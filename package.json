@@ -10,10 +10,17 @@
     "@types/node": "^16.7.13",
     "@types/react": "^18.0.0",
     "@types/react-dom": "^18.0.0",
+    "grindery-nexus-client": "^0.9.12",
+    "grindery-ui": "^0.10.1",
     "react": "^18.2.0",
+    "react-copy-to-clipboard": "^5.1.0",
     "react-dom": "^18.2.0",
+    "react-foco": "^1.3.1",
+    "react-jdenticon": "^1.0.0",
     "react-scripts": "5.0.1",
+    "styled-components": "^5.3.6",
     "typescript": "^4.4.2",
+    "use-grindery-nexus": "^0.4.3",
     "web-vitals": "^2.1.0"
   },
   "scripts": {
@@ -39,5 +46,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@types/styled-components": "^5.1.26"
   }
 }
