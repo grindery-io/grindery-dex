@@ -20,3 +20,29 @@ export const Title = styled.p`
     margin: 0 auto 15px;
   }
 `;
+
+export const Text = styled.div`
+  & p,
+  & li {
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 150%;
+    color: #363636;
+  }
+
+  & p {
+    margin: 0 0 24px;
+    padding: 0;
+  }
+
+  & ul {
+    margin: 0 0 24px;
+    padding: 0 0 0 20px;
+
+    & li {
+      margin: 0;
+      padding: 0 0 0 0;
+      list-style-type: disc;
+    }
+  }
+`;
