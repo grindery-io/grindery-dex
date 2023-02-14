@@ -51,7 +51,7 @@ function Approve() {
     setLoading(false);
   };
 
-  return address ? (
+  return (
     <>
       <Title>Approve</Title>
       <TextInput
@@ -91,7 +91,7 @@ function Approve() {
         </ButtonWrapper>
       )}
     </>
-  ) : null;
+  );
 }
 
 export default Approve;
