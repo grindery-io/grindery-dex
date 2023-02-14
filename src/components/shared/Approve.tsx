@@ -1,7 +1,11 @@
 import {TextInput, Button} from "grindery-ui";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import styled from "styled-components";
 import {SCREEN} from "../../constants";
+import Web3Modal from "web3modal";
+import {providers, ethers} from "ethers";
+import {useGrinderyNexus} from "use-grindery-nexus";
+import {CircularProgress, Alert} from "grindery-ui";
 
 const ButtonWrapper = styled.div`
   margin: 32px 0 0;
@@ -24,31 +28,70 @@ const Title = styled.p`
 `;
 
 function Approve() {
+  const {address, provider, ethers} = useGrinderyNexus();
+
   const [spenderAddress, setSpenderAddress] = useState<string | null>("");
-  const [amount, setAmount] = useState<string | null>("");
+  const [amount, setAmount] = useState<number>(0);
+  const [loading, setLoading] = useState<boolean>(false);
 
-  const handleClick = async () => {};
+  const ERC20_ABI = [
+    "function approve(address spender, uint256 amount) public virtual override returns (bool)",
+  ];
 
-  return (
+  const handleClick = async () => {
+    const contractAddress = "0x11fE4B6AE13d2a6055C8D9cF65c55bac32B5d844";
+    const contract = new ethers.Contract(contractAddress, ERC20_ABI, provider);
+    const signer = provider.getSigner();
+
+    const daiWithSigner = contract.connect(signer);
+
+    const tx = await daiWithSigner.approve(spenderAddress, amount);
+    setLoading(true);
+    await tx.wait();
+    setLoading(false);
+  };
+
+  return address ? (
     <>
       <Title>Approve</Title>
       <TextInput
-        value={spenderAddress}
-        onChange={(spenderAddress: string) => setSpenderAddress(spenderAddress)}
+        value={address}
+        onChange={(address: string) => setSpenderAddress(address)}
         label="Spender Address"
         required
       />
       <TextInput
         value={amount}
-        onChange={(amount: string) => setAmount(amount)}
+        onChange={(amount: number) => setAmount(amount)}
         label="Amount"
         required
       />
-      <ButtonWrapper>
-        <Button value="Approve" size="small" onClick={handleClick} />
-      </ButtonWrapper>
+      {loading && (
+        <>
+          <div style={{textAlign: "center", margin: "0 0 20px"}}>
+            Grindery DePay is now waiting to complete the operation
+          </div>
+          <div
+            style={{
+              bottom: "32px",
+              left: 0,
+              textAlign: "center",
+              color: "#8C30F5",
+              width: "100%",
+              margin: "10px",
+            }}
+          >
+            <CircularProgress color="inherit" />
+          </div>
+        </>
+      )}
+      {!loading && (
+        <ButtonWrapper>
+          <Button value="Approve" size="small" onClick={handleClick} />
+        </ButtonWrapper>
+      )}
     </>
-  );
+  ) : null;
 }
 
 export default Approve;
