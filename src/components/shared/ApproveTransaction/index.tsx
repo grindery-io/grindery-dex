@@ -20,9 +20,9 @@ function ApproveTransaction() {
     );
     const signer = provider.getSigner();
 
-    const daiWithSigner = contract.connect(signer);
+    const depayWithSigner = contract.connect(signer);
 
-    const tx = await daiWithSigner.approve(spenderAddress, amount);
+    const tx = await depayWithSigner.approve(spenderAddress, amount);
     setLoading(true);
     await tx.wait();
     setLoading(false);
