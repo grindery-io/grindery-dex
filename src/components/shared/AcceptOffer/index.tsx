@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import {useState} from "react";
 import {TextInput, Button} from "grindery-ui";
 import {ButtonWrapper, Title} from "./style";
 

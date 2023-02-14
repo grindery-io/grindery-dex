@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import {useEffect, useState} from "react";
 import {Snackbar, Dialog} from "grindery-ui";
 import {ICONS} from "../../../constants";
 import {useGrinderyNexus} from "use-grindery-nexus";

@@ -1,4 +1,3 @@
-import React from "react";
 import {ThemeProvider} from "grindery-ui";
 import GrinderyNexusContextProvider from "use-grindery-nexus";
 import HomePage from "./components/pages/HomePage";
