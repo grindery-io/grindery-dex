@@ -13,8 +13,15 @@ export const ICONS: {[key: string]: string} = {
 };
 
 export const DEPAY_CONTRACT_ADDRESS =
-  "0x11fE4B6AE13d2a6055C8D9cF65c55bac32B5d844";
+  "0xe91fc5f6cf045c83d265140abe5271e5600f820c";
 
 export const DEPAY_ABI = [
+  "function depositGRTRequestERC20(uint256 amntDepGRT, address tokenRequest, uint256 amntReq, uint256 chnIdReq, address destAddr) external returns (bool)",
+  "function acceptOffer(bytes32 idRequest, uint256 idOffer) external returns (bool)",
+  "function setGRTAddr(address token) external onlyOwner",
+  "function setGRTChainId(uint256 chainId) external onlyOwner",
+];
+
+export const ERC20_ABI = [
   "function approve(address spender, uint256 amount) public virtual override returns (bool)",
 ];
