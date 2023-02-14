@@ -11,3 +11,10 @@ export const ICONS: {[key: string]: string} = {
   ACCOUNT: "/images/icons/account.svg",
   CROSS: "/images/icons/cross.svg",
 };
+
+export const DEPAY_CONTRACT_ADDRESS =
+  "0x11fE4B6AE13d2a6055C8D9cF65c55bac32B5d844";
+
+export const DEPAY_ABI = [
+  "function approve(address spender, uint256 amount) public virtual override returns (bool)",
+];

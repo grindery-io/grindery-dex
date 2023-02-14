@@ -3,6 +3,7 @@ import {TextInput, Button} from "grindery-ui";
 import {useGrinderyNexus} from "use-grindery-nexus";
 import {CircularProgress} from "grindery-ui";
 import {ButtonWrapper, Title} from "./style";
+import {DEPAY_ABI, DEPAY_CONTRACT_ADDRESS} from "../../../constants";
 
 function ApproveTransaction() {
   const {address, provider, ethers} = useGrinderyNexus();
@@ -11,13 +12,12 @@ function ApproveTransaction() {
   const [amount, setAmount] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
 
-  const ERC20_ABI = [
-    "function approve(address spender, uint256 amount) public virtual override returns (bool)",
-  ];
-
   const handleClick = async () => {
-    const contractAddress = "0x11fE4B6AE13d2a6055C8D9cF65c55bac32B5d844";
-    const contract = new ethers.Contract(contractAddress, ERC20_ABI, provider);
+    const contract = new ethers.Contract(
+      DEPAY_CONTRACT_ADDRESS,
+      DEPAY_ABI,
+      provider
+    );
     const signer = provider.getSigner();
 
     const daiWithSigner = contract.connect(signer);
