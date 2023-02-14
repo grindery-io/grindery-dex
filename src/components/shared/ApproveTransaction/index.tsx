@@ -1,33 +1,10 @@
+import {useState} from "react";
 import {TextInput, Button} from "grindery-ui";
-import {useEffect, useState} from "react";
-import styled from "styled-components";
-import {SCREEN} from "../../constants";
-import Web3Modal from "web3modal";
-import {providers, ethers} from "ethers";
 import {useGrinderyNexus} from "use-grindery-nexus";
-import {CircularProgress, Alert} from "grindery-ui";
+import {CircularProgress} from "grindery-ui";
+import {ButtonWrapper, Title} from "./style";
 
-const ButtonWrapper = styled.div`
-  margin: 32px 0 0;
-  text-align: right;
-`;
-
-const Title = styled.p`
-  font-weight: 700;
-  font-size: 25px;
-  line-height: 120%;
-  text-align: center;
-  color: rgba(0, 0, 0, 0.87);
-  padding: 0 50px;
-  margin: 0 0 15px;
-  @media (min-width: ${SCREEN.TABLET}) {
-    padding: 0;
-    max-width: 576px;
-    margin: 0 auto 15px;
-  }
-`;
-
-function Approve() {
+function ApproveTransaction() {
   const {address, provider, ethers} = useGrinderyNexus();
 
   const [spenderAddress, setSpenderAddress] = useState<string | null>("");
@@ -94,4 +71,4 @@ function Approve() {
   );
 }
 
-export default Approve;
+export default ApproveTransaction;

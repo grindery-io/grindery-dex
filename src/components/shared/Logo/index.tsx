@@ -1,7 +1,6 @@
-import React from "react";
-import logo from "../../assets/images/nexus-logo.svg";
-import logoHorizontal from "../../assets/images/nexus-logo-horizontal.svg";
-import logoSquare from "../../assets/images/nexus-square.svg";
+import logo from "../../../assets/images/nexus-logo.svg";
+import logoHorizontal from "../../../assets/images/nexus-logo-horizontal.svg";
+import logoSquare from "../../../assets/images/nexus-square.svg";
 
 type Props = {
   variant?: "horizontal" | "square";
