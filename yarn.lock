@@ -9893,10 +9893,10 @@ url-parse@^1.5.3:
     querystringify "^2.1.1"
     requires-port "^1.0.0"
 
-use-grindery-nexus@^0.4.3:
-  version "0.4.3"
-  resolved "https://registry.yarnpkg.com/use-grindery-nexus/-/use-grindery-nexus-0.4.3.tgz#95bdd8b304d96cf3530656566fe1576db5cb26fe"
-  integrity sha512-F9UwLusXsHxTeZlcDmG7yx85IgdrVfaMLqtctXEmtwGgx9mHIqymOF2R0ZPij9/RU5SCpvuFX/JsFQ+969HvPA==
+use-grindery-nexus@^0.4.4:
+  version "0.4.4"
+  resolved "https://registry.yarnpkg.com/use-grindery-nexus/-/use-grindery-nexus-0.4.4.tgz#35cea88bee263358603f366e1dd28a6c5ae45b72"
+  integrity sha512-lXT61NcGQUAprNN3gDGshmINsKhM62Mp6EZh3IL+QvOSDOhyI2mi15jXc7D2t/BvNeDXZAaXG8FxBlYMM9IA3A==
   dependencies:
     "@onflow/fcl" "^1.2.1"
     bignumber.js "^9.0.2"
