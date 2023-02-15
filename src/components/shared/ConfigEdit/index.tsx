@@ -7,6 +7,7 @@ function ConfigEdit() {
   const [grtAddress, setGrtAddress] = useState<string | null>("");
   const [chainId, setChainId] = useState<string | null>("");
   const [realityAddress, setRealityAddress] = useState<string | null>("");
+  const [userNonce, setUserNonce] = useState<string | null>("");
 
   const handleClick = async () => {};
 
@@ -19,6 +20,17 @@ function ConfigEdit() {
       <TextInput
         onChange={(amountGrt: string) => setGrtAddress(amountGrt)}
         label="Amount (GRT)"
+        required
+      />
+      <ButtonWrapper>
+        <Button value="Update" size="small" onClick={handleClick} />
+      </ButtonWrapper>
+
+
+      <SubTitle>Get Nonce for a user (GRT pool) </SubTitle>
+      <TextInput
+        onChange={(userNonce: string) => setGrtAddress(userNonce)}
+        label="User Address"
         required
       />
       <ButtonWrapper>
