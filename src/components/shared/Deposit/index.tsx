@@ -11,7 +11,7 @@ function Deposit() {
   const [erc20AmountReq, setERC20AmountReq] = useState<string | null>("");
   const [destinationAddrs, setDestinationAddrs] = useState<string | null>("");
   const [loading, setLoading] = useState<boolean>(false);
-  const {provider, ethers, chain} = useGrinderyNexus();
+  const {address, provider, ethers, chain} = useGrinderyNexus();
 
   const requestTypeOptions = [
     {label: "ERC20 Token", value: "ERC20"},
@@ -22,22 +22,23 @@ function Deposit() {
   );
 
   const handleClick = async () => {
-    console.log(chain?.toString().split(":").pop());
+    const chainId = chain?.toString().split(":").pop();
+    const signer = provider.getSigner();
+
+    console.log("erc20TokenAddrs - " + erc20TokenAddrs);
+    console.log("destinationAddrs - " + destinationAddrs);
 
     const contract = new ethers.Contract(
       DEPAY_CONTRACT_ADDRESS,
       DEPAY_ABI,
-      provider
+      signer
     );
-    const signer = provider.getSigner();
-    const depayWithSigner = contract.connect(signer);
-
-    const tx = await depayWithSigner.depositGRTRequestERC20(
-      100,
+    const tx = await contract.depositGRTRequestERC20(
+      0,
       10,
       erc20TokenAddrs,
-      1000,
-      5,
+      10,
+      chainId,
       destinationAddrs,
       {
         gasLimit: 30000,
@@ -78,6 +79,7 @@ function Deposit() {
         required
       />
       <TextInput
+        value={address}
         onChange={(destinationAddrs: string) =>
           setDestinationAddrs(destinationAddrs)
         }
