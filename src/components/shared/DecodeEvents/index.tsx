@@ -21,7 +21,8 @@ function DecodeEvents() {
 
   const {provider, ethers} = useGrinderyNexus();
   const [txhash, setTxHash] = useState<string>("0xe21bbf73c0a2eb43e3597572752f995af6df27fbb44c6b878ace5a160ea1047e");
-  const [events, setEvents] = useState([{}]);
+  const [eventObject, setEventObject] = useState([{}]);
+  const [eventDisplay, setEventDisplay] = useState("");
 
   const signer = provider.getSigner();
   const _grtPoolContract = new ethers.Contract(
@@ -53,19 +54,26 @@ function DecodeEvents() {
           arguments: args
         });
       }
-      setEvents(event);
     })
+    setEventObject(event);
+    formatObjectToString();
   };
 
-  const displayEvent = async () => {
-
-    return "toto";
-
-  };
+  const formatObjectToString = async () => {
+    let output = '';
+    for (const event of eventObject as Event[]) {
+      output += `${event.name}\n`;
+      for (const arg of event.arguments) {
+        output += `${arg.name}: ${arg.value}\n`;
+      }
+      output += '\n';
+    }
+    setEventDisplay(output);
+  }
 
   return (
     <>
-      <Title>Decode events</Title>
+      <Title>Decode eventObject</Title>
         <>
           <TextInput
             value={txhash}
@@ -74,7 +82,12 @@ function DecodeEvents() {
             required
           />
           <ResponseWrapper>
-            <Text value={"Events " + displayEvent} variant="subtitle1" />
+            <Text
+              value={"Event \n".concat(eventDisplay).split("\n").map((i,key) => {
+                return <div key={key}>{i}</div>;
+            })}
+              variant="subtitle1"
+            />
           </ResponseWrapper>
         </>
       <ButtonWrapper>

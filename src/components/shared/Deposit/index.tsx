@@ -39,9 +39,7 @@ function Deposit() {
       erc20AmountReq,
       5,
       destinationAddrs,
-      {
-        gasLimit: 500000,
-      }
+      {gasLimit: 500000,}
     );
     setLoading(true);
     const response = await tx.wait();
@@ -65,12 +63,14 @@ function Deposit() {
         label="Nonce"
         required
         value="0"
+        placeholder={"0"}
       />
       <TextInput
         onChange={(amount: string) => setGrtAmount(amount)}
         label="GRT Amount"
         required
         value="1"
+        placeholder={"1"}
       />
       {requestType === requestTypeOptions[0].value && (
         <TextInput
@@ -78,6 +78,7 @@ function Deposit() {
           label="ERC20 Token Address Request"
           required
           value="0x326C977E6efc84E512bB9C30f76E30c160eD06FB"
+          placeholder={"0x326C977E6efc84E512bB9C30f76E30c160eD06FB"}
         />
       )}
       <TextInput
@@ -85,6 +86,7 @@ function Deposit() {
         label="ERC20 Amount Required"
         required
         value="1"
+        placeholder={"1"}
       />
       <TextInput
         onChange={(destinationAddrs: string) =>
@@ -93,6 +95,7 @@ function Deposit() {
         label="Destination Address"
         required
         value="0x710f35C7c7CEC6B4f80D63ED506c356160eB58d1"
+        placeholder={"0x710f35C7c7CEC6B4f80D45ED506c356160eB58d1"}
       />
       {loading && (
         <>

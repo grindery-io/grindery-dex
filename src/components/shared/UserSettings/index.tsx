@@ -11,6 +11,7 @@ import {ResponseWrapper} from "./style";
 function UserSettings() {
   const operationOptions = [
     {label: "Mint GRT (GRT Token)", value: "mintGRT"},
+    {label: "Stake GRT (GRT pool)", value: "stakeGRT"},
     {label: "Get owner (GRT pool)", value: "getOwnerPool"},
     {label: "Get GRT Token address (GRT pool)", value: "getGRTAddress"},
     {label: "Get GRT Token chain Id (GRT pool)", value: "getGRTChainId"},
@@ -50,6 +51,8 @@ function UserSettings() {
   const [grtChainId, setGrtChainId] = useState<number>(0);
   const [realityAddress, setRealityAddress] = useState<string>("");
   const [ownerPool, setOwnerPool] = useState<string>("");
+  const [stakeGRT, setStakeGRT] = useState<number>(0);
+  const [resultStakeGRT, setResultStakeGRT] = useState<boolean>(false);
 
   const signer = provider.getSigner();
   const _grtPoolContract = new ethers.Contract(
@@ -87,6 +90,7 @@ function UserSettings() {
     setGrtChainId(0);
     setRealityAddress("");
     setOwnerPool("");
+    setStakeGRT(0);
   }
 
   const handleClick = async () => {
@@ -205,6 +209,12 @@ function UserSettings() {
           await grtPoolContract.owner()
         );
         break;
+      case "stakeGRT":
+        setResultStakeGRT(
+          await grtPoolContract.stakeGRT(
+            stakeGRT
+          )
+        )
 
     }
   };
@@ -478,6 +488,22 @@ function UserSettings() {
           <ResponseWrapper>
             <Text
               value={"Owner GRT Pool " + ownerPool}
+              variant="subtitle1"
+            />
+          </ResponseWrapper>
+        </>
+      )}
+      {operation === "stakeGRT" && (
+        <>
+          <TextInput
+            onChange={(amount: number) => setStakeGRT(amount)}
+            label="Amount (GRT)"
+            required
+            placeholder={"10"}
+          />
+          <ResponseWrapper>
+            <Text
+              value={"Staked GRT " + resultStakeGRT}
               variant="subtitle1"
             />
           </ResponseWrapper>

@@ -30,11 +30,13 @@ function AcceptOffer() {
         onChange={(offerId: string) => setOfferId(offerId)}
         label="Offer Id"
         required
+        placeholder={"0"}
       />
       <TextInput
         onChange={(requestId: string) => setRequestId(requestId)}
         label="Request Id"
         required
+        placeholder={"0xd2b8dbec86dba5f9b5c34f84d0dc19bf715f984e3c78051e5ffa813a1d29dd73"}
       />
       <ButtonWrapper>
         <Button value="Accept" size="small" onClick={handleClick} />

@@ -27,7 +27,7 @@ const HomePage = () => {
                 onChange={(index: number) => {
                   setTab(index);
                 }}
-                options={["Sellers", "Buyer", "Settings"]}
+                options={["Buyer", "Seller", "Settings"]}
                 orientation="horizontal"
                 activeIndicatorColor="#A963EF"
                 activeColor="#8C30F5"
