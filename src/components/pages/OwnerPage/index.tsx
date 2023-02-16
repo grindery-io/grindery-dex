@@ -1,10 +1,10 @@
-import ConfigEdit from "../../shared/ConfigEdit";
+import Settings from "../../shared/Settings";
 import {RootWrapper} from "./style";
 
 function OwnerPage() {
   return (
     <RootWrapper>
-      <ConfigEdit />
+      <Settings />
     </RootWrapper>
   );
 }

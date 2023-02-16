@@ -21,7 +21,6 @@ export const Title = styled.p`
   }
 `;
 
-
 export const SubTitle = styled.p`
   font-weight: 700;
   font-size: 18px;
@@ -29,10 +28,8 @@ export const SubTitle = styled.p`
   text-align: left;
   color: rgba(0, 0, 0, 0.87);
   padding: 0 50px;
-  margin: 0 0 15px;
   @media (min-width: ${SCREEN.TABLET}) {
     padding: 0;
     max-width: 576px;
-    margin: 0 auto 15px;
   }
 `;
