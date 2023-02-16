@@ -1,12 +1,7 @@
-import React from "react";
 import styled from "styled-components";
-import useAppContext from "../../hooks/useAppContext";
-import Logo from "./Logo";
-import {SCREEN} from "../../constants";
-import UserMenu from "./UserMenu";
-import {useGrinderyNexus} from "use-grindery-nexus";
+import {SCREEN} from "../../../constants";
 
-const Wrapper = styled.div`
+export const Wrapper = styled.div`
   border-bottom: 1px solid #dcdcdc;
   padding: 16px;
   display: flex;
@@ -30,7 +25,7 @@ const Wrapper = styled.div`
   }
 `;
 
-const UserWrapper = styled.div`
+export const UserWrapper = styled.div`
   margin-left: auto;
   order: 4;
   @media (min-width: ${SCREEN.TABLET}) {
@@ -54,13 +49,13 @@ const UserWrapper = styled.div`
   }
 `;*/
 
-const LogoWrapper = styled.div`
+export const LogoWrapper = styled.div`
   @media (min-width: ${SCREEN.TABLET}) {
     order: 2;
   }
 `;
 
-const CompanyNameWrapper = styled.div`
+export const CompanyNameWrapper = styled.div`
   display: block;
   order: 3;
   font-weight: 700;
@@ -70,7 +65,7 @@ const CompanyNameWrapper = styled.div`
   cursor: pointer;
 `;
 
-const ConnectWrapper = styled.div`
+export const ConnectWrapper = styled.div`
   display: none;
   margin-left: auto;
   @media (min-width: ${SCREEN.TABLET}) {
@@ -95,37 +90,3 @@ const ConnectWrapper = styled.div`
     }
   }
 `;
-
-type Props = {};
-
-const AppHeader = (props: Props) => {
-  const {user} = useAppContext();
-  const {connect} = useGrinderyNexus();
-
-  return (
-    <Wrapper>
-      <LogoWrapper>
-        <Logo variant="square" />
-      </LogoWrapper>
-      <CompanyNameWrapper>DePay</CompanyNameWrapper>
-      {!user && "ethereum" in window && (
-        <ConnectWrapper>
-          <button
-            onClick={() => {
-              connect();
-            }}
-          >
-            Connect wallet
-          </button>
-        </ConnectWrapper>
-      )}
-      {user && (
-        <UserWrapper>
-          <UserMenu />
-        </UserWrapper>
-      )}
-    </Wrapper>
-  );
-};
-
-export default AppHeader;

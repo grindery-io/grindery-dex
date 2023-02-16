@@ -9893,10 +9893,10 @@ url-parse@^1.5.3:
     querystringify "^2.1.1"
     requires-port "^1.0.0"
 
-use-grindery-nexus@^0.4.3:
-  version "0.4.3"
-  resolved "https://registry.yarnpkg.com/use-grindery-nexus/-/use-grindery-nexus-0.4.3.tgz#95bdd8b304d96cf3530656566fe1576db5cb26fe"
-  integrity sha512-F9UwLusXsHxTeZlcDmG7yx85IgdrVfaMLqtctXEmtwGgx9mHIqymOF2R0ZPij9/RU5SCpvuFX/JsFQ+969HvPA==
+use-grindery-nexus@^0.4.5:
+  version "0.4.5"
+  resolved "https://registry.yarnpkg.com/use-grindery-nexus/-/use-grindery-nexus-0.4.5.tgz#545fd136459326fdc22e4a8bb2de41850bd373a5"
+  integrity sha512-B3y05qhn16qRgd4YDPuToNRjUug+NzaghxPxbm0HvVX8bJyG5CpkEcciJ/AXRKEfefa67jQEf1e2CCOlhOH60g==
   dependencies:
     "@onflow/fcl" "^1.2.1"
     bignumber.js "^9.0.2"
@@ -9989,7 +9989,7 @@ web-vitals@^2.1.0, web-vitals@^2.1.4:
   resolved "https://registry.yarnpkg.com/web-vitals/-/web-vitals-2.1.4.tgz#76563175a475a5e835264d373704f9dde718290c"
   integrity sha512-sVWcwhU5mX6crfI5Vd2dC4qchyTqxV8URinzt25XqVh+bHEPGH4C3NPrNionCP7Obx59wrYEbNlw4Z8sjALzZg==
 
-web3modal@^1.9.8:
+web3modal@^1.9.12, web3modal@^1.9.8:
   version "1.9.12"
   resolved "https://registry.yarnpkg.com/web3modal/-/web3modal-1.9.12.tgz#cb000888fa422a96e3df552d4784e347ba35efcc"
   integrity sha512-RiLY2tNOEUCobtsMTmhwl/FoHZGxRZz7SSdLsh6qbbybPNUO0rFPY8xam9SpPwlLd2cUDGiWkLgDUJde0sHxdw==

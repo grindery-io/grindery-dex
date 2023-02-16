@@ -11,3 +11,9 @@ export const ICONS: {[key: string]: string} = {
   ACCOUNT: "/images/icons/account.svg",
   CROSS: "/images/icons/cross.svg",
 };
+
+export const DEPAY_CONTRACT_ADDRESS =
+  "0xe91fc5f6cf045c83d265140abe5271e5600f820c";
+
+export const DEPAY_DISPUTE_ADDRESS =
+  "0xef468d8bdE6Cab3e678587415226a3d4bAAc5F01";

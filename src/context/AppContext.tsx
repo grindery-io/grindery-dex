@@ -1,5 +1,5 @@
 import NexusClient from "grindery-nexus-client";
-import React, {createContext, useCallback, useEffect, useState} from "react";
+import {createContext, useCallback, useEffect, useState} from "react";
 import {useGrinderyNexus} from "use-grindery-nexus";
 import {defaultFunc} from "../helpers/utils";
 
