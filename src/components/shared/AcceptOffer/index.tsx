@@ -1,8 +1,9 @@
 import {useState} from "react";
 import {TextInput, Button} from "grindery-ui";
 import {ButtonWrapper, Title} from "./style";
-import {DEPAY_ABI, DEPAY_CONTRACT_ADDRESS} from "../../../constants";
+import {DEPAY_CONTRACT_ADDRESS} from "../../../constants";
 import {useGrinderyNexus} from "use-grindery-nexus";
+import GrtPool from "../Abi/GrtPool.json";
 
 function AcceptOffer() {
   const [offerId, setOfferId] = useState<string | null>("");
@@ -12,7 +13,7 @@ function AcceptOffer() {
   const handleClick = async () => {
     const contract = new ethers.Contract(
       DEPAY_CONTRACT_ADDRESS,
-      DEPAY_ABI,
+      GrtPool.abi,
       provider
     );
     const signer = provider.getSigner();

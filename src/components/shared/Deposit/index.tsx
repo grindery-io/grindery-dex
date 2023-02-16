@@ -2,8 +2,9 @@ import {useState} from "react";
 import {TextInput, Button, SelectSimple} from "grindery-ui";
 import {Title, ButtonWrapper, Text} from "./style";
 import {useGrinderyNexus} from "use-grindery-nexus";
-import {DEPAY_ABI, DEPAY_CONTRACT_ADDRESS} from "../../../constants";
+import {DEPAY_CONTRACT_ADDRESS} from "../../../constants";
 import {CircularProgress} from "grindery-ui";
+import GrtPool from "../Abi/GrtPool.json";
 
 function Deposit() {
   const [grtAmount, setGrtAmount] = useState<string | null>("");
@@ -22,32 +23,45 @@ function Deposit() {
   );
 
   const handleClick = async () => {
-    const chainId = chain?.toString().split(":").pop();
+    console.log(chain?.toString().split(":").pop());
     const signer = provider.getSigner();
-
-    console.log("erc20TokenAddrs - " + erc20TokenAddrs);
-    console.log("destinationAddrs - " + destinationAddrs);
-
     const contract = new ethers.Contract(
       DEPAY_CONTRACT_ADDRESS,
-      DEPAY_ABI,
+      GrtPool.abi,
       signer
     );
-    const tx = await contract.depositGRTRequestERC20(
+    const depayWithSigner = contract.connect(signer);
+    const tx = await depayWithSigner.depositGRTRequestERC20(
       0,
-      10,
+      1,
       erc20TokenAddrs,
-      10,
-      chainId,
+      1,
+      5,
       destinationAddrs,
       {
-        gasLimit: 30000,
+        gasLimit: 100000,
       }
     );
     setLoading(true);
     const response = await tx.wait();
     console.log(response);
-    // setLoading(false);
+    setLoading(false);
+
+    // const tx = await depayWithSigner.depositGRTRequestERC20(
+    //   100,
+    //   10,
+    //   erc20TokenAddrs,
+    //   1000,
+    //   5,
+    //   destinationAddrs,
+    //   {
+    //     gasLimit: 30000,
+    //   }
+    // );
+    // setLoading(true);
+    // const response = await tx.wait();
+    // console.log(response);
+    // // setLoading(false);
   };
 
   return (
@@ -65,26 +79,29 @@ function Deposit() {
         onChange={(amount: string) => setGrtAmount(amount)}
         label="GRT Amount"
         required
+        value="10"
       />
       {requestType === requestTypeOptions[0].value && (
         <TextInput
           onChange={(address: string) => setErc20TokenAddrs(address)}
           label="ERC20 Token Address Request"
           required
+          value="0xe91fc5f6cf045c83d265140abe5271e5600f820c"
         />
       )}
       <TextInput
         onChange={(erc20Amount: string) => setERC20AmountReq(erc20Amount)}
         label="ERC20 Amount Required"
         required
+        value="10"
       />
       <TextInput
-        value={address}
         onChange={(destinationAddrs: string) =>
           setDestinationAddrs(destinationAddrs)
         }
         label="Destination Address"
         required
+        value="0xe91fc5f6cf045c83d265140abe5271e5600f820c"
       />
       {loading && (
         <>
