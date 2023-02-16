@@ -13,7 +13,7 @@ function Deposit() {
   const [destinationAddrs, setDestinationAddrs] = useState<string | null>("");
   const [nonce, setNonce] = useState<string | null>("");
   const [loading, setLoading] = useState<boolean>(false);
-  const {address, provider, ethers, chain} = useGrinderyNexus();
+  const {provider, ethers, chain} = useGrinderyNexus();
 
   const requestTypeOptions = [
     {label: "ERC20 Token", value: "ERC20"},
@@ -24,7 +24,7 @@ function Deposit() {
   );
 
   const handleClick = async () => {
-    console.log(chain?.toString().split(":").pop());
+    const chainId = chain?.toString().split(":").pop();
     const signer = provider.getSigner();
     const contract = new ethers.Contract(
       GRTPOOL_CONTRACT_ADDRESS,
@@ -37,9 +37,9 @@ function Deposit() {
       grtAmount,
       erc20TokenAddrs,
       erc20AmountReq,
-      5,
+      chainId,
       destinationAddrs,
-      {gasLimit: 500000,}
+      {gasLimit: 500000}
     );
     setLoading(true);
     const response = await tx.wait();
