@@ -3,7 +3,7 @@ import {TextInput, Button, SelectSimple, Text} from "grindery-ui";
 import {ButtonWrapper} from "../AcceptOffer/style";
 import {Title} from "../AccountModal/style";
 import {useGrinderyNexus} from "use-grindery-nexus";
-import {DEPAY_CONTRACT_ADDRESS, GRT_CONTRACT_ADDRESS} from "../../../constants";
+import {GRTPOOL_CONTRACT_ADDRESS, GRT_CONTRACT_ADDRESS} from "../../../constants";
 import GrtPool from "../Abi/GrtPool.json";
 import Grt from "../Abi/Grt.json";
 import {ResponseWrapper} from "./style";
@@ -53,7 +53,7 @@ function UserSettings() {
 
   const signer = provider.getSigner();
   const _grtPoolContract = new ethers.Contract(
-    DEPAY_CONTRACT_ADDRESS,
+    GRTPOOL_CONTRACT_ADDRESS,
     GrtPool.abi,
     signer
   );

@@ -1,7 +1,7 @@
 import {useState} from "react";
 import {TextInput, Button} from "grindery-ui";
 import {ButtonWrapper, Title} from "./style";
-import {DEPAY_CONTRACT_ADDRESS} from "../../../constants";
+import {GRTPOOL_CONTRACT_ADDRESS} from "../../../constants";
 import {useGrinderyNexus} from "use-grindery-nexus";
 import GrtPool from "../Abi/GrtPool.json";
 
@@ -12,7 +12,7 @@ function AcceptOffer() {
 
   const handleClick = async () => {
     const contract = new ethers.Contract(
-      DEPAY_CONTRACT_ADDRESS,
+      GRTPOOL_CONTRACT_ADDRESS,
       GrtPool.abi,
       provider
     );

@@ -2,7 +2,7 @@ import {useState} from "react";
 import {TextInput, Button, SelectSimple} from "grindery-ui";
 import {Title, ButtonWrapper, Text} from "./style";
 import {useGrinderyNexus} from "use-grindery-nexus";
-import {DEPAY_CONTRACT_ADDRESS} from "../../../constants";
+import {GRTPOOL_CONTRACT_ADDRESS} from "../../../constants";
 import {CircularProgress} from "grindery-ui";
 import GrtPool from "../Abi/GrtPool.json";
 
@@ -27,19 +27,11 @@ function Deposit() {
     console.log(chain?.toString().split(":").pop());
     const signer = provider.getSigner();
     const contract = new ethers.Contract(
-      DEPAY_CONTRACT_ADDRESS,
+      GRTPOOL_CONTRACT_ADDRESS,
       GrtPool.abi,
       signer
     );
     const depayWithSigner = contract.connect(signer);
-
-    console.log(
-      "nonce", nonce,
-      "amount", grtAmount,
-      "erc20TokenAddrs", erc20TokenAddrs,
-      "erc20AmountReq", erc20AmountReq,
-      "destinationAddrs", destinationAddrs,
-    )
     const tx = await depayWithSigner.depositGRTRequestERC20(
       nonce,
       grtAmount,

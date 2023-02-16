@@ -3,7 +3,7 @@ import {TextInput, Button} from "grindery-ui";
 import {useGrinderyNexus} from "use-grindery-nexus";
 import {CircularProgress} from "grindery-ui";
 import {ButtonWrapper, Title} from "./style";
-import {DEPAY_CONTRACT_ADDRESS} from "../../../constants";
+import {GRTPOOL_CONTRACT_ADDRESS} from "../../../constants";
 import ERC20 from "../Abi/ERC20.json";
 
 function ApproveTransaction() {
@@ -12,7 +12,7 @@ function ApproveTransaction() {
     "0x1e3C935E9A45aBd04430236DE959d12eD9763162"
   );
   const [spenderAddress, setSpenderAddress] = useState<string>(
-    DEPAY_CONTRACT_ADDRESS
+    GRTPOOL_CONTRACT_ADDRESS
   );
   const [amount, setAmount] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);

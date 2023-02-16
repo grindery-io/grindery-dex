@@ -4,7 +4,7 @@ import {ButtonWrapper} from "../AcceptOffer/style";
 import {Title} from "../AccountModal/style";
 import {useGrinderyNexus} from "use-grindery-nexus";
 import {
-  DEPAY_CONTRACT_ADDRESS,
+  GRTPOOL_CONTRACT_ADDRESS,
   DEPAY_DISPUTE_ADDRESS,
 } from "../../../constants";
 import GrtPool from "../Abi/GrtPool.json";
@@ -25,7 +25,7 @@ function OwnerSettings() {
   const signer = provider.getSigner();
 
   const _grtPoolContract = new ethers.Contract(
-    DEPAY_CONTRACT_ADDRESS,
+    GRTPOOL_CONTRACT_ADDRESS,
     GrtPool.abi,
     signer
   );
