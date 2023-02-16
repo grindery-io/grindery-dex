@@ -1,5 +1,4 @@
 import ClaimReward from "../../shared/ClaimReward";
-import HonourOfferCrossChain from "../../shared/HonourOfferCrossChain";
 import HonourOfferOnChain from "../../shared/HonourOfferOnChain";
 import MakeOffer from "../../shared/MakeOffer";
 import {RootWrapper} from "./style";
@@ -9,7 +8,6 @@ function BuyerPage() {
     <RootWrapper>
       <MakeOffer />
       <HonourOfferOnChain />
-      <HonourOfferCrossChain />
       <ClaimReward />
     </RootWrapper>
   );

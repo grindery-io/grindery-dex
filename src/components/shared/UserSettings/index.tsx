@@ -1,9 +1,18 @@
 import {useState} from "react";
-import {TextInput, Button, SelectSimple, Text} from "grindery-ui";
+import {
+  TextInput,
+  Button,
+  SelectSimple,
+  Text,
+  CircularProgress,
+} from "grindery-ui";
 import {ButtonWrapper} from "../AcceptOffer/style";
 import {Title} from "../AccountModal/style";
 import {useGrinderyNexus} from "use-grindery-nexus";
-import {GRTPOOL_CONTRACT_ADDRESS, GRT_CONTRACT_ADDRESS} from "../../../constants";
+import {
+  GRTPOOL_CONTRACT_ADDRESS,
+  GRT_CONTRACT_ADDRESS,
+} from "../../../constants";
 import GrtPool from "../Abi/GrtPool.json";
 import Grt from "../Abi/Grt.json";
 import {ResponseWrapper} from "./style";
@@ -15,7 +24,10 @@ function UserSettings() {
     {label: "Get owner (GRT pool)", value: "getOwnerPool"},
     {label: "Get GRT Token address (GRT pool)", value: "getGRTAddress"},
     {label: "Get GRT Token chain Id (GRT pool)", value: "getGRTChainId"},
-    {label: "Get Reality contract address (GRT pool)", value: "getRealityAddress"},
+    {
+      label: "Get Reality contract address (GRT pool)",
+      value: "getRealityAddress",
+    },
     {label: "Get nonce for a user (GRT pool)", value: "getNonce"},
     {label: "Get requester address (GRT pool)", value: "getRequester"},
     {label: "Get request recipient address (GRT pool)", value: "getRecipient"},
@@ -27,7 +39,10 @@ function UserSettings() {
     {label: "Get request chain id (GRT pool)", value: "getRequestChainId"},
     {label: "Get offer creator address (GRT pool)", value: "getOfferCreator"},
     {label: "Get offer amount (GRT pool)", value: "getOfferAmount"},
-    {label: "Number offers for a request (GRT pool)", value: "nbrOffersRequest"},
+    {
+      label: "Number offers for a request (GRT pool)",
+      value: "nbrOffersRequest",
+    },
   ];
   const {provider, ethers} = useGrinderyNexus();
   const [operation, setOperations] = useState<string>("getNonce");
@@ -53,6 +68,7 @@ function UserSettings() {
   const [ownerPool, setOwnerPool] = useState<string>("");
   const [stakeGRT, setStakeGRT] = useState<number>(0);
   const [resultStakeGRT, setResultStakeGRT] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const signer = provider.getSigner();
   const _grtPoolContract = new ethers.Contract(
@@ -91,131 +107,90 @@ function UserSettings() {
     setRealityAddress("");
     setOwnerPool("");
     setStakeGRT(0);
-  }
+  };
 
   const handleClick = async () => {
+    try {
+      setLoading(true);
 
-    switch (operation) {
-      case "getNonce":
-        setNonce(
-          (await grtPoolContract.getNonce(userAddress))
-          .toString()
-        );
-        break;
-      case "getRequester":
-        setAddressRequester(
-          await grtPoolContract.getRequester(
-            ethers.utils.formatBytes32String(requestId)
-          )
-        );
-        break;
-      case "getRecipient":
-        setAddressRecipient(
-          await grtPoolContract.getRecipient(
-            ethers.utils.formatBytes32String(requestId)
-          )
-        );
-        break;
-      case "getDepositToken":
-        setDepositTokenAddrs(
-          await grtPoolContract.getDepositToken(
-            ethers.utils.formatBytes32String(requestId)
-          )
-        );
-        break;
-      case "getDepositAmount":
-        setDepositAmount(
-          await grtPoolContract.getDepositAmount(
-            ethers.utils.formatBytes32String(requestId)
-          )
-        );
-        break;
-      case "getDepositChainId":
-        setDepositChainId(
-          await grtPoolContract.getDepositChainId(
-            ethers.utils.formatBytes32String(requestId)
-          )
-        );
-        break;
-      case "getRequestToken":
-        setRequestToken(
-          await grtPoolContract.getRequestToken(
-            ethers.utils.formatBytes32String(requestId)
-          )
-        );
-        break;
-      case "getRequestAmount":
-        setRequestAmount(
-          await grtPoolContract.getRequestAmount(
-            ethers.utils.formatBytes32String(requestId)
-          )
-        );
-        break;
-      case "getRequestChainId":
-        setRequestChainId(
-          await grtPoolContract.getRequestChainId(
-            ethers.utils.formatBytes32String(requestId)
-          )
-        );
-        break;
-      case "getOfferCreator":
-        setOfferAddrsCreator(
-          await grtPoolContract.getOfferCreator(
-            ethers.utils.formatBytes32String(requestId),
-            offerId
-          )
-        );
-        break;
-      case "getOfferAmount":
-        setOfferAmount(
-          await grtPoolContract.getOfferAmount(
-            ethers.utils.formatBytes32String(requestId),
-            offerId
-          )
-        );
-        break;
-      case "nbrOffersRequest":
-        setNbrOffersRequest(
-          await grtPoolContract.nbrOffersRequest(
-            ethers.utils.formatBytes32String(requestId)
-          )
-        );
-        break;
-      case "mintGRT":
-        setGrtToMint(
-          await grtContract.mint(
-            userAddress,
-            grtToMint
-          )
-        );
-        break;
-      case "getGRTAddress":
-        setGrtAddress(
-          await grtPoolContract.grtAddress()
-        );
-        break;
-      case "getGRTChainId":
-        setGrtChainId(
-          await grtPoolContract.grtChainId()
-        );
-        break;
-      case "getRealityAddress":
-        setRealityAddress(
-          await grtPoolContract.realityAddress()
-        );
-        break;
-      case "getOwnerPool":
-        setOwnerPool(
-          await grtPoolContract.owner()
-        );
-        break;
-      case "stakeGRT":
-        setResultStakeGRT(
-          await grtPoolContract.stakeGRT(
-            stakeGRT
-          )
-        )
+      switch (operation) {
+        case "getNonce":
+          setNonce((await grtPoolContract.getNonce(userAddress)).toString());
+          break;
+        case "getRequester":
+          setAddressRequester(await grtPoolContract.getRequester(requestId));
+          break;
+        case "getRecipient":
+          setAddressRecipient(await grtPoolContract.getRecipient(requestId));
+          break;
+        case "getDepositToken":
+          setDepositTokenAddrs(
+            await grtPoolContract.getDepositToken(requestId)
+          );
+          break;
+        case "getDepositAmount":
+          setDepositAmount(await grtPoolContract.getDepositAmount(requestId));
+          break;
+        case "getDepositChainId":
+          setDepositChainId(await grtPoolContract.getDepositChainId(requestId));
+          break;
+        case "getRequestToken":
+          setRequestToken(await grtPoolContract.getRequestToken(requestId));
+          break;
+        case "getRequestAmount":
+          setRequestAmount(await grtPoolContract.getRequestAmount(requestId));
+          break;
+        case "getRequestChainId":
+          setRequestChainId(await grtPoolContract.getRequestChainId(requestId));
+          break;
+        case "getOfferCreator":
+          setOfferAddrsCreator(
+            await grtPoolContract.getOfferCreator(requestId, offerId)
+          );
+          break;
+        case "getOfferAmount":
+          setOfferAmount(
+            await grtPoolContract.getOfferAmount(requestId, offerId)
+          );
+          break;
+        case "nbrOffersRequest":
+          setNbrOffersRequest(
+            await grtPoolContract.nbrOffersRequest(requestId)
+          );
+          break;
+        case "mintGRT":
+          setGrtToMint(
+            await grtContract.mint(
+              userAddress,
+              ethers.utils.parseEther(grtToMint)
+            )
+          );
+          break;
+        case "getGRTAddress":
+          setGrtAddress(await grtPoolContract.grtAddress());
+          break;
+        case "getGRTChainId":
+          setGrtChainId(await grtPoolContract.grtChainId());
+          break;
+        case "getRealityAddress":
+          setRealityAddress(await grtPoolContract.realityAddress());
+          break;
+        case "getOwnerPool":
+          setOwnerPool(await grtPoolContract.owner());
+          break;
+        case "stakeGRT":
+          setResultStakeGRT(
+            await grtPoolContract
+              .stakeGRT(stakeGRT, {
+                gasLimit: 500000,
+              })
+              .toString()
+          );
+      }
 
+      setLoading(false);
+    } catch (e) {
+      setLoading(false);
     }
   };
 
@@ -249,7 +224,9 @@ function UserSettings() {
             onChange={(requestId: string) => setRequestId(requestId)}
             label="Request Id"
             required
-            placeholder={"0x3693c58d1bc68755bb4598d8a176e111308f2106403795117daadb3135a498b4"}
+            placeholder={
+              "0x3693c58d1bc68755bb4598d8a176e111308f2106403795117daadb3135a498b4"
+            }
           />
           <ResponseWrapper>
             <Text
@@ -265,7 +242,9 @@ function UserSettings() {
             onChange={(requestId: string) => setRequestId(requestId)}
             label="Request Id"
             required
-            placeholder={"0x3693c58d1bc68755bb4598d8a176e111308f2106403795117daadb3135a498b4"}
+            placeholder={
+              "0x3693c58d1bc68755bb4598d8a176e111308f2106403795117daadb3135a498b4"
+            }
           />
           <ResponseWrapper>
             <Text
@@ -281,7 +260,9 @@ function UserSettings() {
             onChange={(requestId: string) => setRequestId(requestId)}
             label="Request Id"
             required
-            placeholder={"0x3693c58d1bc68755bb4598d8a176e111308f2106403795117daadb3135a498b4"}
+            placeholder={
+              "0x3693c58d1bc68755bb4598d8a176e111308f2106403795117daadb3135a498b4"
+            }
           />
           <ResponseWrapper>
             <Text
@@ -297,7 +278,9 @@ function UserSettings() {
             onChange={(requestId: string) => setRequestId(requestId)}
             label="Request Id"
             required
-            placeholder={"0x3693c58d1bc68755bb4598d8a176e111308f2106403795117daadb3135a498b4"}
+            placeholder={
+              "0x3693c58d1bc68755bb4598d8a176e111308f2106403795117daadb3135a498b4"
+            }
           />
           <ResponseWrapper>
             <Text
@@ -313,7 +296,9 @@ function UserSettings() {
             onChange={(requestId: string) => setRequestId(requestId)}
             label="Request Id"
             required
-            placeholder={"0x3693c58d1bc68755bb4598d8a176e111308f2106403795117daadb3135a498b4"}
+            placeholder={
+              "0x3693c58d1bc68755bb4598d8a176e111308f2106403795117daadb3135a498b4"
+            }
           />
           <ResponseWrapper>
             <Text
@@ -329,7 +314,9 @@ function UserSettings() {
             onChange={(requestId: string) => setRequestId(requestId)}
             label="Request Id"
             required
-            placeholder={"0x3693c58d1bc68755bb4598d8a176e111308f2106403795117daadb3135a498b4"}
+            placeholder={
+              "0x3693c58d1bc68755bb4598d8a176e111308f2106403795117daadb3135a498b4"
+            }
           />
           <ResponseWrapper>
             <Text
@@ -345,7 +332,9 @@ function UserSettings() {
             onChange={(requestId: string) => setRequestId(requestId)}
             label="Request Id"
             required
-            placeholder={"0x3693c58d1bc68755bb4598d8a176e111308f2106403795117daadb3135a498b4"}
+            placeholder={
+              "0x3693c58d1bc68755bb4598d8a176e111308f2106403795117daadb3135a498b4"
+            }
           />
           <ResponseWrapper>
             <Text
@@ -361,7 +350,9 @@ function UserSettings() {
             onChange={(requestId: string) => setRequestId(requestId)}
             label="Request Id"
             required
-            placeholder={"0x3693c58d1bc68755bb4598d8a176e111308f2106403795117daadb3135a498b4"}
+            placeholder={
+              "0x3693c58d1bc68755bb4598d8a176e111308f2106403795117daadb3135a498b4"
+            }
           />
           <ResponseWrapper>
             <Text
@@ -377,7 +368,9 @@ function UserSettings() {
             onChange={(requestId: string) => setRequestId(requestId)}
             label="Request Id"
             required
-            placeholder={"0x3693c58d1bc68755bb4598d8a176e111308f2106403795117daadb3135a498b4"}
+            placeholder={
+              "0x3693c58d1bc68755bb4598d8a176e111308f2106403795117daadb3135a498b4"
+            }
           />
           <TextInput
             onChange={(offerId: number) => setOfferId(offerId)}
@@ -399,7 +392,9 @@ function UserSettings() {
             onChange={(requestId: string) => setRequestId(requestId)}
             label="Request Id"
             required
-            placeholder={"0x3693c58d1bc68755bb4598d8a176e111308f2106403795117daadb3135a498b4"}
+            placeholder={
+              "0x3693c58d1bc68755bb4598d8a176e111308f2106403795117daadb3135a498b4"
+            }
           />
           <TextInput
             onChange={(offerId: number) => setOfferId(offerId)}
@@ -421,7 +416,9 @@ function UserSettings() {
             onChange={(requestId: string) => setRequestId(requestId)}
             label="Request Id"
             required
-            placeholder={"0x3693c58d1bc68755bb4598d8a176e111308f2106403795117daadb3135a498b4"}
+            placeholder={
+              "0x3693c58d1bc68755bb4598d8a176e111308f2106403795117daadb3135a498b4"
+            }
           />
           <ResponseWrapper>
             <Text
@@ -456,20 +453,14 @@ function UserSettings() {
       {operation === "getGRTAddress" && (
         <>
           <ResponseWrapper>
-            <Text
-              value={"GRT address " + grtAddress}
-              variant="subtitle1"
-            />
+            <Text value={"GRT address " + grtAddress} variant="subtitle1" />
           </ResponseWrapper>
         </>
       )}
       {operation === "getGRTChainId" && (
         <>
           <ResponseWrapper>
-            <Text
-              value={"GRT chain ID " + grtChainId}
-              variant="subtitle1"
-            />
+            <Text value={"GRT chain ID " + grtChainId} variant="subtitle1" />
           </ResponseWrapper>
         </>
       )}
@@ -486,10 +477,7 @@ function UserSettings() {
       {operation === "getOwnerPool" && (
         <>
           <ResponseWrapper>
-            <Text
-              value={"Owner GRT Pool " + ownerPool}
-              variant="subtitle1"
-            />
+            <Text value={"Owner GRT Pool " + ownerPool} variant="subtitle1" />
           </ResponseWrapper>
         </>
       )}
@@ -502,16 +490,34 @@ function UserSettings() {
             placeholder={"10"}
           />
           <ResponseWrapper>
-            <Text
-              value={"Staked GRT " + resultStakeGRT}
-              variant="subtitle1"
-            />
+            <Text value={"Staked GRT " + resultStakeGRT} variant="subtitle1" />
           </ResponseWrapper>
         </>
       )}
-      <ButtonWrapper>
-        <Button value="Run" size="small" onClick={handleClick} />
-      </ButtonWrapper>
+      {loading && (
+        <>
+          <div style={{textAlign: "center", margin: "0 0 20px"}}>
+            Grindery DePay is now waiting to complete the operation
+          </div>
+          <div
+            style={{
+              bottom: "32px",
+              left: 0,
+              textAlign: "center",
+              color: "#8C30F5",
+              width: "100%",
+              margin: "10px",
+            }}
+          >
+            <CircularProgress color="inherit" />
+          </div>
+        </>
+      )}
+      {!loading && (
+        <ButtonWrapper>
+          <Button value="Run" size="small" onClick={handleClick} />
+        </ButtonWrapper>
+      )}
     </>
   );
 }

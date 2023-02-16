@@ -3,12 +3,9 @@ import {TextInput, Button, SelectSimple, CircularProgress} from "grindery-ui";
 import {ButtonWrapper} from "../AcceptOffer/style";
 import {Title} from "../AccountModal/style";
 import {useGrinderyNexus} from "use-grindery-nexus";
-import {
-  GRTPOOL_CONTRACT_ADDRESS,
-  DEPAY_DISPUTE_ADDRESS,
-} from "../../../constants";
+import {GRTPOOL_CONTRACT_ADDRESS} from "../../../constants";
 import GrtPool from "../Abi/GrtPool.json";
-import GrtDispute from "../Abi/GrtDispute.json";
+import AlertBox from "../AlertBox";
 
 function OwnerSettings() {
   const operationOptions = [
@@ -17,10 +14,14 @@ function OwnerSettings() {
     {label: "Set Reality address (GRT pool)", value: "setAddrReality"},
   ];
   const {provider, ethers} = useGrinderyNexus();
-  const [operation, setOperations] = useState<string>(operationOptions[0].value);
+  const [operation, setOperations] = useState<string>(
+    operationOptions[0].value
+  );
   const [address, setAddress] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const [chainId, setChainId] = useState<number>(0);
+  const [trxHash, setTrxHash] = useState<string | null>("");
+  const [error, setError] = useState<boolean>(false);
 
   const signer = provider.getSigner();
 
@@ -33,32 +34,37 @@ function OwnerSettings() {
 
   const handleClick = async () => {
     let tx: any;
-    switch (operation) {
-      case "setGRTAddr":
-        tx = await grtPoolContract.setGRTAddr(address, {
-          gasLimit: 100000,
-        });
-        setLoading(true);
-        await tx.wait();
-        setLoading(false);
-        break;
-      case "setGRTChainId":
-        tx = await grtPoolContract.setGRTChainId(chainId, {
-          gasLimit: 100000,
-        });
-        setLoading(true);
-        await tx.wait();
-        setLoading(false);
-        break;
-      case "setAddrReality":
-        tx = await grtPoolContract.setAddrReality(address, {
-          gasLimit: 100000,
-        });
-        setLoading(true);
-        await tx.wait();
-        setLoading(false);
-        break;
+
+    try {
+      switch (operation) {
+        case "setGRTAddr":
+          tx = await grtPoolContract.setGRTAddr(address, {
+            gasLimit: 100000,
+          });
+          break;
+
+        case "setGRTChainId":
+          tx = await grtPoolContract.setGRTChainId(chainId, {
+            gasLimit: 100000,
+          });
+          break;
+
+        case "setAddrReality":
+          tx = await grtPoolContract.setAddrReality(address, {
+            gasLimit: 100000,
+          });
+          break;
+      }
+
+      setLoading(true);
+      await tx.wait();
+      setLoading(false);
+    } catch (e) {
+      setError(true);
+      setLoading(false);
     }
+
+    setTrxHash(tx.hash);
   };
 
   return (
@@ -120,6 +126,7 @@ function OwnerSettings() {
           </div>
         </>
       )}
+      {trxHash && <AlertBox trxHash={trxHash} isError={error} />}
       {!loading && (
         <ButtonWrapper>
           <Button value="Run" size="small" onClick={handleClick} />

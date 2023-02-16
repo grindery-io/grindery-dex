@@ -5,6 +5,7 @@ import {CircularProgress} from "grindery-ui";
 import {ButtonWrapper, Title} from "./style";
 import {GRTPOOL_CONTRACT_ADDRESS} from "../../../constants";
 import ERC20 from "../Abi/ERC20.json";
+import AlertBox from "../AlertBox";
 
 function ApproveTransaction() {
   const {provider, ethers} = useGrinderyNexus();
@@ -16,6 +17,8 @@ function ApproveTransaction() {
   );
   const [amount, setAmount] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
+  const [trxHash, setTrxHash] = useState<string | null>("");
+  const [error, setError] = useState<boolean>(false);
 
   const handleClick = async () => {
     const contract = new ethers.Contract(tokenAddress, ERC20, provider);
@@ -23,9 +26,17 @@ function ApproveTransaction() {
     const contractWithSigner = contract.connect(signer);
 
     const tx = await contractWithSigner.approve(spenderAddress, amount);
-    setLoading(true);
-    await tx.wait();
-    setLoading(false);
+
+    try {
+      setLoading(true);
+      await tx.wait();
+      setLoading(false);
+    } catch (e) {
+      setError(true);
+      setLoading(false);
+    }
+
+    setTrxHash(tx.hash);
   };
 
   return (
@@ -68,6 +79,7 @@ function ApproveTransaction() {
           </div>
         </>
       )}
+      {trxHash && <AlertBox trxHash={trxHash} isError={error} />}
       {!loading && (
         <ButtonWrapper>
           <Button value="Approve" size="small" onClick={handleClick} />
