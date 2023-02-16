@@ -2,7 +2,6 @@ import {useState} from "react";
 import {TextInput, Button, SelectSimple, Text} from "grindery-ui";
 import {ButtonWrapper} from "../AcceptOffer/style";
 import {Title} from "../AccountModal/style";
-import {SubTitle} from "../Settings/style";
 import {useGrinderyNexus} from "use-grindery-nexus";
 import {DEPAY_CONTRACT_ADDRESS} from "../../../constants";
 import GrtPool from "../Abi/GrtPool.json";

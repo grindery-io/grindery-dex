@@ -1,4 +1,3 @@
-import ApproveTransaction from "../../shared/ApproveTransaction";
 import ClaimReward from "../../shared/ClaimReward";
 import HonourOfferCrossChain from "../../shared/HonourOfferCrossChain";
 import HonourOfferOnChain from "../../shared/HonourOfferOnChain";
