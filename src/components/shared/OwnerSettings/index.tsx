@@ -14,56 +14,50 @@ function OwnerSettings() {
   const operationOptions = [
     {label: "Set GRT address (GRT pool)", value: "setGRTAddr"},
     {label: "Set GRT chain id (GRT pool)", value: "setGRTChainId"},
-    {label: "Set Reality address (GRT Satellite)", value: "setAddrReality"},
+    {label: "Set Reality address (GRT pool)", value: "setAddrReality"},
   ];
   const {provider, ethers} = useGrinderyNexus();
-  const [operation, setOperations] = useState<string>(
-    operationOptions[0].value
-  );
+  const [operation, setOperations] = useState<string>(operationOptions[0].value);
   const [address, setAddress] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const [chainId, setChainId] = useState<number>(0);
 
   const signer = provider.getSigner();
 
-  const contract = new ethers.Contract(
+  const _grtPoolContract = new ethers.Contract(
     DEPAY_CONTRACT_ADDRESS,
     GrtPool.abi,
     signer
   );
-  const contractWithSigner = contract.connect(signer);
-
-  const grtSatellite = new ethers.Contract(
-    DEPAY_DISPUTE_ADDRESS,
-    GrtDispute.abi,
-    signer
-  );
-  const grtSatelliteWithSigner = grtSatellite.connect(signer);
+  const grtPoolContract = _grtPoolContract.connect(signer);
 
   const handleClick = async () => {
-    if (operation === operationOptions[0].value) {
-      const tx = await contractWithSigner.setGRTAddr(address, {
-        gasLimit: 100000,
-      });
-      setLoading(true);
-      await tx.wait();
-      setLoading(false);
-    }
-    if (operation === operationOptions[1].value) {
-      const tx = await contractWithSigner.setGRTChainId(chainId, {
-        gasLimit: 100000,
-      });
-      setLoading(true);
-      await tx.wait();
-      setLoading(false);
-    }
-    if (operation === operationOptions[2].value) {
-      const tx = await grtSatelliteWithSigner.setAddrReality(address, {
-        gasLimit: 100000,
-      });
-      setLoading(true);
-      await tx.wait();
-      setLoading(false);
+    let tx: any;
+    switch (operation) {
+      case "setGRTAddr":
+        tx = await grtPoolContract.setGRTAddr(address, {
+          gasLimit: 100000,
+        });
+        setLoading(true);
+        await tx.wait();
+        setLoading(false);
+        break;
+      case "setGRTChainId":
+        tx = await grtPoolContract.setGRTChainId(chainId, {
+          gasLimit: 100000,
+        });
+        setLoading(true);
+        await tx.wait();
+        setLoading(false);
+        break;
+      case "setAddrReality":
+        tx = await grtPoolContract.setAddrReality(address, {
+          gasLimit: 100000,
+        });
+        setLoading(true);
+        await tx.wait();
+        setLoading(false);
+        break;
     }
   };
 
@@ -77,30 +71,33 @@ function OwnerSettings() {
           setOperations(e.target.value);
         }}
       />
-      {operation === operationOptions[0].value && (
+      {operation === "setGRTAddr" && (
         <>
           <TextInput
             onChange={(grtAddrs: string) => setAddress(grtAddrs)}
             label="GRT Address"
             required
+            placeholder={"0x1e3C935E9A45aBd04430236DE959d12eD9763162"}
           />
         </>
       )}
-      {operation === operationOptions[1].value && (
+      {operation === "setGRTChainId" && (
         <>
           <TextInput
             onChange={(grtChainId: number) => setChainId(grtChainId)}
             label="GRT Chain Id"
             required
+            placeholder={"5"}
           />
         </>
       )}
-      {operation === operationOptions[2].value && (
+      {operation === "setAddrReality" && (
         <>
           <TextInput
             onChange={(address: string) => setAddress(address)}
             label="Reality Address"
             required
+            placeholder={"0x6F80C5cBCF9FbC2dA2F0675E56A5900BB70Df72f"}
           />
         </>
       )}
