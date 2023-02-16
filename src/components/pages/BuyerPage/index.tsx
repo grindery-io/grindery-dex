@@ -8,7 +8,6 @@ import {RootWrapper} from "./style";
 function BuyerPage() {
   return (
     <RootWrapper>
-      <ApproveTransaction />
       <MakeOffer />
       <HonourOfferOnChain />
       <HonourOfferCrossChain />

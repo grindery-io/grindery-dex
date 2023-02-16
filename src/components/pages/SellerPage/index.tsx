@@ -6,7 +6,6 @@ import {RootWrapper} from "./style";
 function SellerPage() {
   return (
     <RootWrapper>
-      <Approve />
       <Deposit />
       <AcceptOffer />
     </RootWrapper>
