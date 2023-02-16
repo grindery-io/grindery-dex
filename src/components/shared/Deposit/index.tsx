@@ -11,6 +11,7 @@ function Deposit() {
   const [erc20TokenAddrs, setErc20TokenAddrs] = useState<string | null>("");
   const [erc20AmountReq, setERC20AmountReq] = useState<string | null>("");
   const [destinationAddrs, setDestinationAddrs] = useState<string | null>("");
+  const [nonce, setNonce] = useState<string | null>("");
   const [loading, setLoading] = useState<boolean>(false);
   const {address, provider, ethers, chain} = useGrinderyNexus();
 
@@ -31,37 +32,29 @@ function Deposit() {
       signer
     );
     const depayWithSigner = contract.connect(signer);
+
+    console.log(
+      "nonce", nonce,
+      "amount", grtAmount,
+      "erc20TokenAddrs", erc20TokenAddrs,
+      "erc20AmountReq", erc20AmountReq,
+      "destinationAddrs", destinationAddrs,
+    )
     const tx = await depayWithSigner.depositGRTRequestERC20(
-      0,
-      1,
+      nonce,
+      grtAmount,
       erc20TokenAddrs,
-      1,
+      erc20AmountReq,
       5,
       destinationAddrs,
       {
-        gasLimit: 100000,
+        gasLimit: 500000,
       }
     );
     setLoading(true);
     const response = await tx.wait();
     console.log(response);
     setLoading(false);
-
-    // const tx = await depayWithSigner.depositGRTRequestERC20(
-    //   100,
-    //   10,
-    //   erc20TokenAddrs,
-    //   1000,
-    //   5,
-    //   destinationAddrs,
-    //   {
-    //     gasLimit: 30000,
-    //   }
-    // );
-    // setLoading(true);
-    // const response = await tx.wait();
-    // console.log(response);
-    // // setLoading(false);
   };
 
   return (
@@ -76,24 +69,30 @@ function Deposit() {
         }}
       />
       <TextInput
+        onChange={(nonce: string) => setNonce(nonce)}
+        label="Nonce"
+        required
+        value="0"
+      />
+      <TextInput
         onChange={(amount: string) => setGrtAmount(amount)}
         label="GRT Amount"
         required
-        value="10"
+        value="1"
       />
       {requestType === requestTypeOptions[0].value && (
         <TextInput
           onChange={(address: string) => setErc20TokenAddrs(address)}
           label="ERC20 Token Address Request"
           required
-          value="0xe91fc5f6cf045c83d265140abe5271e5600f820c"
+          value="0x326C977E6efc84E512bB9C30f76E30c160eD06FB"
         />
       )}
       <TextInput
         onChange={(erc20Amount: string) => setERC20AmountReq(erc20Amount)}
         label="ERC20 Amount Required"
         required
-        value="10"
+        value="1"
       />
       <TextInput
         onChange={(destinationAddrs: string) =>
@@ -101,7 +100,7 @@ function Deposit() {
         }
         label="Destination Address"
         required
-        value="0xe91fc5f6cf045c83d265140abe5271e5600f820c"
+        value="0x710f35C7c7CEC6B4f80D63ED506c356160eB58d1"
       />
       {loading && (
         <>

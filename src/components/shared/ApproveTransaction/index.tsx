@@ -9,7 +9,7 @@ import ERC20 from "../Abi/ERC20.json";
 function ApproveTransaction() {
   const {provider, ethers} = useGrinderyNexus();
   const [tokenAddress, setTokenAddress] = useState<string | null>(
-    "0x11fe4b6ae13d2a6055c8d9cf65c55bac32b5d844"
+    "0x1e3C935E9A45aBd04430236DE959d12eD9763162"
   );
   const [spenderAddress, setSpenderAddress] = useState<string>(
     DEPAY_CONTRACT_ADDRESS
