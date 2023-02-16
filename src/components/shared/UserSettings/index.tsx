@@ -10,9 +10,11 @@ import {ResponseWrapper} from "./style";
 
 function UserSettings() {
   const operationOptions = [
-    {label: "Mint GRT", value: "mintGRT"},
-    {label: "Get GRT address", value: "getGRTAddress"},
-    {label: "Get GRT chain Id", value: "getGRTChainId"},
+    {label: "Mint GRT (GRT Token)", value: "mintGRT"},
+    {label: "Get owner (GRT pool)", value: "getOwnerPool"},
+    {label: "Get GRT Token address (GRT pool)", value: "getGRTAddress"},
+    {label: "Get GRT Token chain Id (GRT pool)", value: "getGRTChainId"},
+    {label: "Get Reality contract address (GRT pool)", value: "getRealityAddress"},
     {label: "Get nonce for a user (GRT pool)", value: "getNonce"},
     {label: "Get requester address (GRT pool)", value: "getRequester"},
     {label: "Get request recipient address (GRT pool)", value: "getRecipient"},
@@ -46,6 +48,8 @@ function UserSettings() {
   const [grtToMint, setGrtToMint] = useState<number>(0);
   const [grtAddress, setGrtAddress] = useState<string>("");
   const [grtChainId, setGrtChainId] = useState<number>(0);
+  const [realityAddress, setRealityAddress] = useState<string>("");
+  const [ownerPool, setOwnerPool] = useState<string>("");
 
   const signer = provider.getSigner();
   const _grtPoolContract = new ethers.Contract(
@@ -81,6 +85,8 @@ function UserSettings() {
     setGrtToMint(0);
     setGrtAddress("");
     setGrtChainId(0);
+    setRealityAddress("");
+    setOwnerPool("");
   }
 
   const handleClick = async () => {
@@ -189,6 +195,17 @@ function UserSettings() {
           await grtPoolContract.grtChainId()
         );
         break;
+      case "getRealityAddress":
+        setRealityAddress(
+          await grtPoolContract.realityAddress()
+        );
+        break;
+      case "getOwnerPool":
+        setOwnerPool(
+          await grtPoolContract.owner()
+        );
+        break;
+
     }
   };
 
@@ -209,6 +226,7 @@ function UserSettings() {
             onChange={(userAddress: string) => setUserAddress(userAddress)}
             label="User Address"
             required
+            placeholder={"0x710f35C7c7CEC6B4f80D63ED506c354360eB58d1"}
           />
           <ResponseWrapper>
             <Text value={"User nonce " + nonce} variant="subtitle1" />
@@ -221,6 +239,7 @@ function UserSettings() {
             onChange={(requestId: string) => setRequestId(requestId)}
             label="Request Id"
             required
+            placeholder={"0x3693c58d1bc68755bb4598d8a176e111308f2106403795117daadb3135a498b4"}
           />
           <ResponseWrapper>
             <Text
@@ -236,6 +255,7 @@ function UserSettings() {
             onChange={(requestId: string) => setRequestId(requestId)}
             label="Request Id"
             required
+            placeholder={"0x3693c58d1bc68755bb4598d8a176e111308f2106403795117daadb3135a498b4"}
           />
           <ResponseWrapper>
             <Text
@@ -251,6 +271,7 @@ function UserSettings() {
             onChange={(requestId: string) => setRequestId(requestId)}
             label="Request Id"
             required
+            placeholder={"0x3693c58d1bc68755bb4598d8a176e111308f2106403795117daadb3135a498b4"}
           />
           <ResponseWrapper>
             <Text
@@ -266,6 +287,7 @@ function UserSettings() {
             onChange={(requestId: string) => setRequestId(requestId)}
             label="Request Id"
             required
+            placeholder={"0x3693c58d1bc68755bb4598d8a176e111308f2106403795117daadb3135a498b4"}
           />
           <ResponseWrapper>
             <Text
@@ -281,6 +303,7 @@ function UserSettings() {
             onChange={(requestId: string) => setRequestId(requestId)}
             label="Request Id"
             required
+            placeholder={"0x3693c58d1bc68755bb4598d8a176e111308f2106403795117daadb3135a498b4"}
           />
           <ResponseWrapper>
             <Text
@@ -296,6 +319,7 @@ function UserSettings() {
             onChange={(requestId: string) => setRequestId(requestId)}
             label="Request Id"
             required
+            placeholder={"0x3693c58d1bc68755bb4598d8a176e111308f2106403795117daadb3135a498b4"}
           />
           <ResponseWrapper>
             <Text
@@ -311,6 +335,7 @@ function UserSettings() {
             onChange={(requestId: string) => setRequestId(requestId)}
             label="Request Id"
             required
+            placeholder={"0x3693c58d1bc68755bb4598d8a176e111308f2106403795117daadb3135a498b4"}
           />
           <ResponseWrapper>
             <Text
@@ -326,6 +351,7 @@ function UserSettings() {
             onChange={(requestId: string) => setRequestId(requestId)}
             label="Request Id"
             required
+            placeholder={"0x3693c58d1bc68755bb4598d8a176e111308f2106403795117daadb3135a498b4"}
           />
           <ResponseWrapper>
             <Text
@@ -341,11 +367,13 @@ function UserSettings() {
             onChange={(requestId: string) => setRequestId(requestId)}
             label="Request Id"
             required
+            placeholder={"0x3693c58d1bc68755bb4598d8a176e111308f2106403795117daadb3135a498b4"}
           />
           <TextInput
             onChange={(offerId: number) => setOfferId(offerId)}
             label="Offer Id"
             required
+            placeholder={"2"}
           />
           <ResponseWrapper>
             <Text
@@ -361,11 +389,13 @@ function UserSettings() {
             onChange={(requestId: string) => setRequestId(requestId)}
             label="Request Id"
             required
+            placeholder={"0x3693c58d1bc68755bb4598d8a176e111308f2106403795117daadb3135a498b4"}
           />
           <TextInput
             onChange={(offerId: number) => setOfferId(offerId)}
             label="Offer Id"
             required
+            placeholder={"2"}
           />
           <ResponseWrapper>
             <Text
@@ -381,6 +411,7 @@ function UserSettings() {
             onChange={(requestId: string) => setRequestId(requestId)}
             label="Request Id"
             required
+            placeholder={"0x3693c58d1bc68755bb4598d8a176e111308f2106403795117daadb3135a498b4"}
           />
           <ResponseWrapper>
             <Text
@@ -396,11 +427,13 @@ function UserSettings() {
             onChange={(userAddress: string) => setUserAddress(userAddress)}
             label="User Address"
             required
+            placeholder={"0x710f35C7c7CEC6B4f80D63ED506c354360eB58d1"}
           />
           <TextInput
             onChange={(grtToMint: number) => setGrtToMint(grtToMint)}
             label="Amount (GRT)"
             required
+            placeholder={"10"}
           />
           <ResponseWrapper>
             <Text
@@ -425,6 +458,26 @@ function UserSettings() {
           <ResponseWrapper>
             <Text
               value={"GRT chain ID " + grtChainId}
+              variant="subtitle1"
+            />
+          </ResponseWrapper>
+        </>
+      )}
+      {operation === "getRealityAddress" && (
+        <>
+          <ResponseWrapper>
+            <Text
+              value={"Reality.eth contract address " + realityAddress}
+              variant="subtitle1"
+            />
+          </ResponseWrapper>
+        </>
+      )}
+      {operation === "getOwnerPool" && (
+        <>
+          <ResponseWrapper>
+            <Text
+              value={"Owner GRT Pool " + ownerPool}
               variant="subtitle1"
             />
           </ResponseWrapper>
