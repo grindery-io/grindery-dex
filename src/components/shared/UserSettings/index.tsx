@@ -19,7 +19,6 @@ import {ResponseWrapper} from "./style";
 
 function UserSettings() {
   const operationOptions = [
-    {label: "Mint GRT (GRT Token)", value: "mintGRT"},
     {label: "Stake GRT (GRT pool)", value: "stakeGRT"},
     {label: "Get owner (GRT pool)", value: "getOwnerPool"},
     {label: "Get GRT Token address (GRT pool)", value: "getGRTAddress"},
@@ -61,7 +60,6 @@ function UserSettings() {
   const [offerId, setOfferId] = useState<number>(0);
   const [offerAmount, setOfferAmount] = useState<number>(0);
   const [nbrOffersRequest, setNbrOffersRequest] = useState<number>(0);
-  const [grtToMint, setGrtToMint] = useState<number>(0);
   const [grtAddress, setGrtAddress] = useState<string>("");
   const [grtChainId, setGrtChainId] = useState<number>(0);
   const [realityAddress, setRealityAddress] = useState<string>("");
@@ -101,7 +99,6 @@ function UserSettings() {
     setOfferId(0);
     setOfferAmount(0);
     setNbrOffersRequest(0);
-    setGrtToMint(0);
     setGrtAddress("");
     setGrtChainId(0);
     setRealityAddress("");
@@ -156,14 +153,6 @@ function UserSettings() {
         case "nbrOffersRequest":
           setNbrOffersRequest(
             await grtPoolContract.nbrOffersRequest(requestId)
-          );
-          break;
-        case "mintGRT":
-          setGrtToMint(
-            await grtContract.mint(
-              userAddress,
-              ethers.utils.parseEther(grtToMint)
-            )
           );
           break;
         case "getGRTAddress":
@@ -423,28 +412,6 @@ function UserSettings() {
           <ResponseWrapper>
             <Text
               value={"Number offers request " + nbrOffersRequest}
-              variant="subtitle1"
-            />
-          </ResponseWrapper>
-        </>
-      )}
-      {operation === "mintGRT" && (
-        <>
-          <TextInput
-            onChange={(userAddress: string) => setUserAddress(userAddress)}
-            label="User Address"
-            required
-            placeholder={"0x710f35C7c7CEC6B4f80D63ED506c354360eB58d1"}
-          />
-          <TextInput
-            onChange={(grtToMint: number) => setGrtToMint(grtToMint)}
-            label="Amount (GRT)"
-            required
-            placeholder={"10"}
-          />
-          <ResponseWrapper>
-            <Text
-              value={"Amount of minted GRT " + grtToMint}
               variant="subtitle1"
             />
           </ResponseWrapper>
