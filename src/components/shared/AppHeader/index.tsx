@@ -21,7 +21,7 @@ const AppHeader = (props: Props) => {
       <LogoWrapper>
         <Logo variant="square" />
       </LogoWrapper>
-      <CompanyNameWrapper>DePay</CompanyNameWrapper>
+      <CompanyNameWrapper>DeMM</CompanyNameWrapper>
       {!user && "ethereum" in window && (
         <ConnectWrapper>
           <button
