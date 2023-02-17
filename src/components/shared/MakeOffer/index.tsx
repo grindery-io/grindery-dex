@@ -6,9 +6,14 @@ import {GRTPOOL_CONTRACT_ADDRESS} from "../../../constants";
 import GrtPool from "../Abi/GrtPool.json";
 import AlertBox from "../AlertBox";
 
-function MakeOffer() {
-  const [amount, setAmount] = useState<string | null>("");
-  const [requestId, setRequestId] = useState<string | null>("");
+type MakeOfferProps = {
+  requestId: string | null;
+  amount: string | null;
+};
+
+function MakeOffer(props: MakeOfferProps) {
+  const [amount, setAmount] = useState<string | null>(props.amount);
+  const [requestId, setRequestId] = useState<string | null>(props.requestId);
   const [loading, setLoading] = useState<boolean>(false);
   const {provider, ethers} = useGrinderyNexus();
   const [trxHash, setTrxHash] = useState<string | null>("");
@@ -46,6 +51,7 @@ function MakeOffer() {
         label="Amount"
         required
         placeholder={"1"}
+        value={amount}
       />
       <TextInput
         onChange={(requestId: string) => setRequestId(requestId)}
@@ -54,6 +60,7 @@ function MakeOffer() {
         placeholder={
           "0xd2b8dbec86dba5f9b5c34f84d0dc19bf715f984e3c78051e5ffa813a1d29dd73"
         }
+        value={requestId}
       />
       {loading && (
         <>

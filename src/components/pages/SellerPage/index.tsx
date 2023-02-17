@@ -1,12 +1,48 @@
+import {useLocation} from "react-router";
 import AcceptOffer from "../../shared/AcceptOffer";
 import Deposit from "../../shared/Deposit";
 import {RootWrapper} from "./style";
 
 function SellerPage() {
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  let operation = searchParams.get("operation");
+  let nonce = null;
+  let grtAmount = null;
+  let erc20TokenAddress = null;
+  let erc20TokenAmount = null;
+  let address = null;
+  let requestId = null;
+  let offerId = null;
+
+  switch (operation) {
+    case "deposit":
+      nonce = searchParams.get("nonce");
+      grtAmount = searchParams.get("grt_amount");
+      erc20TokenAddress = searchParams.get("token_address");
+      erc20TokenAmount = searchParams.get("token_amount");
+      address = searchParams.get("address");
+      break;
+
+    case "accept_offer":
+      requestId = searchParams.get("request_id");
+      offerId = searchParams.get("offer_id");
+      break;
+
+    default:
+      break;
+  }
+
   return (
     <RootWrapper>
-      <Deposit />
-      <AcceptOffer />
+      <Deposit
+        nonce={nonce}
+        grtAmount={grtAmount}
+        erc20TokenAddress={erc20TokenAddress}
+        erc20TokenAmount={erc20TokenAmount}
+        address={address}
+      />
+      <AcceptOffer requestId={requestId} offerId={offerId} />
     </RootWrapper>
   );
 }

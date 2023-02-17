@@ -6,9 +6,14 @@ import {GRTPOOL_CONTRACT_ADDRESS} from "../../../constants";
 import GrtPool from "../Abi/GrtPool.json";
 import AlertBox from "../AlertBox";
 
-function ClaimReward() {
-  const [offerId, setOfferId] = useState<string | null>("");
-  const [requestId, setRequestId] = useState<string | null>("");
+type ClaimRewardProps = {
+  requestId: string | null;
+  offerId: string | null;
+};
+
+function ClaimReward(props: ClaimRewardProps) {
+  const [offerId, setOfferId] = useState<string | null>(props.offerId);
+  const [requestId, setRequestId] = useState<string | null>(props.requestId);
   const [loading, setLoading] = useState<boolean>(false);
   const {provider, ethers} = useGrinderyNexus();
   const [trxHash, setTrxHash] = useState<string | null>("");
@@ -49,6 +54,7 @@ function ClaimReward() {
         label="Offer Id"
         required
         placeholder={"0"}
+        value={offerId}
       />
       <TextInput
         onChange={(requestId: string) => setRequestId(requestId)}
@@ -57,6 +63,7 @@ function ClaimReward() {
         placeholder={
           "0xd2b8dbec86dba5f9b5c34f84d0dc19bf715f984e3c78051e5ffa813a1d29dd73"
         }
+        value={requestId}
       />
       {loading && (
         <>

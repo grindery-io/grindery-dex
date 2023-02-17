@@ -8,8 +8,10 @@ import {
   CompanyNameWrapper,
   ConnectWrapper,
   UserWrapper,
+  LinksWrapper,
 } from "./style";
-
+import {BrowserRouter as Router, Routes, Route, Link} from "react-router-dom";
+import BuyerPage from "../../pages/BuyerPage";
 type Props = {};
 
 const AppHeader = (props: Props) => {
@@ -22,6 +24,12 @@ const AppHeader = (props: Props) => {
         <Logo variant="square" />
       </LogoWrapper>
       <CompanyNameWrapper>DeMM</CompanyNameWrapper>
+      <LinksWrapper>
+        <Link to="/buy">Buy</Link>
+        <Link to="/sell">Sell</Link>
+        <Link to="/setting">Settings</Link>
+        <Link to="/faucet">Faucet</Link>
+      </LinksWrapper>
       {!user && "ethereum" in window && (
         <ConnectWrapper>
           <button

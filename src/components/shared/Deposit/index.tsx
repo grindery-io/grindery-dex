@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import {useState} from "react";
 import {TextInput, Button, SelectSimple} from "grindery-ui";
 import {Title, ButtonWrapper, Text} from "./style";
 import {useGrinderyNexus} from "use-grindery-nexus";
@@ -7,17 +7,27 @@ import {CircularProgress} from "grindery-ui";
 import GrtPool from "../Abi/GrtPool.json";
 import AlertBox from "../AlertBox";
 
-function Deposit() {
-  const {address, provider, ethers, chain} = useGrinderyNexus();
-  const [grtAmount, setGrtAmount] = useState<string | null>("1");
+type DepositProps = {
+  nonce: string | null;
+  grtAmount: string | null;
+  erc20TokenAddress: string | null;
+  erc20TokenAmount: string | null;
+  address: string | null;
+};
+
+function Deposit(props: DepositProps) {
+  const {provider, ethers, chain} = useGrinderyNexus();
+  const [grtAmount, setGrtAmount] = useState<string | null>(props.grtAmount);
   const [erc20TokenAddrs, setErc20TokenAddrs] = useState<string | null>(
-    "0x326C977E6efc84E512bB9C30f76E30c160eD06FB"
+    props.erc20TokenAddress
   );
-  const [erc20AmountReq, setERC20AmountReq] = useState<string | null>("1");
+  const [erc20AmountReq, setERC20AmountReq] = useState<string | null>(
+    props.erc20TokenAmount
+  );
   const [destinationAddrs, setDestinationAddrs] = useState<string | null>(
-    address
+    props.address
   );
-  const [nonce, setNonce] = useState<number | null>(0);
+  const [nonce, setNonce] = useState<string | null>(props.nonce);
   const [loading, setLoading] = useState<boolean>(false);
   const [trxHash, setTrxHash] = useState<string | null>("");
   const [error, setError] = useState<boolean>(false);
@@ -94,18 +104,18 @@ function Deposit() {
         }}
       />
       <TextInput
-        onChange={(nonce: number) => setNonce(nonce)}
+        onChange={(nonce: string) => setNonce(nonce)}
         label="Nonce"
         required
         value={nonce}
-        placeholder={nonce}
+        placeholder="0"
       />
       <TextInput
         onChange={(amount: string) => setGrtAmount(amount)}
         label="GRT Amount"
         required
         value={grtAmount}
-        placeholder={grtAmount}
+        placeholder="10"
       />
       {requestType === requestTypeOptions[0].value && (
         <TextInput
@@ -113,7 +123,7 @@ function Deposit() {
           label="ERC20 Token Address Request"
           required
           value={erc20TokenAddrs}
-          placeholder={erc20TokenAddrs}
+          placeholder="0x2166903c38b4883b855ea2c77a02430a27cdfede"
         />
       )}
       <TextInput
@@ -121,7 +131,7 @@ function Deposit() {
         label="ERC20 Amount Required"
         required
         value={erc20AmountReq}
-        placeholder={erc20AmountReq}
+        placeholder="20"
       />
       <TextInput
         onChange={(destinationAddrs: string) =>
@@ -129,7 +139,7 @@ function Deposit() {
         }
         label="Destination Address"
         required
-        placeholder={destinationAddrs}
+        placeholder="0x2166903c38b4883b855ea2c77a02430a27cdfede"
         value={destinationAddrs}
       />
       {loading && (

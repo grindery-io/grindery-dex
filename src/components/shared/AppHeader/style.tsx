@@ -90,3 +90,23 @@ export const ConnectWrapper = styled.div`
     }
   }
 `;
+
+export const LinksWrapper = styled.div`
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  gap: 20px;
+  order: 3;
+
+  & a {
+    font-size: 16px;
+    line-height: 150%;
+    text-decoration: none;
+    display: inline-block;
+    color: #0b0d17;
+    cursor: pointer;
+  }
+`;

@@ -33,3 +33,7 @@ export const SubTitle = styled.p`
     max-width: 576px;
   }
 `;
+
+export const RootWrapper = styled.div`
+  margin 30px;
+`;

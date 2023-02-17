@@ -6,13 +6,18 @@ import {useGrinderyNexus} from "use-grindery-nexus";
 import GrtPool from "../Abi/GrtPool.json";
 import AlertBox from "../AlertBox";
 
-function AcceptOffer() {
-  const [offerId, setOfferId] = useState<string | null>("");
-  const [requestId, setRequestId] = useState<string | null>("");
-  const {provider, ethers} = useGrinderyNexus();
+type AcceptOfferProps = {
+  requestId: string | null;
+  offerId: string | null;
+};
+
+function AcceptOffer(props: AcceptOfferProps) {
+  const [offerId, setOfferId] = useState<string | null>(props.offerId);
+  const [requestId, setRequestId] = useState<string | null>(props.requestId);
   const [loading, setLoading] = useState<boolean>(false);
   const [trxHash, setTrxHash] = useState<string | null>("");
   const [error, setError] = useState<boolean>(false);
+  const {provider, ethers} = useGrinderyNexus();
 
   const handleClick = async () => {
     const contract = new ethers.Contract(
@@ -46,6 +51,7 @@ function AcceptOffer() {
         label="Offer Id"
         required
         placeholder={"0"}
+        value={offerId}
       />
       <TextInput
         onChange={(requestId: string) => setRequestId(requestId)}
@@ -54,6 +60,7 @@ function AcceptOffer() {
         placeholder={
           "0xd2b8dbec86dba5f9b5c34f84d0dc19bf715f984e3c78051e5ffa813a1d29dd73"
         }
+        value={requestId}
       />
       {loading && (
         <>
