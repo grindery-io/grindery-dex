@@ -10,8 +10,8 @@ import {
   UserWrapper,
   LinksWrapper,
 } from "./style";
-import {BrowserRouter as Router, Routes, Route, Link} from "react-router-dom";
-import BuyerPage from "../../pages/BuyerPage";
+import {Link} from "react-router-dom";
+
 type Props = {};
 
 const AppHeader = (props: Props) => {
