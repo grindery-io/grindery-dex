@@ -3,7 +3,7 @@ import {Container, RootWrapper, RootWrapper2} from "./style";
 import SellerPage from "../SellerPage";
 import BuyerPage from "../BuyerPage";
 import FaucetPage from "../FaucetPage";
-import {Routes, Route} from "react-router-dom";
+import {Routes, Route, Navigate} from "react-router-dom";
 import Settings from "../../shared/Settings";
 
 const HomePage = () => {
@@ -15,6 +15,7 @@ const HomePage = () => {
       <RootWrapper>
         <RootWrapper2>
           <Routes>
+            <Route path="/" element={<Navigate to="/buy" />} />
             <Route path="/buy" element={<BuyerPage />} />
             <Route path="/sell" element={<SellerPage />} />
             <Route path="/setting" element={<Settings />} />
