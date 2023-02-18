@@ -40,6 +40,7 @@ function ClaimReward(props: ClaimRewardProps) {
       await tx.wait();
       setLoading(false);
     } catch (e) {
+      setError(true);
       setLoading(false);
     }
 
