@@ -15,17 +15,8 @@ export const RootWrapper = styled.div`
 export const RootWrapper2 = styled.div`
   max-width: calc(75vw - 30px);
   width: 50rem;
-  @media (min-width: ${SCREEN.TABLET}) {
-    margin: 40px 20px 0;
-    border: 1px solid #dcdcdc;
-    max-width: auto;
-  }
-  @media (min-width: ${SCREEN.DESKTOP}) {
-    margin: 20px 20px 0;
-  }
-  @media (min-width: ${SCREEN.DESKTOP_XL}) {
-    margin: 100px 20px 0;
-  }
+  border: 1px solid #dcdcdc;
+  max-width: auto;
 `;
 
 export const TabsWrapper = styled.div`
