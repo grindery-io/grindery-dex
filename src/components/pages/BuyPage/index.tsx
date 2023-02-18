@@ -3,7 +3,7 @@ import AcceptOffer from "../../shared/AcceptOffer";
 import Deposit from "../../shared/Deposit";
 import {RootWrapper} from "./style";
 
-function SellerPage() {
+function BuyPage() {
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   let operation = searchParams.get("operation");
@@ -47,4 +47,4 @@ function SellerPage() {
   );
 }
 
-export default SellerPage;
+export default BuyPage;
