@@ -8,6 +8,7 @@ import GrtPool from "../Abi/GrtPool.json";
 import AlertBox from "../AlertBox";
 
 type DepositProps = {
+  requestType: string | null;
   nonce: string | null;
   grtAmount: string | null;
   erc20TokenAddress: string | null;
@@ -37,7 +38,7 @@ function Deposit(props: DepositProps) {
     {label: "Native Token", value: "Native"},
   ];
   const [requestType, setRequestType] = useState<string>(
-    requestTypeOptions[0].value
+    props.requestType || requestTypeOptions[0].value
   );
   let tx: any;
 

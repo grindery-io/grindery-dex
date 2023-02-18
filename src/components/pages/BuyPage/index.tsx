@@ -7,6 +7,7 @@ function BuyPage() {
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   let operation = searchParams.get("operation");
+  let requestType = null;
   let nonce = null;
   let grtAmount = null;
   let erc20TokenAddress = null;
@@ -17,6 +18,7 @@ function BuyPage() {
 
   switch (operation) {
     case "deposit":
+      requestType = searchParams.get("request_type");
       nonce = searchParams.get("nonce");
       grtAmount = searchParams.get("grt_amount");
       erc20TokenAddress = searchParams.get("token_address");
@@ -36,6 +38,7 @@ function BuyPage() {
   return (
     <RootWrapper>
       <Deposit
+        requestType={requestType}
         nonce={nonce}
         grtAmount={grtAmount}
         erc20TokenAddress={erc20TokenAddress}
