@@ -80,8 +80,6 @@ function Deposit(props: DepositProps) {
         break;
     }
 
-    setTrxHash(tx.hash);
-
     try {
       setLoading(true);
       await tx.wait();
@@ -90,6 +88,8 @@ function Deposit(props: DepositProps) {
       setError(true);
       setLoading(false);
     }
+
+    setTrxHash(tx.hash);
   };
 
   return (
@@ -144,9 +144,6 @@ function Deposit(props: DepositProps) {
       />
       {loading && (
         <>
-          <div style={{textAlign: "center", margin: "0 0 20px"}}>
-            Grindery DePay is now waiting to complete the operation
-          </div>
           <div
             style={{
               bottom: "32px",

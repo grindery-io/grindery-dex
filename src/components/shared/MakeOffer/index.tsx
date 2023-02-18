@@ -64,9 +64,6 @@ function MakeOffer(props: MakeOfferProps) {
       />
       {loading && (
         <>
-          <div style={{textAlign: "center", margin: "0 0 20px"}}>
-            Grindery DePay is now waiting to complete the operation
-          </div>
           <div
             style={{
               bottom: "32px",

@@ -9,14 +9,15 @@ import AlertBox from "../AlertBox";
 
 function FaucetGRT() {
   const {provider, ethers} = useGrinderyNexus();
-  const [userAddress, setUserAddress] = useState<string | null>("0x1e3C935E9A45aBd04430236DE959d12eD9763162");
+  const [userAddress, setUserAddress] = useState<string | null>(
+    "0x1e3C935E9A45aBd04430236DE959d12eD9763162"
+  );
   const [amountGRT, setAmountGRT] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
   const [trxHash, setTrxHash] = useState<string | null>("");
   const [error, setError] = useState<boolean>(false);
 
   const handleClick = async () => {
-
     const signer = provider.getSigner();
     const _grtContract = new ethers.Contract(
       GRT_CONTRACT_ADDRESS,
@@ -55,9 +56,6 @@ function FaucetGRT() {
       />
       {loading && (
         <>
-          <div style={{textAlign: "center", margin: "0 0 20px"}}>
-            Grindery DePay is now waiting to complete the operation
-          </div>
           <div
             style={{
               bottom: "32px",
