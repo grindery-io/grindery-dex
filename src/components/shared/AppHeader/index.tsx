@@ -24,12 +24,7 @@ const AppHeader = (props: Props) => {
         <Logo variant="square" />
       </LogoWrapper>
       <CompanyNameWrapper>DeMM</CompanyNameWrapper>
-      <LinksWrapper>
-        <Link to="/buy">Buy</Link>
-        <Link to="/sell">Sell</Link>
-        <Link to="/setting">Settings</Link>
-        <Link to="/faucet">Faucet</Link>
-      </LinksWrapper>
+
       {!user && "ethereum" in window && (
         <ConnectWrapper>
           <button
@@ -42,9 +37,17 @@ const AppHeader = (props: Props) => {
         </ConnectWrapper>
       )}
       {user && (
-        <UserWrapper>
-          <UserMenu />
-        </UserWrapper>
+        <>
+          <LinksWrapper>
+            <Link to="/buy">Buy</Link>
+            <Link to="/sell">Sell</Link>
+            <Link to="/setting">Settings</Link>
+            <Link to="/faucet">Faucet</Link>
+          </LinksWrapper>
+          <UserWrapper>
+            <UserMenu />
+          </UserWrapper>
+        </>
       )}
     </Wrapper>
   );
