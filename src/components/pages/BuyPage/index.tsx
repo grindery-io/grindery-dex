@@ -35,17 +35,22 @@ function BuyPage() {
       break;
   }
 
+  console.log(operation);
   return (
     <RootWrapper>
-      <Deposit
-        requestType={requestType}
-        nonce={nonce}
-        grtAmount={grtAmount}
-        erc20TokenAddress={erc20TokenAddress}
-        erc20TokenAmount={erc20TokenAmount}
-        address={address}
-      />
-      <AcceptOffer requestId={requestId} offerId={offerId} />
+      {operation === "deposit" || operation === null ? (
+        <Deposit
+          requestType={requestType}
+          nonce={nonce}
+          grtAmount={grtAmount}
+          erc20TokenAddress={erc20TokenAddress}
+          erc20TokenAmount={erc20TokenAmount}
+          address={address}
+        />
+      ) : null}
+      {operation === "accept_offer" || operation === null ? (
+        <AcceptOffer requestId={requestId} offerId={offerId} />
+      ) : null}
     </RootWrapper>
   );
 }

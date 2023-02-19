@@ -43,14 +43,22 @@ function SellPage() {
 
   return (
     <RootWrapper>
-      <MakeOffer requestId={requestId} amount={amount} />
-      <HonourOfferOnChain requestId={requestId} offerId={offerId} />
-      <HonourOfferCrossChain
-        tokenAddress={tokenAddress}
-        toAddress={toAddress}
-        amount={amount}
-      />
-      <ClaimReward requestId={requestId} offerId={offerId} />
+      {operation === "offer" || operation === null ? (
+        <MakeOffer requestId={requestId} amount={amount} />
+      ) : null}
+      {operation === "honour_on_chain" || operation === null ? (
+        <HonourOfferOnChain requestId={requestId} offerId={offerId} />
+      ) : null}
+      {operation === "honour_cross_chain" || operation === null ? (
+        <HonourOfferCrossChain
+          tokenAddress={tokenAddress}
+          toAddress={toAddress}
+          amount={amount}
+        />
+      ) : null}
+      {operation === "claim" || operation === null ? (
+        <ClaimReward requestId={requestId} offerId={offerId} />
+      ) : null}
     </RootWrapper>
   );
 }
