@@ -1,5 +1,5 @@
 import {useState} from "react";
-import {TextInput, Button, CircularProgress} from "grindery-ui";
+import {TextInput, Button, CircularProgress, SelectSimple} from "grindery-ui";
 import {Title, ButtonWrapper} from "./style";
 import {GRTPOOL_CONTRACT_ADDRESS} from "../../../constants";
 import GrtPool from "../Abi/GrtPool.json";
@@ -14,10 +14,20 @@ type HonourOfferOnChainProps = {
 function HonourOfferOnChain(props: HonourOfferOnChainProps) {
   const [offerId, setOfferId] = useState<string | null>(props.offerId);
   const [requestId, setRequestId] = useState<string | null>(props.requestId);
+  const [amount, setAmount] = useState<number>(0);
   const {provider, ethers} = useGrinderyNexus();
   const [loading, setLoading] = useState<boolean>(false);
   const [trxHash, setTrxHash] = useState<string | null>("");
   const [error, setError] = useState<boolean>(false);
+
+  const honourOfferType = [
+    {label: "ERC20", value: "ERC20"},
+    {label: "Native", value: "Native"},
+  ];
+
+  const [honourOffer, setHonourOffer] = useState<string>(
+    honourOfferType[0].label
+  );
 
   const handleClick = async () => {
     const contract = new ethers.Contract(
@@ -27,9 +37,20 @@ function HonourOfferOnChain(props: HonourOfferOnChainProps) {
     );
     const signer = provider.getSigner();
     const depayWithSigner = contract.connect(signer);
-    const tx = await depayWithSigner.payOfferOnChainERC20(requestId, offerId, {
-      gasLimit: 500000,
-    });
+    let tx;
+
+    if (honourOffer === "ERC20") {
+      tx = await depayWithSigner.payOfferOnChainERC20(requestId, offerId, {
+        gasLimit: 500000,
+      });
+    }
+
+    if (honourOffer === "Native") {
+      tx = await depayWithSigner.payOfferOnChainNative(requestId, offerId, {
+        gasLimit: 50000,
+        value: ethers.utils.parseUnits(amount, 18).toString(),
+      });
+    }
 
     try {
       setLoading(true);
@@ -46,6 +67,13 @@ function HonourOfferOnChain(props: HonourOfferOnChainProps) {
   return (
     <>
       <Title>Honour Offer On-chain</Title>
+      <SelectSimple
+        options={honourOfferType}
+        value={honourOffer}
+        onChange={(e: any) => {
+          setHonourOffer(e.target.value);
+        }}
+      />
       <TextInput
         onChange={(offerId: string) => setOfferId(offerId)}
         label="Offer Id"
@@ -62,6 +90,15 @@ function HonourOfferOnChain(props: HonourOfferOnChainProps) {
         }
         value={requestId}
       />
+      {honourOffer === "Native" && (
+        <TextInput
+          onChange={(amount: number) => setAmount(amount)}
+          label="Amount"
+          required
+          placeholder={"10"}
+          value={amount}
+        />
+      )}
       {loading && (
         <>
           <div
@@ -80,9 +117,11 @@ function HonourOfferOnChain(props: HonourOfferOnChainProps) {
       )}
       {trxHash && <AlertBox trxHash={trxHash} isError={error} />}
       {!loading && (
-        <ButtonWrapper>
-          <Button value="Honour" size="small" onClick={handleClick} />
-        </ButtonWrapper>
+        <>
+          <ButtonWrapper>
+            <Button value="Honour Offer" size="small" onClick={handleClick} />
+          </ButtonWrapper>
+        </>
       )}
     </>
   );

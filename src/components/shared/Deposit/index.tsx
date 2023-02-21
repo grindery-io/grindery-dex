@@ -10,20 +10,20 @@ import AlertBox from "../AlertBox";
 type DepositProps = {
   requestType: string | null;
   nonce: string | null;
-  grtAmount: string | null;
+  grtAmount: number | null;
   erc20TokenAddress: string | null;
-  erc20TokenAmount: string | null;
+  erc20TokenAmount: number | null;
   address: string | null;
   chain: string | null;
 };
 
 function Deposit(props: DepositProps) {
   const {provider, ethers} = useGrinderyNexus();
-  const [grtAmount, setGrtAmount] = useState<string | null>(props.grtAmount);
+  const [grtAmount, setGrtAmount] = useState<number | null>(props.grtAmount);
   const [erc20TokenAddrs, setErc20TokenAddrs] = useState<string | null>(
     props.erc20TokenAddress
   );
-  const [erc20AmountReq, setERC20AmountReq] = useState<string | null>(
+  const [erc20AmountReq, setERC20AmountReq] = useState<number | null>(
     props.erc20TokenAmount
   );
   const [destinationAddrs, setDestinationAddrs] = useState<string | null>(
@@ -64,9 +64,9 @@ function Deposit(props: DepositProps) {
       case requestTypeOptions[0].value:
         tx = await depayWithSigner.depositGRTRequestERC20(
           nonce,
-          grtAmount,
+          ethers.utils.parseUnits(grtAmount, 18).toString(),
           erc20TokenAddrs,
-          erc20AmountReq,
+          ethers.utils.parseUnits(erc20AmountReq, 18).toString(),
           chain,
           destinationAddrs,
           {gasLimit: 500000}
@@ -76,8 +76,8 @@ function Deposit(props: DepositProps) {
       case requestTypeOptions[1].value:
         tx = await depayWithSigner.depositGRTRequestNative(
           nonce,
-          grtAmount,
-          erc20AmountReq,
+          ethers.utils.parseUnits(grtAmount, 18).toString(),
+          ethers.utils.parseUnits(erc20AmountReq, 18).toString(),
           chain,
           destinationAddrs,
           {gasLimit: 500000}
@@ -127,7 +127,7 @@ function Deposit(props: DepositProps) {
         placeholder="0"
       />
       <TextInput
-        onChange={(amount: string) => setGrtAmount(amount)}
+        onChange={(amount: number) => setGrtAmount(amount)}
         label="GRT Amount"
         required
         value={grtAmount}
@@ -143,7 +143,7 @@ function Deposit(props: DepositProps) {
         />
       )}
       <TextInput
-        onChange={(erc20Amount: string) => setERC20AmountReq(erc20Amount)}
+        onChange={(erc20Amount: number) => setERC20AmountReq(erc20Amount)}
         label="ERC20 Amount Required"
         required
         value={erc20AmountReq}

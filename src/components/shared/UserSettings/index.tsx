@@ -159,9 +159,12 @@ function UserSettings() {
         case "stakeGRT":
           setResultStakeGRT(
             await grtPoolContract
-              .stakeGRT(stakeGRT, {
-                gasLimit: 500000,
-              })
+              .stakeGRT(
+                ethers.utils.parseUnits(stakeGRT.toString(), 18).toString(),
+                {
+                  gasLimit: 500000,
+                }
+              )
               .toString()
           );
       }

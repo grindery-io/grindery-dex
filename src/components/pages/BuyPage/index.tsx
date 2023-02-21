@@ -21,9 +21,9 @@ function BuyPage() {
     case "deposit":
       requestType = searchParams.get("request_type");
       nonce = searchParams.get("nonce");
-      grtAmount = searchParams.get("grt_amount");
+      grtAmount = Number(searchParams.get("grt_amount"));
       erc20TokenAddress = searchParams.get("token_address");
-      erc20TokenAmount = searchParams.get("token_amount");
+      erc20TokenAmount = Number(searchParams.get("token_amount"));
       address = searchParams.get("address");
       chain = searchParams.get("chain");
       break;

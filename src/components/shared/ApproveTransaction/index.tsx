@@ -25,7 +25,10 @@ function ApproveTransaction() {
     const signer = provider.getSigner();
     const contractWithSigner = contract.connect(signer);
 
-    const tx = await contractWithSigner.approve(spenderAddress, amount);
+    const tx = await contractWithSigner.approve(
+      spenderAddress,
+      ethers.utils.parseUnits(amount.toString(), 18).toString()
+    );
 
     try {
       setLoading(true);
@@ -35,7 +38,6 @@ function ApproveTransaction() {
       setError(true);
       setLoading(false);
     }
-
     setTrxHash(tx.hash);
   };
 

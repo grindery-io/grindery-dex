@@ -27,9 +27,13 @@ function MakeOffer(props: MakeOfferProps) {
       signer
     );
     const depayWithSigner = contract.connect(signer);
-    const tx = await depayWithSigner.createOffer(requestId, amount, {
-      gasLimit: 500000,
-    });
+    const tx = await depayWithSigner.createOffer(
+      requestId,
+      ethers.utils.parseUnits(amount, 18).toString(),
+      {
+        gasLimit: 500000,
+      }
+    );
 
     try {
       setLoading(true);

@@ -1,5 +1,5 @@
 import {useState} from "react";
-import {TextInput, Button, CircularProgress} from "grindery-ui";
+import {TextInput, Button, CircularProgress, SelectSimple} from "grindery-ui";
 import {Title, ButtonWrapper} from "./style";
 import GrtSatellite from "../Abi/GrtSatellite.json";
 import {useGrinderyNexus} from "use-grindery-nexus";
@@ -21,6 +21,15 @@ function HonourOfferCrossChain(props: HonourCrossOnChainProps) {
   const [trxHash, setTrxHash] = useState<string | null>("");
   const [error, setError] = useState<boolean>(false);
 
+  const honourOfferType = [
+    {label: "ERC20", value: "ERC20"},
+    {label: "Native", value: "Native"},
+  ];
+
+  const [honourOffer, setHonourOffer] = useState<string>(
+    honourOfferType[0].label
+  );
+
   const handleClick = async () => {
     const signer = provider.getSigner();
 
@@ -30,17 +39,27 @@ function HonourOfferCrossChain(props: HonourCrossOnChainProps) {
       signer
     );
     const contractWithSigner = contract.connect(signer);
-    const tx = await contractWithSigner.payOfferCrossChainERC20(
-      tokenAddress,
-      toAddress,
-      amount,
-      {
-        gasLimit: 500000,
-      }
-    );
 
+    let tx;
     try {
       setLoading(true);
+      if (honourOffer === "ERC20") {
+        tx = await contractWithSigner.payOfferCrossChainERC20(
+          tokenAddress,
+          toAddress,
+          ethers.utils.parseUnits(amount, 18).toString(),
+          {
+            gasLimit: 500000,
+          }
+        );
+      }
+
+      if (honourOffer === "Native") {
+        tx = await contractWithSigner.payOfferCrossChainNative(toAddress, {
+          gasLimit: 500000,
+          value: ethers.utils.parseUnits(amount, 18).toString(),
+        });
+      }
       await tx.wait();
       setLoading(false);
     } catch (e) {
@@ -54,13 +73,22 @@ function HonourOfferCrossChain(props: HonourCrossOnChainProps) {
   return (
     <>
       <Title>Honour Offer Cross-chain</Title>
-      <TextInput
-        onChange={(tokenAddress: string) => setTokenAddress(tokenAddress)}
-        label="Token Address"
-        required
-        placeholder={"0x1e3C935E9A45aBd04430236DE959d12eD9763162"}
-        value={tokenAddress}
+      <SelectSimple
+        options={honourOfferType}
+        value={honourOffer}
+        onChange={(e: any) => {
+          setHonourOffer(e.target.value);
+        }}
       />
+      {honourOffer === "ERC20" && (
+        <TextInput
+          onChange={(tokenAddress: string) => setTokenAddress(tokenAddress)}
+          label="Token Address"
+          required
+          placeholder={"0x1e3C935E9A45aBd04430236DE959d12eD9763162"}
+          value={tokenAddress}
+        />
+      )}
       <TextInput
         onChange={(toAddress: string) => setToAddress(toAddress)}
         label="To"
