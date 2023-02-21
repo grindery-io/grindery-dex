@@ -9,6 +9,7 @@ import AlertBox from "../AlertBox";
 type HonourOfferOnChainProps = {
   requestId: string | null;
   offerId: string | null;
+  tokenType: string | null;
 };
 
 function HonourOfferOnChain(props: HonourOfferOnChainProps) {
@@ -26,7 +27,7 @@ function HonourOfferOnChain(props: HonourOfferOnChainProps) {
   ];
 
   const [honourOffer, setHonourOffer] = useState<string>(
-    honourOfferType[0].label
+    props.tokenType || honourOfferType[0].label
   );
 
   const handleClick = async () => {
@@ -47,8 +48,8 @@ function HonourOfferOnChain(props: HonourOfferOnChainProps) {
 
     if (honourOffer === "Native") {
       tx = await depayWithSigner.payOfferOnChainNative(requestId, offerId, {
+        value: ethers.utils.parseEther(amount),
         gasLimit: 50000,
-        value: ethers.utils.parseUnits(amount, 18).toString(),
       });
     }
 

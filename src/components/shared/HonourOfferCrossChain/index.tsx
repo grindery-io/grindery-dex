@@ -10,6 +10,7 @@ type HonourCrossOnChainProps = {
   tokenAddress: string | null;
   toAddress: string | null;
   amount: string | null;
+  tokenType: string | null;
 };
 
 function HonourOfferCrossChain(props: HonourCrossOnChainProps) {
@@ -27,7 +28,7 @@ function HonourOfferCrossChain(props: HonourCrossOnChainProps) {
   ];
 
   const [honourOffer, setHonourOffer] = useState<string>(
-    honourOfferType[0].label
+    props.tokenType || honourOfferType[0].label
   );
 
   const handleClick = async () => {
