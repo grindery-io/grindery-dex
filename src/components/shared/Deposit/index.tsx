@@ -14,10 +14,11 @@ type DepositProps = {
   erc20TokenAddress: string | null;
   erc20TokenAmount: string | null;
   address: string | null;
+  chain: string | null;
 };
 
 function Deposit(props: DepositProps) {
-  const {provider, ethers, chain} = useGrinderyNexus();
+  const {provider, ethers} = useGrinderyNexus();
   const [grtAmount, setGrtAmount] = useState<string | null>(props.grtAmount);
   const [erc20TokenAddrs, setErc20TokenAddrs] = useState<string | null>(
     props.erc20TokenAddress
@@ -40,10 +41,16 @@ function Deposit(props: DepositProps) {
   const [requestType, setRequestType] = useState<string>(
     props.requestType || requestTypeOptions[0].value
   );
+  const chainOptions = [
+    {label: "Goerli", value: "5"},
+    {label: "BSC - Testnet", value: "97"},
+  ];
+  const [chain, setChain] = useState<string>(
+    props.chain || chainOptions[0].value
+  );
   let tx: any;
 
   const handleClick = async () => {
-    const chainId = chain?.toString().split(":").pop();
     const signer = provider.getSigner();
 
     const contract = new ethers.Contract(
@@ -60,7 +67,7 @@ function Deposit(props: DepositProps) {
           grtAmount,
           erc20TokenAddrs,
           erc20AmountReq,
-          chainId,
+          chain,
           destinationAddrs,
           {gasLimit: 500000}
         );
@@ -71,7 +78,7 @@ function Deposit(props: DepositProps) {
           nonce,
           grtAmount,
           erc20AmountReq,
-          chainId,
+          chain,
           destinationAddrs,
           {gasLimit: 500000}
         );
@@ -102,6 +109,14 @@ function Deposit(props: DepositProps) {
         value={requestType}
         onChange={(e: any) => {
           setRequestType(e.target.value);
+        }}
+      />
+      <Text>Request Chain</Text>
+      <SelectSimple
+        options={chainOptions}
+        value={chain}
+        onChange={(e: any) => {
+          setChain(e.target.value);
         }}
       />
       <TextInput

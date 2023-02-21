@@ -15,6 +15,7 @@ function BuyPage() {
   let address = null;
   let requestId = null;
   let offerId = null;
+  let chain = null;
 
   switch (operation) {
     case "deposit":
@@ -24,6 +25,7 @@ function BuyPage() {
       erc20TokenAddress = searchParams.get("token_address");
       erc20TokenAmount = searchParams.get("token_amount");
       address = searchParams.get("address");
+      chain = searchParams.get("chain");
       break;
 
     case "accept_offer":
@@ -35,7 +37,6 @@ function BuyPage() {
       break;
   }
 
-  console.log(operation);
   return (
     <RootWrapper>
       {operation === "deposit" || operation === null ? (
@@ -46,6 +47,7 @@ function BuyPage() {
           erc20TokenAddress={erc20TokenAddress}
           erc20TokenAmount={erc20TokenAmount}
           address={address}
+          chain={chain}
         />
       ) : null}
       {operation === "accept_offer" || operation === null ? (
