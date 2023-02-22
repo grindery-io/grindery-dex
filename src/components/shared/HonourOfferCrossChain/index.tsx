@@ -7,6 +7,9 @@ import {GRTSATELLITE_CONTRACT_ADDRESS} from "../../../constants";
 import AlertBox from "../AlertBox";
 
 type HonourCrossOnChainProps = {
+  requestId: string | null;
+  offerId: string | null;
+  chainIdDeposit: string | null;
   tokenAddress: string | null;
   toAddress: string | null;
   amount: string | null;
@@ -15,6 +18,9 @@ type HonourCrossOnChainProps = {
 
 function HonourOfferCrossChain(props: HonourCrossOnChainProps) {
   const {provider, ethers} = useGrinderyNexus();
+  const [requestId, setRequestId] = useState(props.requestId);
+  const [offerId, setOfferId] = useState(props.offerId);
+  const [chainIdDeposit, setChainIdDeposit] = useState(props.chainIdDeposit);
   const [tokenAddress, setTokenAddress] = useState(props.tokenAddress);
   const [toAddress, setToAddress] = useState(props.toAddress);
   const [amount, setAmount] = useState(props.amount);
@@ -80,6 +86,27 @@ function HonourOfferCrossChain(props: HonourCrossOnChainProps) {
         onChange={(e: any) => {
           setHonourOffer(e.target.value);
         }}
+      />
+      <TextInput
+        onChange={(requestId: string) => setRequestId(requestId)}
+        label="RequestId"
+        required
+        placeholder={"0xd2b8dbec86dba5f9b5c34f84d0dc19bf715f984e3c78051e5ffa813a1d29dd73"}
+        value={requestId}
+      />
+      <TextInput
+        onChange={(offerId: string) => setOfferId(offerId)}
+        label="OfferId"
+        required
+        placeholder={"0"}
+        value={offerId}
+      />
+      <TextInput
+        onChange={(chainIdDeposit: string) => setChainIdDeposit(chainIdDeposit)}
+        label="ChainId (initial deposit)"
+        required
+        placeholder={"0x1e3C935E9A45aBd04430236DE959d12eD9763162"}
+        value={chainIdDeposit}
       />
       {honourOffer === "ERC20" && (
         <TextInput

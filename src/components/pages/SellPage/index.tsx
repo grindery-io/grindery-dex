@@ -15,6 +15,7 @@ function SellPage() {
   let tokenAddress = null;
   let toAddress = null;
   let tokenType = null;
+  let chainIdDeposit = null;
 
   switch (operation) {
     case "offer":
@@ -29,6 +30,9 @@ function SellPage() {
       break;
 
     case "honour_cross_chain":
+      requestId = searchParams.get("request_id");
+      offerId = searchParams.get("offer_id");
+      chainIdDeposit = searchParams.get("chain_id_deposit");
       tokenAddress = searchParams.get("token_address");
       toAddress = searchParams.get("to_address");
       amount = searchParams.get("amount");
@@ -58,6 +62,9 @@ function SellPage() {
       ) : null}
       {operation === "honour_cross_chain" || operation === null ? (
         <HonourOfferCrossChain
+          requestId={requestId}
+          offerId={offerId}
+          chainIdDeposit={chainIdDeposit}
           tokenAddress={tokenAddress}
           toAddress={toAddress}
           amount={amount}
