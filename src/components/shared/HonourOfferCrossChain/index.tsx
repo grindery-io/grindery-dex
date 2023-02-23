@@ -91,7 +91,9 @@ function HonourOfferCrossChain(props: HonourCrossOnChainProps) {
         onChange={(requestId: string) => setRequestId(requestId)}
         label="RequestId"
         required
-        placeholder={"0xd2b8dbec86dba5f9b5c34f84d0dc19bf715f984e3c78051e5ffa813a1d29dd73"}
+        placeholder={
+          "0xd2b8dbec86dba5f9b5c34f84d0dc19bf715f984e3c78051e5ffa813a1d29dd73"
+        }
         value={requestId}
       />
       <TextInput
@@ -105,7 +107,7 @@ function HonourOfferCrossChain(props: HonourCrossOnChainProps) {
         onChange={(chainIdDeposit: string) => setChainIdDeposit(chainIdDeposit)}
         label="ChainId (initial deposit)"
         required
-        placeholder={"0x1e3C935E9A45aBd04430236DE959d12eD9763162"}
+        placeholder={"5"}
         value={chainIdDeposit}
       />
       {honourOffer === "ERC20" && (

@@ -120,7 +120,7 @@ function HonourOfferOnChain(props: HonourOfferOnChainProps) {
       {!loading && (
         <>
           <ButtonWrapper>
-            <Button value="Honour Offer" size="small" onClick={handleClick} />
+            <Button value="Honour" size="small" onClick={handleClick} />
           </ButtonWrapper>
         </>
       )}
