@@ -49,7 +49,7 @@ function HonourOfferOnChain(props: HonourOfferOnChainProps) {
     if (honourOffer === "Native") {
       tx = await depayWithSigner.payOfferOnChainNative(requestId, offerId, {
         value: ethers.utils.parseEther(amount),
-        gasLimit: 50000,
+        gasLimit: 500000,
       });
     }
 
