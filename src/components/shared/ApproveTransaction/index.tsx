@@ -25,9 +25,19 @@ function ApproveTransaction() {
     const signer = provider.getSigner();
     const contractWithSigner = contract.connect(signer);
 
+    const _erc20Contract = new ethers.Contract(
+      tokenAddress,
+      ERC20,
+      signer
+    );
+    const erc20Contract = _erc20Contract.connect(signer);
+
     const tx = await contractWithSigner.approve(
       spenderAddress,
-      ethers.utils.parseUnits(amount.toString(), 18).toString()
+      ethers.utils.parseUnits(
+        amount.toString(),
+        await erc20Contract.decimals()
+      ).toString()
     );
 
     try {
