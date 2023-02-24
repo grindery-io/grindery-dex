@@ -5,6 +5,7 @@ import GrtSatellite from "../Abi/GrtSatellite.json";
 import {useGrinderyNexus} from "use-grindery-nexus";
 import {GRTSATELLITE_CONTRACT_ADDRESS} from "../../../constants";
 import AlertBox from "../AlertBox";
+import ERC20 from "../Abi/ERC20.json";
 
 type HonourCrossOnChainProps = {
   requestId: string | null;
@@ -51,10 +52,33 @@ function HonourOfferCrossChain(props: HonourCrossOnChainProps) {
     try {
       setLoading(true);
       if (honourOffer === "ERC20") {
+        const _erc20Contract = new ethers.Contract(
+          tokenAddress,
+          ERC20,
+          signer
+        );
+        const erc20Contract = _erc20Contract.connect(signer);
+
+        console.log("requestID", requestId);
+        console.log("offerID", offerId);
+        console.log("chainId", chainIdDeposit);
+        console.log("token", tokenAddress);
+        console.log("to", toAddress);
+        console.log("amount", ethers.utils.parseUnits(
+          amount?.toString(),
+          await erc20Contract.decimals()
+        ).toString());
+
         tx = await contractWithSigner.payOfferCrossChainERC20(
+          requestId,
+          offerId,
+          chainIdDeposit,
           tokenAddress,
           toAddress,
-          ethers.utils.parseUnits(amount, 18).toString(),
+          ethers.utils.parseUnits(
+            amount?.toString(),
+            await erc20Contract.decimals()
+          ).toString(),
           {
             gasLimit: 500000,
           }
@@ -62,10 +86,16 @@ function HonourOfferCrossChain(props: HonourCrossOnChainProps) {
       }
 
       if (honourOffer === "Native") {
-        tx = await contractWithSigner.payOfferCrossChainNative(toAddress, {
-          gasLimit: 500000,
-          value: ethers.utils.parseUnits(amount, 18).toString(),
-        });
+        tx = await contractWithSigner.payOfferCrossChainNative(
+          requestId,
+          offerId,
+          chainIdDeposit,
+          toAddress,
+          {
+            gasLimit: 500000,
+            value: ethers.utils.parseUnits(amount, 18).toString(),
+          }
+        );
       }
       await tx.wait();
       setLoading(false);

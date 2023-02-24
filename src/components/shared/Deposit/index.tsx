@@ -2,9 +2,10 @@ import {useState} from "react";
 import {TextInput, Button, SelectSimple} from "grindery-ui";
 import {Title, ButtonWrapper, Text} from "./style";
 import {useGrinderyNexus} from "use-grindery-nexus";
-import {GRTPOOL_CONTRACT_ADDRESS} from "../../../constants";
+import {GRTPOOL_CONTRACT_ADDRESS, GRT_CONTRACT_ADDRESS} from "../../../constants";
 import {CircularProgress} from "grindery-ui";
 import GrtPool from "../Abi/GrtPool.json";
+import ERC20 from "../Abi/ERC20.json";
 import AlertBox from "../AlertBox";
 
 type DepositProps = {
@@ -42,8 +43,8 @@ function Deposit(props: DepositProps) {
     props.requestType || requestTypeOptions[0].value
   );
   const chainOptions = [
-    {label: "Goerli", value: "5"},
-    {label: "BSC - Testnet", value: "97"},
+    {label: "Goerli", value: "5", ankr: "https://rpc.ankr.com/eth_goerli"},
+    {label: "BSC - Testnet", value: "97", ankr: "https://rpc.ankr.com/bsc_testnet_chapel"},
   ];
   const [chain, setChain] = useState<string>(
     props.chain || chainOptions[0].value
@@ -60,13 +61,38 @@ function Deposit(props: DepositProps) {
     );
     const depayWithSigner = contract.connect(signer);
 
+    const _erc20ContractDeposit = new ethers.Contract(
+      GRT_CONTRACT_ADDRESS,
+      ERC20,
+      signer
+    );
+    const erc20ContractDeposit = _erc20ContractDeposit.connect(signer);
+    const amountDeposit = ethers.utils.parseUnits(
+      grtAmount,
+      await erc20ContractDeposit.decimals()
+    ).toString();
+
     switch (requestType) {
       case requestTypeOptions[0].value:
+        const requestProvider = new ethers.providers.JsonRpcProvider(
+          chainOptions.find(e => e.value === chain)?.ankr
+        );
+        const _requestToken = new ethers.Contract(
+          erc20TokenAddrs,
+          ERC20,
+          requestProvider
+        );
+        const requestToken = _requestToken.connect(requestProvider);
+        const amountRequest = ethers.utils.parseUnits(
+          erc20AmountReq,
+          await requestToken.decimals()
+        ).toString();
+
         tx = await depayWithSigner.depositGRTRequestERC20(
           nonce,
-          ethers.utils.parseUnits(grtAmount, 18).toString(),
+          amountDeposit,
           erc20TokenAddrs,
-          ethers.utils.parseUnits(erc20AmountReq, 18).toString(),
+          amountRequest,
           chain,
           destinationAddrs,
           {gasLimit: 500000}
@@ -76,7 +102,7 @@ function Deposit(props: DepositProps) {
       case requestTypeOptions[1].value:
         tx = await depayWithSigner.depositGRTRequestNative(
           nonce,
-          ethers.utils.parseUnits(grtAmount, 18).toString(),
+          amountDeposit,
           ethers.utils.parseUnits(erc20AmountReq, 18).toString(),
           chain,
           destinationAddrs,
