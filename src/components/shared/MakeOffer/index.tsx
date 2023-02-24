@@ -5,6 +5,7 @@ import {useGrinderyNexus} from "use-grindery-nexus";
 import {GRTPOOL_CONTRACT_ADDRESS} from "../../../constants";
 import GrtPool from "../Abi/GrtPool.json";
 import AlertBox from "../AlertBox";
+import ERC20 from "../Abi/ERC20.json";
 
 type MakeOfferProps = {
   requestId: string | null;
@@ -19,6 +20,15 @@ function MakeOffer(props: MakeOfferProps) {
   const [trxHash, setTrxHash] = useState<string | null>("");
   const [error, setError] = useState<boolean>(false);
 
+  const chainOptions = [
+    {label: "Goerli", value: "5", ankr: "https://rpc.ankr.com/eth_goerli"},
+    {
+      label: "BSC - Testnet",
+      value: "97",
+      ankr: "https://rpc.ankr.com/bsc_testnet_chapel",
+    },
+  ];
+
   const handleClick = async () => {
     const signer = provider.getSigner();
     const contract = new ethers.Contract(
@@ -27,9 +37,33 @@ function MakeOffer(props: MakeOfferProps) {
       signer
     );
     const depayWithSigner = contract.connect(signer);
-    const tx = await depayWithSigner.createOffer(
+
+    const tokenAddress = await depayWithSigner.getRequestToken(requestId);
+    const chainId = await depayWithSigner.getRequestChainId(requestId);
+
+    let operationAmount;
+    if (tokenAddress === "0x0000000000000000000000000000000000000000") {
+      operationAmount = ethers.utils.parseUnits(amount, 18).toString();
+    } else {
+      const requestProvider = new ethers.providers.JsonRpcProvider(
+        chainOptions.find((e) => {
+          return e.value === chainId.toString();
+        })?.ankr
+      );
+      const _requestToken = new ethers.Contract(
+        tokenAddress,
+        ERC20,
+        requestProvider
+      );
+      const requestToken = _requestToken.connect(requestProvider);
+      const decimals = await requestToken.decimals();
+
+      operationAmount = ethers.utils.parseUnits(amount, decimals).toString();
+    }
+
+    const createOfferTx = await depayWithSigner.createOffer(
       requestId,
-      ethers.utils.parseUnits(amount, 18).toString(),
+      operationAmount,
       {
         gasLimit: 500000,
       }
@@ -37,14 +71,14 @@ function MakeOffer(props: MakeOfferProps) {
 
     try {
       setLoading(true);
-      await tx.wait();
+      await createOfferTx.wait();
       setLoading(false);
     } catch (e) {
       setError(true);
       setLoading(false);
     }
 
-    setTrxHash(tx.hash);
+    setTrxHash(createOfferTx.hash);
   };
 
   return (
