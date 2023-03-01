@@ -5,7 +5,6 @@ import {
   switchChainAndAddToken,
 } from '@lifi/wallet-management';
 import type { WidgetVariant } from '@lifi/widget';
-import { LiFiWidget } from '@lifi/widget';
 import {
   Box,
   // Button,
@@ -30,6 +29,7 @@ import { WalletButtons } from './components/WalletButtons';
 import { WidgetEvents } from './components/WidgetEvents';
 import { widgetBaseConfig, widgetConfig, WidgetVariants } from './config';
 import './index.css';
+import { LiFiWidget } from './LiFiWidget';
 import { useWallet } from './providers/WalletProvider';
 
 export const App = () => {
@@ -187,17 +187,3 @@ export const App = () => {
     </ThemeProvider>
   );
 };
-
-function ValueLabelComponent({
-  children,
-  value,
-}: {
-  children: React.ReactElement;
-  value: number;
-}) {
-  return (
-    <Tooltip enterTouchDelay={0} placement="top" title={value}>
-      {children}
-    </Tooltip>
-  );
-}
