@@ -38,6 +38,7 @@ import AppContextProvider from './context/AppContext';
 import EarlyAccessModal from './components/grindery/EarlyAccessModal';
 import AppHeader from './components/grindery/AppHeader';
 import FaucetPage from './pages/FaucetPage/FaucetPage';
+import StakingPage from './pages/StakingPage/StakingPage';
 
 declare global {
   interface Window {
@@ -235,7 +236,23 @@ export const App = () => {
                 </GrinderyThemeProvider>
               }
             />
-            <Route path="*" element={<Navigate to="/swap" />} />
+            <Route
+              path="/staking"
+              element={
+                <GrinderyThemeProvider>
+                  <Box
+                    display="flex"
+                    height="calc(100vh - 75px)"
+                    style={{ paddingTop: '75px' }}
+                  >
+                    <Box flex={1} style={{ margin: '50px auto auto' }}>
+                      <StakingPage />
+                    </Box>
+                  </Box>
+                </GrinderyThemeProvider>
+              }
+            />
+            <Route path="*" element={<Navigate to="/faucet" />} />
           </Routes>
         </BrowserRouter>
       </AppContextProvider>

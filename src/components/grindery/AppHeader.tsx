@@ -154,7 +154,7 @@ const AppHeader = (props: Props) => {
       </AppsMenuWrapper>*/}
       {
         <LinksWrapper>
-          <a
+          {/*<a
             href="/swap"
             onClick={(event: React.MouseEvent<HTMLElement>) => {
               event.preventDefault();
@@ -162,7 +162,7 @@ const AppHeader = (props: Props) => {
             }}
           >
             Swap
-          </a>
+          </a>*/}
           <a
             href="/faucet"
             onClick={(event: React.MouseEvent<HTMLElement>) => {
@@ -171,6 +171,15 @@ const AppHeader = (props: Props) => {
             }}
           >
             Faucet
+          </a>
+          <a
+            href="/staking"
+            onClick={(event: React.MouseEvent<HTMLElement>) => {
+              event.preventDefault();
+              navigate('/staking');
+            }}
+          >
+            Staking
           </a>
         </LinksWrapper>
       }

@@ -12,10 +12,12 @@ export const CardHeader = styled(MuiCardHeader)(({ theme }) => ({
     fontSize: '1.125rem',
     lineHeight: '1.2778',
     color: theme.palette.text.primary,
+    width: 'auto !important',
   },
   [`.${cardHeaderClasses.subheader}`]: {
     fontWeight: '400',
     fontSize: '0.75rem',
     color: theme.palette.text.secondary,
+    width: 'auto !important',
   },
 }));
