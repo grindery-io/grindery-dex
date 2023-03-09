@@ -1,6 +1,6 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+//import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { App } from './App';
 import { WalletProvider } from './providers/WalletProvider';
 
@@ -13,13 +13,8 @@ const root = createRoot(rootElement);
 
 root.render(
   <React.StrictMode>
-    <BrowserRouter>
-      <WalletProvider>
-        <Routes>
-          <Route path="/swap/*" element={<App />} />
-          <Route path="/*" element={<App />} />
-        </Routes>
-      </WalletProvider>
-    </BrowserRouter>
+    <WalletProvider>
+      <App />
+    </WalletProvider>
   </React.StrictMode>
 );

@@ -15,13 +15,13 @@ export const widgetBaseConfig: WidgetConfig = {
   // toToken: '0x7f5c764cbc14f9669b88837ca1490cca17c31607', // 0x0000000000000000000000000000000000000000
   // fromAmount: '20',
   // toAddress: '0x552008c0f6870c2f77e5cC1d2eb9bdff03e30Ea0',
-
+  appearance: 'light',
   disableTelemetry: false,
-  // disableAppearance: true,
+  //disableAppearance: true,
   variant: 'expandable',
   integrator: 'li.fi-playground',
   disabledChains: [],
-  // hiddenUI: ['poweredBy', 'language', 'appearance'],
+  hiddenUI: ['poweredBy', 'language', 'appearance'],
   chains: {
     allow: [], // 1, 1285, 10, 56, 137
     deny: [],
@@ -138,6 +138,7 @@ export const widgetBaseConfig: WidgetConfig = {
 
 export const widgetConfig: WidgetConfig = {
   ...widgetBaseConfig,
+  appearance: 'light',
   containerStyle: {
     // border: `1px solid ${
     //   window.matchMedia('(prefers-color-scheme: dark)').matches

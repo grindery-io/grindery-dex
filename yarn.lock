@@ -6969,10 +6969,10 @@ grapheme-splitter@^1.0.4:
   resolved "https://registry.yarnpkg.com/grapheme-splitter/-/grapheme-splitter-1.0.4.tgz#9cf3a665c6247479896834af35cf1dbb4400767e"
   integrity sha512-bzh50DW9kTPM00T8y4o8vQg89Di9oLJVLW/KaOGIXJWP/iqCN6WKYkbNOF04vFLJhwcpYUh9ydh/+5vpOqV4YQ==
 
-grindery-nexus-client@^0.9.12:
-  version "0.9.13"
-  resolved "https://registry.yarnpkg.com/grindery-nexus-client/-/grindery-nexus-client-0.9.13.tgz#f2312bc7ea9570b12cd63e4ac4a6d4a852bd52f2"
-  integrity sha512-b7Sdl1wu/wonA4WLCJvKvV2j1/5fqsbW43mv/s0wTCYXEObbaSWhJAWEF4cHngq7hmE6ChqqoHYozuTn+mK7Jw==
+grindery-nexus-client@0.9.14:
+  version "0.9.14"
+  resolved "https://registry.yarnpkg.com/grindery-nexus-client/-/grindery-nexus-client-0.9.14.tgz#ae9d9818a33753565328554488948a65d4c86d54"
+  integrity sha512-Kw2/bpmv5/3dzQDd6B2nL2H1RG9IUvhgJQMZLk+S0b91RmpH9M5LK9695U1rsbMDMQfuKz3oRJo8lMRPUzw8og==
   dependencies:
     axios "^0.27.2"
     jwt-decode "^3.1.2"
@@ -11937,10 +11937,10 @@ url-parse@^1.5.3:
     querystringify "^2.1.1"
     requires-port "^1.0.0"
 
-use-grindery-nexus@^0.4.5:
-  version "0.4.5"
-  resolved "https://registry.yarnpkg.com/use-grindery-nexus/-/use-grindery-nexus-0.4.5.tgz#545fd136459326fdc22e4a8bb2de41850bd373a5"
-  integrity sha512-B3y05qhn16qRgd4YDPuToNRjUug+NzaghxPxbm0HvVX8bJyG5CpkEcciJ/AXRKEfefa67jQEf1e2CCOlhOH60g==
+use-grindery-nexus@0.4.6:
+  version "0.4.6"
+  resolved "https://registry.yarnpkg.com/use-grindery-nexus/-/use-grindery-nexus-0.4.6.tgz#42a7223344220602fe5125373dc28fefe2310037"
+  integrity sha512-5HL3/ZVR8z2kbFuzREAYsd0xcB6qP+Hl83y6hqOfru7WKzUO12b9A75cpM83QUPa7B30U8jfvcV7NVc0UCJWLA==
   dependencies:
     "@onflow/fcl" "^1.2.1"
     bignumber.js "^9.0.2"

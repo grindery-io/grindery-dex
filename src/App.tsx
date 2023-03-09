@@ -31,6 +31,19 @@ import { widgetBaseConfig, widgetConfig, WidgetVariants } from './config';
 import './index.css';
 import { LiFiWidget } from './LiFiWidget';
 import { useWallet } from './providers/WalletProvider';
+import { ThemeProvider as GrinderyThemeProvider } from 'grindery-ui';
+import GrinderyNexusContextProvider from 'use-grindery-nexus';
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+import AppContextProvider from './context/AppContext';
+import EarlyAccessModal from './components/grindery/EarlyAccessModal';
+import AppHeader from './components/grindery/AppHeader';
+import FaucetPage from './pages/FaucetPage/FaucetPage';
+
+declare global {
+  interface Window {
+    ethereum: any;
+  }
+}
 
 export const App = () => {
   const { connect, disconnect, account } = useWallet();
@@ -38,7 +51,7 @@ export const App = () => {
     Object.fromEntries(new URLSearchParams(window?.location.search))
   );
   const [externalWallerManagement, setExternalWalletManagement] =
-    useState<boolean>(false);
+    useState<boolean>(true);
   const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
   const [config, setConfig] = useState(widgetConfig);
   const [variant, setVariant] = useState<WidgetVariant>(
@@ -55,7 +68,7 @@ export const App = () => {
   const [theme, setTheme] = useState(() =>
     createTheme({
       palette: {
-        mode: (systemColor && prefersDarkMode) || darkMode ? 'dark' : 'light',
+        mode: 'light',
         primary: {
           main: '#3F49E1',
         },
@@ -63,8 +76,7 @@ export const App = () => {
           main: '#F5B5FF',
         },
         background: {
-          default:
-            (systemColor && prefersDarkMode) || darkMode ? '#000' : '#F4F5F6',
+          default: '#F4F5F6',
         },
       },
     })
@@ -76,7 +88,7 @@ export const App = () => {
         ? widgetBaseConfig
         : {
             ...widgetConfig,
-            appearance: systemColor ? 'auto' : darkMode ? 'dark' : 'light',
+            appearance: 'light',
             containerStyle: {
               ...widgetConfig.containerStyle,
               // border: `1px solid ${
@@ -123,6 +135,7 @@ export const App = () => {
     if (externalWallerManagement) {
       setConfig((config) => ({
         ...config,
+        appearance: 'light',
         walletManagement: {
           signer: account.signer,
           connect: async () => {
@@ -148,7 +161,11 @@ export const App = () => {
         },
       }));
     } else {
-      setConfig((config) => ({ ...config, walletManagement: undefined }));
+      setConfig((config) => ({
+        ...config,
+        walletManagement: undefined,
+        appearance: 'light',
+      }));
     }
   }, [externalWallerManagement, account.signer, connect, disconnect]);
 
@@ -156,7 +173,7 @@ export const App = () => {
     setTheme(
       createTheme({
         palette: {
-          mode: (systemColor && prefersDarkMode) || darkMode ? 'dark' : 'light',
+          mode: 'light',
           primary: {
             main: primary,
           },
@@ -164,8 +181,7 @@ export const App = () => {
             main: secondary,
           },
           background: {
-            default:
-              (systemColor && prefersDarkMode) || darkMode ? '#000' : '#F4F5F6',
+            default: '#F4F5F6',
           },
         },
       })
@@ -176,14 +192,53 @@ export const App = () => {
   }, [darkMode, prefersDarkMode, primary, secondary, systemColor]);
 
   return (
-    <ThemeProvider theme={theme}>
-      <WidgetEvents />
-      <Box display="flex" height="100vh">
-        <CssBaseline />
-        <Box flex={1} margin="auto">
-          <LiFiWidget config={config} open />
-        </Box>
-      </Box>
-    </ThemeProvider>
+    <GrinderyNexusContextProvider>
+      <AppContextProvider>
+        <BrowserRouter>
+          <GrinderyThemeProvider>
+            <EarlyAccessModal />
+            <AppHeader />
+          </GrinderyThemeProvider>
+          <Routes>
+            <Route
+              path="/swap/*"
+              element={
+                <>
+                  <ThemeProvider theme={theme}>
+                    <WidgetEvents />
+                    <Box
+                      display="flex"
+                      height="calc(100vh - 75px)"
+                      style={{ paddingTop: '75px' }}
+                    >
+                      <Box flex={1} margin="auto">
+                        <LiFiWidget config={config} open />
+                      </Box>
+                    </Box>
+                  </ThemeProvider>
+                </>
+              }
+            />
+            <Route
+              path="/faucet"
+              element={
+                <GrinderyThemeProvider>
+                  <Box
+                    display="flex"
+                    height="calc(100vh - 75px)"
+                    style={{ paddingTop: '75px' }}
+                  >
+                    <Box flex={1} style={{ margin: '50px auto auto' }}>
+                      <FaucetPage />
+                    </Box>
+                  </Box>
+                </GrinderyThemeProvider>
+              }
+            />
+            <Route path="*" element={<Navigate to="/swap" />} />
+          </Routes>
+        </BrowserRouter>
+      </AppContextProvider>
+    </GrinderyNexusContextProvider>
   );
 };
