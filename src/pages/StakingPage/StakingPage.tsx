@@ -29,7 +29,6 @@ import {
   ArrowBack as ArrowBackIcon,
   AddCircleOutline as AddCircleOutlineIcon,
   SaveAlt as SaveAltIcon,
-  Add as AddIcon,
 } from '@mui/icons-material';
 
 type Stake = {
@@ -46,14 +45,13 @@ function isNumeric(value: string) {
 
 const VIEWS = {
   ROOT: 'root',
-  // ADD: 'add',
   STAKE: 'stake',
   SELECT_CHAIN: 'select_chain',
   WITHDRAW: 'withdraw',
 };
 
 function StakingPage() {
-  const { user, address, connect, chain: selectedChain } = useGrinderyNexus();
+  const { user, connect, chain: selectedChain } = useGrinderyNexus();
   const [amountGRT, setAmountGRT] = useState<string>('');
   const [amountAdd, setAmountAdd] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
@@ -171,74 +169,23 @@ function StakingPage() {
     }
     setLoading(true);
     setTimeout(() => {
-      // setStakes((_stakes) => [
-      //   {
-      //     id: (parseFloat(_stakes[_stakes.length - 1].id) + 1).toString(),
-      //     amount: amountGRT,
-      //     chain: chain.toString(),
-      //     new: true,
-      //   },
-      //   ..._stakes,
-      // ]);
       setStakes(
-        [...stakes].map(stake => {
+        [...stakes].map((stake) => {
           if (stake.chain === chain) {
             return {
               ...stake,
               amount: (parseInt(stake.amount) + parseInt(amountGRT)).toString(),
-              updated: true
-            }
+              updated: true,
+            };
           }
           return stake;
-        }
-      ))
+        })
+      );
       setView(VIEWS.ROOT);
       setAmountGRT('');
       setLoading(false);
     }, 1500);
   };
-
-  // const handleAddClick = async () => {
-  //   setErrorMessage({
-  //     type: '',
-  //     text: '',
-  //   });
-
-  //   if (!amountAdd) {
-  //     setErrorMessage({
-  //       type: 'amountAdd',
-  //       text: 'Amount is required',
-  //     });
-  //     return;
-  //   }
-  //   if (!isNumeric(amountAdd)) {
-  //     setErrorMessage({
-  //       type: 'amountAdd',
-  //       text: 'Must be a number',
-  //     });
-  //     return;
-  //   }
-  //   setLoading(true);
-  //   setTimeout(() => {
-  //     setStakes((_stakes) => [
-  //       ..._stakes.map((s: Stake) => {
-  //         if (s.id === selectedStake) {
-  //           return {
-  //             ...s,
-  //             amount: (parseFloat(s.amount) + parseFloat(amountAdd)).toString(),
-  //             updated: true,
-  //           };
-  //         } else {
-  //           return s;
-  //         }
-  //       }),
-  //     ]);
-  //     setView(VIEWS.ROOT);
-  //     setAmountAdd('');
-  //     setSelectedStake('');
-  //     setLoading(false);
-  //   }, 1500);
-  // };
 
   const handleWithdrawClick = async () => {
     setErrorMessage({
@@ -436,22 +383,6 @@ function StakingPage() {
                               </IconButton>
                             </Tooltip>
                           )}
-
-                          {/* <Tooltip title="Add">
-                            <IconButton
-                              aria-label="Add"
-                              size="small"
-                              onClick={() => {
-                                setSelectedStake(stake.id);
-                                setView(VIEWS.ADD);
-                              }}
-                            >
-                              <AddIcon
-                                sx={{ color: 'black' }}
-                                fontSize="inherit"
-                              />
-                            </IconButton>
-                          </Tooltip> */}
                         </Box>
                       }
                     />
@@ -613,116 +544,6 @@ function StakingPage() {
               </ButtonWrapper>
             </>
           )}
-          {/* {view === VIEWS.ADD && (
-            <>
-              <HeaderAppBar
-                elevation={0}
-                style={{
-                  paddingLeft: 0,
-                  paddingRight: 0,
-                  paddingBottom: '10px',
-                }}
-              >
-                <IconButton
-                  size="medium"
-                  edge="start"
-                  onClick={() => {
-                    setView(VIEWS.ROOT);
-                    setAmountAdd('');
-                    setSelectedStake('');
-                  }}
-                >
-                  <ArrowBackIcon />
-                </IconButton>
-
-                <Typography
-                  fontSize={18}
-                  align={'center'}
-                  fontWeight="700"
-                  flex={1}
-                  noWrap
-                >
-                  Add
-                </Typography>
-
-                <Box width={28} height={40} />
-              </HeaderAppBar>
-              <form spellCheck="false">
-                <Card style={{ borderRadius: '12px', marginTop: '20px' }}>
-                  <CardTitle>GST Amount</CardTitle>
-                  <FormControl
-                    fullWidth
-                    sx={{ paddingTop: '6px', paddingBottom: '5px' }}
-                  >
-                    <Input
-                      size="small"
-                      autoComplete="off"
-                      autoCorrect="off"
-                      autoCapitalize="off"
-                      spellCheck="false"
-                      value={amountAdd}
-                      onChange={(
-                        event: React.ChangeEvent<HTMLInputElement>
-                      ) => {
-                        setErrorMessage({
-                          type: '',
-                          text: '',
-                        });
-                        setAmountAdd(event.target.value);
-                      }}
-                      name="amountAdd"
-                      placeholder="Enter amount of tokens"
-                      disabled={false}
-                    />
-                    <FormHelperText
-                      error={
-                        errorMessage.type === 'amountAdd' && !!errorMessage.text
-                      }
-                    >
-                      {errorMessage.type === 'amountAdd' && !!errorMessage.text
-                        ? errorMessage.text
-                        : ''}
-                    </FormHelperText>
-                  </FormControl>
-                </Card>
-              </form>
-              {loading && (
-                <>
-                  <div
-                    style={{
-                      textAlign: 'center',
-                      color: '#3f49e1',
-                      width: '100%',
-                      margin: '20px 0',
-                    }}
-                  >
-                    <CircularProgress color="inherit" />
-                  </div>
-                </>
-              )}
-
-              <ButtonWrapper>
-                <Button
-                  disabled={loading}
-                  fullWidth
-                  value={
-                    loading
-                      ? 'Waiting transaction'
-                      : user
-                      ? 'Add'
-                      : 'Connect wallet'
-                  }
-                  onClick={
-                    user
-                      ? handleAddClick
-                      : () => {
-                          connect();
-                        }
-                  }
-                />
-              </ButtonWrapper>
-            </>
-          )} */}
           {view === VIEWS.WITHDRAW && (
             <>
               <HeaderAppBar
