@@ -46,7 +46,7 @@ function isNumeric(value: string) {
 
 const VIEWS = {
   ROOT: 'root',
-  ADD: 'add',
+  // ADD: 'add',
   STAKE: 'stake',
   SELECT_CHAIN: 'select_chain',
   WITHDRAW: 'withdraw',
@@ -62,6 +62,7 @@ function StakingPage() {
   const [view, setView] = useState(VIEWS.ROOT);
   const [chains, setChains] = useState<any[]>([]);
   const [selectedStake, setSelectedStake] = useState('');
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const currentChain =
     chain && chains.find((c) => c.value === chain)
       ? {
@@ -170,62 +171,74 @@ function StakingPage() {
     }
     setLoading(true);
     setTimeout(() => {
-      setStakes((_stakes) => [
-        {
-          id: (parseFloat(_stakes[_stakes.length - 1].id) + 1).toString(),
-          amount: amountGRT,
-          chain: chain.toString(),
-          new: true,
-        },
-        ..._stakes,
-      ]);
+      // setStakes((_stakes) => [
+      //   {
+      //     id: (parseFloat(_stakes[_stakes.length - 1].id) + 1).toString(),
+      //     amount: amountGRT,
+      //     chain: chain.toString(),
+      //     new: true,
+      //   },
+      //   ..._stakes,
+      // ]);
+      setStakes(
+        [...stakes].map(stake => {
+          if (stake.chain === chain) {
+            return {
+              ...stake,
+              amount: (parseInt(stake.amount) + parseInt(amountGRT)).toString(),
+              updated: true
+            }
+          }
+          return stake;
+        }
+      ))
       setView(VIEWS.ROOT);
       setAmountGRT('');
       setLoading(false);
     }, 1500);
   };
 
-  const handleAddClick = async () => {
-    setErrorMessage({
-      type: '',
-      text: '',
-    });
+  // const handleAddClick = async () => {
+  //   setErrorMessage({
+  //     type: '',
+  //     text: '',
+  //   });
 
-    if (!amountAdd) {
-      setErrorMessage({
-        type: 'amountAdd',
-        text: 'Amount is required',
-      });
-      return;
-    }
-    if (!isNumeric(amountAdd)) {
-      setErrorMessage({
-        type: 'amountAdd',
-        text: 'Must be a number',
-      });
-      return;
-    }
-    setLoading(true);
-    setTimeout(() => {
-      setStakes((_stakes) => [
-        ..._stakes.map((s: Stake) => {
-          if (s.id === selectedStake) {
-            return {
-              ...s,
-              amount: (parseFloat(s.amount) + parseFloat(amountAdd)).toString(),
-              updated: true,
-            };
-          } else {
-            return s;
-          }
-        }),
-      ]);
-      setView(VIEWS.ROOT);
-      setAmountAdd('');
-      setSelectedStake('');
-      setLoading(false);
-    }, 1500);
-  };
+  //   if (!amountAdd) {
+  //     setErrorMessage({
+  //       type: 'amountAdd',
+  //       text: 'Amount is required',
+  //     });
+  //     return;
+  //   }
+  //   if (!isNumeric(amountAdd)) {
+  //     setErrorMessage({
+  //       type: 'amountAdd',
+  //       text: 'Must be a number',
+  //     });
+  //     return;
+  //   }
+  //   setLoading(true);
+  //   setTimeout(() => {
+  //     setStakes((_stakes) => [
+  //       ..._stakes.map((s: Stake) => {
+  //         if (s.id === selectedStake) {
+  //           return {
+  //             ...s,
+  //             amount: (parseFloat(s.amount) + parseFloat(amountAdd)).toString(),
+  //             updated: true,
+  //           };
+  //         } else {
+  //           return s;
+  //         }
+  //       }),
+  //     ]);
+  //     setView(VIEWS.ROOT);
+  //     setAmountAdd('');
+  //     setSelectedStake('');
+  //     setLoading(false);
+  //   }, 1500);
+  // };
 
   const handleWithdrawClick = async () => {
     setErrorMessage({
@@ -424,7 +437,7 @@ function StakingPage() {
                             </Tooltip>
                           )}
 
-                          <Tooltip title="Add">
+                          {/* <Tooltip title="Add">
                             <IconButton
                               aria-label="Add"
                               size="small"
@@ -438,7 +451,7 @@ function StakingPage() {
                                 fontSize="inherit"
                               />
                             </IconButton>
-                          </Tooltip>
+                          </Tooltip> */}
                         </Box>
                       }
                     />
@@ -600,7 +613,7 @@ function StakingPage() {
               </ButtonWrapper>
             </>
           )}
-          {view === VIEWS.ADD && (
+          {/* {view === VIEWS.ADD && (
             <>
               <HeaderAppBar
                 elevation={0}
@@ -709,7 +722,7 @@ function StakingPage() {
                 />
               </ButtonWrapper>
             </>
-          )}
+          )} */}
           {view === VIEWS.WITHDRAW && (
             <>
               <HeaderAppBar
