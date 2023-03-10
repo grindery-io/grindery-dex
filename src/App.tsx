@@ -1,33 +1,14 @@
+import React, { useEffect, useState } from 'react';
 import type { Token } from '@lifi/sdk';
 import {
   addChain,
   switchChain,
   switchChainAndAddToken,
 } from '@lifi/wallet-management';
-import type { WidgetVariant } from '@lifi/widget';
-import {
-  Box,
-  // Button,
-  Checkbox,
-  CssBaseline,
-  Drawer,
-  FormControl,
-  FormControlLabel,
-  InputLabel,
-  MenuItem,
-  Select,
-  Slider,
-  Switch,
-  TextField,
-  Tooltip,
-  Typography,
-  useMediaQuery,
-} from '@mui/material';
+import { Box, useMediaQuery } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import React, { useEffect, useState } from 'react';
-import { WalletButtons } from './components/WalletButtons';
 import { WidgetEvents } from './components/WidgetEvents';
-import { widgetBaseConfig, widgetConfig, WidgetVariants } from './config';
+import { widgetConfig } from './config';
 import './index.css';
 import { LiFiWidget } from './LiFiWidget';
 import { useWallet } from './providers/WalletProvider';
@@ -39,6 +20,7 @@ import EarlyAccessModal from './components/grindery/EarlyAccessModal';
 import AppHeader from './components/grindery/AppHeader';
 import FaucetPage from './pages/FaucetPage/FaucetPage';
 import StakingPage from './pages/StakingPage/StakingPage';
+import OffersPage from './pages/OffersPage/OffersPage';
 
 declare global {
   interface Window {
@@ -48,24 +30,20 @@ declare global {
 
 export const App = () => {
   const { connect, disconnect, account } = useWallet();
-  const [searchParams] = useState(() =>
-    Object.fromEntries(new URLSearchParams(window?.location.search))
-  );
-  const [externalWallerManagement, setExternalWalletManagement] =
-    useState<boolean>(true);
+  const externalWallerManagement = true;
   const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
   const [config, setConfig] = useState(widgetConfig);
-  const [variant, setVariant] = useState<WidgetVariant>(
-    searchParams.drawer ? 'drawer' : 'expandable'
-  );
-  const [fontFamily, setFontFamily] = useState('Inter var, Inter, sans-serif');
-  const [borderRadius, setBorderRadius] = useState(12);
-  const [borderRadiusSecondary, setBorderRadiusSecondary] = useState(8);
-  const [primary, setPrimaryColor] = useState('#3F49E1');
-  const [secondary, setSecondaryColor] = useState('#F5B5FF');
+
+  const variant = 'expandable';
+
+  const fontFamily = 'Inter var, Inter, sans-serif';
+  const borderRadius = 12;
+  const borderRadiusSecondary = 8;
+  const primary = '#3F49E1';
+  const secondary = '#F5B5FF';
 
   const [darkMode, setDarkMode] = useState(prefersDarkMode);
-  const [systemColor, setSystemColor] = useState(true);
+  const systemColor = true;
   const [theme, setTheme] = useState(() =>
     createTheme({
       palette: {
@@ -85,20 +63,18 @@ export const App = () => {
 
   useEffect(() => {
     setConfig(() => ({
-      ...(variant === 'drawer'
-        ? widgetBaseConfig
-        : {
-            ...widgetConfig,
-            appearance: 'light',
-            containerStyle: {
-              ...widgetConfig.containerStyle,
-              // border: `1px solid ${
-              //   (systemColor && prefersDarkMode) || darkMode
-              //     ? 'rgb(66, 66, 66)'
-              //     : 'rgb(234, 234, 234)'
-              // }`,
-            },
-          }),
+      ...{
+        ...widgetConfig,
+        appearance: 'light',
+        containerStyle: {
+          ...widgetConfig.containerStyle,
+          // border: `1px solid ${
+          //   (systemColor && prefersDarkMode) || darkMode
+          //     ? 'rgb(66, 66, 66)'
+          //     : 'rgb(234, 234, 234)'
+          // }`,
+        },
+      },
       theme: {
         palette: {
           primary: {
@@ -247,6 +223,22 @@ export const App = () => {
                   >
                     <Box flex={1} style={{ margin: '50px auto auto' }}>
                       <StakingPage />
+                    </Box>
+                  </Box>
+                </GrinderyThemeProvider>
+              }
+            />
+            <Route
+              path="/offers"
+              element={
+                <GrinderyThemeProvider>
+                  <Box
+                    display="flex"
+                    height="calc(100vh - 75px)"
+                    style={{ paddingTop: '75px' }}
+                  >
+                    <Box flex={1} style={{ margin: '50px auto auto' }}>
+                      <OffersPage />
                     </Box>
                   </Box>
                 </GrinderyThemeProvider>

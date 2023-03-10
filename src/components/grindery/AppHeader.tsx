@@ -5,7 +5,22 @@ import Logo from './Logo';
 import { SCREEN } from '../../constants';
 import UserMenu from './UserMenu';
 import { useGrinderyNexus } from 'use-grindery-nexus';
-import { useNavigate } from 'react-router';
+import { useLocation, useNavigate } from 'react-router';
+
+const links = [
+  {
+    path: '/faucet',
+    label: 'Faucet',
+  },
+  {
+    path: '/staking',
+    label: 'Staking',
+  },
+  {
+    path: '/offers',
+    label: 'Offers',
+  },
+];
 
 const Wrapper = styled.div`
   border-bottom: 1px solid #dcdcdc;
@@ -38,22 +53,6 @@ const UserWrapper = styled.div`
     order: 4;
   }
 `;
-
-/*const AppsMenuWrapper = styled.div`
-  order: 4;
-  margin-left: auto;
-
-  @media (max-width: ${SCREEN.TABLET}) {
-    & .apps-menu__dropdown {
-      min-width: 200px;
-      max-width: 200px;
-
-      & > ul {
-        min-width: 200px !important;
-      }
-    }
-  }
-`;*/
 
 const LogoWrapper = styled.a`
   display: block;
@@ -92,6 +91,10 @@ const LinksWrapper = styled.div`
     display: inline-block;
     color: #0b0d17;
     cursor: pointer;
+
+    &.active {
+      font-weight: 700;
+    }
   }
 `;
 
@@ -128,6 +131,7 @@ const AppHeader = (props: Props) => {
   let navigate = useNavigate();
   const { user } = useAppContext();
   const { connect } = useGrinderyNexus();
+  const location = useLocation();
 
   return (
     <Wrapper>
@@ -147,40 +151,23 @@ const AppHeader = (props: Props) => {
           navigate('/');
         }}
       >
-        Gateway
+        DELIGHT
       </CompanyNameWrapper>
-      {/*<AppsMenuWrapper>
-        <AppsMenu apps={GRINDERY_APPS} />
-      </AppsMenuWrapper>*/}
+
       {
         <LinksWrapper>
-          {/*<a
-            href="/swap"
-            onClick={(event: React.MouseEvent<HTMLElement>) => {
-              event.preventDefault();
-              navigate('/swap');
-            }}
-          >
-            Swap
-          </a>*/}
-          <a
-            href="/faucet"
-            onClick={(event: React.MouseEvent<HTMLElement>) => {
-              event.preventDefault();
-              navigate('/faucet');
-            }}
-          >
-            Faucet
-          </a>
-          <a
-            href="/staking"
-            onClick={(event: React.MouseEvent<HTMLElement>) => {
-              event.preventDefault();
-              navigate('/staking');
-            }}
-          >
-            Staking
-          </a>
+          {links.map((link: any) => (
+            <a
+              href={link.path}
+              onClick={(event: React.MouseEvent<HTMLElement>) => {
+                event.preventDefault();
+                navigate(link.path);
+              }}
+              className={location.pathname === link.path ? 'active' : 'default'}
+            >
+              {link.label}
+            </a>
+          ))}
         </LinksWrapper>
       }
       {!user && 'ethereum' in window && (

@@ -6,9 +6,6 @@ import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { ICONS } from '../../constants';
 import { useGrinderyNexus } from 'use-grindery-nexus';
 import { Snackbar } from 'grindery-ui';
-//import AccountModal from "./AccountModal";
-import useAppContext from '../../hooks/useAppContext';
-import { useNavigate } from 'react-router';
 
 const UserContainer = styled.div`
   position: relative;
@@ -126,8 +123,6 @@ type Props = {
 
 const UserMenu = (props: Props) => {
   const mode = props.mode || 'light';
-  let navigate = useNavigate();
-  const { userProps } = useAppContext();
   const { address, disconnect } = useGrinderyNexus();
   const [menuOpened, setMenuOpened] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -172,16 +167,6 @@ const UserMenu = (props: Props) => {
                 <span>{'Copy wallet addres'}</span>
               </button>
             </CopyToClipboard>
-            {/*userProps && userProps.email && (
-              <button
-                onClick={() => {
-                  navigate("/account");
-                }}
-              >
-                <img src={ICONS.ACCOUNT} alt="" />
-                <span>Account details</span>
-              </button>
-              )*/}
             <button
               onClick={() => {
                 disconnect();

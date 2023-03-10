@@ -35,6 +35,7 @@
     "typescript": "^4.4.2",
     "use-grindery-nexus": "0.4.6",
     "uuid": "^9.0.0",
+    "walletconnect": "^1.7.8",
     "web-vitals": "^2.1.0",
     "web3modal": "^1.9.12",
     "zustand": "^4.3.5"

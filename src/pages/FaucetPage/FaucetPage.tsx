@@ -15,7 +15,6 @@ import Grt from '../../components/grindery/Abi/Grt.json';
 import AlertBox from '../../components/grindery/AlertBox';
 import { Card, CardTitle } from '../../components/Card';
 import { Box } from '@mui/system';
-import NexusClient from 'grindery-nexus-client';
 import {
   FormControl,
   Input,
@@ -73,11 +72,6 @@ function FaucetPage() {
       : null;
 
   const getChains = async () => {
-    const client = new NexusClient();
-    /*const items = await client.listChains('evm').catch((err) => {
-      // handle chain fetching error
-    });*/
-
     setChains([
       {
         value: 'eip155:97',
@@ -187,24 +181,38 @@ function FaucetPage() {
   }, []);
 
   useEffect(() => {
-    if (currentChain && currentChain.id) {
+    const formattedChain =
+      chain && chains.find((c) => c.value === chain)
+        ? {
+            id:
+              chain && typeof chain === 'string'
+                ? `0x${parseFloat(chain.split(':')[1]).toString(16)}`
+                : '',
+            value: chains.find((c) => c.value === chain)?.value || '',
+            label: chains.find((c) => c.value === chain)?.label || '',
+            icon: chains.find((c) => c.value === chain)?.icon || '',
+            rpc: chains.find((c) => c.value === chain)?.rpc || [],
+            nativeToken: chains.find((c) => c.value === chain)?.token || '',
+          }
+        : null;
+    if (formattedChain && formattedChain.id) {
       window.ethereum.request({
         method: 'wallet_addEthereumChain',
         params: [
           {
-            chainId: currentChain.id,
-            chainName: currentChain.label,
-            rpcUrls: currentChain.rpc,
+            chainId: formattedChain.id,
+            chainName: formattedChain.label,
+            rpcUrls: formattedChain.rpc,
             nativeCurrency: {
-              name: currentChain.nativeToken,
-              symbol: currentChain.nativeToken,
+              name: formattedChain.nativeToken,
+              symbol: formattedChain.nativeToken,
               decimals: 18,
             },
           },
         ],
       });
     }
-  }, [currentChain]);
+  }, [chain, chains]);
 
   return (
     <>

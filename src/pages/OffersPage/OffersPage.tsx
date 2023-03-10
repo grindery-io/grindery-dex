@@ -49,7 +49,7 @@ const VIEWS = {
   WITHDRAW: 'withdraw',
 };
 
-function StakingPage() {
+function OffersPage() {
   const { user, connect, chain: selectedChain } = useGrinderyNexus();
   const [amountGRT, setAmountGRT] = useState<string>('');
   const [amountAdd, setAmountAdd] = useState<string>('');
@@ -244,38 +244,24 @@ function StakingPage() {
   }, []);
 
   useEffect(() => {
-    const formattedChain =
-      chain && chains.find((c) => c.value === chain)
-        ? {
-            id:
-              chain && typeof chain === 'string'
-                ? `0x${parseFloat(chain.split(':')[1]).toString(16)}`
-                : '',
-            value: chains.find((c) => c.value === chain)?.value || '',
-            label: chains.find((c) => c.value === chain)?.label || '',
-            icon: chains.find((c) => c.value === chain)?.icon || '',
-            rpc: chains.find((c) => c.value === chain)?.rpc || [],
-            nativeToken: chains.find((c) => c.value === chain)?.token || '',
-          }
-        : null;
-    if (formattedChain && formattedChain.id) {
+    if (currentChain && currentChain.id) {
       window.ethereum.request({
         method: 'wallet_addEthereumChain',
         params: [
           {
-            chainId: formattedChain.id,
-            chainName: formattedChain.label,
-            rpcUrls: formattedChain.rpc,
+            chainId: currentChain.id,
+            chainName: currentChain.label,
+            rpcUrls: currentChain.rpc,
             nativeCurrency: {
-              name: formattedChain.nativeToken,
-              symbol: formattedChain.nativeToken,
+              name: currentChain.nativeToken,
+              symbol: currentChain.nativeToken,
               decimals: 18,
             },
           },
         ],
       });
     }
-  }, [chain, chains]);
+  }, [currentChain]);
 
   return (
     <>
@@ -767,4 +753,4 @@ function StakingPage() {
   );
 }
 
-export default StakingPage;
+export default OffersPage;

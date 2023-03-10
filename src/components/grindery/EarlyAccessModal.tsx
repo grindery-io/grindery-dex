@@ -1,11 +1,11 @@
-import React, { useState } from "react";
-import { Select, RichInput } from "grindery-ui";
-import styled from "styled-components";
-import { ICONS } from "../../constants";
-import useAppContext from "../../hooks/useAppContext";
-import Button from "./Button";
-import CheckBox from "./CheckBox";
-import { validateEmail } from "../../helpers/utils";
+import React, { useState } from 'react';
+import { RichInput } from 'grindery-ui';
+import styled from 'styled-components';
+import { ICONS } from '../../constants';
+import useAppContext from '../../hooks/useAppContext';
+import Button from './Button';
+import CheckBox from './CheckBox';
+import { validateEmail } from '../../helpers/utils';
 
 const Wrapper = styled.div`
   position: fixed;
@@ -169,28 +169,28 @@ const EarlyAccessModal = (props: Props) => {
     chekingOptIn,
   } = useAppContext();
   const [loading, setLoading] = useState(false);
-  const [email, setEmail] = useState("");
-  const [interest, setInterest] = useState([""]);
-  const [skill, setSkill] = useState([""]);
+  const [email, setEmail] = useState('');
+  const [interest, setInterest] = useState(['']);
+  const [skill, setSkill] = useState(['']);
   const [consent, setConsent] = useState(false);
-  const [error, setError] = useState({ type: "", text: "" });
-  const [success, setSuccess] = useState("");
-  const [firstname, setFirstname] = useState("");
-  const [lastname, setLastname] = useState("");
+  const [error, setError] = useState({ type: '', text: '' });
+  const [success, setSuccess] = useState('');
+  const [firstname, setFirstname] = useState('');
+  const [lastname, setLastname] = useState('');
 
   const validate = () => {
     if (!email) {
-      setError({ type: "email", text: "Email is required" });
+      setError({ type: 'email', text: 'Email is required' });
       return;
     }
     if (!validateEmail(email)) {
-      setError({ type: "email", text: "Email is not valid" });
+      setError({ type: 'email', text: 'Email is not valid' });
       return;
     }
     if (!consent) {
       setError({
-        type: "consent",
-        text: "Please, agree with our Terms of Service and Privacy Policy",
+        type: 'consent',
+        text: 'Please, agree with our Terms of Service and Privacy Policy',
       });
       return;
     }
@@ -198,40 +198,40 @@ const EarlyAccessModal = (props: Props) => {
   };
 
   const handleEmailChange = (value: string) => {
-    setError({ type: "", text: "" });
-    setEmail(value || "");
+    setError({ type: '', text: '' });
+    setEmail(value || '');
   };
 
   const requestEarlyAccess = async () => {
     setLoading(true);
-    setError({ type: "", text: "" });
+    setError({ type: '', text: '' });
     const res = await client
-      ?.requestEngine("or_requestEarlyAccess", {
+      ?.requestEngine('or_requestEarlyAccess', {
         email,
-        source: "gateway.grindery.org",
-        app: "Requested to Gateway",
+        source: 'gateway.grindery.org',
+        app: 'Requested to Gateway',
         firstname,
         lastname,
-        interest: interest.join(";"),
-        skill: skill.join(";"),
+        interest: interest.join(';'),
+        skill: skill.join(';'),
       })
       .catch((err) => {
         console.error(
-          "or_requestEarlyAccess error",
+          'or_requestEarlyAccess error',
           err.response.data.error.message
         );
         setError({
-          type: "server",
+          type: 'server',
           text:
             err.response.data.error.message ||
-            "Server error, please, try again",
+            'Server error, please, try again',
         });
 
         setLoading(false);
       });
     if (res) {
       setSuccess(
-        "We just sent you a confirmation email. Please check your email and confirm to activate your account."
+        'We just sent you a confirmation email. Please check your email and confirm to activate your account.'
       );
 
       //"Your request will be manually reviewed. We'll notify you by email as soon as we have an available opening."
@@ -250,10 +250,10 @@ const EarlyAccessModal = (props: Props) => {
                 src="/images/thank-you.png"
                 alt="thank you"
                 style={{
-                  marginBottom: "10px",
-                  width: "604px",
-                  maxWidth: "100%",
-                  height: "auto",
+                  marginBottom: '10px',
+                  width: '604px',
+                  maxWidth: '100%',
+                  height: 'auto',
                 }}
               />
               <FormTitle>Thank you!</FormTitle>
@@ -279,7 +279,7 @@ const EarlyAccessModal = (props: Props) => {
                 placeholder=""
                 value={email}
                 onChange={handleEmailChange}
-                error={error.type === "email" && error.text ? error.text : ""}
+                error={error.type === 'email' && error.text ? error.text : ''}
                 required
                 options={[]}
               />
@@ -306,15 +306,15 @@ const EarlyAccessModal = (props: Props) => {
               </CheckboxSubTitle>
               {[
                 {
-                  value: "dApp2Zapier",
-                  label: "Connect a specific dApp to Zapier",
+                  value: 'dApp2Zapier',
+                  label: 'Connect a specific dApp to Zapier',
                 },
                 {
-                  value: "MyDapp2Zapier",
-                  label: "Publish my dApp on Zapier",
+                  value: 'MyDapp2Zapier',
+                  label: 'Publish my dApp on Zapier',
                 },
-                { value: "Learn", label: "Browse and learn" },
-                { value: "else", label: "Something else" },
+                { value: 'Learn', label: 'Browse and learn' },
+                { value: 'else', label: 'Something else' },
               ].map((option) => (
                 <CheckboxWrapper>
                   <CheckBox
@@ -330,7 +330,7 @@ const EarlyAccessModal = (props: Props) => {
                     }}
                   />
                   <CheckboxLabel
-                    style={{ cursor: "pointer" }}
+                    style={{ cursor: 'pointer' }}
                     onClick={() => {
                       if (interest.includes(option.value)) {
                         setInterest([
@@ -353,15 +353,15 @@ const EarlyAccessModal = (props: Props) => {
               </CheckboxSubTitle>
               {[
                 {
-                  value: "web3",
+                  value: 'web3',
                   label: "I'm a web3 buildler",
                 },
                 {
-                  value: "zapier",
+                  value: 'zapier',
                   label: "I'm a Zapier guru",
                 },
-                { value: "code", label: "I'm a coding wizard" },
-                { value: "human", label: "I'm only human" },
+                { value: 'code', label: "I'm a coding wizard" },
+                { value: 'human', label: "I'm only human" },
               ].map((option) => (
                 <CheckboxWrapper>
                   <CheckBox
@@ -377,7 +377,7 @@ const EarlyAccessModal = (props: Props) => {
                     }}
                   />
                   <CheckboxLabel
-                    style={{ cursor: "pointer" }}
+                    style={{ cursor: 'pointer' }}
                     onClick={() => {
                       if (skill.includes(option.value)) {
                         setSkill([
@@ -393,25 +393,25 @@ const EarlyAccessModal = (props: Props) => {
                 </CheckboxWrapper>
               ))}
 
-              <CheckboxWrapper style={{ marginTop: "40px" }}>
+              <CheckboxWrapper style={{ marginTop: '40px' }}>
                 <CheckBox
                   checked={consent}
                   onChange={(val) => {
                     setConsent(val);
                   }}
-                  style={{ marginTop: "4px" }}
+                  style={{ marginTop: '4px' }}
                 />
                 <CheckboxLabel>
                   To communicate with you we need you to provide us with
-                  information. To learn more, see our{" "}
+                  information. To learn more, see our{' '}
                   <a
                     href="https://docs.google.com/document/u/1/d/e/2PACX-1vROgga4q_jago0wilXMB28BxXoymaaegLv5pwCSVZMi8QRCp7oXmfxIhMEXeVC8Hrg3eBBGooMMa641/pub"
                     target="_blank"
                     rel="noreferrer"
                   >
                     Terms of Service
-                  </a>{" "}
-                  and{" "}
+                  </a>{' '}
+                  and{' '}
                   <a
                     href="https://www.grindery.io/privacy"
                     target="_blank"
@@ -422,7 +422,7 @@ const EarlyAccessModal = (props: Props) => {
                 </CheckboxLabel>
               </CheckboxWrapper>
               {error &&
-                (error.type === "server" || error.type === "consent") &&
+                (error.type === 'server' || error.type === 'consent') &&
                 error.text && <ErrorWrapper>{error.text}</ErrorWrapper>}
               <Button
                 value="Continue"
