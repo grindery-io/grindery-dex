@@ -338,7 +338,7 @@ function OffersPage() {
     getChains();
   }, []);
 
-  /*useEffect(() => {
+  useEffect(() => {
     if (currentChain && currentChain.id) {
       window.ethereum.request({
         method: 'wallet_addEthereumChain',
@@ -356,7 +356,7 @@ function OffersPage() {
         ],
       });
     }
-  }, [currentChain]);*/
+  }, [currentChain]);
 
   return (
     <>
