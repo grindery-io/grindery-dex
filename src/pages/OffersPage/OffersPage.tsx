@@ -662,7 +662,7 @@ function OffersPage() {
                     subheader={
                       token && currentChain ? `on ${currentChain?.label}` : null
                     }
-                    selected={!!currentChain}
+                    selected={Boolean(token && currentChain)}
                     compact={false}
                   />
                   {errorMessage.type === 'chain' && !!errorMessage.text && (
