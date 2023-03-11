@@ -243,7 +243,7 @@ function StakingPage() {
     getChains();
   }, []);
 
-  useEffect(() => {
+  /*useEffect(() => {
     const formattedChain =
       chain && chains.find((c) => c.value === chain)
         ? {
@@ -275,7 +275,7 @@ function StakingPage() {
         ],
       });
     }
-  }, [chain, chains]);
+  }, [chain, chains]);*/
 
   return (
     <>
