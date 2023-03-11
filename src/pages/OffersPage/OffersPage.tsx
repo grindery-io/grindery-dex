@@ -5,12 +5,18 @@ import {
   IconButton,
   Tooltip,
   Typography,
-  Button as MuiButton,
+  InputAdornment,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemAvatar,
+  ListItemText,
+  Badge,
 } from '@mui/material';
 import { Button } from 'grindery-ui';
 import { useGrinderyNexus } from 'use-grindery-nexus';
 import { CircularProgress } from 'grindery-ui';
-import { Badge, ButtonWrapper } from './style';
+import { TextBadge, ButtonWrapper } from './style';
 import { Card, CardTitle } from '../../components/Card';
 import { Box } from '@mui/system';
 import {
@@ -27,15 +33,20 @@ import { HeaderAppBar } from '../../components/Header/Header.style';
 import {
   ArrowBack as ArrowBackIcon,
   AddCircleOutline as AddCircleOutlineIcon,
-  SaveAlt as SaveAltIcon,
+  Search as SearchIcon,
+  SearchOff as SearchOffIcon,
+  PowerSettingsNew as PowerSettingsNewIcon,
 } from '@mui/icons-material';
 
-type Stake = {
+type Offer = {
   id: string;
   chain: string;
-  amount: string;
-  new?: boolean;
-  updated?: boolean;
+  min: string;
+  max: string;
+  token: string;
+  tokenAddress: string;
+  tokenIcon?: string;
+  isActive: boolean;
 };
 
 function isNumeric(value: string) {
@@ -44,21 +55,22 @@ function isNumeric(value: string) {
 
 const VIEWS = {
   ROOT: 'root',
-  STAKE: 'stake',
+  CREATE: 'create',
   SELECT_CHAIN: 'select_chain',
-  WITHDRAW: 'withdraw',
 };
 
 function OffersPage() {
   const { user, connect, chain: selectedChain } = useGrinderyNexus();
-  const [amountGRT, setAmountGRT] = useState<string>('');
-  const [amountAdd, setAmountAdd] = useState<string>('');
+  const [amountMin, setAmountMin] = useState<string>('');
+  const [amountMax, setAmountMax] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState({ type: '', text: '' });
   const [chain, setChain] = useState(selectedChain || '');
   const [view, setView] = useState(VIEWS.ROOT);
   const [chains, setChains] = useState<any[]>([]);
-  const [selectedStake, setSelectedStake] = useState('');
+  const [token, setToken] = useState<any>('');
+  const [searchToken, setSearchToken] = useState('');
+  const [isActivating, setIsActivating] = useState('');
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const currentChain =
     chain && chains.find((c) => c.value === chain)
@@ -75,23 +87,47 @@ function OffersPage() {
         }
       : null;
 
-  const [stakes, setStakes] = useState<Stake[]>([
+  const [offers, setOffers] = useState<Offer[]>([
     {
       id: '1',
       chain: 'eip155:5',
-      amount: '2000',
+      min: '200',
+      max: '10000',
+      token: 'GTH',
+      tokenAddress: '',
+      tokenIcon:
+        'https://explorer.bitquery.io/packs/media/icon/eth-093b3f87.svg',
+      isActive: true,
     },
     {
       id: '2',
       chain: 'eip155:97',
-      amount: '15000',
+      min: '10',
+      max: '1000',
+      token: 'BNB',
+      tokenAddress: '',
+      tokenIcon: 'https://bscscan.com/token/images/binance_32.png',
+      isActive: true,
     },
     {
       id: '3',
       chain: 'eip155:338',
-      amount: '850',
+      min: '500',
+      max: '5000',
+      token: 'CRO',
+      tokenAddress: '',
+      tokenIcon:
+        'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAYAAACM/rhtAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAVFSURBVHgBxVhLbBtVFD3zSeqiNJhSiFV+TkRFC3GULPgUgeSs6IJFkBBUYkHMCla2i7NEtVcIKWmcHRuUdAMVAtXsYJWphEJ3SUlAUQXKSHyatBWYEmiaeOb1vvFvPm/GYztVj/I08bzfmXvvu58H7BeiySgOPj+Lofc2kPhwAvsEBfuBgyfTMM0SZDmJ/lgUPZHTGDgZx+EXr+Dm5TK6gIRu0PdKEnLPZ2CVoca72Akg0m/fIQ+5MoeVYkdEOyMYTcbBME8t6ekbeIYIHnJvowNGAavnFtAm2iPI7QxqmlT5EUxDbB6PHgMO9PksQET39saxXtSx7wQPv5YGWJ7TDBx3ZCiAYB1sAXsk0RBEWx+SI6eSeODYPCTpfUhyhBqEDbIOWXoDD8cKYNJD9HLUf1HqU+RJxF6OYGvpUtD2/hKMnSI7i3xCB+Ct5jBWm2J7MqkMxubw+NNFx0EYzcRhKIs0Lo5ABNunl2B0IooI0rR3hnqD1SkrC/jfyKJc8j+hiTOTtM3Z1kShYa+ScqvdSfCJt0/D2PvYuRiDR4KMFmP01ZslDWEwmomiovIPPtt6sNM+nTbY/9wq2VPUZlf0V3tW3+lQerP448ssttd1z9pxInL01eO4sbTpeL95eQfXlzQcfeF8KPuU5X+s8dWd7X2Ks8n1p1omcgX07I7ht88XhOuOTKVxSN2AwpYp1M3jONmgGyskldWZSdLAOElKRwg4CcqKtylqCYo5ht8v5KELbG04l8Tw1DIdlCIaLkiaRA+RHcmJVbo2rRHRQcBMtSLqIqh6m9SbgX7BuwiXUCK3SHZFjYlVxijMJaY2qgdFgOrJvdQGwbrk5Ob/bnA745LpUZfpV9LFSKd23vUuTgvNW1IWqb0FfAiqNoIR54w+ddGSjCOiMPKFKEAxxiwbUyqDHtVxKavqvHWi24DqJGj/ycQzJCnq6GPSHNRK3uGkVywXMdjwgdyZA1nL9tqEi6CCWnRoBoyI6T+bR5C16Yxvf9XGFtAFnASlms3V/bLEyfYGTJe6SkbDQCBBO4iggfsKlwTdobmu53sI0xTs24SK+w3TEBBsCqU7ghJ7quWYZzOjMFH2TU6ZYeNT11iToIyuQCHNihSCMrPq0GcpVC4Hhj0uQa5mq9n+75ggM79xvYgT0YuOBKGeOPCcsjGMnPsIRRO3o2YVImRvRvXZMcG1mYw4yNcShETub2fi0CBYgEwFk7v8rBg1UkaTnE2Cndlg3QGPnMmQU0+7smU3MY0iTaoWXbxg5oOOnNh6144NqrLmm438eK5I8XfcmyBYu+hW3rc2PS4kx0uLJ9+h2tqYsA6KjwSd5zuRC3B6Uolq2qzvaeRFUkW9SCc7DlMq4KfponAcJ9YXSZNr4fYpThwYK1j5Z3sEG7ODa1p+CPyuOWJv0lUJpV4S4giESWXFV9YHOmNb2JpBUSYw8BLVDT+seLp5/eHGYxOj6DvxhXVPAzNKdgdhg1km9X6Aa19/2thNyCF0qchrWvra1ZmSsJtflRzo5+tkgtchRy5R2raDoruEDb76CE1UoPZHXqfT7U5shdDImaeohNVFna3vZqo3BHka+m7LsVyFm79cgbEz2/KjJJB5sCxufqsFDwuLKlG+cfDt6Y1fgd3//PuZpc4C/vquiBBo/36wldqvXwXubPtMJjuDkUdZC53odn7DOpzLk8/jUcRpY1vrwM6/7l003JFS2NF0tInuroBF9nntZyJ4q7Y6nXLGUtj+XkOH6I5gHfartj9Xgdu3ypY6e3uL7agT94xgHdw+t67GsbvdNbE67gLGASCUUYAwaQAAAABJRU5ErkJggg==',
+      isActive: true,
     },
   ]);
+
+  const chainTokens = (
+    (chain && chains.find((c) => c.value === chain)?.tokens) ||
+    []
+  ).filter(
+    (t: any) => !searchToken || t.symbol.toLowerCase().includes(searchToken)
+  );
 
   const getChains = async () => {
     setChains([
@@ -109,12 +145,34 @@ function OffersPage() {
           'https://data-seed-prebsc-1-s2.binance.org:8545',
           'https://data-seed-prebsc-2-s2.binance.org:8545',
         ],
+        tokens: [
+          {
+            id: 1,
+            address: '0x0',
+            symbol: 'BNB',
+
+            icon: 'https://bscscan.com/token/images/binance_32.png',
+          },
+          {
+            id: 2,
+            address: '0x8965349fb649A33a30cbFDa057D8eC2C48AbE2A2',
+            symbol: 'USDC',
+
+            icon: 'https://bscscan.com/token/images/usdcgno_32.png',
+          },
+          {
+            id: 3,
+            address: '0x2170ed0880ac9a755fd29b2688956bd959f933f8',
+            symbol: 'ETH',
+            icon: 'https://bscscan.com/token/images/ethereum_32.png',
+          },
+        ],
       },
       {
         value: 'eip155:5',
         label: 'Goerli',
         icon: 'data:image/png;base64,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',
-        token: 'ETH',
+        token: 'GTH',
         rpc: [
           'https://goerli.blockpi.network/v1/rpc/public',
           'https://rpc.ankr.com/eth_goerli',
@@ -123,6 +181,26 @@ function OffersPage() {
           'https://rpc.goerli.mudit.blog',
           'https://endpoints.omniatech.io/v1/eth/goerli/public',
         ],
+        tokens: [
+          {
+            id: 4,
+            address: '0x0',
+            symbol: 'GTH',
+            icon: 'https://explorer.bitquery.io/packs/media/icon/eth-093b3f87.svg',
+          },
+          {
+            id: 5,
+            address: '0xFfb99f4A02712C909d8F7cC44e67C87Ea1E71E83',
+            symbol: 'ETH',
+            icon: 'https://bscscan.com/token/images/ethereum_32.png',
+          },
+          {
+            id: 6,
+            address: '0xfb501A48aFFC39aa4b4C83A025D4F0b5C1ca4A6C',
+            symbol: 'BNB',
+            icon: 'https://bscscan.com/token/images/binance_32.png',
+          },
+        ],
       },
       {
         value: 'eip155:338',
@@ -130,6 +208,26 @@ function OffersPage() {
         icon: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAYAAACM/rhtAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAVFSURBVHgBxVhLbBtVFD3zSeqiNJhSiFV+TkRFC3GULPgUgeSs6IJFkBBUYkHMCla2i7NEtVcIKWmcHRuUdAMVAtXsYJWphEJ3SUlAUQXKSHyatBWYEmiaeOb1vvFvPm/GYztVj/I08bzfmXvvu58H7BeiySgOPj+Lofc2kPhwAvsEBfuBgyfTMM0SZDmJ/lgUPZHTGDgZx+EXr+Dm5TK6gIRu0PdKEnLPZ2CVoca72Akg0m/fIQ+5MoeVYkdEOyMYTcbBME8t6ekbeIYIHnJvowNGAavnFtAm2iPI7QxqmlT5EUxDbB6PHgMO9PksQET39saxXtSx7wQPv5YGWJ7TDBx3ZCiAYB1sAXsk0RBEWx+SI6eSeODYPCTpfUhyhBqEDbIOWXoDD8cKYNJD9HLUf1HqU+RJxF6OYGvpUtD2/hKMnSI7i3xCB+Ct5jBWm2J7MqkMxubw+NNFx0EYzcRhKIs0Lo5ABNunl2B0IooI0rR3hnqD1SkrC/jfyKJc8j+hiTOTtM3Z1kShYa+ScqvdSfCJt0/D2PvYuRiDR4KMFmP01ZslDWEwmomiovIPPtt6sNM+nTbY/9wq2VPUZlf0V3tW3+lQerP448ssttd1z9pxInL01eO4sbTpeL95eQfXlzQcfeF8KPuU5X+s8dWd7X2Ks8n1p1omcgX07I7ht88XhOuOTKVxSN2AwpYp1M3jONmgGyskldWZSdLAOElKRwg4CcqKtylqCYo5ht8v5KELbG04l8Tw1DIdlCIaLkiaRA+RHcmJVbo2rRHRQcBMtSLqIqh6m9SbgX7BuwiXUCK3SHZFjYlVxijMJaY2qgdFgOrJvdQGwbrk5Ob/bnA745LpUZfpV9LFSKd23vUuTgvNW1IWqb0FfAiqNoIR54w+ddGSjCOiMPKFKEAxxiwbUyqDHtVxKavqvHWi24DqJGj/ycQzJCnq6GPSHNRK3uGkVywXMdjwgdyZA1nL9tqEi6CCWnRoBoyI6T+bR5C16Yxvf9XGFtAFnASlms3V/bLEyfYGTJe6SkbDQCBBO4iggfsKlwTdobmu53sI0xTs24SK+w3TEBBsCqU7ghJ7quWYZzOjMFH2TU6ZYeNT11iToIyuQCHNihSCMrPq0GcpVC4Hhj0uQa5mq9n+75ggM79xvYgT0YuOBKGeOPCcsjGMnPsIRRO3o2YVImRvRvXZMcG1mYw4yNcShETub2fi0CBYgEwFk7v8rBg1UkaTnE2Cndlg3QGPnMmQU0+7smU3MY0iTaoWXbxg5oOOnNh6144NqrLmm438eK5I8XfcmyBYu+hW3rc2PS4kx0uLJ9+h2tqYsA6KjwSd5zuRC3B6Uolq2qzvaeRFUkW9SCc7DlMq4KfponAcJ9YXSZNr4fYpThwYK1j5Z3sEG7ODa1p+CPyuOWJv0lUJpV4S4giESWXFV9YHOmNb2JpBUSYw8BLVDT+seLp5/eHGYxOj6DvxhXVPAzNKdgdhg1km9X6Aa19/2thNyCF0qchrWvra1ZmSsJtflRzo5+tkgtchRy5R2raDoruEDb76CE1UoPZHXqfT7U5shdDImaeohNVFna3vZqo3BHka+m7LsVyFm79cgbEz2/KjJJB5sCxufqsFDwuLKlG+cfDt6Y1fgd3//PuZpc4C/vquiBBo/36wldqvXwXubPtMJjuDkUdZC53odn7DOpzLk8/jUcRpY1vrwM6/7l003JFS2NF0tInuroBF9nntZyJ4q7Y6nXLGUtj+XkOH6I5gHfartj9Xgdu3ypY6e3uL7agT94xgHdw+t67GsbvdNbE67gLGASCUUYAwaQAAAABJRU5ErkJggg==',
         token: 'TCRO',
         rpc: ['https://evm-t3.cronos.org'],
+        tokens: [
+          {
+            id: 7,
+            address: '0x0',
+            symbol: 'TCRO',
+            icon: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAYAAACM/rhtAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAVFSURBVHgBxVhLbBtVFD3zSeqiNJhSiFV+TkRFC3GULPgUgeSs6IJFkBBUYkHMCla2i7NEtVcIKWmcHRuUdAMVAtXsYJWphEJ3SUlAUQXKSHyatBWYEmiaeOb1vvFvPm/GYztVj/I08bzfmXvvu58H7BeiySgOPj+Lofc2kPhwAvsEBfuBgyfTMM0SZDmJ/lgUPZHTGDgZx+EXr+Dm5TK6gIRu0PdKEnLPZ2CVoca72Akg0m/fIQ+5MoeVYkdEOyMYTcbBME8t6ekbeIYIHnJvowNGAavnFtAm2iPI7QxqmlT5EUxDbB6PHgMO9PksQET39saxXtSx7wQPv5YGWJ7TDBx3ZCiAYB1sAXsk0RBEWx+SI6eSeODYPCTpfUhyhBqEDbIOWXoDD8cKYNJD9HLUf1HqU+RJxF6OYGvpUtD2/hKMnSI7i3xCB+Ct5jBWm2J7MqkMxubw+NNFx0EYzcRhKIs0Lo5ABNunl2B0IooI0rR3hnqD1SkrC/jfyKJc8j+hiTOTtM3Z1kShYa+ScqvdSfCJt0/D2PvYuRiDR4KMFmP01ZslDWEwmomiovIPPtt6sNM+nTbY/9wq2VPUZlf0V3tW3+lQerP448ssttd1z9pxInL01eO4sbTpeL95eQfXlzQcfeF8KPuU5X+s8dWd7X2Ks8n1p1omcgX07I7ht88XhOuOTKVxSN2AwpYp1M3jONmgGyskldWZSdLAOElKRwg4CcqKtylqCYo5ht8v5KELbG04l8Tw1DIdlCIaLkiaRA+RHcmJVbo2rRHRQcBMtSLqIqh6m9SbgX7BuwiXUCK3SHZFjYlVxijMJaY2qgdFgOrJvdQGwbrk5Ob/bnA745LpUZfpV9LFSKd23vUuTgvNW1IWqb0FfAiqNoIR54w+ddGSjCOiMPKFKEAxxiwbUyqDHtVxKavqvHWi24DqJGj/ycQzJCnq6GPSHNRK3uGkVywXMdjwgdyZA1nL9tqEi6CCWnRoBoyI6T+bR5C16Yxvf9XGFtAFnASlms3V/bLEyfYGTJe6SkbDQCBBO4iggfsKlwTdobmu53sI0xTs24SK+w3TEBBsCqU7ghJ7quWYZzOjMFH2TU6ZYeNT11iToIyuQCHNihSCMrPq0GcpVC4Hhj0uQa5mq9n+75ggM79xvYgT0YuOBKGeOPCcsjGMnPsIRRO3o2YVImRvRvXZMcG1mYw4yNcShETub2fi0CBYgEwFk7v8rBg1UkaTnE2Cndlg3QGPnMmQU0+7smU3MY0iTaoWXbxg5oOOnNh6144NqrLmm438eK5I8XfcmyBYu+hW3rc2PS4kx0uLJ9+h2tqYsA6KjwSd5zuRC3B6Uolq2qzvaeRFUkW9SCc7DlMq4KfponAcJ9YXSZNr4fYpThwYK1j5Z3sEG7ODa1p+CPyuOWJv0lUJpV4S4giESWXFV9YHOmNb2JpBUSYw8BLVDT+seLp5/eHGYxOj6DvxhXVPAzNKdgdhg1km9X6Aa19/2thNyCF0qchrWvra1ZmSsJtflRzo5+tkgtchRy5R2raDoruEDb76CE1UoPZHXqfT7U5shdDImaeohNVFna3vZqo3BHka+m7LsVyFm79cgbEz2/KjJJB5sCxufqsFDwuLKlG+cfDt6Y1fgd3//PuZpc4C/vquiBBo/36wldqvXwXubPtMJjuDkUdZC53odn7DOpzLk8/jUcRpY1vrwM6/7l003JFS2NF0tInuroBF9nntZyJ4q7Y6nXLGUtj+XkOH6I5gHfartj9Xgdu3ypY6e3uL7agT94xgHdw+t67GsbvdNbE67gLGASCUUYAwaQAAAABJRU5ErkJggg==',
+          },
+          {
+            id: 8,
+            address: '0xc21223249CA28397B4B6541dfFaEcC539BfF0c59',
+            symbol: 'USDC',
+            icon: 'https://bscscan.com/token/images/usdcgno_32.png',
+          },
+          {
+            id: 9,
+            address: '0xF2001B145b43032AAF5Ee2884e456CCd805F677D',
+            symbol: 'DAI',
+            icon: 'https://cronoscan.com/token/images/MCDDai_32.png',
+          },
+        ],
       },
     ]);
   };
@@ -139,99 +237,96 @@ function OffersPage() {
       type: '',
       text: '',
     });
-
-    if (!amountGRT) {
+    if (!chain || !token) {
       setErrorMessage({
-        type: 'amountGRT',
-        text: 'Amount is required',
+        type: 'chain',
+        text: 'Chain and token are required',
       });
       return;
     }
-    if (!isNumeric(amountGRT)) {
+    if (!amountMin) {
       setErrorMessage({
-        type: 'amountGRT',
+        type: 'amountMin',
+        text: 'Min amount is required',
+      });
+      return;
+    }
+    if (!isNumeric(amountMin)) {
+      setErrorMessage({
+        type: 'amountMin',
         text: 'Must be a number',
       });
       return;
     }
-    if (!chain) {
+    if (!amountMax) {
       setErrorMessage({
-        type: 'chain',
-        text: 'Blockchain is required',
+        type: 'amountMax',
+        text: 'Max amount is required',
       });
       return;
     }
+    if (!isNumeric(amountMax)) {
+      setErrorMessage({
+        type: 'amountMax',
+        text: 'Must be a number',
+      });
+      return;
+    }
+    if (parseFloat(amountMax) <= parseFloat(amountMin)) {
+      setErrorMessage({
+        type: 'amountMax',
+        text: 'Must be greater than min',
+      });
+      return;
+    }
+
     setLoading(true);
     setTimeout(() => {
-      setStakes(
-        [...stakes].map((stake) => {
-          if (stake.chain === chain) {
-            return {
-              ...stake,
-              amount: (parseInt(stake.amount) + parseInt(amountGRT)).toString(),
-              updated: true,
-            };
-          }
-          return stake;
-        })
-      );
+      setOffers([
+        {
+          id: (parseFloat(offers[offers.length - 1].id) + 1).toString(),
+          chain: currentChain?.value,
+          min: amountMin,
+          max: amountMax,
+          token: token.symbol || '',
+          tokenAddress: token.address || '',
+          tokenIcon: token.icon || '',
+          isActive: true,
+        },
+        ...offers,
+      ]);
       setView(VIEWS.ROOT);
-      setAmountGRT('');
+      setAmountMin('');
+      setAmountMax('');
+      setToken('');
+      setSearchToken('');
       setLoading(false);
     }, 1500);
   };
 
-  const handleWithdrawClick = async () => {
-    setErrorMessage({
-      type: '',
-      text: '',
-    });
-
-    if (!amountAdd) {
-      setErrorMessage({
-        type: 'amountAdd',
-        text: 'Amount is required',
-      });
-      return;
-    }
-    if (!isNumeric(amountAdd)) {
-      setErrorMessage({
-        type: 'amountAdd',
-        text: 'Must be a number',
-      });
-      return;
-    }
-    if (
-      parseFloat(amountAdd) >
-      parseFloat(stakes.find((s) => selectedStake === s.id)?.amount || '0')
-    ) {
-      setErrorMessage({
-        type: 'amountAdd',
-        text: `You can withdraw maximum ${
-          stakes.find((s) => selectedStake === s.id)?.amount
-        } tokens`,
-      });
-      return;
-    }
-    setLoading(true);
+  const handleDeactivateClick = async (offerId: string) => {
+    setIsActivating(offerId);
     setTimeout(() => {
-      setStakes((_stakes) => [
-        ..._stakes.map((s: Stake) => {
-          if (s.id === selectedStake) {
-            return {
-              ...s,
-              amount: (parseFloat(s.amount) - parseFloat(amountAdd)).toString(),
-              updated: true,
-            };
-          } else {
-            return s;
-          }
-        }),
+      setOffers([
+        ...offers.map((offer) => ({
+          ...offer,
+          isActive: offerId === offer.id ? false : offer.isActive,
+        })),
       ]);
-      setView(VIEWS.ROOT);
-      setAmountAdd('');
-      setSelectedStake('');
-      setLoading(false);
+      setIsActivating('');
+    }, 1500);
+  };
+
+  const handleActivateClick = async (offerId: string) => {
+    setIsActivating(offerId);
+    setTimeout(() => {
+      setOffers([
+        ...offers.map((offer) => ({
+          ...offer,
+          isActive: offerId === offer.id ? true : offer.isActive,
+        })),
+      ]);
+      setIsActivating('');
     }, 1500);
   };
 
@@ -268,7 +363,7 @@ function OffersPage() {
       <Box style={{ margin: '0 auto auto', maxWidth: '392px' }}>
         <Box
           style={{
-            padding: '0px 24px 20px',
+            padding: '0px 0 0px',
             boxShadow: '0px 8px 32px rgb(0 0 0 / 8%)',
             borderRadius: '16px',
             background: '#fff',
@@ -279,8 +374,8 @@ function OffersPage() {
               <HeaderAppBar
                 elevation={0}
                 style={{
-                  paddingLeft: 0,
-                  paddingRight: 0,
+                  paddingLeft: '24px',
+                  paddingRight: '24px',
                   paddingBottom: '10px',
                 }}
               >
@@ -291,15 +386,15 @@ function OffersPage() {
                   flex={1}
                   noWrap
                 >
-                  Staking
+                  Offers
                 </Typography>
                 {user && (
-                  <Tooltip title="Stake">
+                  <Tooltip title="Create">
                     <IconButton
                       size="medium"
                       edge="end"
                       onClick={() => {
-                        setView(VIEWS.STAKE);
+                        setView(VIEWS.CREATE);
                       }}
                     >
                       <AddCircleOutlineIcon sx={{ color: 'black' }} />
@@ -308,104 +403,172 @@ function OffersPage() {
                 )}
               </HeaderAppBar>
 
-              {user &&
-                stakes.map((stake: Stake) => (
-                  <Card
-                    key={stake.id}
-                    flex={1}
-                    style={{
-                      borderRadius: '12px',
-                      marginBottom: '12px',
-                      backgroundColor: stake.new
-                        ? 'rgba(245, 181, 255, 0.08)'
-                        : '#fff',
-                    }}
-                  >
-                    {(stake.new || stake.updated) && (
-                      <Box>
-                        {stake.new && <Badge>New</Badge>}
-
-                        {stake.updated && (
-                          <Badge className="secondary">Updated</Badge>
+              <Box
+                style={{
+                  maxHeight: '540px',
+                  overflow: 'auto',
+                  paddingLeft: '24px',
+                  paddingRight: '24px',
+                }}
+              >
+                {user &&
+                  offers.map((offer: Offer) => (
+                    <Card
+                      key={offer.id}
+                      flex={1}
+                      style={{
+                        borderRadius: '12px',
+                        marginBottom: '12px',
+                        backgroundColor: '#fff',
+                      }}
+                    >
+                      <Box display={'flex'} flexDirection={'row'}>
+                        {!offer.isActive && (
+                          <TextBadge className="secondary">Inactive</TextBadge>
                         )}
                       </Box>
-                    )}
 
-                    <SelectTokenCardHeader
-                      style={{ height: 'auto' }}
-                      avatar={
-                        chain ? (
-                          <Avatar
-                            src={
-                              chains.find((c) => c.value === stake.chain)?.icon
-                            }
-                            alt={
-                              chains.find((c) => c.value === stake.chain)?.label
+                      <SelectTokenCardHeader
+                        style={{ height: 'auto' }}
+                        avatar={
+                          <Badge
+                            overlap="circular"
+                            anchorOrigin={{
+                              vertical: 'bottom',
+                              horizontal: 'right',
+                            }}
+                            badgeContent={
+                              chain ? (
+                                <Avatar
+                                  src={
+                                    chains.find((c) => c.value === offer.chain)
+                                      ?.icon
+                                  }
+                                  alt={
+                                    chains.find((c) => c.value === offer.chain)
+                                      ?.label
+                                  }
+                                  sx={{
+                                    width: '16px',
+                                    height: '16px',
+                                    border: '2px solid #fff',
+                                    background: '#fff',
+                                  }}
+                                >
+                                  {
+                                    chains.find((c) => c.value === offer.chain)
+                                      ?.nativeToken
+                                  }
+                                </Avatar>
+                              ) : (
+                                <AvatarDefault
+                                  width={16}
+                                  height={16}
+                                  sx={{ border: '2px solid #fff' }}
+                                />
+                              )
                             }
                           >
-                            {
-                              chains.find((c) => c.value === stake.chain)
-                                ?.nativeToken
-                            }
-                          </Avatar>
-                        ) : (
-                          <AvatarDefault width={32} height={32} />
-                        )
-                      }
-                      title={parseFloat(stake.amount).toLocaleString()}
-                      subheader={`GST on ${
-                        chains.find((c) => c.value === stake.chain)?.label
-                      }`}
-                      selected={true}
-                      compact={false}
-                      action={
-                        <Box>
-                          {parseFloat(stake.amount) > 0 && (
-                            <Tooltip title="Withdraw">
-                              <IconButton
-                                aria-label="Withdraw"
-                                size="small"
-                                onClick={() => {
-                                  setSelectedStake(stake.id);
-                                  setView(VIEWS.WITHDRAW);
+                            {offer.tokenIcon ? (
+                              <Avatar
+                                sx={{ width: '32px', height: '32px' }}
+                                src={offer.tokenIcon}
+                                alt={offer.token || offer.tokenAddress}
+                              >
+                                {offer.token || offer.tokenAddress}
+                              </Avatar>
+                            ) : (
+                              <AvatarDefault width={32} height={32} />
+                            )}
+                          </Badge>
+                        }
+                        title={
+                          <Box
+                            style={{
+                              whiteSpace: 'pre-wrap',
+                              color: offer.isActive ? '#000' : '#aaa',
+                            }}
+                            mb={'3px'}
+                          >
+                            {`Min: ${parseFloat(
+                              offer.min
+                            ).toLocaleString()}\nMax: ${parseFloat(
+                              offer.max
+                            ).toLocaleString()}`}
+                          </Box>
+                        }
+                        subheader={`${offer.token} on ${
+                          chains.find((c) => c.value === offer.chain)?.label
+                        }`}
+                        selected={true}
+                        compact={false}
+                        action={
+                          <Box>
+                            {!isActivating || isActivating !== offer.id ? (
+                              <Tooltip
+                                title={
+                                  offer.isActive ? 'Deactivate' : 'Activate'
+                                }
+                              >
+                                <IconButton
+                                  aria-label={
+                                    offer.isActive ? 'Deactivate' : 'Activate'
+                                  }
+                                  size="small"
+                                  onClick={() => {
+                                    if (offer.isActive) {
+                                      handleDeactivateClick(offer.id);
+                                    } else {
+                                      handleActivateClick(offer.id);
+                                    }
+                                  }}
+                                >
+                                  <PowerSettingsNewIcon
+                                    sx={{ color: 'black' }}
+                                    fontSize="inherit"
+                                  />
+                                </IconButton>
+                              </Tooltip>
+                            ) : (
+                              <span
+                                style={{
+                                  color: '#3f49e1',
+                                  padding: '5px',
                                 }}
                               >
-                                <SaveAltIcon
-                                  sx={{ color: 'black' }}
-                                  fontSize="inherit"
-                                />
-                              </IconButton>
-                            </Tooltip>
-                          )}
-                        </Box>
-                      }
-                    />
-                  </Card>
-                ))}
-              <ButtonWrapper>
-                <Button
-                  fullWidth
-                  value={user ? 'Stake' : 'Connect wallet'}
-                  onClick={
-                    user
-                      ? () => {
-                          setView(VIEWS.STAKE);
+                                <CircularProgress color="inherit" size={16} />
+                              </span>
+                            )}
+                          </Box>
                         }
-                      : () => {
-                          connect();
-                        }
-                  }
-                />
-              </ButtonWrapper>
+                      />
+                    </Card>
+                  ))}
+                <ButtonWrapper style={{ marginBottom: '10px' }}>
+                  <Button
+                    fullWidth
+                    value={user ? 'Create offer' : 'Connect wallet'}
+                    onClick={
+                      user
+                        ? () => {
+                            setView(VIEWS.CREATE);
+                          }
+                        : () => {
+                            connect();
+                          }
+                    }
+                  />
+                </ButtonWrapper>
+              </Box>
             </>
           )}
-          {view === VIEWS.STAKE && (
+          {view === VIEWS.CREATE && (
             <>
               <HeaderAppBar
                 elevation={0}
                 style={{
-                  paddingLeft: 0,
-                  paddingRight: 0,
+                  paddingLeft: 24,
+                  paddingRight: 24,
                   paddingBottom: '10px',
                 }}
               >
@@ -414,7 +577,8 @@ function OffersPage() {
                   edge="start"
                   onClick={() => {
                     setView(VIEWS.ROOT);
-                    setAmountGRT('');
+                    setAmountMin('');
+                    setAmountMax('');
                   }}
                 >
                   <ArrowBackIcon />
@@ -427,12 +591,15 @@ function OffersPage() {
                   flex={1}
                   noWrap
                 >
-                  Stake
+                  Create offer
                 </Typography>
 
                 <Box width={28} height={40} />
               </HeaderAppBar>
-              <form spellCheck="false">
+              <form
+                spellCheck="false"
+                style={{ paddingLeft: '24px', paddingRight: '24px' }}
+              >
                 <Card
                   flex={1}
                   onClick={() => {
@@ -440,66 +607,162 @@ function OffersPage() {
                   }}
                   style={{ borderRadius: '12px' }}
                 >
-                  <CardTitle>Blockchain</CardTitle>
+                  <CardTitle>Blockchain and token</CardTitle>
 
                   <SelectTokenCardHeader
                     style={{ height: 'auto' }}
                     avatar={
-                      chain ? (
-                        <Avatar
-                          src={currentChain?.icon}
-                          alt={currentChain?.label}
-                        >
-                          {currentChain?.nativeToken}
-                        </Avatar>
-                      ) : (
-                        <AvatarDefault width={32} height={32} />
-                      )
+                      <Badge
+                        overlap="circular"
+                        anchorOrigin={{
+                          vertical: 'bottom',
+                          horizontal: 'right',
+                        }}
+                        badgeContent={
+                          currentChain && token ? (
+                            <Avatar
+                              sx={{
+                                width: '16px',
+                                height: '16px',
+                                border: '2px solid #fff',
+                                background: '#fff',
+                              }}
+                              src={currentChain?.icon}
+                              alt={currentChain?.label}
+                            >
+                              {currentChain?.nativeToken}
+                            </Avatar>
+                          ) : (
+                            <AvatarDefault
+                              width={16}
+                              height={16}
+                              sx={{ border: '2px solid #fff' }}
+                            />
+                          )
+                        }
+                      >
+                        {currentChain && token && token.icon ? (
+                          <Avatar
+                            sx={{ width: '32px', height: '32px' }}
+                            src={token.icon}
+                            alt={token.symbol || token.address}
+                          >
+                            {token.symbol || token.address}
+                          </Avatar>
+                        ) : (
+                          <AvatarDefault width={32} height={32} />
+                        )}
+                      </Badge>
                     }
-                    title={currentChain?.label || 'Select blockchain'}
-                    subheader={null}
+                    title={
+                      token && currentChain
+                        ? token?.symbol || token?.address
+                        : 'Select chain and token'
+                    }
+                    subheader={
+                      token && currentChain ? `on ${currentChain?.label}` : null
+                    }
                     selected={!!currentChain}
                     compact={false}
                   />
-                </Card>
-
-                <Card style={{ borderRadius: '12px', marginTop: '20px' }}>
-                  <CardTitle>GST Amount</CardTitle>
-                  <FormControl
-                    fullWidth
-                    sx={{ paddingTop: '6px', paddingBottom: '5px' }}
-                  >
-                    <Input
-                      size="small"
-                      autoComplete="off"
-                      autoCorrect="off"
-                      autoCapitalize="off"
-                      spellCheck="false"
-                      value={amountGRT}
-                      onChange={(
-                        event: React.ChangeEvent<HTMLInputElement>
-                      ) => {
-                        setErrorMessage({
-                          type: '',
-                          text: '',
-                        });
-                        setAmountGRT(event.target.value);
-                      }}
-                      name="amountGRT"
-                      placeholder="Enter amount of tokens"
-                      disabled={false}
-                    />
+                  {errorMessage.type === 'chain' && !!errorMessage.text && (
                     <FormHelperText
-                      error={
-                        errorMessage.type === 'amountGRT' && !!errorMessage.text
-                      }
+                      style={{
+                        paddingLeft: '16px',
+                        paddingRight: '16px',
+                        paddingBottom: '6px',
+                      }}
+                      error={true}
                     >
-                      {errorMessage.type === 'amountGRT' && !!errorMessage.text
+                      {errorMessage.type === 'chain' && !!errorMessage.text
                         ? errorMessage.text
                         : ''}
                     </FormHelperText>
-                  </FormControl>
+                  )}
                 </Card>
+
+                <Box display="flex" flexDirection="row" gap="16px">
+                  <Card style={{ borderRadius: '12px', marginTop: '20px' }}>
+                    <CardTitle>Minimum amount</CardTitle>
+                    <FormControl
+                      fullWidth
+                      sx={{ paddingTop: '6px', paddingBottom: '5px' }}
+                    >
+                      <Input
+                        size="small"
+                        autoComplete="off"
+                        autoCorrect="off"
+                        autoCapitalize="off"
+                        spellCheck="false"
+                        value={amountMin}
+                        onChange={(
+                          event: React.ChangeEvent<HTMLInputElement>
+                        ) => {
+                          setErrorMessage({
+                            type: '',
+                            text: '',
+                          });
+                          setAmountMin(event.target.value);
+                        }}
+                        name="amountMin"
+                        placeholder="0"
+                        disabled={false}
+                        style={{ padding: '0px 16px 0px 0' }}
+                      />
+                      <FormHelperText
+                        error={
+                          errorMessage.type === 'amountMin' &&
+                          !!errorMessage.text
+                        }
+                      >
+                        {errorMessage.type === 'amountMin' &&
+                        !!errorMessage.text
+                          ? errorMessage.text
+                          : ''}
+                      </FormHelperText>
+                    </FormControl>
+                  </Card>
+                  <Card style={{ borderRadius: '12px', marginTop: '20px' }}>
+                    <CardTitle>Maximum amount</CardTitle>
+                    <FormControl
+                      fullWidth
+                      sx={{ paddingTop: '6px', paddingBottom: '5px' }}
+                    >
+                      <Input
+                        size="small"
+                        autoComplete="off"
+                        autoCorrect="off"
+                        autoCapitalize="off"
+                        spellCheck="false"
+                        value={amountMax}
+                        onChange={(
+                          event: React.ChangeEvent<HTMLInputElement>
+                        ) => {
+                          setErrorMessage({
+                            type: '',
+                            text: '',
+                          });
+                          setAmountMax(event.target.value);
+                        }}
+                        name="amountMax"
+                        placeholder="0"
+                        disabled={false}
+                        style={{ padding: '0px 16px 0px 0' }}
+                      />
+                      <FormHelperText
+                        error={
+                          errorMessage.type === 'amountMax' &&
+                          !!errorMessage.text
+                        }
+                      >
+                        {errorMessage.type === 'amountMax' &&
+                        !!errorMessage.text
+                          ? errorMessage.text
+                          : ''}
+                      </FormHelperText>
+                    </FormControl>
+                  </Card>
+                </Box>
               </form>
               {loading && (
                 <>
@@ -516,7 +779,13 @@ function OffersPage() {
                 </>
               )}
 
-              <ButtonWrapper>
+              <ButtonWrapper
+                style={{
+                  paddingLeft: '24px',
+                  paddingRight: '24px',
+                  paddingBottom: '10px',
+                }}
+              >
                 <Button
                   disabled={loading}
                   fullWidth
@@ -524,7 +793,7 @@ function OffersPage() {
                     loading
                       ? 'Waiting transaction'
                       : user
-                      ? 'Stake'
+                      ? 'Create'
                       : 'Connect wallet'
                   }
                   onClick={
@@ -538,158 +807,14 @@ function OffersPage() {
               </ButtonWrapper>
             </>
           )}
-          {view === VIEWS.WITHDRAW && (
-            <>
-              <HeaderAppBar
-                elevation={0}
-                style={{
-                  paddingLeft: 0,
-                  paddingRight: 0,
-                  paddingBottom: '10px',
-                }}
-              >
-                <IconButton
-                  size="medium"
-                  edge="start"
-                  onClick={() => {
-                    setView(VIEWS.ROOT);
-                    setAmountAdd('');
-                    setSelectedStake('');
-                  }}
-                >
-                  <ArrowBackIcon />
-                </IconButton>
 
-                <Typography
-                  fontSize={18}
-                  align={'center'}
-                  fontWeight="700"
-                  flex={1}
-                  noWrap
-                >
-                  Withdraw
-                </Typography>
-
-                <Box width={28} height={40} />
-              </HeaderAppBar>
-              <form spellCheck="false">
-                <Card style={{ borderRadius: '12px', marginTop: '20px' }}>
-                  <CardTitle>GST Amount</CardTitle>
-                  <FormControl
-                    fullWidth
-                    sx={{ paddingTop: '6px', paddingBottom: '5px' }}
-                  >
-                    <Input
-                      size="small"
-                      autoComplete="off"
-                      autoCorrect="off"
-                      autoCapitalize="off"
-                      spellCheck="false"
-                      value={amountAdd}
-                      onChange={(
-                        event: React.ChangeEvent<HTMLInputElement>
-                      ) => {
-                        setErrorMessage({
-                          type: '',
-                          text: '',
-                        });
-                        setAmountAdd(event.target.value);
-                      }}
-                      name="amountAdd"
-                      placeholder="Enter amount of tokens"
-                      disabled={false}
-                      endAdornment={
-                        <Box
-                          sx={{
-                            '& button': {
-                              fontSize: '14px',
-                              padding: '4px 8px 5px',
-                              display: 'inline-block',
-                              width: 'auto',
-                              margin: '0 16px 0 0',
-                              background: 'rgba(63, 73, 225, 0.08)',
-                              color: 'rgb(63, 73, 225)',
-                              borderRadius: '8px',
-                              minWidth: 0,
-                              '&:hover': {
-                                background: 'rgba(63, 73, 225, 0.12)',
-                                color: 'rgb(63, 73, 225)',
-                              },
-                            },
-                          }}
-                        >
-                          <MuiButton
-                            disableElevation
-                            size="small"
-                            variant="contained"
-                            onClick={() => {
-                              setAmountAdd(
-                                stakes.find((s) => s.id === selectedStake)
-                                  ?.amount || '0'
-                              );
-                            }}
-                          >
-                            max
-                          </MuiButton>
-                        </Box>
-                      }
-                    />
-                    <FormHelperText
-                      error={
-                        errorMessage.type === 'amountAdd' && !!errorMessage.text
-                      }
-                    >
-                      {errorMessage.type === 'amountAdd' && !!errorMessage.text
-                        ? errorMessage.text
-                        : ''}
-                    </FormHelperText>
-                  </FormControl>
-                </Card>
-              </form>
-              {loading && (
-                <>
-                  <div
-                    style={{
-                      textAlign: 'center',
-                      color: '#3f49e1',
-                      width: '100%',
-                      margin: '20px 0',
-                    }}
-                  >
-                    <CircularProgress color="inherit" />
-                  </div>
-                </>
-              )}
-
-              <ButtonWrapper>
-                <Button
-                  disabled={loading}
-                  fullWidth
-                  value={
-                    loading
-                      ? 'Waiting transaction'
-                      : user
-                      ? 'Withdraw'
-                      : 'Connect wallet'
-                  }
-                  onClick={
-                    user
-                      ? handleWithdrawClick
-                      : () => {
-                          connect();
-                        }
-                  }
-                />
-              </ButtonWrapper>
-            </>
-          )}
           {view === VIEWS.SELECT_CHAIN && (
             <>
               <HeaderAppBar
                 elevation={0}
                 style={{
-                  paddingLeft: 0,
-                  paddingRight: 0,
+                  paddingLeft: '24px',
+                  paddingRight: '24px',
                   paddingBottom: '10px',
                 }}
               >
@@ -697,7 +822,8 @@ function OffersPage() {
                   size="medium"
                   edge="start"
                   onClick={() => {
-                    setView(VIEWS.STAKE);
+                    setView(VIEWS.CREATE);
+                    setSearchToken('');
                   }}
                 >
                   <ArrowBackIcon />
@@ -710,12 +836,14 @@ function OffersPage() {
                   flex={1}
                   noWrap
                 >
-                  Select blockchain
+                  Select chain and token
                 </Typography>
 
                 <Box width={28} height={40} />
               </HeaderAppBar>
-              <ChainContainer>
+              <ChainContainer
+                style={{ paddingLeft: '24px', paddingRight: '24px' }}
+              >
                 {chains.map((blockchain: any) => (
                   <Tooltip
                     key={blockchain.value}
@@ -727,7 +855,7 @@ function OffersPage() {
                     <ChainCard
                       onClick={() => {
                         setChain(blockchain.value);
-                        setView(VIEWS.STAKE);
+                        setToken('');
                       }}
                       variant={
                         chain === blockchain.value ? 'selected' : 'default'
@@ -736,7 +864,7 @@ function OffersPage() {
                     >
                       <Avatar
                         src={blockchain.icon}
-                        alt={blockchain.value}
+                        alt={blockchain.label}
                         sx={{ width: 40, height: 40 }}
                       >
                         {blockchain.label}
@@ -745,6 +873,127 @@ function OffersPage() {
                   </Tooltip>
                 ))}
               </ChainContainer>
+              <Box mt={2} pl="24px" pr="24px">
+                <Card style={{ borderRadius: '12px' }}>
+                  <FormControl
+                    fullWidth
+                    style={{
+                      boxSizing: 'border-box',
+                      padding: '8px 16px 8px 0',
+                    }}
+                  >
+                    <Input
+                      size="small"
+                      placeholder={'Search your token'}
+                      value={searchToken}
+                      onChange={(
+                        event: React.ChangeEvent<HTMLInputElement>
+                      ) => {
+                        setSearchToken(event.target.value);
+                      }}
+                      endAdornment={
+                        <InputAdornment position="end">
+                          <SearchIcon />
+                        </InputAdornment>
+                      }
+                      inputProps={{
+                        inputMode: 'search',
+                      }}
+                      autoComplete="off"
+                    />
+                  </FormControl>
+                </Card>
+              </Box>
+
+              {chain && chainTokens && chainTokens.length > 0 ? (
+                <Box
+                  style={{ height: '350px', overflow: 'auto' }}
+                  mt={2}
+                  pl="24px"
+                  pr="24px"
+                  pb="16px"
+                >
+                  <List disablePadding>
+                    {chainTokens.map((chainToken: any) => (
+                      <ListItem
+                        key={chainToken.id}
+                        disablePadding
+                        style={{
+                          height: `64px`,
+                          //transform: `translateY(${start}px)`,
+                        }}
+                      >
+                        <ListItemButton
+                          onClick={() => {
+                            setToken(chainToken);
+                            setView(VIEWS.CREATE);
+                            setSearchToken('');
+                            setErrorMessage({
+                              type: '',
+                              text: '',
+                            });
+                          }}
+                          dense
+                          style={{ borderRadius: '12px' }}
+                        >
+                          <ListItemAvatar>
+                            <Avatar
+                              sx={{ width: 32, height: 32 }}
+                              src={chainToken.icon}
+                              alt={chainToken.symbol}
+                            >
+                              {chainToken.symbol}
+                            </Avatar>
+                          </ListItemAvatar>
+                          <ListItemText
+                            primary={
+                              <span
+                                style={{ fontWeight: '500', fontSize: '18px' }}
+                              >
+                                {chainToken.symbol}
+                              </span>
+                            }
+                            secondary={chainToken.symbol}
+                          />
+                        </ListItemButton>
+                      </ListItem>
+                    ))}
+                  </List>
+                </Box>
+              ) : (
+                <Box
+                  sx={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    flexDirection: 'column',
+                    flex: 1,
+                    padding: 3,
+                    marginTop: '16px',
+                  }}
+                >
+                  <Typography fontSize={48} lineHeight={1}>
+                    <SearchOffIcon fontSize="inherit" />
+                  </Typography>
+                  <Typography
+                    fontSize={14}
+                    color="text.secondary"
+                    textAlign="center"
+                    mt={2}
+                    px={2}
+                  >
+                    {!currentChain ? (
+                      <>Please, select a chain to see a list of tokens.</>
+                    ) : (
+                      <>
+                        We couldn't find tokens{' '}
+                        {currentChain ? `on ${currentChain?.label} chain` : ''}.
+                        Please try search again or switch the chain.
+                      </>
+                    )}
+                  </Typography>
+                </Box>
+              )}
             </>
           )}
         </Box>

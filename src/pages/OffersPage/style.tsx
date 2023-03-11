@@ -39,7 +39,7 @@ export const NumberInput = styled.div`
   }
 `;
 
-export const Badge = styled.p`
+export const TextBadge = styled.p`
   background-color: rgb(245, 181, 255);
   border: 1px solid rgb(245, 181, 255);
   border-radius: 8px;

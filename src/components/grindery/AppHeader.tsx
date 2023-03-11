@@ -38,7 +38,7 @@ const Wrapper = styled.div`
   width: 100%;
   max-width: 100%;
   box-sizing: border-box;
-  z-index: 2;
+  z-index: 1200;
   @media (min-width: ${SCREEN.TABLET}) {
     width: 100%;
     top: 0;
@@ -158,6 +158,7 @@ const AppHeader = (props: Props) => {
         <LinksWrapper>
           {links.map((link: any) => (
             <a
+              key={link.path}
               href={link.path}
               onClick={(event: React.MouseEvent<HTMLElement>) => {
                 event.preventDefault();
