@@ -1,53 +1,25 @@
 import { useEffect, useState } from 'react';
-import {
-  Avatar,
-  FormHelperText,
-  IconButton,
-  Tooltip,
-  Typography,
-  InputAdornment,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemAvatar,
-  ListItemText,
-  Badge,
-} from '@mui/material';
-import { Button } from 'grindery-ui';
+import { IconButton, Tooltip } from '@mui/material';
 import { useGrinderyNexus } from 'use-grindery-nexus';
-import { CircularProgress } from 'grindery-ui';
-import { TextBadge, ButtonWrapper } from './style';
-import { Card, CardTitle } from '../../components/Card';
 import { Box } from '@mui/system';
-import {
-  FormControl,
-  Input,
-} from '../../components/SendToWallet/SendToWallet.style';
-import {
-  ChainCard,
-  ChainContainer,
-} from '../../components/ChainSelect/ChainSelect.style';
-import { SelectTokenCardHeader } from '../../components/SelectTokenButton/SelectTokenButton.style';
-import { AvatarDefault } from '../../components/TokenAvatar/TokenAvatar.style';
-import { HeaderAppBar } from '../../components/Header/Header.style';
 import {
   ArrowBack as ArrowBackIcon,
   AddCircleOutline as AddCircleOutlineIcon,
-  Search as SearchIcon,
-  SearchOff as SearchOffIcon,
-  PowerSettingsNew as PowerSettingsNewIcon,
 } from '@mui/icons-material';
-
-type Offer = {
-  id: string;
-  chain: string;
-  min: string;
-  max: string;
-  token: string;
-  tokenAddress: string;
-  tokenIcon?: string;
-  isActive: boolean;
-};
+import DexCard from '../../components/grindery/DexCard/DexCard';
+import DexCardHeader from '../../components/grindery/DexCard/DexCardHeader';
+import DexOffer from '../../components/grindery/DexOffer/DexOffer';
+import DexCardSubmitButton from '../../components/grindery/DexCard/DexCardSubmitButton';
+import DexCardBody from '../../components/grindery/DexCard/DexCardBody';
+import DexSelectChainAndTokenButton from '../../components/grindery/DexSelectChainAndTokenButton/DexSelectChainAndTokenButton';
+import DexTextInput from '../../components/grindery/DexTextInput/DexTextInput';
+import DexLoading from '../../components/grindery/DexLoading/DexLoading';
+import DexChainsList from '../../components/grindery/DexChainsList/DexChainsList';
+import DexTokenSearch from '../../components/grindery/DexTokenSearch/DexTokenSearch';
+import DexTokensList from '../../components/grindery/DexTokensList/DexTokensList';
+import DexTokensNotFound from '../../components/grindery/DexTokensNotFound/DexTokensNotFound';
+import { Offer } from '../../types/Offer';
+import { Chain } from '../../types/Chain';
 
 function isNumeric(value: string) {
   return /^-?\d+$/.test(value);
@@ -72,7 +44,7 @@ function OffersPage() {
   const [searchToken, setSearchToken] = useState('');
   const [isActivating, setIsActivating] = useState('');
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const currentChain =
+  const currentChain: Chain | null =
     chain && chains.find((c) => c.value === chain)
       ? {
           id:
@@ -285,7 +257,7 @@ function OffersPage() {
       setOffers([
         {
           id: (parseFloat(offers[offers.length - 1].id) + 1).toString(),
-          chain: currentChain?.value,
+          chain: currentChain?.value || '',
           min: amountMin,
           max: amountMax,
           token: token.symbol || '',
@@ -360,35 +332,13 @@ function OffersPage() {
 
   return (
     <>
-      <Box style={{ margin: '0 auto auto', maxWidth: '392px' }}>
-        <Box
-          style={{
-            padding: '0px 0 0px',
-            boxShadow: '0px 8px 32px rgb(0 0 0 / 8%)',
-            borderRadius: '16px',
-            background: '#fff',
-          }}
-        >
-          {view === VIEWS.ROOT && (
-            <>
-              <HeaderAppBar
-                elevation={0}
-                style={{
-                  paddingLeft: '24px',
-                  paddingRight: '24px',
-                  paddingBottom: '10px',
-                }}
-              >
-                <Typography
-                  fontSize={24}
-                  align={'left'}
-                  fontWeight="700"
-                  flex={1}
-                  noWrap
-                >
-                  Offers
-                </Typography>
-                {user && (
+      <DexCard>
+        {view === VIEWS.ROOT && (
+          <>
+            <DexCardHeader
+              title="Offers"
+              endAdornment={
+                user ? (
                   <Tooltip title="Create">
                     <IconButton
                       size="medium"
@@ -400,178 +350,55 @@ function OffersPage() {
                       <AddCircleOutlineIcon sx={{ color: 'black' }} />
                     </IconButton>
                   </Tooltip>
-                )}
-              </HeaderAppBar>
+                ) : null
+              }
+            />
 
-              <Box
-                style={{
-                  maxHeight: '540px',
-                  overflow: 'auto',
-                  paddingLeft: '24px',
-                  paddingRight: '24px',
-                }}
-              >
-                {user &&
-                  offers.map((offer: Offer) => (
-                    <Card
+            <DexCardBody maxHeight="540px">
+              {user &&
+                offers.map((offer: Offer) => {
+                  const offerChain = {
+                    label:
+                      chains.find((c) => c.value === offer.chain)?.label || '',
+                    icon:
+                      chains.find((c) => c.value === offer.chain)?.icon || '',
+                    token:
+                      chains.find((c) => c.value === offer.chain)
+                        ?.nativeToken || '',
+                  };
+                  return (
+                    <DexOffer
                       key={offer.id}
-                      flex={1}
-                      style={{
-                        borderRadius: '12px',
-                        marginBottom: '12px',
-                        backgroundColor: '#fff',
-                      }}
-                    >
-                      <Box display={'flex'} flexDirection={'row'}>
-                        {!offer.isActive && (
-                          <TextBadge className="secondary">Inactive</TextBadge>
-                        )}
-                      </Box>
-
-                      <SelectTokenCardHeader
-                        style={{ height: 'auto' }}
-                        avatar={
-                          <Badge
-                            overlap="circular"
-                            anchorOrigin={{
-                              vertical: 'bottom',
-                              horizontal: 'right',
-                            }}
-                            badgeContent={
-                              chain ? (
-                                <Avatar
-                                  src={
-                                    chains.find((c) => c.value === offer.chain)
-                                      ?.icon
-                                  }
-                                  alt={
-                                    chains.find((c) => c.value === offer.chain)
-                                      ?.label
-                                  }
-                                  sx={{
-                                    width: '16px',
-                                    height: '16px',
-                                    border: '2px solid #fff',
-                                    background: '#fff',
-                                  }}
-                                >
-                                  {
-                                    chains.find((c) => c.value === offer.chain)
-                                      ?.nativeToken
-                                  }
-                                </Avatar>
-                              ) : (
-                                <AvatarDefault
-                                  width={16}
-                                  height={16}
-                                  sx={{ border: '2px solid #fff' }}
-                                />
-                              )
-                            }
-                          >
-                            {offer.tokenIcon ? (
-                              <Avatar
-                                sx={{ width: '32px', height: '32px' }}
-                                src={offer.tokenIcon}
-                                alt={offer.token || offer.tokenAddress}
-                              >
-                                {offer.token || offer.tokenAddress}
-                              </Avatar>
-                            ) : (
-                              <AvatarDefault width={32} height={32} />
-                            )}
-                          </Badge>
-                        }
-                        title={
-                          <Box
-                            style={{
-                              whiteSpace: 'pre-wrap',
-                              color: offer.isActive ? '#000' : '#aaa',
-                            }}
-                            mb={'3px'}
-                          >
-                            {`Min: ${parseFloat(
-                              offer.min
-                            ).toLocaleString()}\nMax: ${parseFloat(
-                              offer.max
-                            ).toLocaleString()}`}
-                          </Box>
-                        }
-                        subheader={`${offer.token} on ${
-                          chains.find((c) => c.value === offer.chain)?.label
-                        }`}
-                        selected={true}
-                        compact={false}
-                        action={
-                          <Box>
-                            {!isActivating || isActivating !== offer.id ? (
-                              <Tooltip
-                                title={
-                                  offer.isActive ? 'Deactivate' : 'Activate'
-                                }
-                              >
-                                <IconButton
-                                  aria-label={
-                                    offer.isActive ? 'Deactivate' : 'Activate'
-                                  }
-                                  size="small"
-                                  onClick={() => {
-                                    if (offer.isActive) {
-                                      handleDeactivateClick(offer.id);
-                                    } else {
-                                      handleActivateClick(offer.id);
-                                    }
-                                  }}
-                                >
-                                  <PowerSettingsNewIcon
-                                    sx={{ color: 'black' }}
-                                    fontSize="inherit"
-                                  />
-                                </IconButton>
-                              </Tooltip>
-                            ) : (
-                              <span
-                                style={{
-                                  color: '#3f49e1',
-                                  padding: '5px',
-                                }}
-                              >
-                                <CircularProgress color="inherit" size={16} />
-                              </span>
-                            )}
-                          </Box>
-                        }
-                      />
-                    </Card>
-                  ))}
-                <ButtonWrapper style={{ marginBottom: '10px' }}>
-                  <Button
-                    fullWidth
-                    value={user ? 'Create offer' : 'Connect wallet'}
-                    onClick={
-                      user
-                        ? () => {
-                            setView(VIEWS.CREATE);
-                          }
-                        : () => {
-                            connect();
-                          }
-                    }
-                  />
-                </ButtonWrapper>
-              </Box>
-            </>
-          )}
-          {view === VIEWS.CREATE && (
-            <>
-              <HeaderAppBar
-                elevation={0}
-                style={{
-                  paddingLeft: 24,
-                  paddingRight: 24,
-                  paddingBottom: '10px',
-                }}
-              >
+                      offer={offer}
+                      chain={offerChain}
+                      isActivating={isActivating}
+                      onDeactivateClick={handleDeactivateClick}
+                      onActivateClick={handleActivateClick}
+                    />
+                  );
+                })}
+              <DexCardSubmitButton
+                label={user ? 'Create offer' : 'Connect wallet'}
+                onClick={
+                  user
+                    ? () => {
+                        setView(VIEWS.CREATE);
+                      }
+                    : () => {
+                        connect();
+                      }
+                }
+              />
+            </DexCardBody>
+          </>
+        )}
+        {view === VIEWS.CREATE && (
+          <>
+            <DexCardHeader
+              title="Create offer"
+              titleSize={18}
+              titleAlign="center"
+              startAdornment={
                 <IconButton
                   size="medium"
                   edge="start"
@@ -583,241 +410,83 @@ function OffersPage() {
                 >
                   <ArrowBackIcon />
                 </IconButton>
+              }
+              endAdornment={<Box width={28} height={40} />}
+            />
 
-                <Typography
-                  fontSize={18}
-                  align={'center'}
-                  fontWeight="700"
-                  flex={1}
-                  noWrap
-                >
-                  Create offer
-                </Typography>
+            <DexCardBody>
+              <DexSelectChainAndTokenButton
+                onClick={() => {
+                  setView(VIEWS.SELECT_CHAIN);
+                }}
+                title="Blockchain and token"
+                chain={currentChain}
+                token={token}
+                error={errorMessage}
+              />
 
-                <Box width={28} height={40} />
-              </HeaderAppBar>
-              <form
-                spellCheck="false"
-                style={{ paddingLeft: '24px', paddingRight: '24px' }}
-              >
-                <Card
-                  flex={1}
-                  onClick={() => {
-                    setView(VIEWS.SELECT_CHAIN);
+              <Box display="flex" flexDirection="row" gap="16px">
+                <DexTextInput
+                  label="Minimum amount"
+                  onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                    setErrorMessage({
+                      type: '',
+                      text: '',
+                    });
+                    setAmountMin(event.target.value);
                   }}
-                  style={{ borderRadius: '12px' }}
-                >
-                  <CardTitle>Blockchain and token</CardTitle>
-
-                  <SelectTokenCardHeader
-                    style={{ height: 'auto' }}
-                    avatar={
-                      <Badge
-                        overlap="circular"
-                        anchorOrigin={{
-                          vertical: 'bottom',
-                          horizontal: 'right',
-                        }}
-                        badgeContent={
-                          currentChain && token ? (
-                            <Avatar
-                              sx={{
-                                width: '16px',
-                                height: '16px',
-                                border: '2px solid #fff',
-                                background: '#fff',
-                              }}
-                              src={currentChain?.icon}
-                              alt={currentChain?.label}
-                            >
-                              {currentChain?.nativeToken}
-                            </Avatar>
-                          ) : (
-                            <AvatarDefault
-                              width={16}
-                              height={16}
-                              sx={{ border: '2px solid #fff' }}
-                            />
-                          )
-                        }
-                      >
-                        {currentChain && token && token.icon ? (
-                          <Avatar
-                            sx={{ width: '32px', height: '32px' }}
-                            src={token.icon}
-                            alt={token.symbol || token.address}
-                          >
-                            {token.symbol || token.address}
-                          </Avatar>
-                        ) : (
-                          <AvatarDefault width={32} height={32} />
-                        )}
-                      </Badge>
-                    }
-                    title={
-                      token && currentChain
-                        ? token?.symbol || token?.address
-                        : 'Select chain and token'
-                    }
-                    subheader={
-                      token && currentChain ? `on ${currentChain?.label}` : null
-                    }
-                    selected={Boolean(token && currentChain)}
-                    compact={false}
-                  />
-                  {errorMessage.type === 'chain' && !!errorMessage.text && (
-                    <FormHelperText
-                      style={{
-                        paddingLeft: '16px',
-                        paddingRight: '16px',
-                        paddingBottom: '6px',
-                      }}
-                      error={true}
-                    >
-                      {errorMessage.type === 'chain' && !!errorMessage.text
-                        ? errorMessage.text
-                        : ''}
-                    </FormHelperText>
-                  )}
-                </Card>
-
-                <Box display="flex" flexDirection="row" gap="16px">
-                  <Card style={{ borderRadius: '12px', marginTop: '20px' }}>
-                    <CardTitle>Minimum amount</CardTitle>
-                    <FormControl
-                      fullWidth
-                      sx={{ paddingTop: '6px', paddingBottom: '5px' }}
-                    >
-                      <Input
-                        size="small"
-                        autoComplete="off"
-                        autoCorrect="off"
-                        autoCapitalize="off"
-                        spellCheck="false"
-                        value={amountMin}
-                        onChange={(
-                          event: React.ChangeEvent<HTMLInputElement>
-                        ) => {
-                          setErrorMessage({
-                            type: '',
-                            text: '',
-                          });
-                          setAmountMin(event.target.value);
-                        }}
-                        name="amountMin"
-                        placeholder="0"
-                        disabled={false}
-                        style={{ padding: '0px 16px 0px 0' }}
-                      />
-                      <FormHelperText
-                        error={
-                          errorMessage.type === 'amountMin' &&
-                          !!errorMessage.text
-                        }
-                      >
-                        {errorMessage.type === 'amountMin' &&
-                        !!errorMessage.text
-                          ? errorMessage.text
-                          : ''}
-                      </FormHelperText>
-                    </FormControl>
-                  </Card>
-                  <Card style={{ borderRadius: '12px', marginTop: '20px' }}>
-                    <CardTitle>Maximum amount</CardTitle>
-                    <FormControl
-                      fullWidth
-                      sx={{ paddingTop: '6px', paddingBottom: '5px' }}
-                    >
-                      <Input
-                        size="small"
-                        autoComplete="off"
-                        autoCorrect="off"
-                        autoCapitalize="off"
-                        spellCheck="false"
-                        value={amountMax}
-                        onChange={(
-                          event: React.ChangeEvent<HTMLInputElement>
-                        ) => {
-                          setErrorMessage({
-                            type: '',
-                            text: '',
-                          });
-                          setAmountMax(event.target.value);
-                        }}
-                        name="amountMax"
-                        placeholder="0"
-                        disabled={false}
-                        style={{ padding: '0px 16px 0px 0' }}
-                      />
-                      <FormHelperText
-                        error={
-                          errorMessage.type === 'amountMax' &&
-                          !!errorMessage.text
-                        }
-                      >
-                        {errorMessage.type === 'amountMax' &&
-                        !!errorMessage.text
-                          ? errorMessage.text
-                          : ''}
-                      </FormHelperText>
-                    </FormControl>
-                  </Card>
-                </Box>
-              </form>
-              {loading && (
-                <>
-                  <div
-                    style={{
-                      textAlign: 'center',
-                      color: '#3f49e1',
-                      width: '100%',
-                      margin: '20px 0',
-                    }}
-                  >
-                    <CircularProgress color="inherit" />
-                  </div>
-                </>
-              )}
-
-              <ButtonWrapper
-                style={{
-                  paddingLeft: '24px',
-                  paddingRight: '24px',
-                  paddingBottom: '10px',
-                }}
-              >
-                <Button
-                  disabled={loading}
-                  fullWidth
-                  value={
-                    loading
-                      ? 'Waiting transaction'
-                      : user
-                      ? 'Create'
-                      : 'Connect wallet'
-                  }
-                  onClick={
-                    user
-                      ? handleClick
-                      : () => {
-                          connect();
-                        }
-                  }
+                  name="amountMin"
+                  placeholder="0"
+                  disabled={false}
+                  value={amountMin}
+                  error={errorMessage}
                 />
-              </ButtonWrapper>
-            </>
-          )}
+                <DexTextInput
+                  label="Maximum amount"
+                  value={amountMax}
+                  onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                    setErrorMessage({
+                      type: '',
+                      text: '',
+                    });
+                    setAmountMax(event.target.value);
+                  }}
+                  name="amountMax"
+                  placeholder="0"
+                  disabled={false}
+                  error={errorMessage}
+                />
+              </Box>
 
-          {view === VIEWS.SELECT_CHAIN && (
-            <>
-              <HeaderAppBar
-                elevation={0}
-                style={{
-                  paddingLeft: '24px',
-                  paddingRight: '24px',
-                  paddingBottom: '10px',
-                }}
-              >
+              {loading && <DexLoading />}
+              <DexCardSubmitButton
+                label={
+                  loading
+                    ? 'Waiting transaction'
+                    : user
+                    ? 'Create'
+                    : 'Connect wallet'
+                }
+                onClick={
+                  user
+                    ? handleClick
+                    : () => {
+                        connect();
+                      }
+                }
+                disabled={loading}
+              />
+            </DexCardBody>
+          </>
+        )}
+
+        {view === VIEWS.SELECT_CHAIN && (
+          <>
+            <DexCardHeader
+              title="Select chain and token"
+              titleSize={18}
+              titleAlign="center"
+              startAdornment={
                 <IconButton
                   size="medium"
                   edge="start"
@@ -828,176 +497,55 @@ function OffersPage() {
                 >
                   <ArrowBackIcon />
                 </IconButton>
+              }
+              endAdornment={<Box width={28} height={40} />}
+            />
+            <DexChainsList
+              chain={chain}
+              chains={chains}
+              onClick={(blockchain: any) => {
+                setChain(blockchain.value);
+                setToken('');
+              }}
+            />
+            <DexTokenSearch
+              value={searchToken}
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                setSearchToken(event.target.value);
+              }}
+            />
 
-                <Typography
-                  fontSize={18}
-                  align={'center'}
-                  fontWeight="700"
-                  flex={1}
-                  noWrap
-                >
-                  Select chain and token
-                </Typography>
-
-                <Box width={28} height={40} />
-              </HeaderAppBar>
-              <ChainContainer
-                style={{ paddingLeft: '24px', paddingRight: '24px' }}
-              >
-                {chains.map((blockchain: any) => (
-                  <Tooltip
-                    key={blockchain.value}
-                    title={blockchain.label}
-                    placement="top"
-                    enterDelay={400}
-                    arrow
-                  >
-                    <ChainCard
-                      onClick={() => {
-                        setChain(blockchain.value);
-                        setToken('');
-                      }}
-                      variant={
-                        chain === blockchain.value ? 'selected' : 'default'
-                      }
-                      style={{ borderRadius: '12px' }}
-                    >
-                      <Avatar
-                        src={blockchain.icon}
-                        alt={blockchain.label}
-                        sx={{ width: 40, height: 40 }}
-                      >
-                        {blockchain.label}
-                      </Avatar>
-                    </ChainCard>
-                  </Tooltip>
-                ))}
-              </ChainContainer>
-              <Box mt={2} pl="24px" pr="24px">
-                <Card style={{ borderRadius: '12px' }}>
-                  <FormControl
-                    fullWidth
-                    style={{
-                      boxSizing: 'border-box',
-                      padding: '8px 16px 8px 0',
-                    }}
-                  >
-                    <Input
-                      size="small"
-                      placeholder={'Search your token'}
-                      value={searchToken}
-                      onChange={(
-                        event: React.ChangeEvent<HTMLInputElement>
-                      ) => {
-                        setSearchToken(event.target.value);
-                      }}
-                      endAdornment={
-                        <InputAdornment position="end">
-                          <SearchIcon />
-                        </InputAdornment>
-                      }
-                      inputProps={{
-                        inputMode: 'search',
-                      }}
-                      autoComplete="off"
-                    />
-                  </FormControl>
-                </Card>
-              </Box>
-
-              {chain && chainTokens && chainTokens.length > 0 ? (
-                <Box
-                  style={{ height: '350px', overflow: 'auto' }}
-                  mt={2}
-                  pl="24px"
-                  pr="24px"
-                  pb="16px"
-                >
-                  <List disablePadding>
-                    {chainTokens.map((chainToken: any) => (
-                      <ListItem
-                        key={chainToken.id}
-                        disablePadding
-                        style={{
-                          height: `64px`,
-                          //transform: `translateY(${start}px)`,
-                        }}
-                      >
-                        <ListItemButton
-                          onClick={() => {
-                            setToken(chainToken);
-                            setView(VIEWS.CREATE);
-                            setSearchToken('');
-                            setErrorMessage({
-                              type: '',
-                              text: '',
-                            });
-                          }}
-                          dense
-                          style={{ borderRadius: '12px' }}
-                        >
-                          <ListItemAvatar>
-                            <Avatar
-                              sx={{ width: 32, height: 32 }}
-                              src={chainToken.icon}
-                              alt={chainToken.symbol}
-                            >
-                              {chainToken.symbol}
-                            </Avatar>
-                          </ListItemAvatar>
-                          <ListItemText
-                            primary={
-                              <span
-                                style={{ fontWeight: '500', fontSize: '18px' }}
-                              >
-                                {chainToken.symbol}
-                              </span>
-                            }
-                            secondary={chainToken.symbol}
-                          />
-                        </ListItemButton>
-                      </ListItem>
-                    ))}
-                  </List>
-                </Box>
-              ) : (
-                <Box
-                  sx={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    flexDirection: 'column',
-                    flex: 1,
-                    padding: 3,
-                    marginTop: '16px',
-                  }}
-                >
-                  <Typography fontSize={48} lineHeight={1}>
-                    <SearchOffIcon fontSize="inherit" />
-                  </Typography>
-                  <Typography
-                    fontSize={14}
-                    color="text.secondary"
-                    textAlign="center"
-                    mt={2}
-                    px={2}
-                  >
-                    {!currentChain ? (
-                      <>Please, select a chain to see a list of tokens.</>
-                    ) : (
-                      <>
-                        We couldn't find tokens{' '}
-                        {currentChain ? `on ${currentChain?.label} chain` : ''}.
-                        Please try search again or switch the chain.
-                      </>
-                    )}
-                  </Typography>
-                </Box>
-              )}
-            </>
-          )}
-        </Box>
-      </Box>
+            {chain && chainTokens && chainTokens.length > 0 ? (
+              <DexTokensList
+                tokens={chainTokens}
+                onClick={(chainToken: any) => {
+                  setToken(chainToken);
+                  setView(VIEWS.CREATE);
+                  setSearchToken('');
+                  setErrorMessage({
+                    type: '',
+                    text: '',
+                  });
+                }}
+              />
+            ) : (
+              <DexTokensNotFound
+                text={
+                  !currentChain ? (
+                    <>Please, select a chain to see a list of tokens.</>
+                  ) : (
+                    <>
+                      We couldn't find tokens{' '}
+                      {currentChain ? `on ${currentChain?.label} chain` : ''}.
+                      Please try search again or switch the chain.
+                    </>
+                  )
+                }
+              />
+            )}
+          </>
+        )}
+      </DexCard>
     </>
   );
 }

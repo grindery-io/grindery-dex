@@ -4,6 +4,7 @@ import { SCREEN } from '../../constants';
 export const ButtonWrapper = styled.div`
   margin: 10px 0 0;
   text-align: right;
+  padding: 0 24px 10px;
 
   & button {
     background-color: #3f49e1;

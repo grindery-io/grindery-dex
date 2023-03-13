@@ -2,7 +2,8 @@ import styled from 'styled-components';
 import { SCREEN } from '../../constants';
 
 export const ButtonWrapper = styled.div`
-  margin: 10px 0 0;
+  margin: 10px 0px 0px;
+  padding: 0 24px 10px;
   text-align: right;
 
   & button {

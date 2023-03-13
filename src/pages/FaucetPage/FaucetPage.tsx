@@ -1,32 +1,20 @@
 import { useEffect, useState } from 'react';
-import {
-  Avatar,
-  FormHelperText,
-  IconButton,
-  Tooltip,
-  Typography,
-} from '@mui/material';
-import { Button } from 'grindery-ui';
+import { IconButton } from '@mui/material';
 import { useGrinderyNexus } from 'use-grindery-nexus';
-import { CircularProgress } from 'grindery-ui';
-import { ButtonWrapper } from './style';
 import { GRT_CONTRACT_ADDRESS } from '../../constants';
 import Grt from '../../components/grindery/Abi/Grt.json';
 import AlertBox from '../../components/grindery/AlertBox';
-import { Card, CardTitle } from '../../components/Card';
 import { Box } from '@mui/system';
-import {
-  FormControl,
-  Input,
-} from '../../components/SendToWallet/SendToWallet.style';
-import {
-  ChainCard,
-  ChainContainer,
-} from '../../components/ChainSelect/ChainSelect.style';
-import { SelectTokenCardHeader } from '../../components/SelectTokenButton/SelectTokenButton.style';
-import { AvatarDefault } from '../../components/TokenAvatar/TokenAvatar.style';
-import { HeaderAppBar } from '../../components/Header/Header.style';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
+import DexCardHeader from '../../components/grindery/DexCard/DexCardHeader';
+import DexCard from '../../components/grindery/DexCard/DexCard';
+import DexCardBody from '../../components/grindery/DexCard/DexCardBody';
+import DexLoading from '../../components/grindery/DexLoading/DexLoading';
+import DexCardSubmitButton from '../../components/grindery/DexCard/DexCardSubmitButton';
+import DexSelectChainButton from '../../components/grindery/DexSelectChainButton/DexSelectChainButton';
+import DexTextInput from '../../components/grindery/DexTextInput/DexTextInput';
+import DexChainsList from '../../components/grindery/DexChainsList/DexChainsList';
+import { Chain } from '../../types/Chain';
 
 function isNumeric(value: string) {
   return /^-?\d+$/.test(value);
@@ -217,195 +205,82 @@ function FaucetPage() {
 
   return (
     <>
-      <Box style={{ margin: '0 auto auto', maxWidth: '392px' }}>
-        <Box
-          style={{
-            padding: '0px 24px 10px',
-            boxShadow: '0px 8px 32px rgb(0 0 0 / 8%)',
-            borderRadius: '16px',
-            minHeight: '440px',
-            background: '#fff',
-          }}
-        >
-          {view === VIEWS.ROOT && (
-            <>
-              <HeaderAppBar
-                elevation={0}
-                style={{
-                  paddingLeft: 0,
-                  paddingRight: 0,
-                  paddingBottom: '10px',
+      <DexCard>
+        {view === VIEWS.ROOT && (
+          <>
+            <DexCardHeader title="Get GST Tokens" />
+
+            <DexCardBody>
+              <DexSelectChainButton
+                title="Blockchain"
+                onClick={() => {
+                  setView(VIEWS.SELECT_CHAIN);
                 }}
-              >
-                <Typography
-                  fontSize={24}
-                  align={'left'}
-                  fontWeight="700"
-                  flex={1}
-                  noWrap
-                >
-                  Get GST Tokens
-                </Typography>
-              </HeaderAppBar>
+                chain={currentChain}
+              />
 
-              <form spellCheck="false">
-                <Card
-                  flex={1}
-                  onClick={() => {
-                    setView(VIEWS.SELECT_CHAIN);
-                  }}
-                  style={{ borderRadius: '12px' }}
-                >
-                  <CardTitle>Blockchain</CardTitle>
+              <DexTextInput
+                label="Wallet address"
+                value={userAddress || ''}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                  setErrorMessage({
+                    type: '',
+                    text: '',
+                  });
+                  setUserAddress(event.target.value);
+                }}
+                name="userAddress"
+                placeholder="0x"
+                disabled={false}
+                error={errorMessage}
+              />
 
-                  <SelectTokenCardHeader
-                    style={{ height: 'auto' }}
-                    avatar={
-                      currentChain ? (
-                        <Avatar
-                          src={currentChain?.icon}
-                          alt={currentChain?.label}
-                        >
-                          {currentChain?.nativeToken}
-                        </Avatar>
-                      ) : (
-                        <AvatarDefault width={32} height={32} />
-                      )
-                    }
-                    title={currentChain?.label || 'Select blockchain'}
-                    subheader={null}
-                    selected={!!currentChain}
-                    compact={false}
-                  />
-                </Card>
+              <DexTextInput
+                label="Amount"
+                value={amountGRT}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                  setErrorMessage({
+                    type: '',
+                    text: '',
+                  });
+                  setAmountGRT(event.target.value);
+                }}
+                name="amountGRT"
+                placeholder="Enter amount of tokens"
+                disabled={false}
+                error={errorMessage}
+              />
 
-                <Card style={{ borderRadius: '12px', marginTop: '20px' }}>
-                  <CardTitle>Wallet address</CardTitle>
-                  <FormControl
-                    fullWidth
-                    sx={{ paddingTop: '6px', paddingBottom: '5px' }}
-                  >
-                    <Input
-                      size="small"
-                      autoComplete="off"
-                      autoCorrect="off"
-                      autoCapitalize="off"
-                      spellCheck="false"
-                      value={userAddress}
-                      onChange={(
-                        event: React.ChangeEvent<HTMLInputElement>
-                      ) => {
-                        setErrorMessage({
-                          type: '',
-                          text: '',
-                        });
-                        setUserAddress(event.target.value);
-                      }}
-                      name="userAddress"
-                      placeholder="0x"
-                      disabled={false}
-                      style={{ padding: '0px 16px 0px 0' }}
-                    />
-                    <FormHelperText
-                      error={
-                        errorMessage.type === 'userAddress' &&
-                        !!errorMessage.text
-                      }
-                    >
-                      {errorMessage.type === 'userAddress' &&
-                      !!errorMessage.text
-                        ? errorMessage.text
-                        : ''}
-                    </FormHelperText>
-                  </FormControl>
-                </Card>
-
-                <Card style={{ borderRadius: '12px', marginTop: '20px' }}>
-                  <CardTitle>Amount</CardTitle>
-                  <FormControl
-                    fullWidth
-                    sx={{ paddingTop: '6px', paddingBottom: '5px' }}
-                  >
-                    <Input
-                      size="small"
-                      autoComplete="off"
-                      autoCorrect="off"
-                      autoCapitalize="off"
-                      spellCheck="false"
-                      value={amountGRT}
-                      onChange={(
-                        event: React.ChangeEvent<HTMLInputElement>
-                      ) => {
-                        setErrorMessage({
-                          type: '',
-                          text: '',
-                        });
-                        setAmountGRT(event.target.value);
-                      }}
-                      name="amountGRT"
-                      placeholder="Enter amount of tokens"
-                      disabled={false}
-                    />
-                    <FormHelperText
-                      error={
-                        errorMessage.type === 'amountGRT' && !!errorMessage.text
-                      }
-                    >
-                      {errorMessage.type === 'amountGRT' && !!errorMessage.text
-                        ? errorMessage.text
-                        : ''}
-                    </FormHelperText>
-                  </FormControl>
-                </Card>
-              </form>
-              {loading && (
-                <>
-                  <div
-                    style={{
-                      textAlign: 'center',
-                      color: '#3f49e1',
-                      width: '100%',
-                      margin: '20px 0',
-                    }}
-                  >
-                    <CircularProgress color="inherit" />
-                  </div>
-                </>
-              )}
+              {loading && <DexLoading />}
               {trxHash && <AlertBox trxHash={trxHash} isError={error} />}
 
-              <ButtonWrapper>
-                <Button
-                  disabled={loading}
-                  fullWidth
-                  value={
-                    loading
-                      ? 'Waiting transaction'
-                      : user
-                      ? 'Get GST'
-                      : 'Connect wallet'
-                  }
-                  onClick={
-                    user
-                      ? handleClick
-                      : () => {
-                          connect();
-                        }
-                  }
-                />
-              </ButtonWrapper>
-            </>
-          )}
-          {view === VIEWS.SELECT_CHAIN && (
-            <>
-              <HeaderAppBar
-                elevation={0}
-                style={{
-                  paddingLeft: 0,
-                  paddingRight: 0,
-                  paddingBottom: '10px',
-                }}
-              >
+              <DexCardSubmitButton
+                disabled={loading}
+                label={
+                  loading
+                    ? 'Waiting transaction'
+                    : user
+                    ? 'Get GST'
+                    : 'Connect wallet'
+                }
+                onClick={
+                  user
+                    ? handleClick
+                    : () => {
+                        connect();
+                      }
+                }
+              />
+            </DexCardBody>
+          </>
+        )}
+        {view === VIEWS.SELECT_CHAIN && (
+          <>
+            <DexCardHeader
+              title="Select blockchain"
+              titleSize={18}
+              titleAlign="center"
+              startAdornment={
                 <IconButton
                   size="medium"
                   edge="start"
@@ -415,53 +290,22 @@ function FaucetPage() {
                 >
                   <ArrowBackIcon />
                 </IconButton>
-
-                <Typography
-                  fontSize={18}
-                  align={'center'}
-                  fontWeight="700"
-                  flex={1}
-                  noWrap
-                >
-                  Select blockchain
-                </Typography>
-
-                <Box width={28} height={40} />
-              </HeaderAppBar>
-              <ChainContainer>
-                {chains.map((blockchain: any) => (
-                  <Tooltip
-                    key={blockchain.value}
-                    title={blockchain.label}
-                    placement="top"
-                    enterDelay={400}
-                    arrow
-                  >
-                    <ChainCard
-                      onClick={() => {
-                        setChain(blockchain.value);
-                        setView(VIEWS.ROOT);
-                      }}
-                      variant={
-                        chain === blockchain.value ? 'selected' : 'default'
-                      }
-                      style={{ borderRadius: '12px' }}
-                    >
-                      <Avatar
-                        src={blockchain.icon}
-                        alt={blockchain.value}
-                        sx={{ width: 40, height: 40 }}
-                      >
-                        {blockchain.label}
-                      </Avatar>
-                    </ChainCard>
-                  </Tooltip>
-                ))}
-              </ChainContainer>
-            </>
-          )}
-        </Box>
-      </Box>
+              }
+              endAdornment={<Box width={28} height={40} />}
+            />
+            <Box pb="20px">
+              <DexChainsList
+                chains={chains}
+                chain={chain}
+                onClick={(blockchain: Chain) => {
+                  setChain(blockchain.value);
+                  setView(VIEWS.ROOT);
+                }}
+              />
+            </Box>
+          </>
+        )}
+      </DexCard>
     </>
   );
 }
