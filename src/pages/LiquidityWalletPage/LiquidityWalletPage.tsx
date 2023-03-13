@@ -8,7 +8,6 @@ import {
 } from '@mui/icons-material';
 import DexCard from '../../components/grindery/DexCard/DexCard';
 import DexCardHeader from '../../components/grindery/DexCard/DexCardHeader';
-import DexStake from '../../components/grindery/DexStake/DexStake';
 import DexCardSubmitButton from '../../components/grindery/DexCard/DexCardSubmitButton';
 import DexCardBody from '../../components/grindery/DexCard/DexCardBody';
 import DexLoading from '../../components/grindery/DexLoading/DexLoading';
@@ -16,7 +15,6 @@ import DexTextInput from '../../components/grindery/DexTextInput/DexTextInput';
 import DexSelectChainButton from '../../components/grindery/DexSelectChainButton/DexSelectChainButton';
 import DexChainsList from '../../components/grindery/DexChainsList/DexChainsList';
 import { Chain } from '../../types/Chain';
-import { Stake } from '../../types/Stake';
 import { LiquidityWallet } from '../../types/LiquidityWallet';
 import DexLiquidityWallet from '../../components/grindery/DexLiquidityWallet/DexLiquidityWallet';
 

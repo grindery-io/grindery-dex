@@ -18,9 +18,6 @@ import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import AppContextProvider from './context/AppContext';
 import EarlyAccessModal from './components/grindery/EarlyAccessModal';
 import AppHeader from './components/grindery/AppHeader';
-import FaucetPage from './pages/FaucetPage/FaucetPage';
-import StakingPage from './pages/StakingPage/StakingPage';
-import OffersPage from './pages/OffersPage/OffersPage';
 import DexPageContainer from './components/grindery/DexPageContainer/DexPageContainer';
 import { dexPages } from './components/pages/dexPages';
 

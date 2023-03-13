@@ -1,12 +1,11 @@
+import React from 'react';
 import { Avatar, IconButton, Tooltip } from '@mui/material';
 import { Box } from '@mui/system';
-import React from 'react';
 import { Card } from '../../Card';
 import { SelectTokenCardHeader } from '../../SelectTokenButton/SelectTokenButton.style';
 import { AvatarDefault } from '../../TokenAvatar';
 import { StakeBadge } from './DexLiquidityWallet.style';
 import { SaveAlt as SaveAltIcon, Add as AddIcon } from '@mui/icons-material';
-import { Stake } from '../../../types/Stake';
 import { LiquidityWallet } from '../../../types/LiquidityWallet';
 
 type Props = {
