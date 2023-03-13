@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { IconButton, Tooltip } from '@mui/material';
+import { IconButton, Tooltip, Button as MuiButton } from '@mui/material';
 import { useGrinderyNexus } from 'use-grindery-nexus';
 import { Box } from '@mui/system';
 import {
@@ -8,18 +8,17 @@ import {
 } from '@mui/icons-material';
 import DexCard from '../../components/grindery/DexCard/DexCard';
 import DexCardHeader from '../../components/grindery/DexCard/DexCardHeader';
-import DexOffer from '../../components/grindery/DexOffer/DexOffer';
+import DexStake from '../../components/grindery/DexStake/DexStake';
 import DexCardSubmitButton from '../../components/grindery/DexCard/DexCardSubmitButton';
 import DexCardBody from '../../components/grindery/DexCard/DexCardBody';
-import DexSelectChainAndTokenButton from '../../components/grindery/DexSelectChainAndTokenButton/DexSelectChainAndTokenButton';
-import DexTextInput from '../../components/grindery/DexTextInput/DexTextInput';
 import DexLoading from '../../components/grindery/DexLoading/DexLoading';
+import DexTextInput from '../../components/grindery/DexTextInput/DexTextInput';
+import DexSelectChainButton from '../../components/grindery/DexSelectChainButton/DexSelectChainButton';
 import DexChainsList from '../../components/grindery/DexChainsList/DexChainsList';
-import DexTokenSearch from '../../components/grindery/DexTokenSearch/DexTokenSearch';
-import DexTokensList from '../../components/grindery/DexTokensList/DexTokensList';
-import DexTokensNotFound from '../../components/grindery/DexTokensNotFound/DexTokensNotFound';
-import { Offer } from '../../types/Offer';
 import { Chain } from '../../types/Chain';
+import { Stake } from '../../types/Stake';
+import { LiquidityWallet } from '../../types/LiquidityWallet';
+import DexLiquidityWallet from '../../components/grindery/DexLiquidityWallet/DexLiquidityWallet';
 
 function isNumeric(value: string) {
   return /^-?\d+$/.test(value);
@@ -29,20 +28,19 @@ const VIEWS = {
   ROOT: 'root',
   CREATE: 'create',
   SELECT_CHAIN: 'select_chain',
+  ADD: 'add',
+  WITHDRAW: 'withdraw',
 };
 
-function OffersPage() {
+function LiquidityWalletPage() {
   const { user, connect, chain: selectedChain } = useGrinderyNexus();
-  const [amountMin, setAmountMin] = useState<string>('');
-  const [amountMax, setAmountMax] = useState<string>('');
+  const [amountAdd, setAmountAdd] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState({ type: '', text: '' });
   const [chain, setChain] = useState(selectedChain || '');
   const [view, setView] = useState(VIEWS.ROOT);
-  const [chains, setChains] = useState<any[]>([]);
-  const [token, setToken] = useState<any>('');
-  const [searchToken, setSearchToken] = useState('');
-  const [isActivating, setIsActivating] = useState('');
+  const [chains, setChains] = useState<Chain[]>([]);
+  const [selectedWallet, setSelectedWallet] = useState('');
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const currentChain: Chain | null =
     chain && chains.find((c) => c.value === chain)
@@ -59,36 +57,13 @@ function OffersPage() {
         }
       : null;
 
-  const [offers, setOffers] = useState<Offer[]>([
+  const [wallets, setWallets] = useState<LiquidityWallet[]>([
     {
       id: '1',
       chain: 'eip155:5',
-      min: '200',
-      max: '10000',
-      token: 'GTH',
-      tokenAddress: '',
-      tokenIcon:
-        'https://explorer.bitquery.io/packs/media/icon/eth-093b3f87.svg',
-      isActive: true,
-    },
-    {
-      id: '2',
-      chain: 'eip155:97',
-      min: '10',
-      max: '1000',
-      token: 'BNB',
-      tokenAddress: '',
-      tokenIcon: 'https://bscscan.com/token/images/binance_32.png',
-      isActive: true,
+      balance: '2000',
     },
   ]);
-
-  const chainTokens = (
-    (chain && chains.find((c) => c.value === chain)?.tokens) ||
-    []
-  ).filter(
-    (t: any) => !searchToken || t.symbol.toLowerCase().includes(searchToken)
-  );
 
   const getChains = async () => {
     setChains([
@@ -106,28 +81,6 @@ function OffersPage() {
           'https://data-seed-prebsc-1-s2.binance.org:8545',
           'https://data-seed-prebsc-2-s2.binance.org:8545',
         ],
-        tokens: [
-          {
-            id: 1,
-            address: '0x0',
-            symbol: 'BNB',
-
-            icon: 'https://bscscan.com/token/images/binance_32.png',
-          },
-          {
-            id: 2,
-            address: '0x8965349fb649A33a30cbFDa057D8eC2C48AbE2A2',
-            symbol: 'USDC',
-
-            icon: 'https://bscscan.com/token/images/usdcgno_32.png',
-          },
-          {
-            id: 3,
-            address: '0x2170ed0880ac9a755fd29b2688956bd959f933f8',
-            symbol: 'ETH',
-            icon: 'https://bscscan.com/token/images/ethereum_32.png',
-          },
-        ],
       },
       {
         value: 'eip155:5',
@@ -142,26 +95,6 @@ function OffersPage() {
           'https://rpc.goerli.mudit.blog',
           'https://endpoints.omniatech.io/v1/eth/goerli/public',
         ],
-        tokens: [
-          {
-            id: 4,
-            address: '0x0',
-            symbol: 'GTH',
-            icon: 'https://explorer.bitquery.io/packs/media/icon/eth-093b3f87.svg',
-          },
-          {
-            id: 5,
-            address: '0xFfb99f4A02712C909d8F7cC44e67C87Ea1E71E83',
-            symbol: 'ETH',
-            icon: 'https://bscscan.com/token/images/ethereum_32.png',
-          },
-          {
-            id: 6,
-            address: '0xfb501A48aFFC39aa4b4C83A025D4F0b5C1ca4A6C',
-            symbol: 'BNB',
-            icon: 'https://bscscan.com/token/images/binance_32.png',
-          },
-        ],
       },
       {
         value: 'eip155:338',
@@ -169,26 +102,6 @@ function OffersPage() {
         icon: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAYAAACM/rhtAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAVFSURBVHgBxVhLbBtVFD3zSeqiNJhSiFV+TkRFC3GULPgUgeSs6IJFkBBUYkHMCla2i7NEtVcIKWmcHRuUdAMVAtXsYJWphEJ3SUlAUQXKSHyatBWYEmiaeOb1vvFvPm/GYztVj/I08bzfmXvvu58H7BeiySgOPj+Lofc2kPhwAvsEBfuBgyfTMM0SZDmJ/lgUPZHTGDgZx+EXr+Dm5TK6gIRu0PdKEnLPZ2CVoca72Akg0m/fIQ+5MoeVYkdEOyMYTcbBME8t6ekbeIYIHnJvowNGAavnFtAm2iPI7QxqmlT5EUxDbB6PHgMO9PksQET39saxXtSx7wQPv5YGWJ7TDBx3ZCiAYB1sAXsk0RBEWx+SI6eSeODYPCTpfUhyhBqEDbIOWXoDD8cKYNJD9HLUf1HqU+RJxF6OYGvpUtD2/hKMnSI7i3xCB+Ct5jBWm2J7MqkMxubw+NNFx0EYzcRhKIs0Lo5ABNunl2B0IooI0rR3hnqD1SkrC/jfyKJc8j+hiTOTtM3Z1kShYa+ScqvdSfCJt0/D2PvYuRiDR4KMFmP01ZslDWEwmomiovIPPtt6sNM+nTbY/9wq2VPUZlf0V3tW3+lQerP448ssttd1z9pxInL01eO4sbTpeL95eQfXlzQcfeF8KPuU5X+s8dWd7X2Ks8n1p1omcgX07I7ht88XhOuOTKVxSN2AwpYp1M3jONmgGyskldWZSdLAOElKRwg4CcqKtylqCYo5ht8v5KELbG04l8Tw1DIdlCIaLkiaRA+RHcmJVbo2rRHRQcBMtSLqIqh6m9SbgX7BuwiXUCK3SHZFjYlVxijMJaY2qgdFgOrJvdQGwbrk5Ob/bnA745LpUZfpV9LFSKd23vUuTgvNW1IWqb0FfAiqNoIR54w+ddGSjCOiMPKFKEAxxiwbUyqDHtVxKavqvHWi24DqJGj/ycQzJCnq6GPSHNRK3uGkVywXMdjwgdyZA1nL9tqEi6CCWnRoBoyI6T+bR5C16Yxvf9XGFtAFnASlms3V/bLEyfYGTJe6SkbDQCBBO4iggfsKlwTdobmu53sI0xTs24SK+w3TEBBsCqU7ghJ7quWYZzOjMFH2TU6ZYeNT11iToIyuQCHNihSCMrPq0GcpVC4Hhj0uQa5mq9n+75ggM79xvYgT0YuOBKGeOPCcsjGMnPsIRRO3o2YVImRvRvXZMcG1mYw4yNcShETub2fi0CBYgEwFk7v8rBg1UkaTnE2Cndlg3QGPnMmQU0+7smU3MY0iTaoWXbxg5oOOnNh6144NqrLmm438eK5I8XfcmyBYu+hW3rc2PS4kx0uLJ9+h2tqYsA6KjwSd5zuRC3B6Uolq2qzvaeRFUkW9SCc7DlMq4KfponAcJ9YXSZNr4fYpThwYK1j5Z3sEG7ODa1p+CPyuOWJv0lUJpV4S4giESWXFV9YHOmNb2JpBUSYw8BLVDT+seLp5/eHGYxOj6DvxhXVPAzNKdgdhg1km9X6Aa19/2thNyCF0qchrWvra1ZmSsJtflRzo5+tkgtchRy5R2raDoruEDb76CE1UoPZHXqfT7U5shdDImaeohNVFna3vZqo3BHka+m7LsVyFm79cgbEz2/KjJJB5sCxufqsFDwuLKlG+cfDt6Y1fgd3//PuZpc4C/vquiBBo/36wldqvXwXubPtMJjuDkUdZC53odn7DOpzLk8/jUcRpY1vrwM6/7l003JFS2NF0tInuroBF9nntZyJ4q7Y6nXLGUtj+XkOH6I5gHfartj9Xgdu3ypY6e3uL7agT94xgHdw+t67GsbvdNbE67gLGASCUUYAwaQAAAABJRU5ErkJggg==',
         token: 'TCRO',
         rpc: ['https://evm-t3.cronos.org'],
-        tokens: [
-          {
-            id: 7,
-            address: '0x0',
-            symbol: 'TCRO',
-            icon: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAYAAACM/rhtAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAVFSURBVHgBxVhLbBtVFD3zSeqiNJhSiFV+TkRFC3GULPgUgeSs6IJFkBBUYkHMCla2i7NEtVcIKWmcHRuUdAMVAtXsYJWphEJ3SUlAUQXKSHyatBWYEmiaeOb1vvFvPm/GYztVj/I08bzfmXvvu58H7BeiySgOPj+Lofc2kPhwAvsEBfuBgyfTMM0SZDmJ/lgUPZHTGDgZx+EXr+Dm5TK6gIRu0PdKEnLPZ2CVoca72Akg0m/fIQ+5MoeVYkdEOyMYTcbBME8t6ekbeIYIHnJvowNGAavnFtAm2iPI7QxqmlT5EUxDbB6PHgMO9PksQET39saxXtSx7wQPv5YGWJ7TDBx3ZCiAYB1sAXsk0RBEWx+SI6eSeODYPCTpfUhyhBqEDbIOWXoDD8cKYNJD9HLUf1HqU+RJxF6OYGvpUtD2/hKMnSI7i3xCB+Ct5jBWm2J7MqkMxubw+NNFx0EYzcRhKIs0Lo5ABNunl2B0IooI0rR3hnqD1SkrC/jfyKJc8j+hiTOTtM3Z1kShYa+ScqvdSfCJt0/D2PvYuRiDR4KMFmP01ZslDWEwmomiovIPPtt6sNM+nTbY/9wq2VPUZlf0V3tW3+lQerP448ssttd1z9pxInL01eO4sbTpeL95eQfXlzQcfeF8KPuU5X+s8dWd7X2Ks8n1p1omcgX07I7ht88XhOuOTKVxSN2AwpYp1M3jONmgGyskldWZSdLAOElKRwg4CcqKtylqCYo5ht8v5KELbG04l8Tw1DIdlCIaLkiaRA+RHcmJVbo2rRHRQcBMtSLqIqh6m9SbgX7BuwiXUCK3SHZFjYlVxijMJaY2qgdFgOrJvdQGwbrk5Ob/bnA745LpUZfpV9LFSKd23vUuTgvNW1IWqb0FfAiqNoIR54w+ddGSjCOiMPKFKEAxxiwbUyqDHtVxKavqvHWi24DqJGj/ycQzJCnq6GPSHNRK3uGkVywXMdjwgdyZA1nL9tqEi6CCWnRoBoyI6T+bR5C16Yxvf9XGFtAFnASlms3V/bLEyfYGTJe6SkbDQCBBO4iggfsKlwTdobmu53sI0xTs24SK+w3TEBBsCqU7ghJ7quWYZzOjMFH2TU6ZYeNT11iToIyuQCHNihSCMrPq0GcpVC4Hhj0uQa5mq9n+75ggM79xvYgT0YuOBKGeOPCcsjGMnPsIRRO3o2YVImRvRvXZMcG1mYw4yNcShETub2fi0CBYgEwFk7v8rBg1UkaTnE2Cndlg3QGPnMmQU0+7smU3MY0iTaoWXbxg5oOOnNh6144NqrLmm438eK5I8XfcmyBYu+hW3rc2PS4kx0uLJ9+h2tqYsA6KjwSd5zuRC3B6Uolq2qzvaeRFUkW9SCc7DlMq4KfponAcJ9YXSZNr4fYpThwYK1j5Z3sEG7ODa1p+CPyuOWJv0lUJpV4S4giESWXFV9YHOmNb2JpBUSYw8BLVDT+seLp5/eHGYxOj6DvxhXVPAzNKdgdhg1km9X6Aa19/2thNyCF0qchrWvra1ZmSsJtflRzo5+tkgtchRy5R2raDoruEDb76CE1UoPZHXqfT7U5shdDImaeohNVFna3vZqo3BHka+m7LsVyFm79cgbEz2/KjJJB5sCxufqsFDwuLKlG+cfDt6Y1fgd3//PuZpc4C/vquiBBo/36wldqvXwXubPtMJjuDkUdZC53odn7DOpzLk8/jUcRpY1vrwM6/7l003JFS2NF0tInuroBF9nntZyJ4q7Y6nXLGUtj+XkOH6I5gHfartj9Xgdu3ypY6e3uL7agT94xgHdw+t67GsbvdNbE67gLGASCUUYAwaQAAAABJRU5ErkJggg==',
-          },
-          {
-            id: 8,
-            address: '0xc21223249CA28397B4B6541dfFaEcC539BfF0c59',
-            symbol: 'USDC',
-            icon: 'https://bscscan.com/token/images/usdcgno_32.png',
-          },
-          {
-            id: 9,
-            address: '0xF2001B145b43032AAF5Ee2884e456CCd805F677D',
-            symbol: 'DAI',
-            icon: 'https://cronoscan.com/token/images/MCDDai_32.png',
-          },
-        ],
       },
     ]);
   };
@@ -198,96 +111,146 @@ function OffersPage() {
       type: '',
       text: '',
     });
-    if (!chain || !token) {
+
+    if (!chain) {
       setErrorMessage({
         type: 'chain',
-        text: 'Chain and token are required',
+        text: 'Blockchain is required',
       });
       return;
     }
-    if (!amountMin) {
+    if (
+      chain &&
+      wallets.map((wallet: LiquidityWallet) => wallet.chain).includes(chain)
+    ) {
       setErrorMessage({
-        type: 'amountMin',
-        text: 'Min amount is required',
+        type: 'chain',
+        text: `You already have wallet for ${currentChain?.label} chain. Please, select another.`,
       });
       return;
     }
-    if (!isNumeric(amountMin)) {
+    setLoading(true);
+    setTimeout(() => {
+      setWallets([
+        {
+          id:
+            wallets.length > 0
+              ? (parseFloat(wallets[wallets.length - 1].id) + 1).toString()
+              : '1',
+          chain: chain,
+          balance: '0',
+          new: true,
+        },
+        ...[...wallets],
+      ]);
+      setView(VIEWS.ROOT);
+      setLoading(false);
+    }, 1500);
+  };
+
+  const handleWithdrawClick = async () => {
+    setErrorMessage({
+      type: '',
+      text: '',
+    });
+
+    if (!amountAdd) {
       setErrorMessage({
-        type: 'amountMin',
+        type: 'amountAdd',
+        text: 'Amount is required',
+      });
+      return;
+    }
+    if (!isNumeric(amountAdd)) {
+      setErrorMessage({
+        type: 'amountAdd',
         text: 'Must be a number',
       });
       return;
     }
-    if (!amountMax) {
+    if (
+      parseFloat(amountAdd) >
+      parseFloat(
+        wallets.find((wallet: LiquidityWallet) => selectedWallet === wallet.id)
+          ?.balance || '0'
+      )
+    ) {
       setErrorMessage({
-        type: 'amountMax',
-        text: 'Max amount is required',
+        type: 'amountAdd',
+        text: `You can withdraw maximum ${
+          wallets.find(
+            (wallet: LiquidityWallet) => selectedWallet === wallet.id
+          )?.balance
+        } tokens`,
       });
       return;
     }
-    if (!isNumeric(amountMax)) {
+    setLoading(true);
+    setTimeout(() => {
+      setWallets((_wallets) => [
+        ..._wallets.map((wallet: LiquidityWallet) => {
+          if (wallet.id === selectedWallet) {
+            return {
+              ...wallet,
+              balance: (
+                parseFloat(wallet.balance) - parseFloat(amountAdd)
+              ).toString(),
+              updated: true,
+            };
+          } else {
+            return wallet;
+          }
+        }),
+      ]);
+      setView(VIEWS.ROOT);
+      setAmountAdd('');
+      setSelectedWallet('');
+      setLoading(false);
+    }, 1500);
+  };
+
+  const handleAddClick = async () => {
+    setErrorMessage({
+      type: '',
+      text: '',
+    });
+
+    if (!amountAdd) {
       setErrorMessage({
-        type: 'amountMax',
+        type: 'amountAdd',
+        text: 'Amount is required',
+      });
+      return;
+    }
+    if (!isNumeric(amountAdd)) {
+      setErrorMessage({
+        type: 'amountAdd',
         text: 'Must be a number',
-      });
-      return;
-    }
-    if (parseFloat(amountMax) <= parseFloat(amountMin)) {
-      setErrorMessage({
-        type: 'amountMax',
-        text: 'Must be greater than min',
       });
       return;
     }
 
     setLoading(true);
     setTimeout(() => {
-      setOffers([
-        {
-          id: (parseFloat(offers[offers.length - 1].id) + 1).toString(),
-          chain: currentChain?.value || '',
-          min: amountMin,
-          max: amountMax,
-          token: token.symbol || '',
-          tokenAddress: token.address || '',
-          tokenIcon: token.icon || '',
-          isActive: true,
-        },
-        ...offers,
+      setWallets((_wallets) => [
+        ..._wallets.map((wallet: LiquidityWallet) => {
+          if (wallet.id === selectedWallet) {
+            return {
+              ...wallet,
+              balance: (
+                parseFloat(wallet.balance) + parseFloat(amountAdd)
+              ).toString(),
+              updated: true,
+            };
+          } else {
+            return wallet;
+          }
+        }),
       ]);
       setView(VIEWS.ROOT);
-      setAmountMin('');
-      setAmountMax('');
-      setToken('');
-      setSearchToken('');
+      setAmountAdd('');
+      setSelectedWallet('');
       setLoading(false);
-    }, 1500);
-  };
-
-  const handleDeactivateClick = async (offerId: string) => {
-    setIsActivating(offerId);
-    setTimeout(() => {
-      setOffers([
-        ...offers.map((offer) => ({
-          ...offer,
-          isActive: offerId === offer.id ? false : offer.isActive,
-        })),
-      ]);
-      setIsActivating('');
-    }, 1500);
-  };
-
-  const handleActivateClick = async (offerId: string) => {
-    setIsActivating(offerId);
-    setTimeout(() => {
-      setOffers([
-        ...offers.map((offer) => ({
-          ...offer,
-          isActive: offerId === offer.id ? true : offer.isActive,
-        })),
-      ]);
-      setIsActivating('');
     }, 1500);
   };
 
@@ -325,10 +288,10 @@ function OffersPage() {
         {view === VIEWS.ROOT && (
           <>
             <DexCardHeader
-              title="Offers"
+              title="Liquidity wallets"
               endAdornment={
-                user ? (
-                  <Tooltip title="Create">
+                user && wallets.length > 0 && wallets.length < chains.length ? (
+                  <Tooltip title="Create wallet">
                     <IconButton
                       size="medium"
                       edge="end"
@@ -342,49 +305,57 @@ function OffersPage() {
                 ) : null
               }
             />
-
-            <DexCardBody maxHeight="540px">
-              {user &&
-                offers.map((offer: Offer) => {
-                  const offerChain = {
-                    label:
-                      chains.find((c) => c.value === offer.chain)?.label || '',
-                    icon:
-                      chains.find((c) => c.value === offer.chain)?.icon || '',
-                    token:
-                      chains.find((c) => c.value === offer.chain)
-                        ?.nativeToken || '',
-                  };
-                  return (
-                    <DexOffer
-                      key={offer.id}
-                      offer={offer}
-                      chain={offerChain}
-                      isActivating={isActivating}
-                      onDeactivateClick={handleDeactivateClick}
-                      onActivateClick={handleActivateClick}
-                    />
-                  );
-                })}
-              <DexCardSubmitButton
-                label={user ? 'Create offer' : 'Connect wallet'}
-                onClick={
-                  user
-                    ? () => {
-                        setView(VIEWS.CREATE);
-                      }
-                    : () => {
-                        connect();
-                      }
-                }
-              />
+            <DexCardBody>
+              <>
+                {user &&
+                  wallets.map((wallet: LiquidityWallet) => {
+                    const walletChain = {
+                      icon: chains.find((c) => c.value === wallet.chain)?.icon,
+                      label: chains.find((c) => c.value === wallet.chain)
+                        ?.label,
+                      nativeToken: chains.find((c) => c.value === wallet.chain)
+                        ?.nativeToken,
+                    };
+                    return (
+                      <DexLiquidityWallet
+                        key={wallet.id}
+                        wallet={wallet}
+                        walletChain={walletChain}
+                        onWithdrawClick={(w: LiquidityWallet) => {
+                          setSelectedWallet(w.id);
+                          setView(VIEWS.WITHDRAW);
+                        }}
+                        onAddClick={(w: LiquidityWallet) => {
+                          setSelectedWallet(w.id);
+                          setView(VIEWS.ADD);
+                        }}
+                      />
+                    );
+                  })}
+                {wallets.length < chains.length ? (
+                  <DexCardSubmitButton
+                    label={user ? 'Create wallet' : 'Connect wallet'}
+                    onClick={
+                      user
+                        ? () => {
+                            setView(VIEWS.CREATE);
+                          }
+                        : () => {
+                            connect();
+                          }
+                    }
+                  />
+                ) : (
+                  <Box pb="20px"></Box>
+                )}
+              </>
             </DexCardBody>
           </>
         )}
         {view === VIEWS.CREATE && (
           <>
             <DexCardHeader
-              title="Create offer"
+              title="Create wallet"
               titleSize={18}
               titleAlign="center"
               startAdornment={
@@ -393,8 +364,7 @@ function OffersPage() {
                   edge="start"
                   onClick={() => {
                     setView(VIEWS.ROOT);
-                    setAmountMin('');
-                    setAmountMax('');
+                    setAmountAdd('');
                   }}
                 >
                   <ArrowBackIcon />
@@ -404,56 +374,27 @@ function OffersPage() {
             />
 
             <DexCardBody>
-              <DexSelectChainAndTokenButton
+              <DexSelectChainButton
+                title="Blockchain"
+                chain={currentChain}
                 onClick={() => {
+                  setErrorMessage({
+                    type: '',
+                    text: '',
+                  });
                   setView(VIEWS.SELECT_CHAIN);
                 }}
-                title="Blockchain and token"
-                chain={currentChain}
-                token={token}
                 error={errorMessage}
               />
 
-              <Box display="flex" flexDirection="row" gap="16px">
-                <DexTextInput
-                  label="Minimum amount"
-                  onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                    setErrorMessage({
-                      type: '',
-                      text: '',
-                    });
-                    setAmountMin(event.target.value);
-                  }}
-                  name="amountMin"
-                  placeholder="0"
-                  disabled={false}
-                  value={amountMin}
-                  error={errorMessage}
-                />
-                <DexTextInput
-                  label="Maximum amount"
-                  value={amountMax}
-                  onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                    setErrorMessage({
-                      type: '',
-                      text: '',
-                    });
-                    setAmountMax(event.target.value);
-                  }}
-                  name="amountMax"
-                  placeholder="0"
-                  disabled={false}
-                  error={errorMessage}
-                />
-              </Box>
-
               {loading && <DexLoading />}
               <DexCardSubmitButton
+                disabled={loading}
                 label={
                   loading
                     ? 'Waiting transaction'
                     : user
-                    ? 'Create'
+                    ? 'Create wallet'
                     : 'Connect wallet'
                 }
                 onClick={
@@ -463,16 +404,171 @@ function OffersPage() {
                         connect();
                       }
                 }
-                disabled={loading}
               />
             </DexCardBody>
           </>
         )}
+        {view === VIEWS.WITHDRAW && (
+          <>
+            <DexCardHeader
+              title="Withdraw"
+              titleSize={18}
+              titleAlign="center"
+              startAdornment={
+                <IconButton
+                  size="medium"
+                  edge="start"
+                  onClick={() => {
+                    setView(VIEWS.ROOT);
+                    setAmountAdd('');
+                    setSelectedWallet('');
+                  }}
+                >
+                  <ArrowBackIcon />
+                </IconButton>
+              }
+              endAdornment={<Box width={28} height={40} />}
+            />
 
+            <DexCardBody>
+              <DexTextInput
+                label="Amount"
+                value={amountAdd}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                  setErrorMessage({
+                    type: '',
+                    text: '',
+                  });
+                  setAmountAdd(event.target.value);
+                }}
+                name="amountAdd"
+                placeholder="Enter amount of tokens"
+                disabled={false}
+                endAdornment={
+                  <Box
+                    sx={{
+                      '& button': {
+                        fontSize: '14px',
+                        padding: '4px 8px 5px',
+                        display: 'inline-block',
+                        width: 'auto',
+                        margin: '0 16px 0 0',
+                        background: 'rgba(63, 73, 225, 0.08)',
+                        color: 'rgb(63, 73, 225)',
+                        borderRadius: '8px',
+                        minWidth: 0,
+                        '&:hover': {
+                          background: 'rgba(63, 73, 225, 0.12)',
+                          color: 'rgb(63, 73, 225)',
+                        },
+                      },
+                    }}
+                  >
+                    <MuiButton
+                      disableElevation
+                      size="small"
+                      variant="contained"
+                      onClick={() => {
+                        setAmountAdd(
+                          wallets.find(
+                            (wallet: LiquidityWallet) =>
+                              wallet.id === selectedWallet
+                          )?.balance || '0'
+                        );
+                      }}
+                    >
+                      max
+                    </MuiButton>
+                  </Box>
+                }
+                error={errorMessage}
+              />
+
+              {loading && <DexLoading />}
+              <DexCardSubmitButton
+                disabled={loading}
+                label={
+                  loading
+                    ? 'Waiting transaction'
+                    : user
+                    ? 'Withdraw'
+                    : 'Connect wallet'
+                }
+                onClick={
+                  user
+                    ? handleWithdrawClick
+                    : () => {
+                        connect();
+                      }
+                }
+              />
+            </DexCardBody>
+          </>
+        )}
+        {view === VIEWS.ADD && (
+          <>
+            <DexCardHeader
+              title="Add funds"
+              titleSize={18}
+              titleAlign="center"
+              startAdornment={
+                <IconButton
+                  size="medium"
+                  edge="start"
+                  onClick={() => {
+                    setView(VIEWS.ROOT);
+                    setAmountAdd('');
+                    setSelectedWallet('');
+                  }}
+                >
+                  <ArrowBackIcon />
+                </IconButton>
+              }
+              endAdornment={<Box width={28} height={40} />}
+            />
+
+            <DexCardBody>
+              <DexTextInput
+                label="Amount"
+                value={amountAdd}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                  setErrorMessage({
+                    type: '',
+                    text: '',
+                  });
+                  setAmountAdd(event.target.value);
+                }}
+                name="amountAdd"
+                placeholder="Enter amount of tokens"
+                disabled={false}
+                error={errorMessage}
+              />
+
+              {loading && <DexLoading />}
+              <DexCardSubmitButton
+                disabled={loading}
+                label={
+                  loading
+                    ? 'Waiting transaction'
+                    : user
+                    ? 'Add funds'
+                    : 'Connect wallet'
+                }
+                onClick={
+                  user
+                    ? handleAddClick
+                    : () => {
+                        connect();
+                      }
+                }
+              />
+            </DexCardBody>
+          </>
+        )}
         {view === VIEWS.SELECT_CHAIN && (
           <>
             <DexCardHeader
-              title="Select chain and token"
+              title="Select blockchain"
               titleSize={18}
               titleAlign="center"
               startAdornment={
@@ -481,7 +577,6 @@ function OffersPage() {
                   edge="start"
                   onClick={() => {
                     setView(VIEWS.CREATE);
-                    setSearchToken('');
                   }}
                 >
                   <ArrowBackIcon />
@@ -489,49 +584,21 @@ function OffersPage() {
               }
               endAdornment={<Box width={28} height={40} />}
             />
-            <DexChainsList
-              chain={chain}
-              chains={chains}
-              onClick={(blockchain: any) => {
-                setChain(blockchain.value);
-                setToken('');
-              }}
-            />
-            <DexTokenSearch
-              value={searchToken}
-              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                setSearchToken(event.target.value);
-              }}
-            />
-
-            {chain && chainTokens && chainTokens.length > 0 ? (
-              <DexTokensList
-                tokens={chainTokens}
-                onClick={(chainToken: any) => {
-                  setToken(chainToken);
+            <Box pb="20px">
+              <DexChainsList
+                chain={chain}
+                chains={chains.filter(
+                  (chain: Chain) =>
+                    !wallets
+                      .map((wallet: LiquidityWallet) => wallet.chain)
+                      .includes(chain.value)
+                )}
+                onClick={(blockchain: any) => {
+                  setChain(blockchain.value);
                   setView(VIEWS.CREATE);
-                  setSearchToken('');
-                  setErrorMessage({
-                    type: '',
-                    text: '',
-                  });
                 }}
               />
-            ) : (
-              <DexTokensNotFound
-                text={
-                  !currentChain ? (
-                    <>Please, select a chain to see a list of tokens.</>
-                  ) : (
-                    <>
-                      We couldn't find tokens{' '}
-                      {currentChain ? `on ${currentChain?.label} chain` : ''}.
-                      Please try search again or switch the chain.
-                    </>
-                  )
-                }
-              />
-            )}
+            </Box>
           </>
         )}
       </DexCard>
@@ -539,4 +606,4 @@ function OffersPage() {
   );
 }
 
-export default OffersPage;
+export default LiquidityWalletPage;

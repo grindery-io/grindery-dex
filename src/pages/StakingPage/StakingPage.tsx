@@ -66,11 +66,6 @@ function StakingPage() {
       chain: 'eip155:97',
       amount: '15000',
     },
-    {
-      id: '3',
-      chain: 'eip155:338',
-      amount: '850',
-    },
   ]);
 
   const getChains = async () => {
@@ -144,16 +139,31 @@ function StakingPage() {
     setLoading(true);
     setTimeout(() => {
       setStakes(
-        [...stakes].map((stake) => {
-          if (stake.chain === chain) {
-            return {
-              ...stake,
-              amount: (parseInt(stake.amount) + parseInt(amountGRT)).toString(),
-              updated: true,
-            };
-          }
-          return stake;
-        })
+        [...stakes].map((stake) => stake.chain).includes(chain.toString())
+          ? [...stakes].map((stake) => {
+              if (stake.chain === chain) {
+                return {
+                  ...stake,
+                  amount: (
+                    parseInt(stake.amount) + parseInt(amountGRT)
+                  ).toString(),
+                  updated: true,
+                };
+              }
+              return stake;
+            })
+          : [
+              {
+                id:
+                  stakes.length > 0
+                    ? (parseFloat(stakes[stakes.length - 1].id) + 1).toString()
+                    : '1',
+                chain: chain.toString(),
+                amount: amountGRT,
+                new: true,
+              },
+              ...[...stakes],
+            ]
       );
       setView(VIEWS.ROOT);
       setAmountGRT('');
@@ -224,38 +234,24 @@ function StakingPage() {
   }, []);
 
   useEffect(() => {
-    const formattedChain =
-      chain && chains.find((c) => c.value === chain)
-        ? {
-            id:
-              chain && typeof chain === 'string'
-                ? `0x${parseFloat(chain.split(':')[1]).toString(16)}`
-                : '',
-            value: chains.find((c) => c.value === chain)?.value || '',
-            label: chains.find((c) => c.value === chain)?.label || '',
-            icon: chains.find((c) => c.value === chain)?.icon || '',
-            rpc: chains.find((c) => c.value === chain)?.rpc || [],
-            nativeToken: chains.find((c) => c.value === chain)?.token || '',
-          }
-        : null;
-    if (formattedChain && formattedChain.id) {
+    if (currentChain && currentChain.id) {
       window.ethereum.request({
         method: 'wallet_addEthereumChain',
         params: [
           {
-            chainId: formattedChain.id,
-            chainName: formattedChain.label,
-            rpcUrls: formattedChain.rpc,
+            chainId: currentChain.id,
+            chainName: currentChain.label,
+            rpcUrls: currentChain.rpc,
             nativeCurrency: {
-              name: formattedChain.nativeToken,
-              symbol: formattedChain.nativeToken,
+              name: currentChain.nativeToken,
+              symbol: currentChain.nativeToken,
               decimals: 18,
             },
           },
         ],
       });
     }
-  }, [chain, chains]);
+  }, [currentChain]);
 
   return (
     <>
@@ -265,7 +261,7 @@ function StakingPage() {
             <DexCardHeader
               title="Staking"
               endAdornment={
-                user ? (
+                user && stakes.length > 0 ? (
                   <Tooltip title="Stake">
                     <IconButton
                       size="medium"

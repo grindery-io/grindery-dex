@@ -21,6 +21,8 @@ import AppHeader from './components/grindery/AppHeader';
 import FaucetPage from './pages/FaucetPage/FaucetPage';
 import StakingPage from './pages/StakingPage/StakingPage';
 import OffersPage from './pages/OffersPage/OffersPage';
+import DexPageContainer from './components/grindery/DexPageContainer/DexPageContainer';
+import { dexPages } from './components/pages/dexPages';
 
 declare global {
   interface Window {
@@ -196,54 +198,14 @@ export const App = () => {
                 </>
               }
             />
-            <Route
-              path="/faucet"
-              element={
-                <GrinderyThemeProvider>
-                  <Box
-                    display="flex"
-                    height="calc(100vh - 75px)"
-                    style={{ paddingTop: '75px' }}
-                  >
-                    <Box flex={1} style={{ margin: '50px auto auto' }}>
-                      <FaucetPage />
-                    </Box>
-                  </Box>
-                </GrinderyThemeProvider>
-              }
-            />
-            <Route
-              path="/staking"
-              element={
-                <GrinderyThemeProvider>
-                  <Box
-                    display="flex"
-                    height="calc(100vh - 75px)"
-                    style={{ paddingTop: '75px' }}
-                  >
-                    <Box flex={1} style={{ margin: '50px auto auto' }}>
-                      <StakingPage />
-                    </Box>
-                  </Box>
-                </GrinderyThemeProvider>
-              }
-            />
-            <Route
-              path="/offers"
-              element={
-                <GrinderyThemeProvider>
-                  <Box
-                    display="flex"
-                    height="calc(100vh - 75px)"
-                    style={{ paddingTop: '75px' }}
-                  >
-                    <Box flex={1} style={{ margin: '50px auto auto' }}>
-                      <OffersPage />
-                    </Box>
-                  </Box>
-                </GrinderyThemeProvider>
-              }
-            />
+            {dexPages.map((page: any) => (
+              <Route
+                key={page.path}
+                path={page.path}
+                element={<DexPageContainer>{page.component}</DexPageContainer>}
+              />
+            ))}
+
             <Route path="*" element={<Navigate to="/faucet" />} />
           </Routes>
         </BrowserRouter>

@@ -6,21 +6,7 @@ import { SCREEN } from '../../constants';
 import UserMenu from './UserMenu';
 import { useGrinderyNexus } from 'use-grindery-nexus';
 import { useLocation, useNavigate } from 'react-router';
-
-const links = [
-  {
-    path: '/faucet',
-    label: 'Faucet',
-  },
-  {
-    path: '/staking',
-    label: 'Staking',
-  },
-  {
-    path: '/offers',
-    label: 'Offers',
-  },
-];
+import { dexPages } from '../pages/dexPages';
 
 const Wrapper = styled.div`
   border-bottom: 1px solid #dcdcdc;
@@ -156,7 +142,7 @@ const AppHeader = (props: Props) => {
 
       {
         <LinksWrapper>
-          {links.map((link: any) => (
+          {dexPages.map((link: any) => (
             <a
               key={link.path}
               href={link.path}
