@@ -6,7 +6,35 @@ import { SCREEN } from '../../constants';
 import UserMenu from './UserMenu';
 import { useGrinderyNexus } from 'use-grindery-nexus';
 import { useLocation, useNavigate } from 'react-router';
-import { dexPages } from '../pages/dexPages';
+import { Box } from '@mui/system';
+import ExpandLess from '@mui/icons-material/ExpandLess';
+import ExpandMore from '@mui/icons-material/ExpandMore';
+import {
+  Collapse,
+  Drawer,
+  List,
+  ListItemButton,
+  ListItemText,
+  IconButton,
+} from '@mui/material';
+import { faucetMenu, sellPages } from '../pages/dexPages';
+import MenuIcon from '@mui/icons-material/Menu';
+import OpenInNewIcon from '@mui/icons-material/OpenInNew';
+
+const menu = [
+  {
+    path: '/buy',
+    label: 'Buy',
+  },
+  {
+    path: '/sell',
+    label: 'Sell',
+  },
+  {
+    path: '/faucet',
+    label: 'Faucet',
+  },
+];
 
 const Wrapper = styled.div`
   border-bottom: 1px solid #dcdcdc;
@@ -24,7 +52,7 @@ const Wrapper = styled.div`
   width: 100%;
   max-width: 100%;
   box-sizing: border-box;
-  z-index: 1200;
+  z-index: 1300;
   @media (min-width: ${SCREEN.TABLET}) {
     width: 100%;
     top: 0;
@@ -60,15 +88,21 @@ const CompanyNameWrapper = styled.a`
 `;
 
 const LinksWrapper = styled.div`
-  margin-left: auto;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
 
   display: flex;
   align-items: center;
   justify-content: flex-end;
   flex-direction: row;
   flex-wrap: nowrap;
-  gap: 20px;
+  gap: 24px;
   order: 3;
+
+  @media (max-width: 899px) {
+    display: none;
+  }
 
   & a {
     font-size: 16px;
@@ -77,6 +111,8 @@ const LinksWrapper = styled.div`
     display: inline-block;
     color: #0b0d17;
     cursor: pointer;
+    text-transform: uppercase;
+    font-weight: 500;
 
     &.active {
       font-weight: 700;
@@ -111,6 +147,8 @@ const ConnectWrapper = styled.div`
   }
 `;
 
+const drawerWidth = 240;
+
 type Props = {};
 
 const AppHeader = (props: Props) => {
@@ -118,62 +156,188 @@ const AppHeader = (props: Props) => {
   const { user } = useAppContext();
   const { connect } = useGrinderyNexus();
   const location = useLocation();
+  const [open, setOpen] = React.useState(true);
+  const [faucetOpen, setFaucetOpen] = React.useState(true);
+  const [drawerOpen, setDrawerOpen] = React.useState(false);
+
+  const handleClick = () => {
+    setOpen(!open);
+  };
+
+  const handleFaucetClick = () => {
+    setFaucetOpen(!faucetOpen);
+  };
 
   return (
-    <Wrapper>
-      <LogoWrapper
-        href="/"
-        onClick={(e: React.MouseEvent<HTMLElement>) => {
-          e.preventDefault();
-          navigate('/');
-        }}
-      >
-        <Logo variant="square" />
-      </LogoWrapper>
-      <CompanyNameWrapper
-        href="/"
-        onClick={(e: React.MouseEvent<HTMLElement>) => {
-          e.preventDefault();
-          navigate('/');
-        }}
-      >
-        DELIGHT
-      </CompanyNameWrapper>
-
-      {
-        <LinksWrapper>
-          {dexPages.map((link: any) => (
-            <a
-              key={link.path}
-              href={link.path}
-              onClick={(event: React.MouseEvent<HTMLElement>) => {
-                event.preventDefault();
-                navigate(link.path);
-              }}
-              className={location.pathname === link.path ? 'active' : 'default'}
-            >
-              {link.label}
-            </a>
-          ))}
-        </LinksWrapper>
-      }
-      {!user && 'ethereum' in window && (
-        <ConnectWrapper>
-          <button
-            onClick={() => {
-              connect();
+    <>
+      <Wrapper>
+        <Box sx={{ display: { xs: 'block', md: 'none' } }}>
+          <IconButton
+            aria-label="menu"
+            onClick={(event: React.MouseEvent<HTMLElement>) => {
+              setDrawerOpen(!drawerOpen);
             }}
           >
-            Connect wallet
-          </button>
-        </ConnectWrapper>
-      )}
-      {user && (
-        <UserWrapper>
-          <UserMenu />
-        </UserWrapper>
-      )}
-    </Wrapper>
+            <MenuIcon />
+          </IconButton>
+        </Box>
+        <LogoWrapper
+          href="/"
+          onClick={(e: React.MouseEvent<HTMLElement>) => {
+            e.preventDefault();
+            navigate('/');
+          }}
+        >
+          <Logo variant="square" />
+        </LogoWrapper>
+        <CompanyNameWrapper
+          href="/"
+          onClick={(e: React.MouseEvent<HTMLElement>) => {
+            e.preventDefault();
+            navigate('/');
+          }}
+        >
+          DELIGHT
+        </CompanyNameWrapper>
+
+        {
+          <LinksWrapper>
+            {menu.map((link: any) => (
+              <a
+                key={link.path}
+                href={link.path}
+                onClick={(event: React.MouseEvent<HTMLElement>) => {
+                  event.preventDefault();
+                  navigate(link.path);
+                }}
+                className={
+                  location.pathname.startsWith(link.path) ? 'active' : 'default'
+                }
+              >
+                {link.label}
+              </a>
+            ))}
+          </LinksWrapper>
+        }
+        {!user && 'ethereum' in window && (
+          <ConnectWrapper>
+            <button
+              onClick={() => {
+                connect();
+              }}
+            >
+              Connect wallet
+            </button>
+          </ConnectWrapper>
+        )}
+        {user && (
+          <UserWrapper>
+            <UserMenu />
+          </UserWrapper>
+        )}
+      </Wrapper>
+      <Box sx={{ display: { xs: 'block', md: 'none' } }}>
+        <Drawer
+          variant="persistent"
+          anchor="left"
+          open={drawerOpen}
+          sx={{
+            width: drawerWidth,
+            flexShrink: 0,
+            [`& .MuiDrawer-paper`]: {
+              width: drawerWidth,
+              boxSizing: 'border-box',
+            },
+          }}
+        >
+          <Box sx={{ height: '73px' }} />
+          <Box sx={{ overflow: 'auto' }}>
+            <List>
+              {menu.map((link: any) => (
+                <>
+                  <ListItemButton
+                    key={link.path}
+                    onClick={(event: React.MouseEvent<HTMLElement>) => {
+                      event.preventDefault();
+                      if (link.path === '/sell') {
+                        handleClick();
+                      } else if (link.path === '/faucet') {
+                        handleFaucetClick();
+                      } else {
+                        setDrawerOpen(false);
+                        navigate(link.path);
+                      }
+                    }}
+                    selected={
+                      location.pathname == link.path && link.path !== '/faucet'
+                    }
+                  >
+                    <ListItemText primary={link.label} />
+                    {link.path === '/sell' && (
+                      <>{open ? <ExpandLess /> : <ExpandMore />}</>
+                    )}
+                    {link.path === '/faucet' && (
+                      <>{faucetOpen ? <ExpandLess /> : <ExpandMore />}</>
+                    )}
+                  </ListItemButton>
+                  {link.path === '/sell' && (
+                    <Collapse in={open} timeout="auto">
+                      <List component="div" disablePadding>
+                        {sellPages.map((page: any) => (
+                          <ListItemButton
+                            sx={{ pl: 4 }}
+                            key={page.path}
+                            onClick={(event: React.MouseEvent<HTMLElement>) => {
+                              event.preventDefault();
+                              setDrawerOpen(false);
+                              navigate(page.fullPath);
+                            }}
+                            selected={location.pathname.startsWith(
+                              page.fullPath
+                            )}
+                          >
+                            <ListItemText primary={page.label} />
+                          </ListItemButton>
+                        ))}
+                      </List>
+                    </Collapse>
+                  )}
+                  {link.path === '/faucet' && (
+                    <Collapse in={faucetOpen} timeout="auto">
+                      <List component="div" disablePadding>
+                        {faucetMenu.map((page: any) => (
+                          <ListItemButton
+                            sx={{ pl: 4 }}
+                            key={page.path}
+                            onClick={(event: React.MouseEvent<HTMLElement>) => {
+                              event.preventDefault();
+                              setDrawerOpen(false);
+                              if (page.external) {
+                                window.open(page.fullPath, '_blank');
+                              } else {
+                                navigate(page.fullPath);
+                              }
+                            }}
+                            selected={location.pathname.startsWith(
+                              page.fullPath
+                            )}
+                          >
+                            <ListItemText primary={page.label} />
+                            {page.external && (
+                              <OpenInNewIcon fontSize="small" />
+                            )}
+                          </ListItemButton>
+                        ))}
+                      </List>
+                    </Collapse>
+                  )}
+                </>
+              ))}
+            </List>
+          </Box>
+        </Drawer>
+      </Box>
+    </>
   );
 };
 

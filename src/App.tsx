@@ -19,9 +19,12 @@ import AppContextProvider from './context/AppContext';
 import EarlyAccessModal from './components/grindery/EarlyAccessModal';
 import AppHeader from './components/grindery/AppHeader';
 import DexPageContainer from './components/grindery/DexPageContainer/DexPageContainer';
-import { dexPages } from './components/pages/dexPages';
 import AbiContextProvider from './context/AbiContext';
 import GrinderyChainsContextProvider from './context/GrinderyChainsContext';
+import SellPage from './pages/SellPage/SellPage';
+import FaucetPage from './pages/FaucetPage/FaucetPage';
+import BuyPage from './pages/BuyPage/BuyPage';
+import DexFaucetMenu from './components/grindery/DexFaucetMenu/DexFaucetMenu';
 
 declare global {
   interface Window {
@@ -181,10 +184,10 @@ export const App = () => {
             <AbiContextProvider>
               <Routes>
                 <Route
-                  path="/swap/*"
+                  path="/buy/*"
                   element={
                     <>
-                      <ThemeProvider theme={theme}>
+                      {/*<ThemeProvider theme={theme}>
                         <WidgetEvents />
                         <Box
                           display="flex"
@@ -195,21 +198,23 @@ export const App = () => {
                             <LiFiWidget config={config} open />
                           </Box>
                         </Box>
-                      </ThemeProvider>
+                  </ThemeProvider>*/}
+                      <BuyPage />
                     </>
                   }
                 />
-                {dexPages.map((page: any) => (
-                  <Route
-                    key={page.path}
-                    path={page.path}
-                    element={
-                      <DexPageContainer>{page.component}</DexPageContainer>
-                    }
-                  />
-                ))}
+                <Route path="/sell/*" element={<SellPage />} />
+                <Route
+                  path="/faucet/*"
+                  element={
+                    <DexPageContainer>
+                      <DexFaucetMenu />
+                      <FaucetPage />
+                    </DexPageContainer>
+                  }
+                />
 
-                <Route path="*" element={<Navigate to="/faucet" />} />
+                <Route path="*" element={<Navigate to="/sell" />} />
               </Routes>
             </AbiContextProvider>
           </GrinderyChainsContextProvider>

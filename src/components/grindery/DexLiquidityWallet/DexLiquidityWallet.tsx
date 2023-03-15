@@ -48,7 +48,7 @@ const DexLiquidityWallet = (props: Props) => {
           )
         }
         title={parseFloat(wallet.balance).toLocaleString()}
-        subheader={`GST on ${walletChain.label}`}
+        subheader={`GRT on ${walletChain.label}`}
         selected={true}
         compact={false}
         action={

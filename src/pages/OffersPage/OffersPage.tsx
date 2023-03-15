@@ -20,25 +20,29 @@ import DexTokensList from '../../components/grindery/DexTokensList/DexTokensList
 import DexTokensNotFound from '../../components/grindery/DexTokensNotFound/DexTokensNotFound';
 import { Offer } from '../../types/Offer';
 import { Chain } from '../../types/Chain';
+import { Route, Routes, useNavigate } from 'react-router-dom';
 
 function isNumeric(value: string) {
   return /^-?\d+$/.test(value);
 }
 
 const VIEWS = {
-  ROOT: 'root',
-  CREATE: 'create',
-  SELECT_CHAIN: 'select_chain',
+  ROOT: { path: '', fullPath: '/sell/offers' },
+  CREATE: { path: '/create', fullPath: '/sell/offers/create' },
+  SELECT_CHAIN: {
+    path: '/select-chain',
+    fullPath: '/sell/offers/select-chain',
+  },
 };
 
 function OffersPage() {
   const { user, connect, chain: selectedChain } = useGrinderyNexus();
+  let navigate = useNavigate();
   const [amountMin, setAmountMin] = useState<string>('');
   const [amountMax, setAmountMax] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState({ type: '', text: '' });
   const [chain, setChain] = useState(selectedChain || '');
-  const [view, setView] = useState(VIEWS.ROOT);
   const [chains, setChains] = useState<any[]>([]);
   const [token, setToken] = useState<any>('');
   const [searchToken, setSearchToken] = useState('');
@@ -256,12 +260,12 @@ function OffersPage() {
         },
         ...offers,
       ]);
-      setView(VIEWS.ROOT);
       setAmountMin('');
       setAmountMax('');
       setToken('');
       setSearchToken('');
       setLoading(false);
+      navigate(VIEWS.ROOT.fullPath);
     }, 1500);
   };
 
@@ -322,218 +326,236 @@ function OffersPage() {
   return (
     <>
       <DexCard>
-        {view === VIEWS.ROOT && (
-          <>
-            <DexCardHeader
-              title="Offers"
-              endAdornment={
-                user ? (
-                  <Tooltip title="Create">
+        <Routes>
+          <Route
+            path={VIEWS.ROOT.path}
+            element={
+              <>
+                <DexCardHeader
+                  title="Offers"
+                  endAdornment={
+                    user ? (
+                      <Tooltip title="Create">
+                        <IconButton
+                          size="medium"
+                          edge="end"
+                          onClick={() => {
+                            navigate(VIEWS.CREATE.fullPath);
+                          }}
+                        >
+                          <AddCircleOutlineIcon sx={{ color: 'black' }} />
+                        </IconButton>
+                      </Tooltip>
+                    ) : null
+                  }
+                />
+
+                <DexCardBody maxHeight="540px">
+                  {user &&
+                    offers.map((offer: Offer) => {
+                      const offerChain = {
+                        label:
+                          chains.find((c) => c.value === offer.chain)?.label ||
+                          '',
+                        icon:
+                          chains.find((c) => c.value === offer.chain)?.icon ||
+                          '',
+                        token:
+                          chains.find((c) => c.value === offer.chain)
+                            ?.nativeToken || '',
+                      };
+                      return (
+                        <DexOffer
+                          key={offer.id}
+                          offer={offer}
+                          chain={offerChain}
+                          isActivating={isActivating}
+                          onDeactivateClick={handleDeactivateClick}
+                          onActivateClick={handleActivateClick}
+                        />
+                      );
+                    })}
+                  <DexCardSubmitButton
+                    label={user ? 'Create offer' : 'Connect wallet'}
+                    onClick={
+                      user
+                        ? () => {
+                            navigate(VIEWS.CREATE.fullPath);
+                          }
+                        : () => {
+                            connect();
+                          }
+                    }
+                  />
+                </DexCardBody>
+              </>
+            }
+          />
+          <Route
+            path={VIEWS.CREATE.path}
+            element={
+              <>
+                <DexCardHeader
+                  title="Create offer"
+                  titleSize={18}
+                  titleAlign="center"
+                  startAdornment={
                     <IconButton
                       size="medium"
-                      edge="end"
+                      edge="start"
                       onClick={() => {
-                        setView(VIEWS.CREATE);
+                        setAmountMin('');
+                        setAmountMax('');
+                        navigate(VIEWS.ROOT.fullPath);
                       }}
                     >
-                      <AddCircleOutlineIcon sx={{ color: 'black' }} />
+                      <ArrowBackIcon />
                     </IconButton>
-                  </Tooltip>
-                ) : null
-              }
-            />
+                  }
+                  endAdornment={<Box width={28} height={40} />}
+                />
 
-            <DexCardBody maxHeight="540px">
-              {user &&
-                offers.map((offer: Offer) => {
-                  const offerChain = {
-                    label:
-                      chains.find((c) => c.value === offer.chain)?.label || '',
-                    icon:
-                      chains.find((c) => c.value === offer.chain)?.icon || '',
-                    token:
-                      chains.find((c) => c.value === offer.chain)
-                        ?.nativeToken || '',
-                  };
-                  return (
-                    <DexOffer
-                      key={offer.id}
-                      offer={offer}
-                      chain={offerChain}
-                      isActivating={isActivating}
-                      onDeactivateClick={handleDeactivateClick}
-                      onActivateClick={handleActivateClick}
+                <DexCardBody>
+                  <DexSelectChainAndTokenButton
+                    onClick={() => {
+                      navigate(VIEWS.SELECT_CHAIN.fullPath);
+                    }}
+                    title="Blockchain and token"
+                    chain={currentChain}
+                    token={token}
+                    error={errorMessage}
+                  />
+
+                  <Box display="flex" flexDirection="row" gap="16px">
+                    <DexTextInput
+                      label="Minimum amount"
+                      onChange={(
+                        event: React.ChangeEvent<HTMLInputElement>
+                      ) => {
+                        setErrorMessage({
+                          type: '',
+                          text: '',
+                        });
+                        setAmountMin(event.target.value);
+                      }}
+                      name="amountMin"
+                      placeholder="0"
+                      disabled={false}
+                      value={amountMin}
+                      error={errorMessage}
                     />
-                  );
-                })}
-              <DexCardSubmitButton
-                label={user ? 'Create offer' : 'Connect wallet'}
-                onClick={
-                  user
-                    ? () => {
-                        setView(VIEWS.CREATE);
-                      }
-                    : () => {
-                        connect();
-                      }
-                }
-              />
-            </DexCardBody>
-          </>
-        )}
-        {view === VIEWS.CREATE && (
-          <>
-            <DexCardHeader
-              title="Create offer"
-              titleSize={18}
-              titleAlign="center"
-              startAdornment={
-                <IconButton
-                  size="medium"
-                  edge="start"
-                  onClick={() => {
-                    setView(VIEWS.ROOT);
-                    setAmountMin('');
-                    setAmountMax('');
-                  }}
-                >
-                  <ArrowBackIcon />
-                </IconButton>
-              }
-              endAdornment={<Box width={28} height={40} />}
-            />
+                    <DexTextInput
+                      label="Maximum amount"
+                      value={amountMax}
+                      onChange={(
+                        event: React.ChangeEvent<HTMLInputElement>
+                      ) => {
+                        setErrorMessage({
+                          type: '',
+                          text: '',
+                        });
+                        setAmountMax(event.target.value);
+                      }}
+                      name="amountMax"
+                      placeholder="0"
+                      disabled={false}
+                      error={errorMessage}
+                    />
+                  </Box>
 
-            <DexCardBody>
-              <DexSelectChainAndTokenButton
-                onClick={() => {
-                  setView(VIEWS.SELECT_CHAIN);
-                }}
-                title="Blockchain and token"
-                chain={currentChain}
-                token={token}
-                error={errorMessage}
-              />
-
-              <Box display="flex" flexDirection="row" gap="16px">
-                <DexTextInput
-                  label="Minimum amount"
-                  onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                    setErrorMessage({
-                      type: '',
-                      text: '',
-                    });
-                    setAmountMin(event.target.value);
-                  }}
-                  name="amountMin"
-                  placeholder="0"
-                  disabled={false}
-                  value={amountMin}
-                  error={errorMessage}
+                  {loading && <DexLoading />}
+                  <DexCardSubmitButton
+                    label={
+                      loading
+                        ? 'Waiting transaction'
+                        : user
+                        ? 'Create'
+                        : 'Connect wallet'
+                    }
+                    onClick={
+                      user
+                        ? handleClick
+                        : () => {
+                            connect();
+                          }
+                    }
+                    disabled={loading}
+                  />
+                </DexCardBody>
+              </>
+            }
+          />
+          <Route
+            path={VIEWS.SELECT_CHAIN.path}
+            element={
+              <>
+                <DexCardHeader
+                  title="Select chain and token"
+                  titleSize={18}
+                  titleAlign="center"
+                  startAdornment={
+                    <IconButton
+                      size="medium"
+                      edge="start"
+                      onClick={() => {
+                        setSearchToken('');
+                        navigate(VIEWS.CREATE.fullPath);
+                      }}
+                    >
+                      <ArrowBackIcon />
+                    </IconButton>
+                  }
+                  endAdornment={<Box width={28} height={40} />}
                 />
-                <DexTextInput
-                  label="Maximum amount"
-                  value={amountMax}
-                  onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                    setErrorMessage({
-                      type: '',
-                      text: '',
-                    });
-                    setAmountMax(event.target.value);
+                <DexChainsList
+                  chain={chain}
+                  chains={chains}
+                  onClick={(blockchain: any) => {
+                    setChain(blockchain.value);
+                    setToken('');
                   }}
-                  name="amountMax"
-                  placeholder="0"
-                  disabled={false}
-                  error={errorMessage}
                 />
-              </Box>
-
-              {loading && <DexLoading />}
-              <DexCardSubmitButton
-                label={
-                  loading
-                    ? 'Waiting transaction'
-                    : user
-                    ? 'Create'
-                    : 'Connect wallet'
-                }
-                onClick={
-                  user
-                    ? handleClick
-                    : () => {
-                        connect();
-                      }
-                }
-                disabled={loading}
-              />
-            </DexCardBody>
-          </>
-        )}
-
-        {view === VIEWS.SELECT_CHAIN && (
-          <>
-            <DexCardHeader
-              title="Select chain and token"
-              titleSize={18}
-              titleAlign="center"
-              startAdornment={
-                <IconButton
-                  size="medium"
-                  edge="start"
-                  onClick={() => {
-                    setView(VIEWS.CREATE);
-                    setSearchToken('');
+                <DexTokenSearch
+                  value={searchToken}
+                  onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                    setSearchToken(event.target.value);
                   }}
-                >
-                  <ArrowBackIcon />
-                </IconButton>
-              }
-              endAdornment={<Box width={28} height={40} />}
-            />
-            <DexChainsList
-              chain={chain}
-              chains={chains}
-              onClick={(blockchain: any) => {
-                setChain(blockchain.value);
-                setToken('');
-              }}
-            />
-            <DexTokenSearch
-              value={searchToken}
-              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                setSearchToken(event.target.value);
-              }}
-            />
+                />
 
-            {chain && chainTokens && chainTokens.length > 0 ? (
-              <DexTokensList
-                tokens={chainTokens}
-                onClick={(chainToken: any) => {
-                  setToken(chainToken);
-                  setView(VIEWS.CREATE);
-                  setSearchToken('');
-                  setErrorMessage({
-                    type: '',
-                    text: '',
-                  });
-                }}
-              />
-            ) : (
-              <DexTokensNotFound
-                text={
-                  !currentChain ? (
-                    <>Please, select a chain to see a list of tokens.</>
-                  ) : (
-                    <>
-                      We couldn't find tokens{' '}
-                      {currentChain ? `on ${currentChain?.label} chain` : ''}.
-                      Please try search again or switch the chain.
-                    </>
-                  )
-                }
-              />
-            )}
-          </>
-        )}
+                {chain && chainTokens && chainTokens.length > 0 ? (
+                  <DexTokensList
+                    tokens={chainTokens}
+                    onClick={(chainToken: any) => {
+                      setToken(chainToken);
+                      setSearchToken('');
+                      setErrorMessage({
+                        type: '',
+                        text: '',
+                      });
+                      navigate(VIEWS.CREATE.fullPath);
+                    }}
+                  />
+                ) : (
+                  <DexTokensNotFound
+                    text={
+                      !currentChain ? (
+                        <>Please, select a chain to see a list of tokens.</>
+                      ) : (
+                        <>
+                          We couldn't find tokens{' '}
+                          {currentChain
+                            ? `on ${currentChain?.label} chain`
+                            : ''}
+                          . Please try search again or switch the chain.
+                        </>
+                      )
+                    }
+                  />
+                )}
+              </>
+            }
+          />
+        </Routes>
       </DexCard>
     </>
   );

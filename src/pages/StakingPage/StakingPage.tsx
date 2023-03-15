@@ -23,16 +23,20 @@ import Grt from '../../components/grindery/Abi/Grt.json';
 import useAbi from '../../hooks/useAbi';
 import useGrinderyChains from '../../hooks/useGrinderyChains';
 import { GRT_CONTRACT_ADDRESS, POOL_CONTRACT_ADDRESS } from '../../constants';
+import { Route, Routes, useNavigate } from 'react-router-dom';
 
 function isNumeric(value: string) {
   return /^-?\d+$/.test(value);
 }
 
 const VIEWS = {
-  ROOT: 'root',
-  STAKE: 'stake',
-  SELECT_CHAIN: 'select_chain',
-  WITHDRAW: 'withdraw',
+  ROOT: { path: '/', fullPath: '/sell/staking' },
+  STAKE: { path: '/stake', fullPath: '/sell/staking/stake' },
+  SELECT_CHAIN: {
+    path: '/select-chain',
+    fullPath: '/sell/staking/select-chain',
+  },
+  WITHDRAW: { path: '/withdraw', fullPath: '/sell/staking/withdraw' },
 };
 
 function StakingPage() {
@@ -44,13 +48,14 @@ function StakingPage() {
     ethers,
     address,
   } = useGrinderyNexus();
+  let navigate = useNavigate();
   const { stakingAbi, isLoading: abiIsLoading } = useAbi();
   const [amountGRT, setAmountGRT] = useState<string>('');
   const [amountAdd, setAmountAdd] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState({ type: '', text: '' });
   const [chain, setChain] = useState(selectedChain || '');
-  const [view, setView] = useState(VIEWS.ROOT);
+
   const { chains, isLoading: chainsIsLoading } = useGrinderyChains();
   const [selectedStake, setSelectedStake] = useState('');
   const [stakes, setStakes] = useState<Stake[]>([]);
@@ -358,15 +363,15 @@ function StakingPage() {
             ]
       );
 
-      // change view
-      setView(VIEWS.ROOT);
-
       // clear amount field
       setAmountGRT('');
 
       // complete execution
       setLoading(false);
       setApproved(false);
+
+      // change view
+      navigate(VIEWS.ROOT.fullPath);
     }
   };
 
@@ -473,9 +478,6 @@ function StakingPage() {
       }),
     ]);
 
-    // change view
-    setView(VIEWS.ROOT);
-
     // clear amount input
     setAmountAdd('');
 
@@ -484,6 +486,9 @@ function StakingPage() {
 
     // complete execution
     setLoading(false);
+
+    // change view
+    navigate(VIEWS.ROOT.fullPath);
   };
 
   // update chain state when switched in Metamask
@@ -522,281 +527,296 @@ function StakingPage() {
   return (
     <>
       <DexCard>
-        {view === VIEWS.ROOT && (
-          <>
-            <DexCardHeader
-              title="Staking"
-              endAdornment={
-                user && stakes.length > 0 ? (
-                  <Tooltip title="Stake">
+        <Routes>
+          <Route
+            path={VIEWS.ROOT.path}
+            element={
+              <>
+                <DexCardHeader
+                  title="Staking"
+                  endAdornment={
+                    user && stakes.length > 0 ? (
+                      <Tooltip title="Stake">
+                        <IconButton
+                          size="medium"
+                          edge="end"
+                          onClick={() => {
+                            navigate(VIEWS.STAKE.fullPath);
+                          }}
+                        >
+                          <AddCircleOutlineIcon sx={{ color: 'black' }} />
+                        </IconButton>
+                      </Tooltip>
+                    ) : null
+                  }
+                />
+                <DexCardBody>
+                  {user &&
+                    stakes.map((stake: Stake) => {
+                      const stakeChain = {
+                        icon: chains.find((c) => c.value === stake.chain)?.icon,
+                        label: chains.find((c) => c.value === stake.chain)
+                          ?.label,
+                        nativeToken: chains.find((c) => c.value === stake.chain)
+                          ?.nativeToken,
+                      };
+                      return (
+                        <DexStake
+                          key={stake.id}
+                          stake={stake}
+                          stakeChain={stakeChain}
+                          onWithdrawClick={(s: any) => {
+                            setSelectedStake(stake.id);
+                            navigate(VIEWS.WITHDRAW.fullPath);
+                          }}
+                        />
+                      );
+                    })}
+                  {loading && <DexLoading />}
+                  {errorMessage &&
+                    errorMessage.type === 'getStakes' &&
+                    errorMessage.text && (
+                      <DexAlertBox color="error">
+                        <p>{errorMessage.text}</p>
+                      </DexAlertBox>
+                    )}
+                  <DexCardSubmitButton
+                    label={user ? 'Stake' : 'Connect wallet'}
+                    onClick={
+                      user
+                        ? () => {
+                            navigate(VIEWS.STAKE.fullPath);
+                          }
+                        : () => {
+                            connect();
+                          }
+                    }
+                  />
+                </DexCardBody>
+              </>
+            }
+          />
+          <Route
+            path={VIEWS.STAKE.path}
+            element={
+              <>
+                <DexCardHeader
+                  title="Stake"
+                  titleSize={18}
+                  titleAlign="center"
+                  startAdornment={
                     <IconButton
                       size="medium"
-                      edge="end"
+                      edge="start"
                       onClick={() => {
-                        setView(VIEWS.STAKE);
+                        setAmountGRT('');
+                        navigate(VIEWS.ROOT.fullPath);
                       }}
                     >
-                      <AddCircleOutlineIcon sx={{ color: 'black' }} />
+                      <ArrowBackIcon />
                     </IconButton>
-                  </Tooltip>
-                ) : null
-              }
-            />
-            <DexCardBody>
-              {user &&
-                stakes.map((stake: Stake) => {
-                  const stakeChain = {
-                    icon: chains.find((c) => c.value === stake.chain)?.icon,
-                    label: chains.find((c) => c.value === stake.chain)?.label,
-                    nativeToken: chains.find((c) => c.value === stake.chain)
-                      ?.nativeToken,
-                  };
-                  return (
-                    <DexStake
-                      key={stake.id}
-                      stake={stake}
-                      stakeChain={stakeChain}
-                      onWithdrawClick={(s: any) => {
-                        setSelectedStake(stake.id);
-                        setView(VIEWS.WITHDRAW);
-                      }}
-                    />
-                  );
-                })}
-              {loading && <DexLoading />}
-              {errorMessage &&
-                errorMessage.type === 'getStakes' &&
-                errorMessage.text && (
-                  <DexAlertBox color="error">
-                    <p>{errorMessage.text}</p>
-                  </DexAlertBox>
-                )}
-              <DexCardSubmitButton
-                label={user ? 'Stake' : 'Connect wallet'}
-                onClick={
-                  user
-                    ? () => {
-                        setView(VIEWS.STAKE);
-                      }
-                    : () => {
-                        connect();
-                      }
-                }
-              />
-            </DexCardBody>
-          </>
-        )}
-        {view === VIEWS.STAKE && (
-          <>
-            <DexCardHeader
-              title="Stake"
-              titleSize={18}
-              titleAlign="center"
-              startAdornment={
-                <IconButton
-                  size="medium"
-                  edge="start"
-                  onClick={() => {
-                    setView(VIEWS.ROOT);
-                    setAmountGRT('');
-                  }}
-                >
-                  <ArrowBackIcon />
-                </IconButton>
-              }
-              endAdornment={<Box width={28} height={40} />}
-            />
+                  }
+                  endAdornment={<Box width={28} height={40} />}
+                />
 
-            <DexCardBody>
-              <DexSelectChainButton
-                title="Blockchain"
-                chain={currentChain}
-                onClick={() => {
-                  setView(VIEWS.SELECT_CHAIN);
-                }}
-              />
-
-              <DexTextInput
-                label="GRT Amount"
-                value={amountGRT}
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                  setErrorMessage({
-                    type: '',
-                    text: '',
-                  });
-                  setAmountGRT(event.target.value);
-                }}
-                name="amountGRT"
-                placeholder="Enter amount of tokens"
-                disabled={loading}
-                error={errorMessage}
-              />
-              {approved && (
-                <DexAlertBox color="success">
-                  <p>
-                    Tokens have been approved.
-                    <br />
-                    You can stake now.
-                  </p>
-                </DexAlertBox>
-              )}
-              {loading && <DexLoading />}
-              {errorMessage &&
-                errorMessage.type === 'tx' &&
-                errorMessage.text && (
-                  <DexAlertBox color="error">
-                    <p>{errorMessage.text}</p>
-                  </DexAlertBox>
-                )}
-
-              <DexCardSubmitButton
-                disabled={loading}
-                label={
-                  loading
-                    ? 'Waiting transaction'
-                    : user
-                    ? approved
-                      ? 'Stake'
-                      : 'Approve'
-                    : 'Connect wallet'
-                }
-                onClick={
-                  user
-                    ? handleStakeClick
-                    : () => {
-                        connect();
-                      }
-                }
-              />
-            </DexCardBody>
-          </>
-        )}
-        {view === VIEWS.WITHDRAW && (
-          <>
-            <DexCardHeader
-              title="Withdraw"
-              titleSize={18}
-              titleAlign="center"
-              startAdornment={
-                <IconButton
-                  size="medium"
-                  edge="start"
-                  onClick={() => {
-                    setView(VIEWS.ROOT);
-                    setAmountAdd('');
-                    setSelectedStake('');
-                  }}
-                >
-                  <ArrowBackIcon />
-                </IconButton>
-              }
-              endAdornment={<Box width={28} height={40} />}
-            />
-
-            <DexCardBody>
-              <DexTextInput
-                label="GRT Amount"
-                value={amountAdd}
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                  setErrorMessage({
-                    type: '',
-                    text: '',
-                  });
-                  setAmountAdd(event.target.value);
-                }}
-                name="amountAdd"
-                placeholder="Enter amount of tokens"
-                disabled={false}
-                endAdornment={
-                  <Box
-                    sx={{
-                      '& button': {
-                        fontSize: '14px',
-                        padding: '4px 8px 5px',
-                        display: 'inline-block',
-                        width: 'auto',
-                        margin: '0 16px 0 0',
-                        background: 'rgba(63, 73, 225, 0.08)',
-                        color: 'rgb(63, 73, 225)',
-                        borderRadius: '8px',
-                        minWidth: 0,
-                        '&:hover': {
-                          background: 'rgba(63, 73, 225, 0.12)',
-                          color: 'rgb(63, 73, 225)',
-                        },
-                      },
+                <DexCardBody>
+                  <DexSelectChainButton
+                    title="Blockchain"
+                    chain={currentChain}
+                    onClick={() => {
+                      navigate(VIEWS.SELECT_CHAIN.fullPath);
                     }}
-                  >
-                    <MuiButton
-                      disableElevation
-                      size="small"
-                      variant="contained"
+                  />
+
+                  <DexTextInput
+                    label="GRT Amount"
+                    value={amountGRT}
+                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                      setErrorMessage({
+                        type: '',
+                        text: '',
+                      });
+                      setAmountGRT(event.target.value);
+                    }}
+                    name="amountGRT"
+                    placeholder="Enter amount of tokens"
+                    disabled={loading}
+                    error={errorMessage}
+                  />
+                  {approved && (
+                    <DexAlertBox color="success">
+                      <p>
+                        Tokens have been approved.
+                        <br />
+                        You can stake now.
+                      </p>
+                    </DexAlertBox>
+                  )}
+                  {loading && <DexLoading />}
+                  {errorMessage &&
+                    errorMessage.type === 'tx' &&
+                    errorMessage.text && (
+                      <DexAlertBox color="error">
+                        <p>{errorMessage.text}</p>
+                      </DexAlertBox>
+                    )}
+
+                  <DexCardSubmitButton
+                    disabled={loading}
+                    label={
+                      loading
+                        ? 'Waiting transaction'
+                        : user
+                        ? approved
+                          ? 'Stake'
+                          : 'Approve'
+                        : 'Connect wallet'
+                    }
+                    onClick={
+                      user
+                        ? handleStakeClick
+                        : () => {
+                            connect();
+                          }
+                    }
+                  />
+                </DexCardBody>
+              </>
+            }
+          />
+          <Route
+            path={VIEWS.WITHDRAW.path}
+            element={
+              <>
+                <DexCardHeader
+                  title="Withdraw"
+                  titleSize={18}
+                  titleAlign="center"
+                  startAdornment={
+                    <IconButton
+                      size="medium"
+                      edge="start"
                       onClick={() => {
-                        setAmountAdd(
-                          stakes.find((s) => s.id === selectedStake)?.amount ||
-                            '0'
-                        );
+                        setAmountAdd('');
+                        setSelectedStake('');
+                        navigate(VIEWS.ROOT.fullPath);
                       }}
                     >
-                      max
-                    </MuiButton>
-                  </Box>
-                }
-                error={errorMessage}
-              />
+                      <ArrowBackIcon />
+                    </IconButton>
+                  }
+                  endAdornment={<Box width={28} height={40} />}
+                />
 
-              {loading && <DexLoading />}
-              <DexCardSubmitButton
-                disabled={loading}
-                label={
-                  loading
-                    ? 'Waiting transaction'
-                    : user
-                    ? 'Withdraw'
-                    : 'Connect wallet'
-                }
-                onClick={
-                  user
-                    ? handleWithdrawClick
-                    : () => {
-                        connect();
-                      }
-                }
-              />
-            </DexCardBody>
-          </>
-        )}
-        {view === VIEWS.SELECT_CHAIN && (
-          <>
-            <DexCardHeader
-              title="Select blockchain"
-              titleSize={18}
-              titleAlign="center"
-              startAdornment={
-                <IconButton
-                  size="medium"
-                  edge="start"
-                  onClick={() => {
-                    setView(VIEWS.STAKE);
-                  }}
-                >
-                  <ArrowBackIcon />
-                </IconButton>
-              }
-              endAdornment={<Box width={28} height={40} />}
-            />
-            <Box pb="20px">
-              <DexChainsList
-                chain={chain}
-                chains={chains}
-                onClick={(blockchain: any) => {
-                  setChain(blockchain.value);
-                  setView(VIEWS.STAKE);
-                }}
-              />
-            </Box>
-          </>
-        )}
+                <DexCardBody>
+                  <DexTextInput
+                    label="GRT Amount"
+                    value={amountAdd}
+                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                      setErrorMessage({
+                        type: '',
+                        text: '',
+                      });
+                      setAmountAdd(event.target.value);
+                    }}
+                    name="amountAdd"
+                    placeholder="Enter amount of tokens"
+                    disabled={false}
+                    endAdornment={
+                      <Box
+                        sx={{
+                          '& button': {
+                            fontSize: '14px',
+                            padding: '4px 8px 5px',
+                            display: 'inline-block',
+                            width: 'auto',
+                            margin: '0 16px 0 0',
+                            background: 'rgba(63, 73, 225, 0.08)',
+                            color: 'rgb(63, 73, 225)',
+                            borderRadius: '8px',
+                            minWidth: 0,
+                            '&:hover': {
+                              background: 'rgba(63, 73, 225, 0.12)',
+                              color: 'rgb(63, 73, 225)',
+                            },
+                          },
+                        }}
+                      >
+                        <MuiButton
+                          disableElevation
+                          size="small"
+                          variant="contained"
+                          onClick={() => {
+                            setAmountAdd(
+                              stakes.find((s) => s.id === selectedStake)
+                                ?.amount || '0'
+                            );
+                          }}
+                        >
+                          max
+                        </MuiButton>
+                      </Box>
+                    }
+                    error={errorMessage}
+                  />
+
+                  {loading && <DexLoading />}
+                  <DexCardSubmitButton
+                    disabled={loading}
+                    label={
+                      loading
+                        ? 'Waiting transaction'
+                        : user
+                        ? 'Withdraw'
+                        : 'Connect wallet'
+                    }
+                    onClick={
+                      user
+                        ? handleWithdrawClick
+                        : () => {
+                            connect();
+                          }
+                    }
+                  />
+                </DexCardBody>
+              </>
+            }
+          />
+          <Route
+            path={VIEWS.SELECT_CHAIN.path}
+            element={
+              <>
+                <DexCardHeader
+                  title="Select blockchain"
+                  titleSize={18}
+                  titleAlign="center"
+                  startAdornment={
+                    <IconButton
+                      size="medium"
+                      edge="start"
+                      onClick={() => {
+                        navigate(VIEWS.STAKE.fullPath);
+                      }}
+                    >
+                      <ArrowBackIcon />
+                    </IconButton>
+                  }
+                  endAdornment={<Box width={28} height={40} />}
+                />
+                <Box pb="20px">
+                  <DexChainsList
+                    chain={chain}
+                    chains={chains}
+                    onClick={(blockchain: any) => {
+                      setChain(blockchain.value);
+                      navigate(VIEWS.STAKE.fullPath);
+                    }}
+                  />
+                </Box>
+              </>
+            }
+          />
+        </Routes>
       </DexCard>
     </>
   );

@@ -47,7 +47,7 @@ const DexStake = (props: Props) => {
           )
         }
         title={parseFloat(stake.amount).toLocaleString()}
-        subheader={`GST on ${stakeChain.label}`}
+        subheader={`GRT on ${stakeChain.label}`}
         selected={true}
         compact={false}
         action={
