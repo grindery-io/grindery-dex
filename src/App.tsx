@@ -20,6 +20,8 @@ import EarlyAccessModal from './components/grindery/EarlyAccessModal';
 import AppHeader from './components/grindery/AppHeader';
 import DexPageContainer from './components/grindery/DexPageContainer/DexPageContainer';
 import { dexPages } from './components/pages/dexPages';
+import AbiContextProvider from './context/AbiContext';
+import GrinderyChainsContextProvider from './context/GrinderyChainsContext';
 
 declare global {
   interface Window {
@@ -175,36 +177,42 @@ export const App = () => {
             <EarlyAccessModal />
             <AppHeader />
           </GrinderyThemeProvider>
-          <Routes>
-            <Route
-              path="/swap/*"
-              element={
-                <>
-                  <ThemeProvider theme={theme}>
-                    <WidgetEvents />
-                    <Box
-                      display="flex"
-                      height="calc(100vh - 75px)"
-                      style={{ paddingTop: '75px' }}
-                    >
-                      <Box flex={1} margin="auto">
-                        <LiFiWidget config={config} open />
-                      </Box>
-                    </Box>
-                  </ThemeProvider>
-                </>
-              }
-            />
-            {dexPages.map((page: any) => (
-              <Route
-                key={page.path}
-                path={page.path}
-                element={<DexPageContainer>{page.component}</DexPageContainer>}
-              />
-            ))}
+          <GrinderyChainsContextProvider>
+            <AbiContextProvider>
+              <Routes>
+                <Route
+                  path="/swap/*"
+                  element={
+                    <>
+                      <ThemeProvider theme={theme}>
+                        <WidgetEvents />
+                        <Box
+                          display="flex"
+                          height="calc(100vh - 75px)"
+                          style={{ paddingTop: '75px' }}
+                        >
+                          <Box flex={1} margin="auto">
+                            <LiFiWidget config={config} open />
+                          </Box>
+                        </Box>
+                      </ThemeProvider>
+                    </>
+                  }
+                />
+                {dexPages.map((page: any) => (
+                  <Route
+                    key={page.path}
+                    path={page.path}
+                    element={
+                      <DexPageContainer>{page.component}</DexPageContainer>
+                    }
+                  />
+                ))}
 
-            <Route path="*" element={<Navigate to="/faucet" />} />
-          </Routes>
+                <Route path="*" element={<Navigate to="/faucet" />} />
+              </Routes>
+            </AbiContextProvider>
+          </GrinderyChainsContextProvider>
         </BrowserRouter>
       </AppContextProvider>
     </GrinderyNexusContextProvider>

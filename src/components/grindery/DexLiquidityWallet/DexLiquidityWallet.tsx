@@ -5,7 +5,7 @@ import { Card } from '../../Card';
 import { SelectTokenCardHeader } from '../../SelectTokenButton/SelectTokenButton.style';
 import { AvatarDefault } from '../../TokenAvatar';
 import { StakeBadge } from './DexLiquidityWallet.style';
-import { SaveAlt as SaveAltIcon, Add as AddIcon } from '@mui/icons-material';
+import { Remove as RemoveIcon, Add as AddIcon } from '@mui/icons-material';
 import { LiquidityWallet } from '../../../types/LiquidityWallet';
 
 type Props = {
@@ -73,7 +73,7 @@ const DexLiquidityWallet = (props: Props) => {
                     onWithdrawClick(wallet);
                   }}
                 >
-                  <SaveAltIcon sx={{ color: 'black' }} fontSize="inherit" />
+                  <RemoveIcon sx={{ color: 'black' }} fontSize="inherit" />
                 </IconButton>
               </Tooltip>
             )}

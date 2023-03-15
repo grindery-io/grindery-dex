@@ -5,7 +5,7 @@ import { Card } from '../../Card';
 import { SelectTokenCardHeader } from '../../SelectTokenButton/SelectTokenButton.style';
 import { AvatarDefault } from '../../TokenAvatar';
 import { StakeBadge } from './DexStake.style';
-import { SaveAlt as SaveAltIcon } from '@mui/icons-material';
+import { Remove as RemoveIcon } from '@mui/icons-material';
 import { Stake } from '../../../types/Stake';
 
 type Props = {
@@ -61,7 +61,7 @@ const DexStake = (props: Props) => {
                     onWithdrawClick(stake);
                   }}
                 >
-                  <SaveAltIcon sx={{ color: 'black' }} fontSize="inherit" />
+                  <RemoveIcon sx={{ color: 'black' }} fontSize="inherit" />
                 </IconButton>
               </Tooltip>
             )}
