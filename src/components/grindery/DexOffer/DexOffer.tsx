@@ -20,17 +20,29 @@ export type OfferChain = {
   token: string;
 };
 
+export type OfferToken = {
+  label: string;
+  icon: string;
+};
+
 type Props = {
   offer: Offer;
   chain: OfferChain;
+  token: OfferToken;
   isActivating?: string;
   onDeactivateClick: (offerId: string) => void;
   onActivateClick: (offerId: string) => void;
 };
 
 const DexOffer = (props: Props) => {
-  const { offer, chain, isActivating, onDeactivateClick, onActivateClick } =
-    props;
+  const {
+    offer,
+    chain,
+    isActivating,
+    onDeactivateClick,
+    onActivateClick,
+    token,
+  } = props;
   return (
     <Card
       flex={1}
@@ -67,7 +79,7 @@ const DexOffer = (props: Props) => {
                     background: '#fff',
                   }}
                 >
-                  {chain.token}
+                  {chain.label}
                 </Avatar>
               ) : (
                 <AvatarDefault
@@ -78,13 +90,13 @@ const DexOffer = (props: Props) => {
               )
             }
           >
-            {offer.tokenIcon ? (
+            {token ? (
               <Avatar
                 sx={{ width: '32px', height: '32px' }}
-                src={offer.tokenIcon}
-                alt={offer.token || offer.tokenAddress}
+                src={token.icon}
+                alt={token.label || offer.token || ''}
               >
-                {offer.token || offer.tokenAddress}
+                {token.label || offer.token || ''}
               </Avatar>
             ) : (
               <AvatarDefault width={32} height={32} />
@@ -104,21 +116,21 @@ const DexOffer = (props: Props) => {
             ).toLocaleString()}`}
           </Box>
         }
-        subheader={`${offer.token} on ${chain.label}`}
+        subheader={`${token.label} on ${chain.label}`}
         selected={true}
         compact={false}
         action={
           <Box>
-            {!isActivating || isActivating !== offer.id ? (
+            {!isActivating || isActivating !== offer._id ? (
               <Tooltip title={offer.isActive ? 'Deactivate' : 'Activate'}>
                 <IconButton
                   aria-label={offer.isActive ? 'Deactivate' : 'Activate'}
                   size="small"
                   onClick={() => {
                     if (offer.isActive) {
-                      onDeactivateClick(offer.id);
+                      onDeactivateClick(offer._id);
                     } else {
-                      onActivateClick(offer.id);
+                      onActivateClick(offer._id);
                     }
                   }}
                 >

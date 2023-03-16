@@ -1,3 +1,6 @@
+import React from 'react';
+import OffersContextProvider from '../../context/OffersContext';
+import StakesContextProvider from '../../context/StakesContext';
 import LiquidityWalletPage from '../../pages/LiquidityWalletPage/LiquidityWalletPage';
 import OffersPage from '../../pages/OffersPage/OffersPage';
 import StakingPage from '../../pages/StakingPage/StakingPage';
@@ -8,18 +11,21 @@ export const sellPages = [
     fullPath: '/sell/staking',
     label: 'Staking',
     component: <StakingPage />,
+    ContextProvider: StakesContextProvider,
   },
   {
     path: '/offers',
     fullPath: '/sell/offers',
     label: 'Offers',
     component: <OffersPage />,
+    ContextProvider: OffersContextProvider,
   },
   {
     path: '/wallets',
     fullPath: '/sell/wallets',
     label: 'Wallets',
     component: <LiquidityWalletPage />,
+    ContextProvider: React.Fragment,
   },
 ];
 

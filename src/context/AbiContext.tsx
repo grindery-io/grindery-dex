@@ -5,6 +5,7 @@ import React, { createContext, useEffect, useState } from 'react';
 type ContextProps = {
   isLoading: boolean;
   stakingAbi: any;
+  offersAbi: any;
 };
 
 // Context provider props
@@ -16,11 +17,13 @@ type AbiContextProps = {
 export const AbiContext = createContext<ContextProps>({
   isLoading: true,
   stakingAbi: null,
+  offersAbi: null,
 });
 
 export const AbiContextProvider = ({ children }: AbiContextProps) => {
   const [isLoading, setIsLoading] = useState(true);
   const [stakingAbi, setStakingAbi] = useState<any>(null);
+  const [offersAbi, setOffersAbi] = useState<any>(null);
 
   const getPoolContractAbi = async () => {
     const contractAbi = await axios.get(
@@ -30,8 +33,17 @@ export const AbiContextProvider = ({ children }: AbiContextProps) => {
     setIsLoading(false);
   };
 
+  const getOffersContractAbi = async () => {
+    const contractAbi = await axios.get(
+      `https://raw.githubusercontent.com/grindery-io/Depay-Reality/main/abis/v0.2.0/GrtOffer.sol/GrtOffer.json`
+    );
+    setOffersAbi(contractAbi.data?.abi || null);
+    setIsLoading(false);
+  };
+
   useEffect(() => {
     getPoolContractAbi();
+    getOffersContractAbi();
   }, []);
 
   return (
@@ -39,6 +51,7 @@ export const AbiContextProvider = ({ children }: AbiContextProps) => {
       value={{
         isLoading,
         stakingAbi,
+        offersAbi,
       }}
     >
       {children}

@@ -254,7 +254,7 @@ const AppHeader = (props: Props) => {
           <Box sx={{ overflow: 'auto' }}>
             <List>
               {menu.map((link: any) => (
-                <>
+                <React.Fragment key={link.path}>
                   <ListItemButton
                     key={link.path}
                     onClick={(event: React.MouseEvent<HTMLElement>) => {
@@ -331,7 +331,7 @@ const AppHeader = (props: Props) => {
                       </List>
                     </Collapse>
                   )}
-                </>
+                </React.Fragment>
               ))}
             </List>
           </Box>

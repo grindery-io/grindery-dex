@@ -16,7 +16,7 @@ const SellPage = (props: Props) => {
             <Route
               key={page.path}
               path={`${page.path}/*`}
-              element={page.component}
+              element={<page.ContextProvider children={page.component} />}
             />
           ))}
           <Route

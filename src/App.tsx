@@ -7,10 +7,10 @@ import {
 } from '@lifi/wallet-management';
 import { Box, useMediaQuery } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { WidgetEvents } from './components/WidgetEvents';
+//import { WidgetEvents } from './components/WidgetEvents';
 import { widgetConfig } from './config';
 import './index.css';
-import { LiFiWidget } from './LiFiWidget';
+//import { LiFiWidget } from './LiFiWidget';
 import { useWallet } from './providers/WalletProvider';
 import { ThemeProvider as GrinderyThemeProvider } from 'grindery-ui';
 import GrinderyNexusContextProvider from 'use-grindery-nexus';

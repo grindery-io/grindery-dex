@@ -24,6 +24,7 @@ import useAbi from '../../hooks/useAbi';
 import useGrinderyChains from '../../hooks/useGrinderyChains';
 import { GRT_CONTRACT_ADDRESS, POOL_CONTRACT_ADDRESS } from '../../constants';
 import { Route, Routes, useNavigate } from 'react-router-dom';
+import useStakes from '../../hooks/useStakes';
 
 function isNumeric(value: string) {
   return /^-?\d+$/.test(value);
@@ -58,7 +59,7 @@ function StakingPage() {
 
   const { chains, isLoading: chainsIsLoading } = useGrinderyChains();
   const [selectedStake, setSelectedStake] = useState('');
-  const [stakes, setStakes] = useState<Stake[]>([]);
+  const { stakes, isLoading: stakesIsLoading, setStakes } = useStakes();
   const [approved, setApproved] = useState<boolean>(false);
   const filteredChain = chains.find((c) => c.value === chain);
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -519,10 +520,10 @@ function StakingPage() {
 
   // get user stakes when user, abi and chains are ready
   useEffect(() => {
-    if (address && chain && !abiIsLoading && !chainsIsLoading) {
+    if (address && !abiIsLoading && !chainsIsLoading) {
       getStakes();
     }
-  }, [address, chain, abiIsLoading, chainsIsLoading]);
+  }, [address, abiIsLoading, chainsIsLoading]);
 
   return (
     <>

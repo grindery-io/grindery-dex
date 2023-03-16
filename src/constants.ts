@@ -345,3 +345,5 @@ export const POOL_CONTRACT_ADDRESS: { [key: string]: string } = {
   'eip155:97': '0x97B434f5f0fc9Ab060918bBb68671bd614fEA6CE',
   'eip155:338': '0x2CD3728934dBac6f895421468Ff9B156d28f3aC7',
 };
+
+export const DELIGHT_API_URL = 'https://delight-api.grindery.org';
