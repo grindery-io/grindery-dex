@@ -1,21 +1,22 @@
 import { Avatar, Badge, FormHelperText } from '@mui/material';
 import React from 'react';
 import { Chain } from '../../../types/Chain';
+import { TokenType } from '../../../types/TokenType';
 import { Card, CardTitle } from '../../Card';
 import { SelectTokenCardHeader } from '../../SelectTokenButton/SelectTokenButton.style';
 import { AvatarDefault } from '../../TokenAvatar';
 
-type Token = {
+/*type Token = {
   icon: string;
   symbol: string;
   address: string;
-};
+};*/
 
 type Props = {
   onClick: () => void;
   title: string;
   chain?: Chain | null;
-  token: Token;
+  token: TokenType | '';
   error: {
     type: string;
     text: string;

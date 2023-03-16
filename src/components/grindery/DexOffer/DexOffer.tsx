@@ -49,10 +49,11 @@ const DexOffer = (props: Props) => {
       style={{
         borderRadius: '12px',
         marginBottom: '12px',
-        backgroundColor: '#fff',
+        backgroundColor: offer.new ? 'rgba(245, 181, 255, 0.08)' : '#fff',
       }}
     >
       <Box display={'flex'} flexDirection={'row'}>
+        {offer.new && <DexOfferBadge>New</DexOfferBadge>}
         {!offer.isActive && (
           <DexOfferBadge className="secondary">Inactive</DexOfferBadge>
         )}

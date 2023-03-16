@@ -8,4 +8,5 @@ export type Offer = {
   tokenAddress: string;
   tokenIcon?: string;
   isActive: boolean;
+  new?: boolean;
 };

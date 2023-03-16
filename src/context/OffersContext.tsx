@@ -12,6 +12,7 @@ type ContextProps = {
   error: string;
   setOffers: React.Dispatch<React.SetStateAction<Offer[]>>;
   saveOffer: (body: { [key: string]: any }) => Promise<Offer | boolean>;
+  updateOffer: (id: string) => Promise<boolean>;
 };
 
 // Context provider props
@@ -26,6 +27,7 @@ export const OffersContext = createContext<ContextProps>({
   error: '',
   setOffers: () => {},
   saveOffer: async () => false,
+  updateOffer: async () => false,
 });
 
 export const OffersContextProvider = ({ children }: OffersContextProps) => {
@@ -43,7 +45,7 @@ export const OffersContextProvider = ({ children }: OffersContextProps) => {
   const getOffer = async (id: string) => {
     let res;
     try {
-      res = await axios.get(`${DELIGHT_API_URL}/offers/idOffer/${id}`, params);
+      res = await axios.get(`${DELIGHT_API_URL}/offers/${id}`, params);
     } catch (error: any) {
       setError(getErrorMessage(error, 'Server error'));
     }
@@ -82,6 +84,22 @@ export const OffersContextProvider = ({ children }: OffersContextProps) => {
     }
   };
 
+  const updateOffer = async (id: string) => {
+    setError('');
+    let res;
+    try {
+      res = await axios.put(`${DELIGHT_API_URL}/offers/${id}`, {}, params);
+    } catch (error: any) {
+      setError(getErrorMessage(error, 'Server error'));
+    }
+
+    if (res?.data?.modifiedCount) {
+      return true;
+    } else {
+      return false;
+    }
+  };
+
   useEffect(() => {
     if (token?.access_token) {
       getOffers();
@@ -96,6 +114,7 @@ export const OffersContextProvider = ({ children }: OffersContextProps) => {
         error,
         setOffers,
         saveOffer,
+        updateOffer,
       }}
     >
       {children}
