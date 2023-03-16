@@ -508,7 +508,7 @@ function StakingPage() {
                         />
                       );
                     })}
-                  {stakesIsLoading && <DexLoading />}
+                  {user && stakesIsLoading && <DexLoading />}
                   {errorMessage &&
                     errorMessage.type === 'getStakes' &&
                     errorMessage.text && (
