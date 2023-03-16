@@ -1,6 +1,6 @@
 export type Stake = {
-  id: string;
-  chain: string;
+  _id: string;
+  chainId: string;
   amount: string;
   new?: boolean;
   updated?: boolean;

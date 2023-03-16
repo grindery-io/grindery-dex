@@ -25,9 +25,10 @@ import useGrinderyChains from '../../hooks/useGrinderyChains';
 import { GRT_CONTRACT_ADDRESS, POOL_CONTRACT_ADDRESS } from '../../constants';
 import { Route, Routes, useNavigate } from 'react-router-dom';
 import useStakes from '../../hooks/useStakes';
+import { update } from 'lodash';
 
 function isNumeric(value: string) {
-  return /^-?\d+$/.test(value);
+  return /^\d*(\.\d+)?$/.test(value);
 }
 
 const VIEWS = {
@@ -47,7 +48,7 @@ function StakingPage() {
     chain: selectedChain,
     provider,
     ethers,
-    address,
+    //address,
   } = useGrinderyNexus();
   let navigate = useNavigate();
   const { stakingAbi, isLoading: abiIsLoading } = useAbi();
@@ -59,7 +60,13 @@ function StakingPage() {
 
   const { chains, isLoading: chainsIsLoading } = useGrinderyChains();
   const [selectedStake, setSelectedStake] = useState('');
-  const { stakes, isLoading: stakesIsLoading, setStakes } = useStakes();
+  const {
+    stakes,
+    isLoading: stakesIsLoading,
+    setStakes,
+    addStake,
+    updateStake,
+  } = useStakes();
   const [approved, setApproved] = useState<boolean>(false);
   const filteredChain = chains.find((c) => c.value === chain);
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -77,113 +84,6 @@ function StakingPage() {
           nativeToken: filteredChain?.token || '',
         }
       : null;
-
-  // Get user stakes
-  const getStakes = async () => {
-    // check that abi exists
-    if (!stakingAbi) {
-      setErrorMessage({
-        type: 'getStakes',
-        text: 'Contract ABI not found.',
-      });
-      return;
-    }
-
-    // check that chains are loaded
-    if (!chains.length) {
-      setErrorMessage({
-        type: 'getStakes',
-        text: 'Blockchains not found.',
-      });
-      return;
-    }
-
-    // start getting stakes
-    setLoading(true);
-
-    // get signer
-    const signer = provider.getSigner();
-
-    // array of contract calls
-    let requests = [];
-
-    // call contract function
-    const stakeOf = async (chainId: string) => {
-      // set pool contract
-      const _poolContract = new ethers.Contract(
-        POOL_CONTRACT_ADDRESS[chainId],
-        stakingAbi,
-        signer
-      );
-
-      // connect signer
-      const poolContract = _poolContract.connect(signer);
-
-      // call stakeOf function
-      const tx = await poolContract.stakeOf(
-        address,
-        parseFloat(chainId.split(':')[1])
-      );
-
-      // return 0 amount if failed
-      if (!tx) {
-        return {
-          id: chainId,
-          chain: chainId,
-          amount: '0',
-        };
-      }
-
-      // return staked amount from chain
-      return {
-        id: chainId,
-        chain: chainId,
-        amount: ethers.utils.formatEther(parseInt(tx._hex).toString()),
-      };
-    };
-
-    // loop through chains
-    for (let i = 0; i < chains.length; i++) {
-      // check if contract for a chain has an address
-      if (!POOL_CONTRACT_ADDRESS[chains[i].value]) {
-        setErrorMessage({
-          type: 'getStakes',
-          text: `Contract address for ${chains[i].label} chain not found.`,
-        });
-        setLoading(false);
-        break;
-      }
-
-      // push contract call to an array
-      requests.push(
-        stakeOf(chains[i].value).catch((error: any) => {
-          console.error(`stakeOf on ${chains[i].value} chain error`, error);
-          // return 0 amount if failed
-          return {
-            id: chains[i].value,
-            chain: chains[i].value,
-            amount: '0',
-          };
-        })
-      );
-    }
-
-    // wait for all contract calls
-    const stakesRes = await Promise.all(requests).catch((error: any) => {
-      console.error('promises error', error);
-    });
-
-    // update user stakes state
-    setStakes(
-      (stakesRes &&
-        Array.isArray(stakesRes) &&
-        stakesRes.filter((s: Stake) => s && s.id)) ||
-        []
-    );
-
-    // complete execution
-    setLoading(false);
-  };
 
   // Stake GRT
   const handleStakeClick = async () => {
@@ -335,11 +235,45 @@ function StakingPage() {
         return;
       }
 
-      // update stakes state
-      setStakes(
-        [...stakes].map((stake) => stake.chain).includes(chain.toString())
-          ? [...stakes].map((stake) => {
-              if (stake.chain === chain) {
+      // Add new stake if stake for the chain doesn't exist
+      if (
+        ![...stakes]
+          .map((stake) => stake.chainId)
+          .includes(chain.toString().split(':')[1])
+      ) {
+        const newStake = await addStake({
+          chainId: chain.toString().split(':')[1],
+          amount: amountGRT,
+        });
+        if (newStake && typeof newStake !== 'boolean') {
+          // update stakes state
+          setStakes([
+            {
+              ...newStake,
+              new: true,
+            },
+            ...[...stakes],
+          ]);
+        } else {
+          // handle error
+        }
+      } else {
+        // update existing stake if stake for the chain exists
+        const stakeUpdated = await updateStake({
+          chainId: chain.toString().split(':')[1],
+          amount: (
+            parseInt(
+              stakes.find(
+                (s: Stake) => s.chainId === chain.toString().split(':')[1]
+              )?.amount || '0'
+            ) + parseInt(amountGRT)
+          ).toString(),
+        });
+        if (stakeUpdated) {
+          // update stakes state
+          setStakes(
+            [...stakes].map((stake: Stake) => {
+              if (stake.chainId === chain.toString().split(':')[1]) {
                 return {
                   ...stake,
                   amount: (
@@ -350,19 +284,11 @@ function StakingPage() {
               }
               return stake;
             })
-          : [
-              {
-                id:
-                  stakes.length > 0
-                    ? (parseFloat(stakes[stakes.length - 1].id) + 1).toString()
-                    : '1',
-                chain: chain.toString(),
-                amount: amountGRT,
-                new: true,
-              },
-              ...[...stakes],
-            ]
-      );
+          );
+        } else {
+          // handle error
+        }
+      }
 
       // clear amount field
       setAmountGRT('');
@@ -401,12 +327,12 @@ function StakingPage() {
     }
     if (
       parseFloat(amountAdd) >
-      parseFloat(stakes.find((s) => selectedStake === s.id)?.amount || '0')
+      parseFloat(stakes.find((s) => selectedStake === s._id)?.amount || '0')
     ) {
       setErrorMessage({
         type: 'amountAdd',
         text: `You can withdraw maximum ${
-          stakes.find((s) => selectedStake === s.id)?.amount
+          stakes.find((s) => selectedStake === s._id)?.amount
         } tokens`,
       });
       return;
@@ -464,20 +390,32 @@ function StakingPage() {
       return;
     }
 
-    // update user stakes state
-    setStakes((_stakes) => [
-      ..._stakes.map((s: Stake) => {
-        if (s.id === selectedStake) {
-          return {
-            ...s,
-            amount: (parseFloat(s.amount) - parseFloat(amountAdd)).toString(),
-            updated: true,
-          };
-        } else {
-          return s;
-        }
-      }),
-    ]);
+    const stakeUpdated = await updateStake({
+      chainId: chain.toString().split(':')[1],
+      amount: (
+        parseFloat(
+          stakes.find((s: Stake) => s._id === selectedStake)?.amount || '0'
+        ) - parseFloat(amountAdd)
+      ).toString(),
+    });
+    if (stakeUpdated) {
+      // update stakes state
+      setStakes((_stakes) => [
+        ..._stakes.map((s: Stake) => {
+          if (s._id === selectedStake) {
+            return {
+              ...s,
+              amount: (parseFloat(s.amount) - parseFloat(amountAdd)).toString(),
+              updated: true,
+            };
+          } else {
+            return s;
+          }
+        }),
+      ]);
+    } else {
+      // handle error
+    }
 
     // clear amount input
     setAmountAdd('');
@@ -518,13 +456,6 @@ function StakingPage() {
     }
   }, [currentChain]);
 
-  // get user stakes when user, abi and chains are ready
-  useEffect(() => {
-    if (address && !abiIsLoading && !chainsIsLoading) {
-      getStakes();
-    }
-  }, [address, abiIsLoading, chainsIsLoading]);
-
   return (
     <>
       <DexCard>
@@ -536,7 +467,7 @@ function StakingPage() {
                 <DexCardHeader
                   title="Staking"
                   endAdornment={
-                    user && stakes.length > 0 ? (
+                    user && stakes.length > 4 ? (
                       <Tooltip title="Stake">
                         <IconButton
                           size="medium"
@@ -555,25 +486,29 @@ function StakingPage() {
                   {user &&
                     stakes.map((stake: Stake) => {
                       const stakeChain = {
-                        icon: chains.find((c) => c.value === stake.chain)?.icon,
-                        label: chains.find((c) => c.value === stake.chain)
-                          ?.label,
-                        nativeToken: chains.find((c) => c.value === stake.chain)
-                          ?.nativeToken,
+                        icon: chains.find(
+                          (c) => c.value === `eip155:${stake.chainId}`
+                        )?.icon,
+                        label: chains.find(
+                          (c) => c.value === `eip155:${stake.chainId}`
+                        )?.label,
+                        nativeToken: chains.find(
+                          (c) => c.value === `eip155:${stake.chainId}`
+                        )?.nativeToken,
                       };
                       return (
                         <DexStake
-                          key={stake.id}
+                          key={stake._id}
                           stake={stake}
                           stakeChain={stakeChain}
                           onWithdrawClick={(s: any) => {
-                            setSelectedStake(stake.id);
+                            setSelectedStake(stake._id);
                             navigate(VIEWS.WITHDRAW.fullPath);
                           }}
                         />
                       );
                     })}
-                  {loading && <DexLoading />}
+                  {stakesIsLoading && <DexLoading />}
                   {errorMessage &&
                     errorMessage.type === 'getStakes' &&
                     errorMessage.text && (
@@ -749,7 +684,7 @@ function StakingPage() {
                           variant="contained"
                           onClick={() => {
                             setAmountAdd(
-                              stakes.find((s) => s.id === selectedStake)
+                              stakes.find((s) => s._id === selectedStake)
                                 ?.amount || '0'
                             );
                           }}
