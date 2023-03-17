@@ -4,9 +4,11 @@ export type Offer = {
   min: string;
   max: string;
   token: string;
-  tokenId?: number;
   tokenAddress: string;
-  tokenIcon?: string;
   isActive: boolean;
+  hash?: string;
+  offerId?: string;
+  tokenId?: number;
+  tokenIcon?: string;
   new?: boolean;
 };

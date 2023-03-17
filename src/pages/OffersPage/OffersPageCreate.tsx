@@ -104,7 +104,9 @@ function OffersPageCreate() {
           )}
         {loading && <DexLoading />}
         <DexCardSubmitButton
-          label={loading ? 'Loading' : user ? 'Create' : 'Connect wallet'}
+          label={
+            loading ? 'Waiting transaction' : user ? 'Create' : 'Connect wallet'
+          }
           onClick={
             user
               ? handleCreateClick

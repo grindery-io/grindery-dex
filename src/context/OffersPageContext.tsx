@@ -257,6 +257,13 @@ export const OffersPageContextProvider = ({
       return;
     }
 
+    /*const abiCoder = new ethers.utils.AbiCoder();
+    const data = abiCoder.decode(['uint', 'tuple(uint256, string)'], tx.data);*/
+
+    const receipt = await provider.getTransactionReceipt(tx.hash);
+
+    const offerId = receipt?.logs?.[0]?.topics?.[0] || '';
+
     // save offer to DB
     const newOffer = await saveOffer({
       chain: parseFloat(chain.toString().split(':')[1]),
@@ -266,6 +273,7 @@ export const OffersPageContextProvider = ({
       token: token.symbol || '',
       tokenAddress: token.address || '',
       hash: tx.hash || '',
+      offerId: offerId,
       isActive: true,
     });
 
@@ -295,7 +303,7 @@ export const OffersPageContextProvider = ({
   const handleDeactivateClick = async (offerId: string) => {
     setIsActivating(offerId);
 
-    /*// get signer
+    // get signer
     const signer = provider.getSigner();
 
     // set pool contract
@@ -308,9 +316,24 @@ export const OffersPageContextProvider = ({
     // connect signer
     const poolContract = _poolContract.connect(signer);
 
+    const offerToDeactivate = offers.find(
+      (o: Offer) => o._id === offerId
+    )?.offerId;
+
+    if (!offerToDeactivate) {
+      setErrorMessage({
+        type: 'setIsActive',
+        text: 'Offer ID not found',
+      });
+      setIsActivating('');
+      return;
+    }
+
     // create transaction
     const tx = await poolContract
-      .setIsActive(offerId, false)
+      .setIsActive(offerToDeactivate, false, {
+        gasLimit: 1000000,
+      })
       .catch((error: any) => {
         setErrorMessage({
           type: 'setIsActive',
@@ -341,7 +364,7 @@ export const OffersPageContextProvider = ({
       console.error('tx.wait error', error);
       setIsActivating('');
       return;
-    }*/
+    }
 
     const updated = await updateOffer(offerId).catch((error: any) => {
       // handle error

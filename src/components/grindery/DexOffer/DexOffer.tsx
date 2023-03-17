@@ -125,6 +125,7 @@ const DexOffer = (props: Props) => {
             {!isActivating || isActivating !== offer._id ? (
               <Tooltip title={offer.isActive ? 'Deactivate' : 'Activate'}>
                 <IconButton
+                  disabled={Boolean(isActivating)}
                   aria-label={offer.isActive ? 'Deactivate' : 'Activate'}
                   size="small"
                   onClick={() => {

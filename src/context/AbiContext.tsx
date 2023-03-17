@@ -27,17 +27,17 @@ export const AbiContextProvider = ({ children }: AbiContextProps) => {
 
   const getPoolContractAbi = async () => {
     const contractAbi = await axios.get(
-      `https://raw.githubusercontent.com/grindery-io/Depay-Reality/main/abis/v0.2.0/utils/GrtTokenUtils.sol/GrtTokenUtils.json`
+      `https://raw.githubusercontent.com/grindery-io/Depay-Reality/main/abis/ERC20Sample.json`
     );
-    setStakingAbi(contractAbi.data?.abi || null);
+    setStakingAbi(contractAbi.data || null);
     setIsLoading(false);
   };
 
   const getOffersContractAbi = async () => {
     const contractAbi = await axios.get(
-      `https://raw.githubusercontent.com/grindery-io/Depay-Reality/main/abis/v0.2.0/GrtOffer.sol/GrtOffer.json`
+      `https://raw.githubusercontent.com/grindery-io/Depay-Reality/main/abis/GrtPool.json`
     );
-    setOffersAbi(contractAbi.data?.abi || null);
+    setOffersAbi(contractAbi.data || null);
     setIsLoading(false);
   };
 

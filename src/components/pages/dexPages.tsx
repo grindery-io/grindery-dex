@@ -1,4 +1,5 @@
 import React from 'react';
+import LiquidityWalletPageContextProvider from '../../context/LiquidityWalletPageContext';
 import OffersPageContextProvider from '../../context/OffersPageContext';
 import LiquidityWalletPage from '../../pages/LiquidityWalletPage/LiquidityWalletPage';
 import OffersPage from '../../pages/OffersPage/OffersPage';
@@ -25,7 +26,11 @@ export const sellPages = [
     path: '/wallets',
     fullPath: '/sell/wallets',
     label: 'Wallets',
-    component: <LiquidityWalletPage />,
+    component: (
+      <LiquidityWalletPageContextProvider>
+        <LiquidityWalletPage />
+      </LiquidityWalletPageContextProvider>
+    ),
   },
 ];
 

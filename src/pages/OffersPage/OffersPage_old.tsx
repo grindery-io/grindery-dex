@@ -207,8 +207,6 @@ function OffersPage() {
       return;
     }
 
-    console.log('tx', tx);
-
     // wait for offer transaction
     try {
       await tx.wait();
@@ -221,8 +219,6 @@ function OffersPage() {
       setLoading(false);
       return;
     }
-
-    console.log('tx2', tx);
 
     // save offer to DB
     const newOffer = await saveOffer({
