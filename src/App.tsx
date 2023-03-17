@@ -25,6 +25,7 @@ import SellPage from './pages/SellPage/SellPage';
 import FaucetPage from './pages/FaucetPage/FaucetPage';
 import BuyPage from './pages/BuyPage/BuyPage';
 import DexFaucetMenu from './components/grindery/DexFaucetMenu/DexFaucetMenu';
+import FaucetPageContextProvider from './context/FaucetPageContext';
 
 declare global {
   interface Window {
@@ -209,7 +210,9 @@ export const App = () => {
                   element={
                     <DexPageContainer>
                       <DexFaucetMenu />
-                      <FaucetPage />
+                      <FaucetPageContextProvider>
+                        <FaucetPage />
+                      </FaucetPageContextProvider>
                     </DexPageContainer>
                   }
                 />

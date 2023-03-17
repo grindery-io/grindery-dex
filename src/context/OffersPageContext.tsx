@@ -91,7 +91,7 @@ export const OffersPageContextProvider = ({
 
   const { chain: selectedChain, provider, ethers } = useGrinderyNexus();
   let navigate = useNavigate();
-  const { offersAbi } = useAbi();
+  const { poolAbi } = useAbi();
   const [amountMin, setAmountMin] = useState<string>('');
   const [amountMax, setAmountMax] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
@@ -194,7 +194,7 @@ export const OffersPageContextProvider = ({
     // set pool contract
     const _poolContract = new ethers.Contract(
       POOL_CONTRACT_ADDRESS[chain.toString()],
-      offersAbi,
+      poolAbi,
       signer
     );
 
@@ -309,7 +309,7 @@ export const OffersPageContextProvider = ({
     // set pool contract
     const _poolContract = new ethers.Contract(
       POOL_CONTRACT_ADDRESS[chain.toString()],
-      offersAbi,
+      poolAbi,
       signer
     );
 
@@ -392,7 +392,7 @@ export const OffersPageContextProvider = ({
     // set pool contract
     const _poolContract = new ethers.Contract(
       POOL_CONTRACT_ADDRESS[chain.toString()],
-      offersAbi,
+      poolAbi,
       signer
     );
 

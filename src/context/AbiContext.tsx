@@ -4,8 +4,8 @@ import React, { createContext, useEffect, useState } from 'react';
 // Context props
 type ContextProps = {
   isLoading: boolean;
-  stakingAbi: any;
-  offersAbi: any;
+  poolAbi: any;
+  tokenAbi: any;
 };
 
 // Context provider props
@@ -16,42 +16,42 @@ type AbiContextProps = {
 // Init context
 export const AbiContext = createContext<ContextProps>({
   isLoading: true,
-  stakingAbi: null,
-  offersAbi: null,
+  poolAbi: null,
+  tokenAbi: null,
 });
 
 export const AbiContextProvider = ({ children }: AbiContextProps) => {
   const [isLoading, setIsLoading] = useState(true);
-  const [stakingAbi, setStakingAbi] = useState<any>(null);
-  const [offersAbi, setOffersAbi] = useState<any>(null);
+  const [poolAbi, setPoolAbi] = useState<any>(null);
+  const [tokenAbi, setTokenAbi] = useState<any>(null);
 
   const getPoolContractAbi = async () => {
-    const contractAbi = await axios.get(
-      `https://raw.githubusercontent.com/grindery-io/Depay-Reality/main/abis/ERC20Sample.json`
+    const _poolAbi = await axios.get(
+      `https://raw.githubusercontent.com/grindery-io/Depay-Reality/main/abis/GrtPool.json`
     );
-    setStakingAbi(contractAbi.data || null);
+    setPoolAbi(_poolAbi.data || null);
     setIsLoading(false);
   };
 
-  const getOffersContractAbi = async () => {
-    const contractAbi = await axios.get(
-      `https://raw.githubusercontent.com/grindery-io/Depay-Reality/main/abis/GrtPool.json`
+  const getTokenContractAbi = async () => {
+    const _tokenAbi = await axios.get(
+      `https://raw.githubusercontent.com/grindery-io/Depay-Reality/main/abis/ERC20Sample.json`
     );
-    setOffersAbi(contractAbi.data || null);
+    setTokenAbi(_tokenAbi.data || null);
     setIsLoading(false);
   };
 
   useEffect(() => {
     getPoolContractAbi();
-    getOffersContractAbi();
+    getTokenContractAbi();
   }, []);
 
   return (
     <AbiContext.Provider
       value={{
         isLoading,
-        stakingAbi,
-        offersAbi,
+        poolAbi,
+        tokenAbi,
       }}
     >
       {children}

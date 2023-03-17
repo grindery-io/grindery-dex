@@ -347,3 +347,9 @@ export const POOL_CONTRACT_ADDRESS: { [key: string]: string } = {
 };
 
 export const DELIGHT_API_URL = 'https://delight-api.grindery.org';
+
+export const TX_EXPLORER: { [key: string]: string } = {
+  'eip155:5': 'https://goerli.etherscan.io/tx/',
+  'eip155:97': 'https://testnet.bscscan.com/tx/',
+  'eip155:338': 'https://testnet.cronoscan.com/tx/',
+};

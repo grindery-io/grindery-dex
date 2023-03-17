@@ -1,6 +1,7 @@
 import React from 'react';
 import LiquidityWalletPageContextProvider from '../../context/LiquidityWalletPageContext';
 import OffersPageContextProvider from '../../context/OffersPageContext';
+import StakingPageContextProvider from '../../context/StakingPageContext';
 import LiquidityWalletPage from '../../pages/LiquidityWalletPage/LiquidityWalletPage';
 import OffersPage from '../../pages/OffersPage/OffersPage';
 import StakingPage from '../../pages/StakingPage/StakingPage';
@@ -10,7 +11,11 @@ export const sellPages = [
     path: '/staking',
     fullPath: '/sell/staking',
     label: 'Staking',
-    component: <StakingPage />,
+    component: (
+      <StakingPageContextProvider>
+        <StakingPage />
+      </StakingPageContextProvider>
+    ),
   },
   {
     path: '/offers',

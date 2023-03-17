@@ -1,6 +1,6 @@
 import React, { ReactNode } from 'react';
 import { Typography } from '@mui/material';
-import { HeaderAppBar } from '../../Header/Header.style';
+import { DexCardHeaderAppBar } from './DexCardHeaderAppBar';
 
 type Props = {
   title?: string;
@@ -13,7 +13,7 @@ type Props = {
 const DexCardHeader = (props: Props) => {
   const { title, endAdornment, startAdornment, titleAlign, titleSize } = props;
   return (
-    <HeaderAppBar
+    <DexCardHeaderAppBar
       elevation={0}
       style={{
         paddingLeft: '24px',
@@ -32,7 +32,7 @@ const DexCardHeader = (props: Props) => {
         {title || ''}
       </Typography>
       {endAdornment || null}
-    </HeaderAppBar>
+    </DexCardHeaderAppBar>
   );
 };
 
