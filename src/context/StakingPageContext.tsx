@@ -75,7 +75,10 @@ export const StakingPageContextProvider = ({
       path: '/select-chain',
       fullPath: '/sell/staking/select-chain',
     },
-    WITHDRAW: { path: '/withdraw', fullPath: '/sell/staking/withdraw' },
+    WITHDRAW: {
+      path: '/:stakeId/withdraw',
+      fullPath: '/sell/staking/:stakeId/withdraw',
+    },
   };
 
   const { chain: selectedChain, provider, ethers } = useGrinderyNexus();

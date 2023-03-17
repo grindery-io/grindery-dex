@@ -16,7 +16,7 @@ import DexLoading from '../../components/grindery/DexLoading/DexLoading';
 
 function LiquidityWalletPageRoot() {
   const { user, connect } = useGrinderyNexus();
-  const { VIEWS, setSelectedWallet } = useLiquidityWalletPage();
+  const { VIEWS } = useLiquidityWalletPage();
   let navigate = useNavigate();
   const { wallets, isLoading: walletsIsLoading } = useLiquidityWallets();
 
@@ -62,17 +62,8 @@ function LiquidityWalletPageRoot() {
                   key={wallet.id}
                   wallet={wallet}
                   walletChain={walletChain}
-                  /*onWithdrawClick={(w: LiquidityWallet) => {
-                    setSelectedWallet(w.id);
-                    navigate(VIEWS.WITHDRAW.fullPath);
-                  }}
-                  onAddClick={(w: LiquidityWallet) => {
-                    setSelectedWallet(w.id);
-                    navigate(VIEWS.ADD.fullPath);
-                  }}*/
                   onClick={(w: LiquidityWallet) => {
-                    setSelectedWallet(w.id);
-                    navigate(VIEWS.TOKENS.fullPath);
+                    navigate(VIEWS.TOKENS.fullPath.replace(':walletId', w.id));
                   }}
                 />
               );

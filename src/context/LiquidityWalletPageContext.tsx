@@ -18,7 +18,7 @@ type ContextProps = {
   loading: boolean;
   errorMessage: { type: string; text: string };
   chain: string;
-  selectedWallet: string;
+
   currentChain: Chain | null;
   wallets: LiquidityWallet[];
   token: string;
@@ -28,13 +28,12 @@ type ContextProps = {
   setErrorMessage: React.Dispatch<
     React.SetStateAction<{ type: string; text: string }>
   >;
-  setSelectedWallet: React.Dispatch<React.SetStateAction<string>>;
   setChain: React.Dispatch<React.SetStateAction<string>>;
   setSearchToken: React.Dispatch<React.SetStateAction<string>>;
   setToken: React.Dispatch<React.SetStateAction<string>>;
   handleCreateClick: () => void;
-  handleAddClick: () => void;
-  handleWithdrawClick: () => void;
+  handleAddClick: (id: string) => void;
+  handleWithdrawClick: (id: string) => void;
   VIEWS: {
     [key: string]: {
       path: string;
@@ -54,7 +53,6 @@ export const LiquidityWalletPageContext = createContext<ContextProps>({
   loading: false,
   errorMessage: { type: '', text: '' },
   chain: '',
-  selectedWallet: '',
   currentChain: null,
   wallets: [],
   token: '',
@@ -62,7 +60,6 @@ export const LiquidityWalletPageContext = createContext<ContextProps>({
   searchToken: '',
   setAmountAdd: () => {},
   setErrorMessage: () => {},
-  setSelectedWallet: () => {},
   setChain: () => {},
   setSearchToken: () => {},
   setToken: () => {},
@@ -79,18 +76,24 @@ export const LiquidityWalletPageContextProvider = ({
     ROOT: { path: '/', fullPath: '/sell/wallets' },
     CREATE: { path: '/create', fullPath: '/sell/wallets/create' },
     SELECT_CHAIN: {
-      path: '/tokens/select-chain',
-      fullPath: '/sell/wallets/tokens/select-chain',
+      path: '/select-chain',
+      fullPath: '/sell/wallets/select-chain',
     },
-    ADD: { path: '/tokens/add', fullPath: '/sell/wallets/tokens/add' },
+    ADD: {
+      path: '/:walletId/tokens/add',
+      fullPath: '/sell/wallets/:walletId/tokens/add',
+    },
     WITHDRAW: {
-      path: '/tokens/withdraw',
-      fullPath: '/sell/wallets/tokens/withdraw',
+      path: '/:walletId/tokens/withdraw',
+      fullPath: '/sell/wallets/:walletId/tokens/withdraw',
     },
-    TOKENS: { path: '/tokens', fullPath: '/sell/wallets/tokens' },
+    TOKENS: {
+      path: '/:walletId/tokens',
+      fullPath: '/sell/wallets/:walletId/tokens',
+    },
     SELECT_TOKEN: {
-      path: '/tokens/select-token',
-      fullPath: '/sell/wallets/tokens/select-token',
+      path: '/:walletId/tokens/select-token',
+      fullPath: '/sell/wallets/:walletId/tokens/select-token',
     },
   };
 
@@ -108,7 +111,6 @@ export const LiquidityWalletPageContextProvider = ({
   const [errorMessage, setErrorMessage] = useState({ type: '', text: '' });
   const [chain, setChain] = useState(selectedChain?.toString() || '');
   const { chains } = useGrinderyChains();
-  const [selectedWallet, setSelectedWallet] = useState('');
   const [searchToken, setSearchToken] = useState('');
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const currentChain: Chain | null =
@@ -187,7 +189,7 @@ export const LiquidityWalletPageContextProvider = ({
     }, 1500);
   };
 
-  const handleWithdrawClick = async () => {
+  const handleWithdrawClick = async (id: string) => {
     setErrorMessage({
       type: '',
       text: '',
@@ -210,16 +212,17 @@ export const LiquidityWalletPageContextProvider = ({
     if (
       parseFloat(amountAdd) >
       parseFloat(
-        wallets.find((wallet: LiquidityWallet) => selectedWallet === wallet.id)
-          ?.tokens?.[token] || '0'
+        wallets.find((wallet: LiquidityWallet) => id === wallet.id)?.tokens?.[
+          token
+        ] || '0'
       )
     ) {
       setErrorMessage({
         type: 'amountAdd',
         text: `You can withdraw maximum ${
-          wallets.find(
-            (wallet: LiquidityWallet) => selectedWallet === wallet.id
-          )?.tokens?.[token] || '0'
+          wallets.find((wallet: LiquidityWallet) => id === wallet.id)?.tokens?.[
+            token
+          ] || '0'
         } tokens`,
       });
       return;
@@ -228,7 +231,7 @@ export const LiquidityWalletPageContextProvider = ({
     setTimeout(() => {
       setWallets((_wallets) => [
         ..._wallets.map((wallet: LiquidityWallet) => {
-          if (wallet.id === selectedWallet) {
+          if (wallet.id === id) {
             return {
               ...wallet,
               tokens: {
@@ -246,11 +249,11 @@ export const LiquidityWalletPageContextProvider = ({
       setAmountAdd('');
       setToken('');
       setLoading(false);
-      navigate(VIEWS.TOKENS.fullPath);
+      navigate(VIEWS.TOKENS.fullPath.replace(':walletId', id));
     }, 1500);
   };
 
-  const handleAddClick = async () => {
+  const handleAddClick = async (id: string) => {
     setErrorMessage({
       type: '',
       text: '',
@@ -281,7 +284,7 @@ export const LiquidityWalletPageContextProvider = ({
     setTimeout(() => {
       setWallets((_wallets) => [
         ..._wallets.map((wallet: LiquidityWallet) => {
-          if (wallet.id === selectedWallet) {
+          if (wallet.id === id) {
             return {
               ...wallet,
               tokens: {
@@ -300,7 +303,7 @@ export const LiquidityWalletPageContextProvider = ({
       setAmountAdd('');
       setToken('');
       setLoading(false);
-      navigate(VIEWS.TOKENS.fullPath);
+      navigate(VIEWS.TOKENS.fullPath.replace(':walletId', id));
     }, 1500);
   };
 
@@ -335,7 +338,6 @@ export const LiquidityWalletPageContextProvider = ({
         loading,
         errorMessage,
         chain,
-        selectedWallet,
         currentChain,
         wallets,
         token,
@@ -344,7 +346,6 @@ export const LiquidityWalletPageContextProvider = ({
         setSearchToken,
         setAmountAdd,
         setErrorMessage,
-        setSelectedWallet,
         setChain,
         setToken,
         handleCreateClick,

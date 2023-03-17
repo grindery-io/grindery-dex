@@ -60,7 +60,9 @@ function StakingPageRoot() {
                 stakeChain={stakeChain}
                 onWithdrawClick={(s: any) => {
                   setSelectedStake(stake._id);
-                  navigate(VIEWS.WITHDRAW.fullPath);
+                  navigate(
+                    VIEWS.WITHDRAW.fullPath.replace(':stakeId', stake._id)
+                  );
                 }}
               />
             );

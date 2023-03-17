@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { IconButton, Tooltip } from '@mui/material';
 import { useGrinderyNexus } from 'use-grindery-nexus';
 import { Box } from '@mui/system';
@@ -8,7 +8,7 @@ import DexCardSubmitButton from '../../components/grindery/DexCard/DexCardSubmit
 import DexCardBody from '../../components/grindery/DexCard/DexCardBody';
 import { LiquidityWallet } from '../../types/LiquidityWallet';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import useGrinderyChains from '../../hooks/useGrinderyChains';
 import useLiquidityWalletPage from '../../hooks/useLiquidityWalletPage';
 import { Chain } from '../../types/Chain';
@@ -16,27 +16,39 @@ import { TokenType } from '../../types/TokenType';
 import DexLiquidityWalletToken, {
   WalletToken,
 } from '../../components/grindery/DexLiquidityWalletToken/DexLiquidityWalletToken';
+import useLiquidityWallets from '../../hooks/useLiquidityWallets';
+import DexLoading from '../../components/grindery/DexLoading/DexLoading';
 
 function LiquidityWalletPageTokens() {
   const { user, connect } = useGrinderyNexus();
-  const { wallets, VIEWS, setSelectedWallet, selectedWallet, setToken } =
-    useLiquidityWalletPage();
+  const { VIEWS, setToken, setChain } = useLiquidityWalletPage();
   let navigate = useNavigate();
-
+  let { walletId } = useParams();
+  const { wallets, isLoading: walletsIsLoading } = useLiquidityWallets();
   const { chains } = useGrinderyChains();
 
-  const currentWallet = wallets.find(
-    (w: LiquidityWallet) => w.id === selectedWallet
-  );
+  const currentWallet = wallets.find((w: LiquidityWallet) => w.id === walletId);
 
   const walletChain = chains.find(
     (c: Chain) => c.value.split(':')[1] === currentWallet?.chainId
   );
 
+  useEffect(() => {
+    if (currentWallet) {
+      setChain(`eip155:${currentWallet.chainId}`);
+    }
+  }, [currentWallet]);
+
+  useEffect(() => {
+    if (!currentWallet && !walletsIsLoading) {
+      navigate(VIEWS.ROOT.fullPath);
+    }
+  }, [currentWallet, walletsIsLoading]);
+
   return (
     <>
       <DexCardHeader
-        title={`${walletChain?.label} chain wallet`}
+        title={`${walletChain?.label || ''} chain wallet`}
         titleSize={18}
         titleAlign="center"
         startAdornment={
@@ -44,7 +56,6 @@ function LiquidityWalletPageTokens() {
             size="medium"
             edge="start"
             onClick={() => {
-              setSelectedWallet('');
               navigate(VIEWS.ROOT.fullPath);
             }}
           >
@@ -58,7 +69,9 @@ function LiquidityWalletPageTokens() {
                 size="medium"
                 edge="end"
                 onClick={() => {
-                  navigate(VIEWS.ADD.fullPath);
+                  navigate(
+                    VIEWS.ADD.fullPath.replace(':walletId', walletId || '')
+                  );
                 }}
               >
                 <AddCircleOutlineIcon sx={{ color: 'black' }} />
@@ -71,6 +84,7 @@ function LiquidityWalletPageTokens() {
       />
       <DexCardBody>
         <>
+          {user && walletsIsLoading && <DexLoading />}
           {user &&
             Object.keys(currentWallet?.tokens || {}).map((key: string) => {
               const token: WalletToken = {
@@ -87,11 +101,18 @@ function LiquidityWalletPageTokens() {
                   tokenChain={walletChain}
                   onWithdrawClick={(t: WalletToken) => {
                     setToken(t.label);
-                    navigate(VIEWS.WITHDRAW.fullPath);
+                    navigate(
+                      VIEWS.WITHDRAW.fullPath.replace(
+                        ':walletId',
+                        walletId || ''
+                      )
+                    );
                   }}
                   onAddClick={(t: WalletToken) => {
                     setToken(t.label);
-                    navigate(VIEWS.ADD.fullPath);
+                    navigate(
+                      VIEWS.ADD.fullPath.replace(':walletId', walletId || '')
+                    );
                   }}
                 />
               );
@@ -102,7 +123,9 @@ function LiquidityWalletPageTokens() {
             onClick={
               user
                 ? () => {
-                    navigate(VIEWS.ADD.fullPath);
+                    navigate(
+                      VIEWS.ADD.fullPath.replace(':walletId', walletId || '')
+                    );
                   }
                 : () => {
                     connect();

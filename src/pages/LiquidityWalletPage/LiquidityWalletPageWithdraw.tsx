@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { IconButton, Button as MuiButton } from '@mui/material';
 import { useGrinderyNexus } from 'use-grindery-nexus';
 import { Box } from '@mui/system';
@@ -9,8 +9,9 @@ import DexCardBody from '../../components/grindery/DexCard/DexCardBody';
 import DexLoading from '../../components/grindery/DexLoading/DexLoading';
 import DexTextInput from '../../components/grindery/DexTextInput/DexTextInput';
 import { LiquidityWallet } from '../../types/LiquidityWallet';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import useLiquidityWalletPage from '../../hooks/useLiquidityWalletPage';
+import useLiquidityWallets from '../../hooks/useLiquidityWallets';
 
 function LiquidityWalletPageWithdraw() {
   const { user, connect } = useGrinderyNexus();
@@ -18,8 +19,6 @@ function LiquidityWalletPageWithdraw() {
     amountAdd,
     loading,
     errorMessage,
-    selectedWallet,
-    wallets,
     VIEWS,
     setAmountAdd,
     setErrorMessage,
@@ -28,6 +27,16 @@ function LiquidityWalletPageWithdraw() {
     token,
   } = useLiquidityWalletPage();
   let navigate = useNavigate();
+  const { wallets, isLoading: walletsIsLoading } = useLiquidityWallets();
+  let { walletId } = useParams();
+
+  const currentWallet = wallets.find((w: LiquidityWallet) => w.id === walletId);
+
+  useEffect(() => {
+    if (!currentWallet && !walletsIsLoading) {
+      navigate(VIEWS.ROOT.fullPath);
+    }
+  }, [currentWallet, walletsIsLoading]);
 
   return (
     <>
@@ -42,7 +51,9 @@ function LiquidityWalletPageWithdraw() {
             onClick={() => {
               setAmountAdd('');
               setToken('');
-              navigate(VIEWS.TOKENS.fullPath);
+              navigate(
+                VIEWS.TOKENS.fullPath.replace(':walletId', walletId || '')
+              );
             }}
           >
             <ArrowBackIcon />
@@ -52,76 +63,84 @@ function LiquidityWalletPageWithdraw() {
       />
 
       <DexCardBody>
-        <DexTextInput
-          label="Amount"
-          value={amountAdd}
-          onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-            setErrorMessage({
-              type: '',
-              text: '',
-            });
-            setAmountAdd(event.target.value);
-          }}
-          name="amountAdd"
-          placeholder="Enter amount of tokens"
-          disabled={false}
-          endAdornment={
-            <Box
-              sx={{
-                '& button': {
-                  fontSize: '14px',
-                  padding: '4px 8px 5px',
-                  display: 'inline-block',
-                  width: 'auto',
-                  margin: '0 16px 0 0',
-                  background: 'rgba(63, 73, 225, 0.08)',
-                  color: 'rgb(63, 73, 225)',
-                  borderRadius: '8px',
-                  minWidth: 0,
-                  '&:hover': {
-                    background: 'rgba(63, 73, 225, 0.12)',
-                    color: 'rgb(63, 73, 225)',
-                  },
-                },
+        {user && walletsIsLoading ? (
+          <DexLoading />
+        ) : (
+          <>
+            <DexTextInput
+              label="Amount"
+              value={amountAdd}
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                setErrorMessage({
+                  type: '',
+                  text: '',
+                });
+                setAmountAdd(event.target.value);
               }}
-            >
-              <MuiButton
-                disableElevation
-                size="small"
-                variant="contained"
-                onClick={() => {
-                  setAmountAdd(
-                    wallets.find(
-                      (wallet: LiquidityWallet) => wallet.id === selectedWallet
-                    )?.tokens?.[token] || '0'
-                  );
-                }}
-              >
-                max
-              </MuiButton>
-            </Box>
-          }
-          error={errorMessage}
-        />
+              name="amountAdd"
+              placeholder="Enter amount of tokens"
+              disabled={false}
+              endAdornment={
+                <Box
+                  sx={{
+                    '& button': {
+                      fontSize: '14px',
+                      padding: '4px 8px 5px',
+                      display: 'inline-block',
+                      width: 'auto',
+                      margin: '0 16px 0 0',
+                      background: 'rgba(63, 73, 225, 0.08)',
+                      color: 'rgb(63, 73, 225)',
+                      borderRadius: '8px',
+                      minWidth: 0,
+                      '&:hover': {
+                        background: 'rgba(63, 73, 225, 0.12)',
+                        color: 'rgb(63, 73, 225)',
+                      },
+                    },
+                  }}
+                >
+                  <MuiButton
+                    disableElevation
+                    size="small"
+                    variant="contained"
+                    onClick={() => {
+                      setAmountAdd(
+                        wallets.find(
+                          (wallet: LiquidityWallet) => wallet.id === walletId
+                        )?.tokens?.[token] || '0'
+                      );
+                    }}
+                  >
+                    max
+                  </MuiButton>
+                </Box>
+              }
+              error={errorMessage}
+            />
 
-        {loading && <DexLoading />}
-        <DexCardSubmitButton
-          disabled={loading}
-          label={
-            loading
-              ? 'Waiting transaction'
-              : user
-              ? 'Withdraw'
-              : 'Connect wallet'
-          }
-          onClick={
-            user
-              ? handleWithdrawClick
-              : () => {
-                  connect();
-                }
-          }
-        />
+            {loading && <DexLoading />}
+            <DexCardSubmitButton
+              disabled={loading}
+              label={
+                loading
+                  ? 'Waiting transaction'
+                  : user
+                  ? 'Withdraw'
+                  : 'Connect wallet'
+              }
+              onClick={
+                user
+                  ? () => {
+                      handleWithdrawClick(walletId || '');
+                    }
+                  : () => {
+                      connect();
+                    }
+              }
+            />
+          </>
+        )}
       </DexCardBody>
     </>
   );

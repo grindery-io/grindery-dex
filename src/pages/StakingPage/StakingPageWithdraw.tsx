@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { IconButton, Button as MuiButton } from '@mui/material';
 import { useGrinderyNexus } from 'use-grindery-nexus';
 import { Box } from '@mui/system';
@@ -8,9 +8,10 @@ import DexCardSubmitButton from '../../components/grindery/DexCard/DexCardSubmit
 import DexCardBody from '../../components/grindery/DexCard/DexCardBody';
 import DexLoading from '../../components/grindery/DexLoading/DexLoading';
 import DexTextInput from '../../components/grindery/DexTextInput/DexTextInput';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import useStakes from '../../hooks/useStakes';
 import useStakingPage from '../../hooks/useStakingPage';
+import { Stake } from '../../types/Stake';
 
 function StakingPageWithdraw() {
   const { user, connect } = useGrinderyNexus();
@@ -20,13 +21,28 @@ function StakingPageWithdraw() {
     loading,
     errorMessage,
     selectedStake,
+    setChain,
     setAmountAdd,
     setErrorMessage,
     setSelectedStake,
     handleWithdrawClick,
   } = useStakingPage();
   let navigate = useNavigate();
-  const { stakes } = useStakes();
+  const { stakes, isLoading: stakesIsLoading } = useStakes();
+  let { stakeId } = useParams();
+  const currentStake = stakes.find((s: Stake) => s._id === stakeId);
+
+  useEffect(() => {
+    if (currentStake) {
+      setChain(`eip155:${currentStake.chainId}`);
+    }
+  }, [currentStake]);
+
+  useEffect(() => {
+    if (!currentStake && !stakesIsLoading) {
+      navigate(VIEWS.ROOT.fullPath);
+    }
+  }, [currentStake, stakesIsLoading]);
 
   return (
     <>
@@ -51,55 +67,59 @@ function StakingPageWithdraw() {
       />
 
       <DexCardBody>
-        <DexTextInput
-          label="GRT Amount"
-          value={amountAdd}
-          onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-            setErrorMessage({
-              type: '',
-              text: '',
-            });
-            setAmountAdd(event.target.value);
-          }}
-          name="amountAdd"
-          placeholder="Enter amount of tokens"
-          disabled={false}
-          endAdornment={
-            <Box
-              sx={{
-                '& button': {
-                  fontSize: '14px',
-                  padding: '4px 8px 5px',
-                  display: 'inline-block',
-                  width: 'auto',
-                  margin: '0 16px 0 0',
-                  background: 'rgba(63, 73, 225, 0.08)',
-                  color: 'rgb(63, 73, 225)',
-                  borderRadius: '8px',
-                  minWidth: 0,
-                  '&:hover': {
-                    background: 'rgba(63, 73, 225, 0.12)',
+        {user && stakesIsLoading ? (
+          <DexLoading />
+        ) : (
+          <DexTextInput
+            label="GRT Amount"
+            value={amountAdd}
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+              setErrorMessage({
+                type: '',
+                text: '',
+              });
+              setAmountAdd(event.target.value);
+            }}
+            name="amountAdd"
+            placeholder="Enter amount of tokens"
+            disabled={false}
+            endAdornment={
+              <Box
+                sx={{
+                  '& button': {
+                    fontSize: '14px',
+                    padding: '4px 8px 5px',
+                    display: 'inline-block',
+                    width: 'auto',
+                    margin: '0 16px 0 0',
+                    background: 'rgba(63, 73, 225, 0.08)',
                     color: 'rgb(63, 73, 225)',
+                    borderRadius: '8px',
+                    minWidth: 0,
+                    '&:hover': {
+                      background: 'rgba(63, 73, 225, 0.12)',
+                      color: 'rgb(63, 73, 225)',
+                    },
                   },
-                },
-              }}
-            >
-              <MuiButton
-                disableElevation
-                size="small"
-                variant="contained"
-                onClick={() => {
-                  setAmountAdd(
-                    stakes.find((s) => s._id === selectedStake)?.amount || '0'
-                  );
                 }}
               >
-                max
-              </MuiButton>
-            </Box>
-          }
-          error={errorMessage}
-        />
+                <MuiButton
+                  disableElevation
+                  size="small"
+                  variant="contained"
+                  onClick={() => {
+                    setAmountAdd(
+                      stakes.find((s) => s._id === selectedStake)?.amount || '0'
+                    );
+                  }}
+                >
+                  max
+                </MuiButton>
+              </Box>
+            }
+            error={errorMessage}
+          />
+        )}
 
         {loading && <DexLoading />}
         <DexCardSubmitButton
