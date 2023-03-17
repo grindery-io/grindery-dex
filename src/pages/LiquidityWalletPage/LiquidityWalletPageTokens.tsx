@@ -30,7 +30,7 @@ function LiquidityWalletPageTokens() {
   );
 
   const walletChain = chains.find(
-    (c: Chain) => c.value === currentWallet?.chain
+    (c: Chain) => c.value.split(':')[1] === currentWallet?.chainId
   );
 
   return (

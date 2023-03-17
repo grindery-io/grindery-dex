@@ -11,11 +11,14 @@ import DexLiquidityWallet from '../../components/grindery/DexLiquidityWallet/Dex
 import { useNavigate } from 'react-router-dom';
 import useGrinderyChains from '../../hooks/useGrinderyChains';
 import useLiquidityWalletPage from '../../hooks/useLiquidityWalletPage';
+import useLiquidityWallets from '../../hooks/useLiquidityWallets';
+import DexLoading from '../../components/grindery/DexLoading/DexLoading';
 
 function LiquidityWalletPageRoot() {
   const { user, connect } = useGrinderyNexus();
-  const { wallets, VIEWS, setSelectedWallet } = useLiquidityWalletPage();
+  const { VIEWS, setSelectedWallet } = useLiquidityWalletPage();
   let navigate = useNavigate();
+  const { wallets, isLoading: walletsIsLoading } = useLiquidityWallets();
 
   const { chains } = useGrinderyChains();
 
@@ -44,10 +47,15 @@ function LiquidityWalletPageRoot() {
           {user &&
             wallets.map((wallet: LiquidityWallet) => {
               const walletChain = {
-                icon: chains.find((c) => c.value === wallet.chain)?.icon,
-                label: chains.find((c) => c.value === wallet.chain)?.label,
-                nativeToken: chains.find((c) => c.value === wallet.chain)
-                  ?.nativeToken,
+                icon: chains.find(
+                  (c) => c.value.split(':')[1] === wallet.chainId
+                )?.icon,
+                label: chains.find(
+                  (c) => c.value.split(':')[1] === wallet.chainId
+                )?.label,
+                nativeToken: chains.find(
+                  (c) => c.value.split(':')[1] === wallet.chainId
+                )?.nativeToken,
               };
               return (
                 <DexLiquidityWallet
@@ -69,6 +77,7 @@ function LiquidityWalletPageRoot() {
                 />
               );
             })}
+          {user && walletsIsLoading && <DexLoading />}
           {wallets.length < chains.length ? (
             <DexCardSubmitButton
               label={user ? 'Create wallet' : 'Connect wallet'}

@@ -1,6 +1,6 @@
 export type LiquidityWallet = {
   id: string;
-  chain: string | number;
+  chainId: string;
   tokens: { [key: string]: string };
   updated?: boolean;
   new?: boolean;

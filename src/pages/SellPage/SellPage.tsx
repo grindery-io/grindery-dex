@@ -3,6 +3,7 @@ import { Navigate, Route, Routes } from 'react-router-dom';
 import DexPageContainer from '../../components/grindery/DexPageContainer/DexPageContainer';
 import DexSellMenu from '../../components/grindery/DexSellMenu/DexSellMenu';
 import { sellPages } from '../../components/pages/dexPages';
+import LiquidityWalletsContextProvider from '../../context/LiquidityWalletsContext';
 import OffersContextProvider from '../../context/OffersContext';
 import StakesContextProvider from '../../context/StakesContext';
 
@@ -13,22 +14,24 @@ const SellPage = (props: Props) => {
     <div>
       <StakesContextProvider>
         <OffersContextProvider>
-          <DexPageContainer>
-            <DexSellMenu />
-            <Routes>
-              {sellPages.map((page: any) => (
+          <LiquidityWalletsContextProvider>
+            <DexPageContainer>
+              <DexSellMenu />
+              <Routes>
+                {sellPages.map((page: any) => (
+                  <Route
+                    key={page.path}
+                    path={`${page.path}/*`}
+                    element={page.component}
+                  />
+                ))}
                 <Route
-                  key={page.path}
-                  path={`${page.path}/*`}
-                  element={page.component}
+                  path="/"
+                  element={<Navigate to={`/sell${sellPages[0].path}`} />}
                 />
-              ))}
-              <Route
-                path="/"
-                element={<Navigate to={`/sell${sellPages[0].path}`} />}
-              />
-            </Routes>
-          </DexPageContainer>
+              </Routes>
+            </DexPageContainer>
+          </LiquidityWalletsContextProvider>
         </OffersContextProvider>
       </StakesContextProvider>
     </div>

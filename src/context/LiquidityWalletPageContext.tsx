@@ -6,6 +6,7 @@ import useGrinderyChains from '../hooks/useGrinderyChains';
 import _ from 'lodash';
 import { LiquidityWallet } from '../types/LiquidityWallet';
 import { TokenType } from '../types/TokenType';
+import useLiquidityWallets from '../hooks/useLiquidityWallets';
 
 function isNumeric(value: string) {
   return /^\d*(\.\d+)?$/.test(value);
@@ -16,7 +17,7 @@ type ContextProps = {
   amountAdd: string;
   loading: boolean;
   errorMessage: { type: string; text: string };
-  chain: string | number;
+  chain: string;
   selectedWallet: string;
   currentChain: Chain | null;
   wallets: LiquidityWallet[];
@@ -28,7 +29,7 @@ type ContextProps = {
     React.SetStateAction<{ type: string; text: string }>
   >;
   setSelectedWallet: React.Dispatch<React.SetStateAction<string>>;
-  setChain: React.Dispatch<React.SetStateAction<string | number>>;
+  setChain: React.Dispatch<React.SetStateAction<string>>;
   setSearchToken: React.Dispatch<React.SetStateAction<string>>;
   setToken: React.Dispatch<React.SetStateAction<string>>;
   handleCreateClick: () => void;
@@ -95,12 +96,17 @@ export const LiquidityWalletPageContextProvider = ({
 
   const { chain: selectedChain } = useGrinderyNexus();
   let navigate = useNavigate();
+  const {
+    wallets,
+    setWallets,
+    isLoading: walletsIsLoading,
+    saveWallet,
+  } = useLiquidityWallets();
   const [amountAdd, setAmountAdd] = useState<string>('');
   const [token, setToken] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState({ type: '', text: '' });
-  const [chain, setChain] = useState(selectedChain || '');
-
+  const [chain, setChain] = useState(selectedChain?.toString() || '');
   const { chains } = useGrinderyChains();
   const [selectedWallet, setSelectedWallet] = useState('');
   const [searchToken, setSearchToken] = useState('');
@@ -120,8 +126,6 @@ export const LiquidityWalletPageContextProvider = ({
           tokens: chains.find((c) => c.value === chain)?.tokens || [],
         }
       : null;
-
-  const [wallets, setWallets] = useState<LiquidityWallet[]>([]);
 
   const chainTokens = (
     (chain && chains.find((c) => c.value === chain)?.tokens) ||
@@ -145,7 +149,9 @@ export const LiquidityWalletPageContextProvider = ({
     }
     if (
       chain &&
-      wallets.map((wallet: LiquidityWallet) => wallet.chain).includes(chain)
+      wallets
+        .map((wallet: LiquidityWallet) => wallet.chainId)
+        .includes(chain.split(':')[1])
     ) {
       setErrorMessage({
         type: 'chain',
@@ -154,14 +160,23 @@ export const LiquidityWalletPageContextProvider = ({
       return;
     }
     setLoading(true);
+
+    /*const wallet = await saveWallet({
+      chainId: chain.toString().split(':')[1],
+      tokens: {},
+    }).catch((error: any) => {
+      /// handle saving error
+    });*/
+
     setTimeout(() => {
       setWallets([
         {
+          //...wallet,
           id:
             wallets.length > 0
               ? (parseFloat(wallets[wallets.length - 1].id) + 1).toString()
               : '1',
-          chain: chain,
+          chainId: chain.toString().split(':')[1],
           tokens: {},
           new: true,
         },
@@ -290,7 +305,7 @@ export const LiquidityWalletPageContextProvider = ({
   };
 
   useEffect(() => {
-    setChain(selectedChain || '');
+    setChain(selectedChain?.toString() || '');
   }, [selectedChain]);
 
   useEffect(() => {

@@ -85,7 +85,7 @@ export const FaucetPageContextProvider = ({
   const [error, setError] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState({ type: '', text: '' });
   const [chain, setChain] = useState(selectedChain || '');
-  const { chains, isLoading: chainsIsLoading } = useGrinderyChains();
+  const { chains } = useGrinderyChains();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const currentChain: Chain | null =
     chain && chains.find((c) => c.value === chain)

@@ -41,8 +41,8 @@ function LiquidityWalletPageSelectChain() {
           chains={chains.filter(
             (chain: Chain) =>
               !wallets
-                .map((wallet: LiquidityWallet) => wallet.chain)
-                .includes(chain.value)
+                .map((wallet: LiquidityWallet) => wallet.chainId)
+                .includes(chain.value.split(':')[1])
           )}
           onClick={(blockchain: any) => {
             setChain(blockchain.value);
