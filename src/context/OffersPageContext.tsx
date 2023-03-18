@@ -262,7 +262,7 @@ export const OffersPageContextProvider = ({
 
     const receipt = await provider.getTransactionReceipt(tx.hash);
 
-    const offerId = receipt?.logs?.[0]?.topics?.[0] || '';
+    const offerId = receipt?.logs?.[0]?.topics?.[1] || '';
 
     // save offer to DB
     const newOffer = await saveOffer({
@@ -329,6 +329,23 @@ export const OffersPageContextProvider = ({
       return;
     }
 
+    const checkOwner = await poolContract
+      .getOfferer(offerToDeactivate)
+      .catch((error: any) => {
+        setErrorMessage({
+          type: 'checkOwner',
+          text: getErrorMessage(
+            error.error,
+            'Checking offer owner transaction error'
+          ),
+        });
+        console.error('checkOwner error', error);
+        setIsActivating('');
+        return;
+      });
+
+    console.log('checkOwner', checkOwner);
+
     // create transaction
     const tx = await poolContract
       .setIsActive(offerToDeactivate, false, {
@@ -386,7 +403,57 @@ export const OffersPageContextProvider = ({
   const handleActivateClick = async (offerId: string) => {
     setIsActivating(offerId);
 
-    /*// get signer
+    const offerChain = offers.find((o: Offer) => o._id === offerId)?.chain;
+
+    const chainToSelect = chains.find(
+      (c: Chain) => c.value === `eip155:${offerChain}`
+    );
+
+    if (!chainToSelect) {
+      // handle chain not found error
+      return;
+    }
+
+    try {
+      await window.ethereum.request({
+        method: 'wallet_addEthereumChain',
+        params: [
+          {
+            chainId:
+              chainToSelect && chainToSelect.value
+                ? `0x${parseFloat(chainToSelect.value.split(':')[1]).toString(
+                    16
+                  )}`
+                : '',
+            chainName: chainToSelect?.label || '',
+            rpcUrls: chainToSelect?.rpc || [],
+            nativeCurrency: {
+              name: chainToSelect?.token || '',
+              symbol: chainToSelect?.token || '',
+              decimals: 18,
+            },
+          },
+        ],
+      });
+    } catch (error: any) {
+      // handle chain switching error
+      return;
+    }
+
+    const offerToActivate = offers.find(
+      (o: Offer) => o._id === offerId
+    )?.offerId;
+
+    if (!offerToActivate) {
+      setErrorMessage({
+        type: 'setIsActive',
+        text: 'Offer ID not found',
+      });
+      setIsActivating('');
+      return;
+    }
+
+    // get signer
     const signer = provider.getSigner();
 
     // set pool contract
@@ -401,7 +468,7 @@ export const OffersPageContextProvider = ({
 
     // create transaction
     const tx = await poolContract
-      .setIsActive(offerId, true)
+      .setIsActive(offerToActivate, true)
       .catch((error: any) => {
         setErrorMessage({
           type: 'setIsActive',
@@ -432,7 +499,7 @@ export const OffersPageContextProvider = ({
       console.error('tx.wait error', error);
       setIsActivating('');
       return;
-    }*/
+    }
 
     const updated = await updateOffer(offerId).catch((error: any) => {
       // handle error

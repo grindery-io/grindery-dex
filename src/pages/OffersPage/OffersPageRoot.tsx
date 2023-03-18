@@ -14,6 +14,7 @@ import useGrinderyChains from '../../hooks/useGrinderyChains';
 import useOffers from '../../hooks/useOffers';
 import DexListSubheader from '../../components/grindery/DexListSubheader/DexListSubheader';
 import useOffersPage from '../../hooks/useOffersPage';
+import _ from 'lodash';
 
 function OffersPageRoot() {
   const { user, connect } = useGrinderyNexus();
@@ -59,43 +60,45 @@ function OffersPageRoot() {
                 {chains.find((c: Chain) => c.value === `eip155:${key}`)
                   ?.label || ''}
               </DexListSubheader>
-              {groupedOffers[key].map((offer: Offer) => {
-                const offerChain = {
-                  label:
-                    chains.find((c) => c.value === `eip155:${offer.chain}`)
-                      ?.label || '',
-                  icon:
-                    chains.find((c) => c.value === `eip155:${offer.chain}`)
-                      ?.icon || '',
-                  token:
-                    chains.find((c) => c.value === `eip155:${offer.chain}`)
-                      ?.nativeToken || '',
-                };
-                const currentOfferChain = chains.find(
-                  (c) => c.value === `eip155:${offer.chain}`
-                );
-                const offerToken = {
-                  label:
-                    currentOfferChain?.tokens?.find(
-                      (t) => t.id === offer.tokenId
-                    )?.symbol || '',
-                  icon:
-                    currentOfferChain?.tokens?.find(
-                      (t) => t.id === offer.tokenId
-                    )?.icon || '',
-                };
-                return (
-                  <DexOffer
-                    key={offer._id}
-                    offer={offer}
-                    chain={offerChain}
-                    isActivating={isActivating}
-                    onDeactivateClick={handleDeactivateClick}
-                    onActivateClick={handleActivateClick}
-                    token={offerToken}
-                  />
-                );
-              })}
+              {_.orderBy(groupedOffers[key], ['isActive'], ['desc']).map(
+                (offer: Offer) => {
+                  const offerChain = {
+                    label:
+                      chains.find((c) => c.value === `eip155:${offer.chain}`)
+                        ?.label || '',
+                    icon:
+                      chains.find((c) => c.value === `eip155:${offer.chain}`)
+                        ?.icon || '',
+                    token:
+                      chains.find((c) => c.value === `eip155:${offer.chain}`)
+                        ?.nativeToken || '',
+                  };
+                  const currentOfferChain = chains.find(
+                    (c) => c.value === `eip155:${offer.chain}`
+                  );
+                  const offerToken = {
+                    label:
+                      currentOfferChain?.tokens?.find(
+                        (t) => t.id === offer.tokenId
+                      )?.symbol || '',
+                    icon:
+                      currentOfferChain?.tokens?.find(
+                        (t) => t.id === offer.tokenId
+                      )?.icon || '',
+                  };
+                  return (
+                    <DexOffer
+                      key={offer._id}
+                      offer={offer}
+                      chain={offerChain}
+                      isActivating={isActivating}
+                      onDeactivateClick={handleDeactivateClick}
+                      onActivateClick={handleActivateClick}
+                      token={offerToken}
+                    />
+                  );
+                }
+              )}
             </React.Fragment>
           ))}
         {user && offersIsLoading && <DexLoading />}
