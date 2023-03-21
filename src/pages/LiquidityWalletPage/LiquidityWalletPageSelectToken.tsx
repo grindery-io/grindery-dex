@@ -26,7 +26,9 @@ function LiquidityWalletPageSelectToken() {
 
   const { chains } = useGrinderyChains();
 
-  const currentWallet = wallets.find((w: LiquidityWallet) => w.id === walletId);
+  const currentWallet = wallets.find(
+    (w: LiquidityWallet) => w._id === walletId
+  );
 
   const walletChain = chains.find(
     (c: Chain) => c.value.split(':')[1] === currentWallet?.chainId

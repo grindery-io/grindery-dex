@@ -7,6 +7,9 @@ import _ from 'lodash';
 import { LiquidityWallet } from '../types/LiquidityWallet';
 import { TokenType } from '../types/TokenType';
 import useLiquidityWallets from '../hooks/useLiquidityWallets';
+import { GRTSATELLITE_CONTRACT_ADDRESS } from '../constants';
+import useAbi from '../hooks/useAbi';
+import { getErrorMessage } from '../utils/error';
 
 function isNumeric(value: string) {
   return /^\d*(\.\d+)?$/.test(value);
@@ -97,7 +100,7 @@ export const LiquidityWalletPageContextProvider = ({
     },
   };
 
-  const { chain: selectedChain } = useGrinderyNexus();
+  const { chain: selectedChain, provider, ethers } = useGrinderyNexus();
   let navigate = useNavigate();
   const {
     wallets,
@@ -112,6 +115,7 @@ export const LiquidityWalletPageContextProvider = ({
   const [chain, setChain] = useState(selectedChain?.toString() || '');
   const { chains } = useGrinderyChains();
   const [searchToken, setSearchToken] = useState('');
+  const { satelliteAbi } = useAbi();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const currentChain: Chain | null =
     chain && chains.find((c) => c.value === chain)
@@ -149,6 +153,14 @@ export const LiquidityWalletPageContextProvider = ({
       });
       return;
     }
+    if (!satelliteAbi) {
+      setErrorMessage({
+        type: 'tx',
+        text: 'Satellite ABI not found.',
+      });
+      return;
+    }
+
     if (
       chain &&
       wallets
@@ -163,20 +175,65 @@ export const LiquidityWalletPageContextProvider = ({
     }
     setLoading(true);
 
-    /*const wallet = await saveWallet({
+    const signer = provider.getSigner();
+
+    const _grtSatellite = new ethers.Contract(
+      '0xcB65E522F6e12091184fE41d6E34013ea620319a',
+      satelliteAbi,
+      signer
+    );
+
+    const grtSatellite = _grtSatellite.connect(signer);
+
+    const tx = await grtSatellite
+      .deployLiquidityContract()
+      .catch((error: any) => {
+        setErrorMessage({
+          type: 'tx',
+          text: getErrorMessage(error.error, 'Create wallet transaction error'),
+        });
+        console.error('create wallet error', error.error);
+        setLoading(false);
+        return;
+      });
+
+    if (!tx) {
+      setLoading(false);
+      return;
+    }
+
+    let receipt;
+    try {
+      receipt = await tx.wait();
+    } catch (error: any) {
+      setErrorMessage({
+        type: 'tx',
+        text: error?.message || 'Transaction error',
+      });
+      console.error('tx.wait error', error);
+      setLoading(false);
+      return;
+    }
+
+    const wallet = await saveWallet({
       chainId: chain.toString().split(':')[1],
-      tokens: {},
-    }).catch((error: any) => {
-      /// handle saving error
-    });*/
+      walletAddress: receipt.events[1].args[0],
+    });
+
+    if (!wallet) {
+      setErrorMessage({
+        type: 'tx',
+        text: 'Transaction error',
+      });
+    }
 
     setTimeout(() => {
       setWallets([
         {
           //...wallet,
-          id:
+          _id:
             wallets.length > 0
-              ? (parseFloat(wallets[wallets.length - 1].id) + 1).toString()
+              ? (parseFloat(wallets[wallets.length - 1]._id) + 1).toString()
               : '1',
           chainId: chain.toString().split(':')[1],
           tokens: {},
@@ -185,6 +242,10 @@ export const LiquidityWalletPageContextProvider = ({
         ...[...wallets],
       ]);
       setLoading(false);
+      setErrorMessage({
+        type: '',
+        text: '',
+      });
       navigate(VIEWS.ROOT.fullPath);
     }, 1500);
   };
@@ -212,7 +273,7 @@ export const LiquidityWalletPageContextProvider = ({
     if (
       parseFloat(amountAdd) >
       parseFloat(
-        wallets.find((wallet: LiquidityWallet) => id === wallet.id)?.tokens?.[
+        wallets.find((wallet: LiquidityWallet) => id === wallet._id)?.tokens?.[
           token
         ] || '0'
       )
@@ -220,9 +281,8 @@ export const LiquidityWalletPageContextProvider = ({
       setErrorMessage({
         type: 'amountAdd',
         text: `You can withdraw maximum ${
-          wallets.find((wallet: LiquidityWallet) => id === wallet.id)?.tokens?.[
-            token
-          ] || '0'
+          wallets.find((wallet: LiquidityWallet) => id === wallet._id)
+            ?.tokens?.[token] || '0'
         } tokens`,
       });
       return;
@@ -231,7 +291,7 @@ export const LiquidityWalletPageContextProvider = ({
     setTimeout(() => {
       setWallets((_wallets) => [
         ..._wallets.map((wallet: LiquidityWallet) => {
-          if (wallet.id === id) {
+          if (wallet._id === id) {
             return {
               ...wallet,
               tokens: {
@@ -284,7 +344,7 @@ export const LiquidityWalletPageContextProvider = ({
     setTimeout(() => {
       setWallets((_wallets) => [
         ..._wallets.map((wallet: LiquidityWallet) => {
-          if (wallet.id === id) {
+          if (wallet._id === id) {
             return {
               ...wallet,
               tokens: {

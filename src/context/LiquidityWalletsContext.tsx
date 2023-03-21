@@ -69,14 +69,13 @@ export const LiquidityWalletsContextProvider = ({
 
   const getWallets = async () => {
     setError('');
-    /*let res;
+    let res;
     try {
-      res = await axios.get(`${DELIGHT_API_URL}/liquidity-wallets`, params);
+      res = await axios.get(`${DELIGHT_API_URL}/liquidity-wallets/all`, params);
     } catch (error: any) {
       setError(getErrorMessage(error, 'Server error'));
     }
-    setWallets(res?.data || []);*/
-    setWallets([]);
+    setWallets(res?.data || []);
     setIsLoading(false);
   };
 
@@ -85,13 +84,15 @@ export const LiquidityWalletsContextProvider = ({
     let res;
     try {
       res = await axios.post(
-        `${DELIGHT_API_URL}/liquidity-wallets/create-wallet`,
+        `${DELIGHT_API_URL}/liquidity-wallets/`,
         body,
         params
       );
+      console.log(res);
     } catch (error: any) {
       setError(getErrorMessage(error, 'Server error'));
     }
+
     if (res?.data?.insertedId) {
       const wallet = await getWallet(res?.data?.insertedId);
       if (wallet) {

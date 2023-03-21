@@ -30,7 +30,9 @@ function LiquidityWalletPageWithdraw() {
   const { wallets, isLoading: walletsIsLoading } = useLiquidityWallets();
   let { walletId } = useParams();
 
-  const currentWallet = wallets.find((w: LiquidityWallet) => w.id === walletId);
+  const currentWallet = wallets.find(
+    (w: LiquidityWallet) => w._id === walletId
+  );
 
   useEffect(() => {
     if (!currentWallet && !walletsIsLoading) {
@@ -107,7 +109,7 @@ function LiquidityWalletPageWithdraw() {
                     onClick={() => {
                       setAmountAdd(
                         wallets.find(
-                          (wallet: LiquidityWallet) => wallet.id === walletId
+                          (wallet: LiquidityWallet) => wallet._id === walletId
                         )?.tokens?.[token] || '0'
                       );
                     }}
