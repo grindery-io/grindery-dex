@@ -209,7 +209,7 @@ export const App = () => {
                   }
                 />
 
-                <Route path="*" element={<Navigate to="/sell" />} />
+                <Route path="*" element={<Navigate to="/buy" />} />
               </Routes>
             </AbiContextProvider>
           </GrinderyChainsContextProvider>

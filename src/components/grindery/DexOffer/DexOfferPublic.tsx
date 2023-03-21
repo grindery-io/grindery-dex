@@ -21,18 +21,29 @@ type Props = {
   offer: Offer;
   chain: OfferChain;
   token: OfferToken;
+  onClick?: (offer: Offer) => void;
 };
 
 const DexOfferPublic = (props: Props) => {
-  const { offer, chain, token } = props;
+  const { offer, chain, token, onClick } = props;
   return (
     <Card
       flex={1}
-      style={{
+      sx={{
         borderRadius: '12px',
         marginBottom: '12px',
         backgroundColor: offer.new ? 'rgba(245, 181, 255, 0.08)' : '#fff',
+        '&:hover': {
+          backgroundColor: onClick ? 'rgb(249, 249, 249)' : '#fff',
+        },
       }}
+      onClick={
+        onClick
+          ? () => {
+              onClick(offer);
+            }
+          : undefined
+      }
     >
       <Box display={'flex'} flexDirection={'row'}></Box>
 

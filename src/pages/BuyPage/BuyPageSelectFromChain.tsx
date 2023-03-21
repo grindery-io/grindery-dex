@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box } from '@mui/system';
-import { Navigate, Route, Routes, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import DexCard from '../../components/grindery/DexCard/DexCard';
 import DexCardBody from '../../components/grindery/DexCard/DexCardBody';
 import DexCardHeader from '../../components/grindery/DexCard/DexCardHeader';
@@ -9,9 +9,6 @@ import useBuyPage from '../../hooks/useBuyPage';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
 import DexChainsList from '../../components/grindery/DexChainsList/DexChainsList';
 import useGrinderyChains from '../../hooks/useGrinderyChains';
-import DexTokenSearch from '../../components/grindery/DexTokenSearch/DexTokenSearch';
-import DexTokensList from '../../components/grindery/DexTokensList/DexTokensList';
-import DexTokensNotFound from '../../components/grindery/DexTokensNotFound/DexTokensNotFound';
 import { Chain } from '../../types/Chain';
 import { GRT_CONTRACT_ADDRESS } from '../../constants';
 
