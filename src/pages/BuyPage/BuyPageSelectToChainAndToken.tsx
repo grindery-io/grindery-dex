@@ -1,35 +1,35 @@
 import React from 'react';
-import { IconButton } from '@mui/material';
 import { Box } from '@mui/system';
-import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
+import { Navigate, Route, Routes, useNavigate } from 'react-router-dom';
+import DexCard from '../../components/grindery/DexCard/DexCard';
+import DexCardBody from '../../components/grindery/DexCard/DexCardBody';
 import DexCardHeader from '../../components/grindery/DexCard/DexCardHeader';
+import { IconButton } from '@mui/material';
+import useBuyPage from '../../hooks/useBuyPage';
+import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
 import DexChainsList from '../../components/grindery/DexChainsList/DexChainsList';
+import useGrinderyChains from '../../hooks/useGrinderyChains';
 import DexTokenSearch from '../../components/grindery/DexTokenSearch/DexTokenSearch';
 import DexTokensList from '../../components/grindery/DexTokensList/DexTokensList';
 import DexTokensNotFound from '../../components/grindery/DexTokensNotFound/DexTokensNotFound';
-import { useNavigate } from 'react-router-dom';
-import useGrinderyChains from '../../hooks/useGrinderyChains';
-import useOffersPage from '../../hooks/useOffersPage';
-import DexCardBody from '../../components/grindery/DexCard/DexCardBody';
 
-function OffersPageSelectChain() {
+type Props = {};
+
+const BuyPageSelectChainAndToken = (props: Props) => {
   const {
-    chain,
-    searchToken,
-    currentChain,
-    chainTokens,
-    setErrorMessage,
-    setChain,
-    setToken,
-    setSearchToken,
     VIEWS,
-  } = useOffersPage();
-  let navigate = useNavigate();
-
+    searchToken,
+    setSearchToken,
+    toChain,
+    handleToChainChange,
+    chainTokens,
+    currentToChain,
+    handleToTokenChange,
+  } = useBuyPage();
   const { chains } = useGrinderyChains();
-
+  let navigate = useNavigate();
   return (
-    <>
+    <DexCard>
       <DexCardHeader
         title="Select chain and token"
         titleSize={18}
@@ -40,7 +40,7 @@ function OffersPageSelectChain() {
             edge="start"
             onClick={() => {
               setSearchToken('');
-              navigate(VIEWS.CREATE.fullPath);
+              navigate(VIEWS.ROOT.fullPath);
             }}
           >
             <ArrowBackIcon />
@@ -50,12 +50,9 @@ function OffersPageSelectChain() {
       />
       <DexCardBody>
         <DexChainsList
-          chain={chain}
+          chain={toChain?.value || ''}
           chains={chains}
-          onClick={(blockchain: any) => {
-            setChain(blockchain.value);
-            setToken('');
-          }}
+          onClick={handleToChainChange}
         />
         <DexTokenSearch
           value={searchToken}
@@ -64,37 +61,27 @@ function OffersPageSelectChain() {
           }}
         />
 
-        {chain && chainTokens && chainTokens.length > 0 ? (
-          <DexTokensList
-            tokens={chainTokens}
-            onClick={(chainToken: any) => {
-              setToken(chainToken);
-              setSearchToken('');
-              setErrorMessage({
-                type: '',
-                text: '',
-              });
-              navigate(VIEWS.CREATE.fullPath);
-            }}
-          />
+        {currentToChain && chainTokens && chainTokens.length > 0 ? (
+          <DexTokensList tokens={chainTokens} onClick={handleToTokenChange} />
         ) : (
           <DexTokensNotFound
             text={
-              !currentChain ? (
+              !currentToChain ? (
                 <>Please, select a chain to see a list of tokens.</>
               ) : (
                 <>
                   We couldn't find tokens{' '}
-                  {currentChain ? `on ${currentChain?.label} chain` : ''}.
+                  {currentToChain ? `on ${currentToChain?.label} chain` : ''}.
                   Please try search again or switch the chain.
                 </>
               )
             }
           />
         )}
+        <Box height="20px" />
       </DexCardBody>
-    </>
+    </DexCard>
   );
-}
+};
 
-export default OffersPageSelectChain;
+export default BuyPageSelectChainAndToken;

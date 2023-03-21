@@ -12,7 +12,7 @@ type Props = {
 const DexTokenSearch = (props: Props) => {
   const { value, onChange } = props;
   return (
-    <Box mt={2} pl="24px" pr="24px">
+    <Box mt={2}>
       <Card style={{ borderRadius: '12px' }}>
         <FormControl
           fullWidth

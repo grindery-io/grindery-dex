@@ -14,6 +14,7 @@ import { Chain } from '../../types/Chain';
 import useLiquidityWallets from '../../hooks/useLiquidityWallets';
 import DexLoading from '../../components/grindery/DexLoading/DexLoading';
 import { useGrinderyNexus } from 'use-grindery-nexus';
+import DexCardBody from '../../components/grindery/DexCard/DexCardBody';
 
 function LiquidityWalletPageSelectToken() {
   const { user } = useGrinderyNexus();
@@ -56,7 +57,7 @@ function LiquidityWalletPageSelectToken() {
         }
         endAdornment={<Box width={28} height={40} />}
       />
-      <Box pb="20px">
+      <DexCardBody>
         {user && walletsIsLoading ? (
           <DexLoading />
         ) : (
@@ -102,7 +103,7 @@ function LiquidityWalletPageSelectToken() {
             )}
           </>
         )}
-      </Box>
+      </DexCardBody>
     </>
   );
 }

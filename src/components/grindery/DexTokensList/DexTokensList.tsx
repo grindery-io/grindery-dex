@@ -17,13 +17,7 @@ type Props = {
 const DexTokensList = (props: Props) => {
   const { tokens, onClick } = props;
   return (
-    <Box
-      style={{ height: '350px', overflow: 'auto' }}
-      mt={2}
-      pl="24px"
-      pr="24px"
-      pb="16px"
-    >
+    <Box style={{ height: '350px', overflow: 'auto' }} mt={2} pb="16px">
       <List disablePadding>
         {tokens.map((token: any) => (
           <ListItem

@@ -13,6 +13,7 @@ type ContextProps = {
   setOffers: React.Dispatch<React.SetStateAction<Offer[]>>;
   saveOffer: (body: { [key: string]: any }) => Promise<Offer | boolean>;
   updateOffer: (id: string) => Promise<boolean>;
+  searchOffers: () => void;
 };
 
 // Context provider props
@@ -28,6 +29,7 @@ export const OffersContext = createContext<ContextProps>({
   setOffers: () => {},
   saveOffer: async () => false,
   updateOffer: async () => false,
+  searchOffers: async () => {},
 });
 
 export const OffersContextProvider = ({ children }: OffersContextProps) => {
@@ -100,6 +102,22 @@ export const OffersContextProvider = ({ children }: OffersContextProps) => {
     }
   };
 
+  const searchOffers = async () => {
+    setError('');
+    setIsLoading(true);
+    let res;
+    try {
+      res = await axios.get(`${DELIGHT_API_URL}/offers`, params);
+    } catch (error: any) {
+      setError(getErrorMessage(error, 'Server error'));
+      setIsLoading(false);
+      setOffers([]);
+      return;
+    }
+    setOffers(res?.data || []);
+    setIsLoading(false);
+  };
+
   useEffect(() => {
     if (token?.access_token) {
       getOffers();
@@ -115,6 +133,7 @@ export const OffersContextProvider = ({ children }: OffersContextProps) => {
         setOffers,
         saveOffer,
         updateOffer,
+        searchOffers,
       }}
     >
       {children}

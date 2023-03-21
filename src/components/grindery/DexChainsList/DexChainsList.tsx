@@ -11,7 +11,7 @@ type Props = {
 const DexChainsList = (props: Props) => {
   const { chain, chains, onClick } = props;
   return (
-    <ChainContainer style={{ paddingLeft: '24px', paddingRight: '24px' }}>
+    <ChainContainer>
       {chains.map((blockchain: any) => (
         <Tooltip
           key={blockchain.value}

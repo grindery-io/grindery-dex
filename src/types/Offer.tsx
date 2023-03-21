@@ -1,6 +1,6 @@
 export type Offer = {
   _id: string;
-  chain: string;
+  chain: string | number;
   min: string;
   max: string;
   token: string;

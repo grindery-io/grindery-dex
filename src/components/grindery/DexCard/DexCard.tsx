@@ -15,6 +15,7 @@ const DexCard = (props: Props) => {
           boxShadow: '0px 8px 32px rgb(0 0 0 / 8%)',
           borderRadius: '16px',
           background: '#fff',
+          position: 'relative',
         }}
       >
         {children}

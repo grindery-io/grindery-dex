@@ -13,7 +13,7 @@ import { AvatarDefault } from '../../TokenAvatar';
 };*/
 
 type Props = {
-  onClick: () => void;
+  onClick?: () => void;
   title: string;
   chain?: Chain | null;
   token: TokenType | '';

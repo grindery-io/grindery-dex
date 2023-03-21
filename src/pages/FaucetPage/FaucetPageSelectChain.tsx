@@ -8,6 +8,7 @@ import { Chain } from '../../types/Chain';
 import { useNavigate } from 'react-router-dom';
 import useGrinderyChains from '../../hooks/useGrinderyChains';
 import useFaucetPage from '../../hooks/useFaucetPage';
+import DexCardBody from '../../components/grindery/DexCard/DexCardBody';
 
 function FaucetPageSelectChain() {
   const { VIEWS, chain, setChain } = useFaucetPage();
@@ -34,7 +35,7 @@ function FaucetPageSelectChain() {
         }
         endAdornment={<Box width={28} height={40} />}
       />
-      <Box pb="20px">
+      <DexCardBody>
         <DexChainsList
           chains={chains}
           chain={chain}
@@ -43,7 +44,8 @@ function FaucetPageSelectChain() {
             navigate(VIEWS.ROOT.fullPath);
           }}
         />
-      </Box>
+        <Box pb="20px"></Box>
+      </DexCardBody>
     </>
   );
 }

@@ -1,9 +1,13 @@
 import React from 'react';
 import { CircularProgress } from '@mui/material';
 
-type Props = {};
+type Props = {
+  size?: number;
+  style?: { [key: string]: string | number };
+};
 
 const DexLoading = (props: Props) => {
+  const { size, style } = props;
   return (
     <div
       style={{
@@ -11,9 +15,10 @@ const DexLoading = (props: Props) => {
         color: '#3f49e1',
         width: '100%',
         margin: '20px 0',
+        ...style,
       }}
     >
-      <CircularProgress color="inherit" />
+      <CircularProgress color="inherit" size={size} />
     </div>
   );
 };

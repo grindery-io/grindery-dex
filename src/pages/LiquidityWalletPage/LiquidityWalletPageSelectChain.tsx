@@ -9,6 +9,7 @@ import { LiquidityWallet } from '../../types/LiquidityWallet';
 import { useNavigate } from 'react-router-dom';
 import useGrinderyChains from '../../hooks/useGrinderyChains';
 import useLiquidityWalletPage from '../../hooks/useLiquidityWalletPage';
+import DexCardBody from '../../components/grindery/DexCard/DexCardBody';
 
 function LiquidityWalletPageSelectChain() {
   const { chain, wallets, VIEWS, setChain } = useLiquidityWalletPage();
@@ -35,7 +36,7 @@ function LiquidityWalletPageSelectChain() {
         }
         endAdornment={<Box width={28} height={40} />}
       />
-      <Box pb="20px">
+      <DexCardBody>
         <DexChainsList
           chain={chain}
           chains={chains.filter(
@@ -49,7 +50,8 @@ function LiquidityWalletPageSelectChain() {
             navigate(VIEWS.CREATE.fullPath);
           }}
         />
-      </Box>
+        <Box height="20px" />
+      </DexCardBody>
     </>
   );
 }

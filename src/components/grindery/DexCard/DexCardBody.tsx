@@ -15,6 +15,9 @@ const DexCardBody = (props: Props) => {
         overflow: maxHeight ? 'auto' : 'initial',
         paddingLeft: '24px',
         paddingRight: '24px',
+        paddingTop: '62px',
+        borderTopRightRadius: '12px',
+        borderTopLeftRadius: '12px',
       }}
     >
       {children}

@@ -26,6 +26,8 @@ import FaucetPage from './pages/FaucetPage/FaucetPage';
 import BuyPage from './pages/BuyPage/BuyPage';
 import DexFaucetMenu from './components/grindery/DexFaucetMenu/DexFaucetMenu';
 import FaucetPageContextProvider from './context/FaucetPageContext';
+import BuyPageContextProvider from './context/BuyPageContext';
+import OffersContextProvider from './context/OffersContext';
 
 declare global {
   interface Window {
@@ -187,21 +189,11 @@ export const App = () => {
                 <Route
                   path="/buy/*"
                   element={
-                    <>
-                      {/*<ThemeProvider theme={theme}>
-                        <WidgetEvents />
-                        <Box
-                          display="flex"
-                          height="calc(100vh - 75px)"
-                          style={{ paddingTop: '75px' }}
-                        >
-                          <Box flex={1} margin="auto">
-                            <LiFiWidget config={config} open />
-                          </Box>
-                        </Box>
-                  </ThemeProvider>*/}
-                      <BuyPage />
-                    </>
+                    <OffersContextProvider>
+                      <BuyPageContextProvider>
+                        <BuyPage />
+                      </BuyPageContextProvider>
+                    </OffersContextProvider>
                   }
                 />
                 <Route path="/sell/*" element={<SellPage />} />

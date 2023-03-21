@@ -7,6 +7,7 @@ import DexChainsList from '../../components/grindery/DexChainsList/DexChainsList
 import useGrinderyChains from '../../hooks/useGrinderyChains';
 import { useNavigate } from 'react-router-dom';
 import useStakingPage from '../../hooks/useStakingPage';
+import DexCardBody from '../../components/grindery/DexCard/DexCardBody';
 
 function StakingPageSelectChain() {
   const { VIEWS, chain, setChain } = useStakingPage();
@@ -32,7 +33,7 @@ function StakingPageSelectChain() {
         }
         endAdornment={<Box width={28} height={40} />}
       />
-      <Box pb="20px">
+      <DexCardBody>
         <DexChainsList
           chain={chain}
           chains={chains}
@@ -41,7 +42,8 @@ function StakingPageSelectChain() {
             navigate(VIEWS.STAKE.fullPath);
           }}
         />
-      </Box>
+        <Box height="20px" />
+      </DexCardBody>
     </>
   );
 }
