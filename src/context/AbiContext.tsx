@@ -7,6 +7,7 @@ type ContextProps = {
   poolAbi: any;
   tokenAbi: any;
   satelliteAbi: any;
+  liquidityWalletAbi: any;
 };
 
 // Context provider props
@@ -20,6 +21,7 @@ export const AbiContext = createContext<ContextProps>({
   poolAbi: null,
   tokenAbi: null,
   satelliteAbi: null,
+  liquidityWalletAbi: null,
 });
 
 export const AbiContextProvider = ({ children }: AbiContextProps) => {
@@ -27,6 +29,7 @@ export const AbiContextProvider = ({ children }: AbiContextProps) => {
   const [poolAbi, setPoolAbi] = useState<any>(null);
   const [tokenAbi, setTokenAbi] = useState<any>(null);
   const [satelliteAbi, setSatelliteAbi] = useState<any>(null);
+  const [liquidityWalletAbi, setLiquidityWalletAbi] = useState<any>(null);
 
   const getPoolContractAbi = async () => {
     const _poolAbi = await axios.get(
@@ -52,10 +55,19 @@ export const AbiContextProvider = ({ children }: AbiContextProps) => {
     setIsLoading(false);
   };
 
+  const getLiquidityWalletContractAbi = async () => {
+    const _liquidityWalletAbi = await axios.get(
+      `https://raw.githubusercontent.com/grindery-io/Depay-Reality/main/abis/GrtLiquidityWallet.json`
+    );
+    setLiquidityWalletAbi(_liquidityWalletAbi.data || null);
+    setIsLoading(false);
+  };
+
   useEffect(() => {
     getPoolContractAbi();
     getTokenContractAbi();
     getSatelliteContractAbi();
+    getLiquidityWalletContractAbi();
   }, []);
 
   return (
@@ -65,6 +77,7 @@ export const AbiContextProvider = ({ children }: AbiContextProps) => {
         poolAbi,
         tokenAbi,
         satelliteAbi,
+        liquidityWalletAbi,
       }}
     >
       {children}

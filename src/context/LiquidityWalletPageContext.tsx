@@ -7,7 +7,10 @@ import _ from 'lodash';
 import { LiquidityWallet } from '../types/LiquidityWallet';
 import { TokenType } from '../types/TokenType';
 import useLiquidityWallets from '../hooks/useLiquidityWallets';
-import { GRTSATELLITE_CONTRACT_ADDRESS } from '../constants';
+import {
+  GRTSATELLITE_CONTRACT_ADDRESS,
+  GRT_CONTRACT_ADDRESS,
+} from '../constants';
 import useAbi from '../hooks/useAbi';
 import { getErrorMessage } from '../utils/error';
 
@@ -107,6 +110,8 @@ export const LiquidityWalletPageContextProvider = ({
     setWallets,
     isLoading: walletsIsLoading,
     saveWallet,
+    getWallet,
+    updateWallet,
   } = useLiquidityWallets();
   const [amountAdd, setAmountAdd] = useState<string>('');
   const [token, setToken] = useState<string>('');
@@ -115,7 +120,7 @@ export const LiquidityWalletPageContextProvider = ({
   const [chain, setChain] = useState(selectedChain?.toString() || '');
   const { chains } = useGrinderyChains();
   const [searchToken, setSearchToken] = useState('');
-  const { satelliteAbi } = useAbi();
+  const { satelliteAbi, liquidityWalletAbi, tokenAbi } = useAbi();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const currentChain: Chain | null =
     chain && chains.find((c) => c.value === chain)
@@ -173,6 +178,7 @@ export const LiquidityWalletPageContextProvider = ({
       });
       return;
     }
+
     setLoading(true);
 
     const signer = provider.getSigner();
@@ -287,25 +293,76 @@ export const LiquidityWalletPageContextProvider = ({
       });
       return;
     }
+    if (!liquidityWalletAbi) {
+      setErrorMessage({
+        type: 'tx',
+        text: 'Contract ABI not found.',
+      });
+
+      return;
+    }
+
     setLoading(true);
+
+    const signer = provider.getSigner();
+
+    const wallet = await getWallet(id);
+
+    const _grtLiquidityWallet = new ethers.Contract(
+      wallet.walletAddress,
+      liquidityWalletAbi,
+      signer
+    );
+
+    const grtLiquidityWallet = _grtLiquidityWallet.connect(signer);
+
+    const txTransfer = await grtLiquidityWallet
+      .withdrawNative(ethers.utils.parseEther(amountAdd))
+      .catch((error: any) => {
+        setErrorMessage({
+          type: 'tx',
+          text: getErrorMessage(error.error, 'Transfer transaction error'),
+        });
+        console.error('transfer error', error.error);
+        setLoading(false);
+        return;
+      });
+
+    if (!txTransfer) {
+      setLoading(false);
+      return;
+    }
+
+    try {
+      await txTransfer.wait();
+    } catch (error: any) {
+      setErrorMessage({
+        type: 'tx',
+        text: error?.message || 'Transaction error',
+      });
+      console.error('txTransfer.wait error', error);
+      setLoading(false);
+      return;
+    }
+
+    const amountStored = wallet.tokens[token] || 0;
+
+    const isUpdated = await updateWallet({
+      walletAddress: wallet.walletAddress,
+      chainId: chain.toString().split(':')[1],
+      tokenId: token,
+      amount: (Number(amountStored) - Number(amountAdd)).toString(),
+    });
+
+    if (!isUpdated) {
+      setErrorMessage({
+        type: 'tx',
+        text: 'Transaction error',
+      });
+      return;
+    }
+
     setTimeout(() => {
-      setWallets((_wallets) => [
-        ..._wallets.map((wallet: LiquidityWallet) => {
-          if (wallet._id === id) {
-            return {
-              ...wallet,
-              tokens: {
-                ...wallet.tokens,
-                [token]: (
-                  parseFloat(wallet.tokens[token]) - parseFloat(amountAdd)
-                ).toString(),
-              },
-            };
-          } else {
-            return wallet;
-          }
-        }),
-      ]);
       setAmountAdd('');
       setToken('');
       setLoading(false);
@@ -339,32 +396,65 @@ export const LiquidityWalletPageContextProvider = ({
       });
       return;
     }
-    // (parseFloat(wallet.balance) + parseFloat(amountAdd)).toString(),
+
     setLoading(true);
+
+    const signer = provider.getSigner();
+
+    const wallet = await getWallet(id);
+
+    const txTransfer = await signer
+      .sendTransaction({
+        to: wallet.walletAddress,
+        value: ethers.utils.parseEther(amountAdd),
+      })
+      .catch((error: any) => {
+        setErrorMessage({
+          type: 'tx',
+          text: getErrorMessage(error, 'Transfer transaction error'),
+        });
+        console.error('transfer error', error);
+        setLoading(false);
+        return;
+      });
+
+    if (!txTransfer) {
+      setLoading(false);
+      return;
+    }
+    try {
+      await txTransfer.wait();
+    } catch (error: any) {
+      setErrorMessage({
+        type: 'tx',
+        text: error?.message || 'Transaction error',
+      });
+      console.error('txTransfer.wait error', error);
+      setLoading(false);
+      return;
+    }
+
+    const amountStored = wallet.tokens[token] || 0;
+    const isUpdated = await updateWallet({
+      walletAddress: wallet.walletAddress,
+      chainId: chain.toString().split(':')[1],
+      tokenId: token,
+      amount: (Number(amountStored) + Number(amountAdd)).toString(),
+    });
+    if (!isUpdated) {
+      setErrorMessage({
+        type: 'tx',
+        text: 'Transaction error',
+      });
+      return;
+    }
+    setLoading(false);
     setTimeout(() => {
-      setWallets((_wallets) => [
-        ..._wallets.map((wallet: LiquidityWallet) => {
-          if (wallet._id === id) {
-            return {
-              ...wallet,
-              tokens: {
-                ...wallet.tokens,
-                [token]: (
-                  parseFloat(wallet.tokens[token] || '0') +
-                  parseFloat(amountAdd)
-                ).toString(),
-              },
-            };
-          } else {
-            return wallet;
-          }
-        }),
-      ]);
       setAmountAdd('');
       setToken('');
       setLoading(false);
       navigate(VIEWS.TOKENS.fullPath.replace(':walletId', id));
-    }, 1500);
+    }, 15000);
   };
 
   useEffect(() => {
