@@ -1,13 +1,17 @@
 import React from 'react';
-import { Avatar, Badge, Box, IconButton, Tooltip } from '@mui/material';
+import {
+  Avatar,
+  Badge,
+  Box,
+  IconButton,
+  Skeleton,
+  Tooltip,
+} from '@mui/material';
 import { Card, CardTitle } from '../../Card';
 import { SelectTokenCardHeader } from '../../SelectTokenButton/SelectTokenButton.style';
 import { AvatarDefault } from '../../TokenAvatar';
-//import DexOfferBadge from './DexOfferBadge';
 import { Offer } from '../../../types/Offer';
 import useGrinderyChains from '../../../hooks/useGrinderyChains';
-import { Chain } from '../../../types/Chain';
-import { TokenType } from '../../../types/TokenType';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 
 export type OfferChain = {
@@ -28,18 +32,16 @@ type Props = {
   onClick?: (offer: Offer) => void;
   grt?: string;
   label?: string;
+  tokenPrice?: number | null;
 };
 
 const DexOfferPublic = (props: Props) => {
-  const { offer, chain, token, onClick, grt, label } = props;
-  const { chains } = useGrinderyChains();
-  const tokenPrice =
-    chains
-      .find((c: Chain) => c.label === chain.label)
-      ?.tokens?.find((t: TokenType) => t.symbol === token.label)?.price || '1';
+  const { offer, chain, token, onClick, grt, label, tokenPrice } = props;
 
-  const amount = grt
-    ? (parseFloat(grt) / parseFloat(tokenPrice)).toString()
+  const amount = tokenPrice
+    ? grt
+      ? (parseFloat(grt) / tokenPrice).toString()
+      : '1'
     : '1';
 
   return (
@@ -54,7 +56,7 @@ const DexOfferPublic = (props: Props) => {
         },
       }}
       onClick={
-        onClick
+        onClick && tokenPrice
           ? () => {
               onClick(offer);
             }
@@ -118,15 +120,29 @@ const DexOfferPublic = (props: Props) => {
             }}
             mb={'3px'}
           >
-            {parseFloat(amount).toLocaleString()}
+            {tokenPrice ? (
+              <>{parseFloat(amount).toLocaleString()}</>
+            ) : (
+              <Skeleton />
+            )}
           </Box>
         }
-        subheader={`${token.label} on ${chain.label}`}
+        subheader={
+          <span style={{ whiteSpace: 'pre-wrap' }}>
+            {tokenPrice ? (
+              `${token.label} on ${chain.label}.\n1 ${
+                token.label
+              } = $${tokenPrice?.toLocaleString()}`
+            ) : (
+              <Skeleton />
+            )}
+          </span>
+        }
         selected={true}
         compact={false}
         action={
-          Boolean(onClick) ? (
-            <Tooltip title="Accept offer">
+          Boolean(onClick) && tokenPrice ? (
+            <Tooltip title="Review offer">
               <IconButton>
                 <KeyboardArrowRightIcon />
               </IconButton>

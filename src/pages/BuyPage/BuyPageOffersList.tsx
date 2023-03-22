@@ -15,7 +15,8 @@ import { useNavigate } from 'react-router-dom';
 type Props = {};
 
 const BuyPageOffersList = (props: Props) => {
-  const { VIEWS, loading, foundOffers, fromAmount } = useBuyPage();
+  const { VIEWS, loading, foundOffers, fromAmount, toTokenPrice } =
+    useBuyPage();
   const { chains } = useGrinderyChains();
   let navigate = useNavigate();
   return (
@@ -74,6 +75,7 @@ const BuyPageOffersList = (props: Props) => {
                 chain={offerChain}
                 token={offerToken}
                 grt={fromAmount}
+                tokenPrice={toTokenPrice}
                 onClick={(o: Offer) => {
                   navigate(
                     VIEWS.ACCEPT_OFFER.fullPath.replace(

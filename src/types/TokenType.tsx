@@ -3,5 +3,4 @@ export type TokenType = {
   symbol: string;
   address?: string;
   icon?: string;
-  price?: string;
 };
