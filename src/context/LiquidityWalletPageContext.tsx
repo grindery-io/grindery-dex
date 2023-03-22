@@ -184,7 +184,7 @@ export const LiquidityWalletPageContextProvider = ({
     const signer = provider.getSigner();
 
     const _grtSatellite = new ethers.Contract(
-      '0xcB65E522F6e12091184fE41d6E34013ea620319a',
+      GRTSATELLITE_CONTRACT_ADDRESS[chain.toString()],
       satelliteAbi,
       signer
     );
@@ -366,8 +366,8 @@ export const LiquidityWalletPageContextProvider = ({
       setAmountAdd('');
       setToken('');
       setLoading(false);
-      navigate(VIEWS.TOKENS.fullPath.replace(':walletId', id));
-    }, 1500);
+      navigate(VIEWS.ROOT.fullPath);
+    });
   };
 
   const handleAddClick = async (id: string) => {
@@ -448,13 +448,14 @@ export const LiquidityWalletPageContextProvider = ({
       });
       return;
     }
+
     setLoading(false);
     setTimeout(() => {
       setAmountAdd('');
       setToken('');
       setLoading(false);
-      navigate(VIEWS.TOKENS.fullPath.replace(':walletId', id));
-    }, 15000);
+      navigate(VIEWS.ROOT.fullPath);
+    });
   };
 
   useEffect(() => {
