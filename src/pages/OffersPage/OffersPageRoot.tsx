@@ -64,17 +64,17 @@ function OffersPageRoot() {
                 (offer: Offer) => {
                   const offerChain = {
                     label:
-                      chains.find((c) => c.value === `eip155:${offer.chain}`)
+                      chains.find((c) => c.value === `eip155:${offer.chainId}`)
                         ?.label || '',
                     icon:
-                      chains.find((c) => c.value === `eip155:${offer.chain}`)
+                      chains.find((c) => c.value === `eip155:${offer.chainId}`)
                         ?.icon || '',
                     token:
-                      chains.find((c) => c.value === `eip155:${offer.chain}`)
+                      chains.find((c) => c.value === `eip155:${offer.chainId}`)
                         ?.nativeToken || '',
                   };
                   const currentOfferChain = chains.find(
-                    (c) => c.value === `eip155:${offer.chain}`
+                    (c) => c.value === `eip155:${offer.chainId}`
                   );
                   const offerToken = {
                     label:

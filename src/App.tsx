@@ -28,6 +28,7 @@ import DexFaucetMenu from './components/grindery/DexFaucetMenu/DexFaucetMenu';
 import FaucetPageContextProvider from './context/FaucetPageContext';
 import BuyPageContextProvider from './context/BuyPageContext';
 import OffersContextProvider from './context/OffersContext';
+import TradesContextProvider from './context/TradesContext';
 
 declare global {
   interface Window {
@@ -190,9 +191,11 @@ export const App = () => {
                   path="/buy/*"
                   element={
                     <OffersContextProvider>
-                      <BuyPageContextProvider>
-                        <BuyPage />
-                      </BuyPageContextProvider>
+                      <TradesContextProvider>
+                        <BuyPageContextProvider>
+                          <BuyPage />
+                        </BuyPageContextProvider>
+                      </TradesContextProvider>
                     </OffersContextProvider>
                   }
                 />
@@ -209,7 +212,7 @@ export const App = () => {
                   }
                 />
 
-                <Route path="*" element={<Navigate to="/sell" />} />
+                <Route path="*" element={<Navigate to="/buy" />} />
               </Routes>
             </AbiContextProvider>
           </GrinderyChainsContextProvider>

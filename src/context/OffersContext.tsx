@@ -47,7 +47,7 @@ export const OffersContextProvider = ({ children }: OffersContextProps) => {
   const getOffer = async (id: string) => {
     let res;
     try {
-      res = await axios.get(`${DELIGHT_API_URL}/offers/${id}`, params);
+      res = await axios.get(`${DELIGHT_API_URL}/offers/id?id=${id}`, params);
     } catch (error: any) {
       setError(getErrorMessage(error, 'Server error'));
     }
@@ -87,10 +87,15 @@ export const OffersContextProvider = ({ children }: OffersContextProps) => {
   };
 
   const updateOffer = async (id: string) => {
+    const offer = offers.find((o: Offer) => o.offerId === id);
     setError('');
     let res;
     try {
-      res = await axios.put(`${DELIGHT_API_URL}/offers/${id}`, {}, params);
+      res = await axios.put(
+        `${DELIGHT_API_URL}/offers/${id}`,
+        { offerId: id, isActive: !offer?.isActive },
+        params
+      );
     } catch (error: any) {
       setError(getErrorMessage(error, 'Server error'));
     }

@@ -1,6 +1,6 @@
 export type Offer = {
   _id: string;
-  chain: string | number;
+  chainId: string;
   min: string;
   max: string;
   token: string;
@@ -8,7 +8,6 @@ export type Offer = {
   isActive: boolean;
   hash?: string;
   offerId?: string;
-  tokenId?: number;
-  tokenIcon?: string;
+  tokenId?: string;
   new?: boolean;
 };

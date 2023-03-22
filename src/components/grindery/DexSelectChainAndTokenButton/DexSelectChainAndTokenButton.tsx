@@ -21,10 +21,11 @@ type Props = {
     type: string;
     text: string;
   };
+  name?: string;
 };
 
 const DexSelectChainAndTokenButton = (props: Props) => {
-  const { onClick, title, chain, token, error } = props;
+  const { onClick, title, chain, token, error, name } = props;
   return (
     <Card flex={1} onClick={onClick} style={{ borderRadius: '12px' }}>
       <CardTitle>{title}</CardTitle>
@@ -83,17 +84,36 @@ const DexSelectChainAndTokenButton = (props: Props) => {
         selected={Boolean(token && chain)}
         compact={false}
       />
-      {error.type === 'chain' && !!error.text && (
-        <FormHelperText
-          style={{
-            paddingLeft: '16px',
-            paddingRight: '16px',
-            paddingBottom: '6px',
-          }}
-          error={true}
-        >
-          {error.type === 'chain' && !!error.text ? error.text : ''}
-        </FormHelperText>
+      {!name ? (
+        <>
+          {error.type === 'chain' && !!error.text && (
+            <FormHelperText
+              style={{
+                paddingLeft: '16px',
+                paddingRight: '16px',
+                paddingBottom: '6px',
+              }}
+              error={true}
+            >
+              {error.type === 'chain' && !!error.text ? error.text : ''}
+            </FormHelperText>
+          )}
+        </>
+      ) : (
+        <>
+          {error.type === name && !!error.text && (
+            <FormHelperText
+              style={{
+                paddingLeft: '16px',
+                paddingRight: '16px',
+                paddingBottom: '6px',
+              }}
+              error={true}
+            >
+              {error.type === name && !!error.text ? error.text : ''}
+            </FormHelperText>
+          )}
+        </>
       )}
     </Card>
   );

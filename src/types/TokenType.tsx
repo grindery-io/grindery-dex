@@ -1,6 +1,7 @@
 export type TokenType = {
-  id: number;
+  id: string;
   symbol: string;
   address?: string;
   icon?: string;
+  price?: string;
 };

@@ -131,7 +131,7 @@ export const OffersPageContextProvider = ({
     (t: any) => !searchToken || t.symbol.toLowerCase().includes(searchToken)
   );
 
-  const groupedOffers = _.groupBy(offers, (offer) => offer.chain);
+  const groupedOffers = _.groupBy(offers, (offer) => offer.chainId);
 
   const handleCreateClick = async () => {
     // clear error message
@@ -266,7 +266,7 @@ export const OffersPageContextProvider = ({
 
     // save offer to DB
     const newOffer = await saveOffer({
-      chain: parseFloat(chain.toString().split(':')[1]),
+      chainId: chain.toString().split(':')[1],
       min: amountMin,
       max: amountMax,
       tokenId: token.id,
@@ -303,7 +303,7 @@ export const OffersPageContextProvider = ({
   const handleDeactivateClick = async (offerId: string) => {
     setIsActivating(offerId);
 
-    const offerChain = offers.find((o: Offer) => o._id === offerId)?.chain;
+    const offerChain = offers.find((o: Offer) => o._id === offerId)?.chainId;
 
     const chainToSelect = chains.find(
       (c: Chain) => c.value === `eip155:${offerChain}`
@@ -421,7 +421,7 @@ export const OffersPageContextProvider = ({
       return;
     }
 
-    const updated = await updateOffer(offerId).catch((error: any) => {
+    const updated = await updateOffer(offerToDeactivate).catch((error: any) => {
       // handle error
     });
     if (!updated) {
@@ -441,7 +441,7 @@ export const OffersPageContextProvider = ({
   const handleActivateClick = async (offerId: string) => {
     setIsActivating(offerId);
 
-    const offerChain = offers.find((o: Offer) => o._id === offerId)?.chain;
+    const offerChain = offers.find((o: Offer) => o._id === offerId)?.chainId;
 
     const chainToSelect = chains.find(
       (c: Chain) => c.value === `eip155:${offerChain}`
@@ -541,7 +541,7 @@ export const OffersPageContextProvider = ({
       return;
     }
 
-    const updated = await updateOffer(offerId).catch((error: any) => {
+    const updated = await updateOffer(offerToActivate).catch((error: any) => {
       // handle error
     });
     if (!updated) {
