@@ -1,6 +1,6 @@
 import React, { createContext, useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { GRT_CONTRACT_ADDRESS } from '../constants';
+import { GRT_CONTRACT_ADDRESS, POOL_CONTRACT_ADDRESS } from '../constants';
 import useGrinderyChains from '../hooks/useGrinderyChains';
 import useOffers from '../hooks/useOffers';
 import { Chain } from '../types/Chain';
@@ -11,6 +11,7 @@ import _ from 'lodash';
 import { useGrinderyNexus } from 'use-grindery-nexus';
 import useAbi from '../hooks/useAbi';
 import { getErrorMessage } from '../utils/error';
+import useTrades from '../hooks/useTrades';
 
 // Context props
 type ContextProps = {
@@ -32,6 +33,10 @@ type ContextProps = {
   currentToChain: Chain | null;
   chainTokens: TokenType[];
   foundOffers: Offer[];
+  approved: boolean;
+  accepted: boolean;
+  setAccepted: React.Dispatch<React.SetStateAction<boolean>>;
+  setApproved: React.Dispatch<React.SetStateAction<boolean>>;
   setSearchToken: React.Dispatch<React.SetStateAction<string>>;
   handleFromChainChange: (chain: Chain) => void;
   handleToChainChange: (chain: Chain) => void;
@@ -39,6 +44,7 @@ type ContextProps = {
   handleFromAmountChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   handleSearchClick: () => void;
   handleFromAmountMaxClick: () => void;
+  handleAcceptOfferClick: (offer: Offer) => void;
 };
 
 // Context provider props
@@ -61,6 +67,10 @@ export const BuyPageContext = createContext<ContextProps>({
   currentToChain: null,
   chainTokens: [],
   foundOffers: [],
+  approved: false,
+  accepted: false,
+  setAccepted: () => {},
+  setApproved: () => {},
   setSearchToken: () => {},
   handleFromChainChange: () => {},
   handleToChainChange: () => {},
@@ -68,6 +78,7 @@ export const BuyPageContext = createContext<ContextProps>({
   handleFromAmountChange: () => {},
   handleSearchClick: () => {},
   handleFromAmountMaxClick: () => {},
+  handleAcceptOfferClick: () => {},
 });
 
 export const BuyPageContextProvider = ({ children }: BuyPageContextProps) => {
@@ -88,8 +99,10 @@ export const BuyPageContextProvider = ({ children }: BuyPageContextProps) => {
     },
   };
   let navigate = useNavigate();
-  const { tokenAbi } = useAbi();
+  const { tokenAbi, poolAbi } = useAbi();
   const [errorMessage, setErrorMessage] = useState({ type: '', text: '' });
+  const [approved, setApproved] = useState<boolean>(false);
+  const [accepted, setAccepted] = useState<boolean>(false);
   const [toChain, setToChain] = useState<Chain | null>(null);
   const { chains } = useGrinderyChains();
   const [fromChain, setFromChain] = useState<Chain | null>(
@@ -111,7 +124,7 @@ export const BuyPageContextProvider = ({ children }: BuyPageContextProps) => {
   const [searchToken, setSearchToken] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [currentGrtBalance, setcurrentGrtBalance] = useState<string>('');
-
+  const { saveTrade } = useTrades();
   const { searchOffers, offers, isLoading: isOfferLoading } = useOffers();
   const loading = isOfferLoading || isLoading;
 
@@ -239,6 +252,14 @@ export const BuyPageContextProvider = ({ children }: BuyPageContextProps) => {
       setIsLoading(false);
       return;
     }
+    if (parseFloat(fromAmount) <= 0) {
+      setErrorMessage({
+        type: 'fromAmount',
+        text: 'Amount must be greater than 0',
+      });
+      setIsLoading(false);
+      return;
+    }
     if (parseFloat(fromAmount) > parseFloat(currentGrtBalance)) {
       setErrorMessage({
         type: 'search',
@@ -257,6 +278,7 @@ export const BuyPageContextProvider = ({ children }: BuyPageContextProps) => {
   };
 
   const getGrtBalance = async () => {
+    // switch chain if needed
     if (chain !== fromChain?.value && fromChain) {
       try {
         await window.ethereum.request({
@@ -311,6 +333,175 @@ export const BuyPageContextProvider = ({ children }: BuyPageContextProps) => {
     setcurrentGrtBalance(grtBalance);
   };
 
+  const handleAcceptOfferClick = async (offer: Offer) => {
+    setIsLoading(true);
+
+    // switch chain if needed
+    if (chain !== fromChain?.value && fromChain) {
+      try {
+        await window.ethereum.request({
+          method: 'wallet_addEthereumChain',
+          params: [
+            {
+              chainId: fromChain
+                ? `0x${parseFloat(fromChain.value.split(':')[1]).toString(16)}`
+                : '',
+              chainName: fromChain.label,
+              rpcUrls: fromChain.rpc,
+              nativeCurrency: {
+                name: fromChain.nativeToken,
+                symbol: fromChain.nativeToken,
+                decimals: 18,
+              },
+            },
+          ],
+        });
+      } catch (error: any) {
+        // TODO: handle chain switching error
+      }
+    }
+
+    // get signer
+    const signer = provider.getSigner();
+
+    // approve tokens first
+    if (!approved) {
+      // set GRT contract
+      const _grtContract = new ethers.Contract(
+        GRT_CONTRACT_ADDRESS[fromChain?.value || ''],
+        tokenAbi,
+        signer
+      );
+
+      // connect signer
+      const grtContract = _grtContract.connect(signer);
+
+      // approve GRT
+      const txApprove = await grtContract
+        .approve(
+          POOL_CONTRACT_ADDRESS[fromChain?.value || ''],
+          ethers.utils.parseEther(fromAmount)
+        )
+        .catch((error: any) => {
+          setErrorMessage({
+            type: 'tx',
+            text: getErrorMessage(error.error, 'Approval transaction error'),
+          });
+          console.error('approve error', error.error);
+          setIsLoading(false);
+          return;
+        });
+
+      // stop executing if approval failed
+      if (!txApprove) {
+        setIsLoading(false);
+        return;
+      }
+
+      // wait for approval transaction
+      try {
+        await txApprove.wait();
+      } catch (error: any) {
+        setErrorMessage({
+          type: 'tx',
+          text: error?.message || 'Transaction error',
+        });
+        console.error('txApprove.wait error', error);
+        setIsLoading(false);
+        return;
+      }
+      setIsLoading(false);
+      setApproved(true);
+
+      // accept if tokens were approved
+    } else {
+      // set pool contract
+      const _poolContract = new ethers.Contract(
+        POOL_CONTRACT_ADDRESS[fromChain?.value || ''],
+        poolAbi,
+        signer
+      );
+
+      // connect signer
+      const poolContract = _poolContract.connect(signer);
+
+      // create transaction
+      const tx = await poolContract
+        .depositGRTWithOffer(
+          ethers.utils.parseEther(fromAmount),
+          offer.offerId,
+          address,
+          {
+            gasLimit: 1000000,
+          }
+        )
+        .catch((error: any) => {
+          setErrorMessage({
+            type: 'acceptOffer',
+            text: getErrorMessage(
+              error.error,
+              'Accepting offer transaction error'
+            ),
+          });
+          console.error('depositGRTWithOffer error', error);
+          setIsLoading(false);
+          return;
+        });
+
+      // stop execution if offer activation failed
+      if (!tx) {
+        setIsLoading(false);
+        return;
+      }
+
+      // wait for activation transaction
+      try {
+        await tx.wait();
+      } catch (error: any) {
+        setErrorMessage({
+          type: 'acceptOffer',
+          text: error?.message || 'Transaction error',
+        });
+        console.error('tx.wait error', error);
+        setIsLoading(false);
+        return;
+      }
+
+      // get receipt
+      const receipt = await provider.getTransactionReceipt(tx.hash);
+
+      // get tradeId
+      const tradeId = receipt?.logs?.[0]?.topics?.[1] || '';
+
+      // save trade to DB
+      const trade = await saveTrade({
+        amountGRT: fromAmount,
+        destAddr: address,
+        offerId: offer.offerId,
+        tradeId,
+        amountToken: fromAmount,
+      }).catch((error: any) => {
+        console.error('saveTrade error', error);
+        setErrorMessage({
+          type: 'acceptOffer',
+          text: error?.message || 'Server error',
+        });
+      });
+      if (trade) {
+        // reset state
+        setApproved(false);
+        setIsLoading(false);
+        setAccepted(Boolean(offer.offerId));
+      } else {
+        setErrorMessage({
+          type: 'acceptOffer',
+          text: "Server error, trade wasn't saved",
+        });
+        setIsLoading(false);
+      }
+    }
+  };
+
   useEffect(() => {
     if (toChain && toToken && fromAmount && token?.access_token) {
       setIsOffersVisible(true);
@@ -349,6 +540,10 @@ export const BuyPageContextProvider = ({ children }: BuyPageContextProps) => {
         currentToChain,
         chainTokens,
         foundOffers,
+        approved,
+        accepted,
+        setAccepted,
+        setApproved,
         setSearchToken,
         handleFromChainChange,
         handleToChainChange,
@@ -356,6 +551,7 @@ export const BuyPageContextProvider = ({ children }: BuyPageContextProps) => {
         handleFromAmountChange,
         handleSearchClick,
         handleFromAmountMaxClick,
+        handleAcceptOfferClick,
       }}
     >
       {children}

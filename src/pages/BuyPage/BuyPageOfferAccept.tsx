@@ -15,12 +15,27 @@ import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
 import { IconButton } from '@mui/material';
 import DexCardSubmitButton from '../../components/grindery/DexCard/DexCardSubmitButton';
 import { useGrinderyNexus } from 'use-grindery-nexus';
+import DexAlertBox from '../../components/grindery/DexAlertBox/DexAlertBox';
+import DexAmountInput from '../../components/grindery/DexAmountInput/DexAmountInput';
 
 type Props = {};
 
 const BuyPageOfferAccept = (props: Props) => {
   const { user, connect } = useGrinderyNexus();
-  const { VIEWS, loading, foundOffers } = useBuyPage();
+  const {
+    VIEWS,
+    loading,
+    foundOffers,
+    accepted,
+    approved,
+    handleAcceptOfferClick,
+    setAccepted,
+    setApproved,
+    errorMessage,
+    fromAmount,
+    fromChain,
+    fromToken,
+  } = useBuyPage();
   const { chains } = useGrinderyChains();
   let navigate = useNavigate();
   let { offerId } = useParams();
@@ -57,40 +72,96 @@ const BuyPageOfferAccept = (props: Props) => {
             size="medium"
             edge="start"
             onClick={() => {
+              setAccepted(false);
+              setApproved(false);
               navigate(VIEWS.ROOT.fullPath);
             }}
           >
             <ArrowBackIcon />
           </IconButton>
         }
-        endAdornment={
-          loading ? (
-            <Box ml="auto">
-              <DexLoading size={20} style={{ margin: '0' }} />
-            </Box>
-          ) : (
-            <Box width={28} height={40} />
-          )
-        }
+        endAdornment={<Box width={28} height={40} />}
       />
       <DexCardBody maxHeight="540px">
-        <DexOfferPublic
-          key={offer._id}
-          offer={offer}
-          chain={offerChain}
-          token={offerToken}
-        />
-        <DexCardSubmitButton
-          label={user ? 'Accept offer' : 'Connect wallet'}
-          onClick={
-            user
-              ? () => {}
-              : () => {
-                  connect();
-                }
-          }
-          disabled={Boolean(user) && loading}
-        />
+        {!accepted ? (
+          <>
+            <DexAmountInput
+              label="You pay"
+              value={fromAmount}
+              onChange={() => {}}
+              name="fromAmount"
+              disabled={true}
+              error={errorMessage}
+              placeholder="0"
+              chain={fromChain}
+              token={fromToken}
+              disableTopMargin
+              helpText={`GRT on ${fromChain?.label} chain ($${parseFloat(
+                fromAmount || '0'
+              ).toLocaleString()})`}
+            />
+            <Box mt="20px">
+              <DexOfferPublic
+                key={offer._id}
+                offer={offer}
+                chain={offerChain}
+                token={offerToken}
+                grt={fromAmount}
+                label="You receive"
+              />
+            </Box>
+            {approved && (
+              <DexAlertBox color="success">
+                <p>
+                  Tokens have been approved.
+                  <br />
+                  You can accept offer now.
+                </p>
+              </DexAlertBox>
+            )}
+            {loading && <DexLoading />}
+            {errorMessage &&
+              errorMessage.type === 'acceptOffer' &&
+              errorMessage.text && (
+                <DexAlertBox color="error">
+                  <p>{errorMessage.text}</p>
+                </DexAlertBox>
+              )}
+            <DexCardSubmitButton
+              label={
+                user
+                  ? approved
+                    ? 'Accept offer'
+                    : 'Approve tokens'
+                  : 'Connect wallet'
+              }
+              onClick={
+                user
+                  ? () => {
+                      handleAcceptOfferClick(offer);
+                    }
+                  : () => {
+                      connect();
+                    }
+              }
+              disabled={Boolean(user) && loading}
+            />
+          </>
+        ) : (
+          <>
+            <DexAlertBox color="success">
+              <p>Offer has been accepted.</p>
+            </DexAlertBox>
+            <DexCardSubmitButton
+              label="Close"
+              onClick={() => {
+                setAccepted(false);
+                setApproved(false);
+                navigate(VIEWS.ROOT.fullPath);
+              }}
+            />
+          </>
+        )}
       </DexCardBody>
     </DexCard>
   ) : (

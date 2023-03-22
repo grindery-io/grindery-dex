@@ -20,6 +20,8 @@ type Props = {
   endAdornment?: React.ReactNode;
   chain?: Chain | null;
   token?: TokenType | '';
+  disableTopMargin?: boolean;
+  helpText?: string;
 };
 
 const DexAmountInput = (props: Props) => {
@@ -34,9 +36,16 @@ const DexAmountInput = (props: Props) => {
     endAdornment,
     chain,
     token,
+    disableTopMargin,
+    helpText,
   } = props;
   return (
-    <Card style={{ borderRadius: '12px', marginTop: '20px' }}>
+    <Card
+      style={{
+        borderRadius: '12px',
+        marginTop: !disableTopMargin ? '20px' : '0px',
+      }}
+    >
       <CardTitle>{label}</CardTitle>
       <Box
         display="flex"
@@ -106,9 +115,11 @@ const DexAmountInput = (props: Props) => {
               fontWeight: '500',
             }}
           />
-          <FormHelperText sx={{ paddingLeft: '5px', marginTop: 0 }}>
-            {parseFloat(value || '0').toLocaleString()} $
-          </FormHelperText>
+          {helpText && (
+            <FormHelperText sx={{ paddingLeft: '5px', marginTop: 0 }}>
+              {helpText}
+            </FormHelperText>
+          )}
           <FormHelperText error={error && error.type === name && !!error.text}>
             {error && error.type === name && !!error.text ? error.text : ''}
           </FormHelperText>

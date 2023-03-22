@@ -1,10 +1,14 @@
 import React from 'react';
-import { Avatar, Badge, Box } from '@mui/material';
-import { Card } from '../../Card';
+import { Avatar, Badge, Box, IconButton, Tooltip } from '@mui/material';
+import { Card, CardTitle } from '../../Card';
 import { SelectTokenCardHeader } from '../../SelectTokenButton/SelectTokenButton.style';
 import { AvatarDefault } from '../../TokenAvatar';
 //import DexOfferBadge from './DexOfferBadge';
 import { Offer } from '../../../types/Offer';
+import useGrinderyChains from '../../../hooks/useGrinderyChains';
+import { Chain } from '../../../types/Chain';
+import { TokenType } from '../../../types/TokenType';
+import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 
 export type OfferChain = {
   label: string;
@@ -22,10 +26,22 @@ type Props = {
   chain: OfferChain;
   token: OfferToken;
   onClick?: (offer: Offer) => void;
+  grt?: string;
+  label?: string;
 };
 
 const DexOfferPublic = (props: Props) => {
-  const { offer, chain, token, onClick } = props;
+  const { offer, chain, token, onClick, grt, label } = props;
+  const { chains } = useGrinderyChains();
+  const tokenPrice =
+    chains
+      .find((c: Chain) => c.label === chain.label)
+      ?.tokens?.find((t: TokenType) => t.symbol === token.label)?.price || '1';
+
+  const amount = grt
+    ? (parseFloat(grt) / parseFloat(tokenPrice)).toString()
+    : '1';
+
   return (
     <Card
       flex={1}
@@ -45,6 +61,8 @@ const DexOfferPublic = (props: Props) => {
           : undefined
       }
     >
+      {label && <CardTitle>{label}</CardTitle>}
+
       <Box display={'flex'} flexDirection={'row'}></Box>
 
       <SelectTokenCardHeader
@@ -100,14 +118,21 @@ const DexOfferPublic = (props: Props) => {
             }}
             mb={'3px'}
           >
-            {`Min: ${parseFloat(offer.min).toLocaleString()}\nMax: ${parseFloat(
-              offer.max
-            ).toLocaleString()}`}
+            {parseFloat(amount).toLocaleString()}
           </Box>
         }
         subheader={`${token.label} on ${chain.label}`}
         selected={true}
         compact={false}
+        action={
+          Boolean(onClick) ? (
+            <Tooltip title="Accept offer">
+              <IconButton>
+                <KeyboardArrowRightIcon />
+              </IconButton>
+            </Tooltip>
+          ) : undefined
+        }
       />
     </Card>
   );
