@@ -1,6 +1,10 @@
 import React, { createContext, useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { GRT_CONTRACT_ADDRESS, POOL_CONTRACT_ADDRESS } from '../constants';
+import {
+  DELIGHT_API_URL,
+  GRT_CONTRACT_ADDRESS,
+  POOL_CONTRACT_ADDRESS,
+} from '../constants';
 import useGrinderyChains from '../hooks/useGrinderyChains';
 import useOffers from '../hooks/useOffers';
 import { Chain } from '../types/Chain';
@@ -12,6 +16,7 @@ import { useGrinderyNexus } from 'use-grindery-nexus';
 import useAbi from '../hooks/useAbi';
 import { getErrorMessage } from '../utils/error';
 import useTrades from '../hooks/useTrades';
+import axios from 'axios';
 
 // Context props
 type ContextProps = {
@@ -35,6 +40,7 @@ type ContextProps = {
   foundOffers: Offer[];
   approved: boolean;
   accepted: boolean;
+  toTokenPrice: number | null;
   setAccepted: React.Dispatch<React.SetStateAction<boolean>>;
   setApproved: React.Dispatch<React.SetStateAction<boolean>>;
   setSearchToken: React.Dispatch<React.SetStateAction<string>>;
@@ -69,6 +75,7 @@ export const BuyPageContext = createContext<ContextProps>({
   foundOffers: [],
   approved: false,
   accepted: false,
+  toTokenPrice: null,
   setAccepted: () => {},
   setApproved: () => {},
   setSearchToken: () => {},
@@ -123,6 +130,7 @@ export const BuyPageContextProvider = ({ children }: BuyPageContextProps) => {
   const [isOffersVisible, setIsOffersVisible] = useState<boolean>(false);
   const [searchToken, setSearchToken] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [toTokenPrice, setToTokenPrice] = useState<number | null>(null);
   const [currentGrtBalance, setcurrentGrtBalance] = useState<string>('');
   const { saveTrade } = useTrades();
   const { searchOffers, offers, isLoading: isOfferLoading } = useOffers();
@@ -131,8 +139,9 @@ export const BuyPageContextProvider = ({ children }: BuyPageContextProps) => {
   const foundOffers = offers.filter(
     (offer: Offer) =>
       offer.isActive &&
-      parseFloat(fromAmount) >= parseFloat(offer.min) &&
-      parseFloat(fromAmount) <= parseFloat(offer.max) &&
+      toTokenPrice &&
+      parseFloat(fromAmount) / toTokenPrice >= parseFloat(offer.min) &&
+      parseFloat(fromAmount) / toTokenPrice <= parseFloat(offer.max) &&
       offer.chainId === (toChain?.value?.split(':')?.[1] || '0') &&
       typeof toToken !== 'string' &&
       offer.token === toToken?.symbol
@@ -163,6 +172,27 @@ export const BuyPageContextProvider = ({ children }: BuyPageContextProps) => {
   const debouncedChangeHandler = _.debounce(() => {
     handleSearchClick();
   }, 1000);
+
+  const getTokenPrice = async (symbol: string) => {
+    try {
+      const res = await axios.get(
+        `${DELIGHT_API_URL}/coinmarketcap?token=${symbol}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token?.access_token || ''}`,
+          },
+        }
+      );
+      if (res?.data?.price) {
+        setToTokenPrice(res?.data?.price);
+      } else {
+        setToTokenPrice(null);
+      }
+    } catch (error: any) {
+      console.error(error);
+      setToTokenPrice(null);
+    }
+  };
 
   const handleFromAmountMaxClick = () => {
     setFromAmount(currentGrtBalance || '0');
@@ -336,6 +366,15 @@ export const BuyPageContextProvider = ({ children }: BuyPageContextProps) => {
   const handleAcceptOfferClick = async (offer: Offer) => {
     setIsLoading(true);
 
+    if (!toTokenPrice) {
+      setErrorMessage({
+        type: 'acceptOffer',
+        text: 'Token price is missing',
+      });
+      setIsLoading(false);
+      return;
+    }
+
     // switch chain if needed
     if (chain !== fromChain?.value && fromChain) {
       try {
@@ -384,7 +423,7 @@ export const BuyPageContextProvider = ({ children }: BuyPageContextProps) => {
         )
         .catch((error: any) => {
           setErrorMessage({
-            type: 'tx',
+            type: 'acceptOffer',
             text: getErrorMessage(error.error, 'Approval transaction error'),
           });
           console.error('approve error', error.error);
@@ -403,7 +442,7 @@ export const BuyPageContextProvider = ({ children }: BuyPageContextProps) => {
         await txApprove.wait();
       } catch (error: any) {
         setErrorMessage({
-          type: 'tx',
+          type: 'acceptOffer',
           text: error?.message || 'Transaction error',
         });
         console.error('txApprove.wait error', error);
@@ -471,7 +510,7 @@ export const BuyPageContextProvider = ({ children }: BuyPageContextProps) => {
       const receipt = await provider.getTransactionReceipt(tx.hash);
 
       // get tradeId
-      const tradeId = receipt?.logs?.[0]?.topics?.[1] || '';
+      const tradeId = receipt?.logs?.[2]?.topics?.[1] || '';
 
       // save trade to DB
       const trade = await saveTrade({
@@ -479,7 +518,7 @@ export const BuyPageContextProvider = ({ children }: BuyPageContextProps) => {
         destAddr: address,
         offerId: offer.offerId,
         tradeId,
-        amountToken: fromAmount,
+        amountToken: (parseFloat(fromAmount) / toTokenPrice).toString(),
       }).catch((error: any) => {
         console.error('saveTrade error', error);
         setErrorMessage({
@@ -524,6 +563,12 @@ export const BuyPageContextProvider = ({ children }: BuyPageContextProps) => {
     }
   }, [address, chain, fromChain]);
 
+  useEffect(() => {
+    if (toToken && token?.access_token) {
+      getTokenPrice(toToken.symbol);
+    }
+  }, [toToken, token?.access_token]);
+
   return (
     <BuyPageContext.Provider
       value={{
@@ -542,6 +587,7 @@ export const BuyPageContextProvider = ({ children }: BuyPageContextProps) => {
         foundOffers,
         approved,
         accepted,
+        toTokenPrice,
         setAccepted,
         setApproved,
         setSearchToken,

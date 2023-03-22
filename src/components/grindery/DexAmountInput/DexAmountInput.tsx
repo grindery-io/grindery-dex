@@ -21,7 +21,7 @@ type Props = {
   chain?: Chain | null;
   token?: TokenType | '';
   disableTopMargin?: boolean;
-  helpText?: string;
+  helpText?: string | React.ReactNode;
 };
 
 const DexAmountInput = (props: Props) => {
@@ -51,9 +51,9 @@ const DexAmountInput = (props: Props) => {
         display="flex"
         flexDirection="row"
         padding="12px 0 8px 16px"
-        alignItems="flex-start"
+        alignItems="center"
       >
-        <Box style={{ position: 'relative', marginTop: '8px' }}>
+        <Box style={{ position: 'relative' }}>
           <Badge
             overlap="circular"
             anchorOrigin={{
@@ -116,7 +116,9 @@ const DexAmountInput = (props: Props) => {
             }}
           />
           {helpText && (
-            <FormHelperText sx={{ paddingLeft: '5px', marginTop: 0 }}>
+            <FormHelperText
+              sx={{ paddingLeft: '5px', marginTop: 0, lineHeight: 1.4 }}
+            >
               {helpText}
             </FormHelperText>
           )}

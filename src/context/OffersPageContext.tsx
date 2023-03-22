@@ -382,8 +382,6 @@ export const OffersPageContextProvider = ({
         return;
       });
 
-    console.log('checkOwner', checkOwner);
-
     // create transaction
     const tx = await poolContract
       .setIsActive(offerToDeactivate, false, {

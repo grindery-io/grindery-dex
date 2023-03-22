@@ -35,6 +35,7 @@ const BuyPageOfferAccept = (props: Props) => {
     fromAmount,
     fromChain,
     fromToken,
+    toTokenPrice,
   } = useBuyPage();
   const { chains } = useGrinderyChains();
   let navigate = useNavigate();
@@ -64,7 +65,7 @@ const BuyPageOfferAccept = (props: Props) => {
   return offer ? (
     <DexCard>
       <DexCardHeader
-        title="Accept offer"
+        title="Review offer"
         titleSize={18}
         titleAlign="center"
         startAdornment={
@@ -96,9 +97,11 @@ const BuyPageOfferAccept = (props: Props) => {
               chain={fromChain}
               token={fromToken}
               disableTopMargin
-              helpText={`GRT on ${fromChain?.label} chain ($${parseFloat(
-                fromAmount || '0'
-              ).toLocaleString()})`}
+              helpText={
+                <span
+                  style={{ whiteSpace: 'pre-wrap' }}
+                >{`GRT on ${fromChain?.label} chain\n1 GRT = $1`}</span>
+              }
             />
             <Box mt="20px">
               <DexOfferPublic
@@ -108,6 +111,7 @@ const BuyPageOfferAccept = (props: Props) => {
                 token={offerToken}
                 grt={fromAmount}
                 label="You receive"
+                tokenPrice={toTokenPrice}
               />
             </Box>
             {approved && (
@@ -129,7 +133,9 @@ const BuyPageOfferAccept = (props: Props) => {
               )}
             <DexCardSubmitButton
               label={
-                user
+                loading
+                  ? 'Waiting transaction'
+                  : user
                   ? approved
                     ? 'Accept offer'
                     : 'Approve tokens'
