@@ -1,4 +1,4 @@
-import { Button } from '@mui/material';
+import { Button, IconButton, Tooltip } from '@mui/material';
 import { Box } from '@mui/system';
 import React from 'react';
 import { Navigate, Route, Routes, useNavigate } from 'react-router-dom';
@@ -10,7 +10,7 @@ import DexCardBody from '../../components/grindery/DexCard/DexCardBody';
 import DexCardHeader from '../../components/grindery/DexCard/DexCardHeader';
 import DexCardSubmitButton from '../../components/grindery/DexCard/DexCardSubmitButton';
 import DexSelectChainAndTokenButton from '../../components/grindery/DexSelectChainAndTokenButton/DexSelectChainAndTokenButton';
-import DexTextInput from '../../components/grindery/DexTextInput/DexTextInput';
+import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 import { GRT_CONTRACT_ADDRESS } from '../../constants';
 import useBuyPage from '../../hooks/useBuyPage';
 
@@ -34,7 +34,23 @@ const BuyPageOffersFilter = (props: Props) => {
   let navigate = useNavigate();
   return (
     <DexCard>
-      <DexCardHeader title="Buy" />
+      <DexCardHeader
+        title="Buy"
+        endAdornment={
+          user ? (
+            <Tooltip title="Trades history">
+              <IconButton
+                sx={{ marginRight: '-8px' }}
+                onClick={() => {
+                  navigate(VIEWS.HISTORY.fullPath);
+                }}
+              >
+                <ReceiptLongIcon />
+              </IconButton>
+            </Tooltip>
+          ) : undefined
+        }
+      />
       <DexCardBody>
         <DexSelectChainAndTokenButton
           title="Deposit"

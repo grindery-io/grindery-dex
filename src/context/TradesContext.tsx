@@ -12,6 +12,8 @@ type ContextProps = {
   error: string;
   setTrades: React.Dispatch<React.SetStateAction<Trade[]>>;
   saveTrade: (body: { [key: string]: any }) => Promise<Trade | boolean>;
+  getTrades: () => void;
+  completeTrade: (tradeId: string) => Promise<boolean>;
 };
 
 // Context provider props
@@ -26,6 +28,8 @@ export const TradesContext = createContext<ContextProps>({
   error: '',
   setTrades: () => {},
   saveTrade: async () => false,
+  getTrades: () => {},
+  completeTrade: async () => false,
 });
 
 export const TradesContextProvider = ({ children }: TradesContextProps) => {
@@ -51,6 +55,7 @@ export const TradesContextProvider = ({ children }: TradesContextProps) => {
   };
 
   const getTrades = async () => {
+    setIsLoading(true);
     setError('');
     let res;
     try {
@@ -63,6 +68,7 @@ export const TradesContextProvider = ({ children }: TradesContextProps) => {
   };
 
   const saveTrade = async (body: { [key: string]: any }) => {
+    setIsLoading(true);
     setError('');
     let res;
     try {
@@ -73,11 +79,40 @@ export const TradesContextProvider = ({ children }: TradesContextProps) => {
 
     if (res?.data?.insertedId) {
       const trade = await getTrade(res?.data?.insertedId);
+      setIsLoading(false);
       if (trade) {
         return trade;
       } else {
         return false;
       }
+    } else {
+      setIsLoading(false);
+      return false;
+    }
+  };
+
+  const completeTrade = async (tradeId: string): Promise<boolean> => {
+    setError('');
+    let res;
+    try {
+      res = await axios.put(
+        `${DELIGHT_API_URL}/trades/complete`,
+        { tradeId: tradeId, isComplete: true },
+        params
+      );
+    } catch (error: any) {
+      setError(getErrorMessage(error, 'Server error'));
+    }
+
+    if (res?.data?.modifiedCount) {
+      let res2;
+      try {
+        res2 = await axios.get(`${DELIGHT_API_URL}/trades/user`, params);
+      } catch (error: any) {
+        setError(getErrorMessage(error, 'Server error'));
+      }
+      setTrades(res2?.data || []);
+      return true;
     } else {
       return false;
     }
@@ -97,6 +132,8 @@ export const TradesContextProvider = ({ children }: TradesContextProps) => {
         error,
         setTrades,
         saveTrade,
+        getTrades,
+        completeTrade,
       }}
     >
       {children}

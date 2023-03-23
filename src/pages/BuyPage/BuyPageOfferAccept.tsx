@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box } from '@mui/system';
 import DexCard from '../../components/grindery/DexCard/DexCard';
 import DexCardHeader from '../../components/grindery/DexCard/DexCardHeader';
@@ -12,7 +12,7 @@ import DexOfferPublic from '../../components/grindery/DexOffer/DexOfferPublic';
 import DexOfferSkeleton from '../../components/grindery/DexOffer/DexOfferSkeleton';
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
-import { IconButton } from '@mui/material';
+import { CircularProgress, IconButton, Tooltip } from '@mui/material';
 import DexCardSubmitButton from '../../components/grindery/DexCard/DexCardSubmitButton';
 import { useGrinderyNexus } from 'use-grindery-nexus';
 import DexAlertBox from '../../components/grindery/DexAlertBox/DexAlertBox';
@@ -36,6 +36,7 @@ const BuyPageOfferAccept = (props: Props) => {
     fromChain,
     fromToken,
     toTokenPrice,
+    handleRefreshOffersClick,
   } = useBuyPage();
   const { chains } = useGrinderyChains();
   let navigate = useNavigate();
@@ -62,6 +63,25 @@ const BuyPageOfferAccept = (props: Props) => {
       '',
   };
 
+  const [progress, setProgress] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setProgress((_progress) => (_progress >= 100 ? 0 : _progress + 100 / 60));
+    }, 1000);
+
+    return () => {
+      clearInterval(timer);
+      setProgress(0);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (progress === 0 && !loading && !accepted) {
+      handleRefreshOffersClick();
+    }
+  }, [progress, loading, accepted]);
+
   return offer ? (
     <DexCard>
       <DexCardHeader
@@ -81,7 +101,43 @@ const BuyPageOfferAccept = (props: Props) => {
             <ArrowBackIcon />
           </IconButton>
         }
-        endAdornment={<Box width={28} height={40} />}
+        endAdornment={
+          !accepted ? (
+            <Box ml="auto">
+              <Tooltip title={loading ? 'Refreshing...' : 'Refresh'}>
+                <IconButton
+                  sx={{ marginRight: '-8px', position: 'realtive' }}
+                  onClick={() => {
+                    setProgress(0);
+                  }}
+                >
+                  <CircularProgress
+                    size={20}
+                    variant="determinate"
+                    value={100}
+                    sx={{
+                      color: 'rgba(0,0,0,0.1)',
+                    }}
+                  />
+                  <CircularProgress
+                    size={20}
+                    variant={loading ? undefined : 'determinate'}
+                    value={loading ? undefined : progress}
+                    sx={{
+                      color: '#3f49e1',
+                      position: 'absolute',
+                      left: '8px',
+                      top: '8px',
+                      zIndex: 2,
+                    }}
+                  />
+                </IconButton>
+              </Tooltip>
+            </Box>
+          ) : (
+            <Box width={28} height={40} />
+          )
+        }
       />
       <DexCardBody maxHeight="540px">
         {!accepted ? (
@@ -133,9 +189,7 @@ const BuyPageOfferAccept = (props: Props) => {
               )}
             <DexCardSubmitButton
               label={
-                loading
-                  ? 'Waiting transaction'
-                  : user
+                user
                   ? approved
                     ? 'Accept offer'
                     : 'Approve tokens'

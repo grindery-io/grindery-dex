@@ -51,6 +51,7 @@ type ContextProps = {
   handleSearchClick: () => void;
   handleFromAmountMaxClick: () => void;
   handleAcceptOfferClick: (offer: Offer) => void;
+  handleRefreshOffersClick: () => void;
 };
 
 // Context provider props
@@ -86,6 +87,7 @@ export const BuyPageContext = createContext<ContextProps>({
   handleSearchClick: () => {},
   handleFromAmountMaxClick: () => {},
   handleAcceptOfferClick: () => {},
+  handleRefreshOffersClick: () => {},
 });
 
 export const BuyPageContextProvider = ({ children }: BuyPageContextProps) => {
@@ -103,6 +105,10 @@ export const BuyPageContextProvider = ({ children }: BuyPageContextProps) => {
     ACCEPT_OFFER: {
       path: '/accept/:offerId',
       fullPath: '/buy/accept/:offerId',
+    },
+    HISTORY: {
+      path: '/history',
+      fullPath: '/buy/history',
     },
   };
   let navigate = useNavigate();
@@ -192,6 +198,13 @@ export const BuyPageContextProvider = ({ children }: BuyPageContextProps) => {
       console.error(error);
       setToTokenPrice(null);
     }
+  };
+
+  const handleRefreshOffersClick = async () => {
+    if (toToken) {
+      getTokenPrice(toToken.symbol);
+    }
+    handleSearchClick();
   };
 
   const handleFromAmountMaxClick = () => {
@@ -598,6 +611,7 @@ export const BuyPageContextProvider = ({ children }: BuyPageContextProps) => {
         handleSearchClick,
         handleFromAmountMaxClick,
         handleAcceptOfferClick,
+        handleRefreshOffersClick,
       }}
     >
       {children}

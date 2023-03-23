@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box } from '@mui/system';
 import DexCard from '../../components/grindery/DexCard/DexCard';
 import DexCardHeader from '../../components/grindery/DexCard/DexCardHeader';
@@ -11,24 +11,76 @@ import useGrinderyChains from '../../hooks/useGrinderyChains';
 import DexOfferPublic from '../../components/grindery/DexOffer/DexOfferPublic';
 import DexOfferSkeleton from '../../components/grindery/DexOffer/DexOfferSkeleton';
 import { useNavigate } from 'react-router-dom';
+import { CircularProgress, IconButton, Tooltip } from '@mui/material';
 
 type Props = {};
 
 const BuyPageOffersList = (props: Props) => {
-  const { VIEWS, loading, foundOffers, fromAmount, toTokenPrice } =
-    useBuyPage();
+  const {
+    VIEWS,
+    loading,
+    foundOffers,
+    fromAmount,
+    toTokenPrice,
+    handleRefreshOffersClick,
+  } = useBuyPage();
   const { chains } = useGrinderyChains();
   let navigate = useNavigate();
+  const [progress, setProgress] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setProgress((_progress) => (_progress >= 100 ? 0 : _progress + 100 / 60));
+    }, 1000);
+
+    return () => {
+      clearInterval(timer);
+      setProgress(0);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (progress === 0 && !loading) {
+      handleRefreshOffersClick();
+    }
+  }, [progress, loading]);
+
   return (
     <DexCard>
       <DexCardHeader
         title="Offers"
         endAdornment={
-          loading ? (
-            <Box ml="auto">
-              <DexLoading size={20} style={{ margin: '0' }} />
-            </Box>
-          ) : undefined
+          <Box ml="auto">
+            <Tooltip title={loading ? 'Refreshing...' : 'Refresh'}>
+              <IconButton
+                sx={{ marginRight: '-8px', position: 'realtive' }}
+                onClick={() => {
+                  setProgress(0);
+                }}
+              >
+                <CircularProgress
+                  size={20}
+                  variant="determinate"
+                  value={100}
+                  sx={{
+                    color: 'rgba(0,0,0,0.1)',
+                  }}
+                />
+                <CircularProgress
+                  size={20}
+                  variant={loading ? undefined : 'determinate'}
+                  value={loading ? undefined : progress}
+                  sx={{
+                    color: '#3f49e1',
+                    position: 'absolute',
+                    left: '8px',
+                    top: '8px',
+                    zIndex: 2,
+                  }}
+                />
+              </IconButton>
+            </Tooltip>
+          </Box>
         }
       />
       <DexCardBody maxHeight="540px">

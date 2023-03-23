@@ -29,6 +29,8 @@ import FaucetPageContextProvider from './context/FaucetPageContext';
 import BuyPageContextProvider from './context/BuyPageContext';
 import OffersContextProvider from './context/OffersContext';
 import TradesContextProvider from './context/TradesContext';
+import StakesContextProvider from './context/StakesContext';
+import LiquidityWalletsContextProvider from './context/LiquidityWalletsContext';
 
 declare global {
   interface Window {
@@ -186,34 +188,40 @@ export const App = () => {
           </GrinderyThemeProvider>
           <GrinderyChainsContextProvider>
             <AbiContextProvider>
-              <Routes>
-                <Route
-                  path="/buy/*"
-                  element={
-                    <OffersContextProvider>
-                      <TradesContextProvider>
-                        <BuyPageContextProvider>
-                          <BuyPage />
-                        </BuyPageContextProvider>
-                      </TradesContextProvider>
-                    </OffersContextProvider>
-                  }
-                />
-                <Route path="/sell/*" element={<SellPage />} />
-                <Route
-                  path="/faucet/*"
-                  element={
-                    <DexPageContainer>
-                      <DexFaucetMenu />
-                      <FaucetPageContextProvider>
-                        <FaucetPage />
-                      </FaucetPageContextProvider>
-                    </DexPageContainer>
-                  }
-                />
+              <StakesContextProvider>
+                <OffersContextProvider>
+                  <LiquidityWalletsContextProvider>
+                    <Routes>
+                      <Route
+                        path="/buy/*"
+                        element={
+                          <OffersContextProvider>
+                            <TradesContextProvider>
+                              <BuyPageContextProvider>
+                                <BuyPage />
+                              </BuyPageContextProvider>
+                            </TradesContextProvider>
+                          </OffersContextProvider>
+                        }
+                      />
+                      <Route path="/sell/*" element={<SellPage />} />
+                      <Route
+                        path="/faucet/*"
+                        element={
+                          <DexPageContainer>
+                            <DexFaucetMenu />
+                            <FaucetPageContextProvider>
+                              <FaucetPage />
+                            </FaucetPageContextProvider>
+                          </DexPageContainer>
+                        }
+                      />
 
-                <Route path="*" element={<Navigate to="/buy" />} />
-              </Routes>
+                      <Route path="*" element={<Navigate to="/buy" />} />
+                    </Routes>
+                  </LiquidityWalletsContextProvider>
+                </OffersContextProvider>
+              </StakesContextProvider>
             </AbiContextProvider>
           </GrinderyChainsContextProvider>
         </BrowserRouter>
