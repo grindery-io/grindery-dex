@@ -12,7 +12,7 @@ import DexOfferPublic from '../../components/grindery/DexOffer/DexOfferPublic';
 import DexOfferSkeleton from '../../components/grindery/DexOffer/DexOfferSkeleton';
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
-import { CircularProgress, IconButton, Tooltip } from '@mui/material';
+import { CircularProgress, IconButton, Skeleton, Tooltip } from '@mui/material';
 import DexCardSubmitButton from '../../components/grindery/DexCard/DexCardSubmitButton';
 import { useGrinderyNexus } from 'use-grindery-nexus';
 import DexAlertBox from '../../components/grindery/DexAlertBox/DexAlertBox';
@@ -36,6 +36,8 @@ const BuyPageOfferAccept = (props: Props) => {
     fromChain,
     fromToken,
     toTokenPrice,
+    fromTokenPrice,
+    isPricesLoading,
     handleRefreshOffersClick,
   } = useBuyPage();
   const { chains } = useGrinderyChains();
@@ -104,7 +106,7 @@ const BuyPageOfferAccept = (props: Props) => {
         endAdornment={
           !accepted ? (
             <Box ml="auto">
-              <Tooltip title={loading ? 'Refreshing...' : 'Refresh'}>
+              <Tooltip title={isPricesLoading ? 'Refreshing...' : 'Refresh'}>
                 <IconButton
                   sx={{ marginRight: '-8px', position: 'realtive' }}
                   onClick={() => {
@@ -121,8 +123,8 @@ const BuyPageOfferAccept = (props: Props) => {
                   />
                   <CircularProgress
                     size={20}
-                    variant={loading ? undefined : 'determinate'}
-                    value={loading ? undefined : progress}
+                    variant={isPricesLoading ? undefined : 'determinate'}
+                    value={isPricesLoading ? undefined : progress}
                     sx={{
                       color: '#3f49e1',
                       position: 'absolute',
@@ -154,9 +156,15 @@ const BuyPageOfferAccept = (props: Props) => {
               token={fromToken}
               disableTopMargin
               helpText={
-                <span
-                  style={{ whiteSpace: 'pre-wrap' }}
-                >{`GRT on ${fromChain?.label} chain\n1 GRT = $1`}</span>
+                fromToken && typeof fromToken !== 'string' ? (
+                  <span style={{ whiteSpace: 'pre-wrap' }}>{`${
+                    fromToken?.symbol
+                  } on ${fromChain?.label} chain\n1 ${
+                    fromToken?.symbol
+                  } = $${fromTokenPrice?.toLocaleString()}`}</span>
+                ) : (
+                  <Skeleton />
+                )
               }
             />
             <Box mt="20px">
@@ -165,9 +173,10 @@ const BuyPageOfferAccept = (props: Props) => {
                 offer={offer}
                 chain={offerChain}
                 token={offerToken}
-                grt={fromAmount}
+                fromAmount={fromAmount}
                 label="You receive"
-                tokenPrice={toTokenPrice}
+                toTokenPrice={toTokenPrice}
+                fromTokenPrice={fromTokenPrice}
               />
             </Box>
             {approved && (

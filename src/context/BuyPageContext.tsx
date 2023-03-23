@@ -36,15 +36,20 @@ type ContextProps = {
   isOffersVisible: boolean;
   searchToken: string;
   currentToChain: Chain | null;
-  chainTokens: TokenType[];
+  toChainTokens: TokenType[];
+  currentFromChain: Chain | null;
+  fromChainTokens: TokenType[];
   foundOffers: Offer[];
   approved: boolean;
   accepted: boolean;
   toTokenPrice: number | null;
+  fromTokenPrice: number | null;
+  isPricesLoading: boolean;
   setAccepted: React.Dispatch<React.SetStateAction<boolean>>;
   setApproved: React.Dispatch<React.SetStateAction<boolean>>;
   setSearchToken: React.Dispatch<React.SetStateAction<string>>;
   handleFromChainChange: (chain: Chain) => void;
+  handleFromTokenChange: (token: TokenType) => void;
   handleToChainChange: (chain: Chain) => void;
   handleToTokenChange: (token: TokenType) => void;
   handleFromAmountChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
@@ -72,15 +77,20 @@ export const BuyPageContext = createContext<ContextProps>({
   isOffersVisible: false,
   searchToken: '',
   currentToChain: null,
-  chainTokens: [],
+  toChainTokens: [],
+  currentFromChain: null,
+  fromChainTokens: [],
   foundOffers: [],
   approved: false,
   accepted: false,
   toTokenPrice: null,
+  fromTokenPrice: null,
+  isPricesLoading: false,
   setAccepted: () => {},
   setApproved: () => {},
   setSearchToken: () => {},
   handleFromChainChange: () => {},
+  handleFromTokenChange: () => {},
   handleToChainChange: () => {},
   handleToTokenChange: () => {},
   handleFromAmountChange: () => {},
@@ -94,13 +104,13 @@ export const BuyPageContextProvider = ({ children }: BuyPageContextProps) => {
   const { token, provider, ethers, address, chain } = useGrinderyNexus();
   const VIEWS = {
     ROOT: { path: '', fullPath: '/buy' },
-    SELECT_FROM_CHAIN: {
-      path: '/select-from-chain',
-      fullPath: '/buy/select-from-chain',
+    SELECT_FROM: {
+      path: '/select-from',
+      fullPath: '/buy/select-from',
     },
-    SELECT_TO_CHAIN_TOKEN: {
-      path: '/select-to-chain-token',
-      fullPath: '/buy/select-to-chain-token',
+    SELECT_TO: {
+      path: '/select-to',
+      fullPath: '/buy/select-to',
     },
     ACCEPT_OFFER: {
       path: '/accept/:offerId',
@@ -118,36 +128,30 @@ export const BuyPageContextProvider = ({ children }: BuyPageContextProps) => {
   const [accepted, setAccepted] = useState<boolean>(false);
   const [toChain, setToChain] = useState<Chain | null>(null);
   const { chains } = useGrinderyChains();
-  const [fromChain, setFromChain] = useState<Chain | null>(
-    chains.find((c: Chain) => c.value === chain) || null
-  );
-  const [fromToken, setFromToken] = useState<TokenType | ''>(
-    GRT_CONTRACT_ADDRESS[chain || '']
-      ? {
-          id: '4',
-          address: GRT_CONTRACT_ADDRESS[chain || ''],
-          symbol: 'GRT',
-          icon: 'https://flow.grindery.org/logo192.png',
-        }
-      : ''
-  );
+  const [fromChain, setFromChain] = useState<Chain | null>(null);
+  const [fromToken, setFromToken] = useState<TokenType | ''>('');
   const [toToken, setToToken] = useState<TokenType | ''>('');
   const [fromAmount, setFromAmount] = useState<string>('');
   const [isOffersVisible, setIsOffersVisible] = useState<boolean>(false);
   const [searchToken, setSearchToken] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [toTokenPrice, setToTokenPrice] = useState<number | null>(null);
-  const [currentGrtBalance, setcurrentGrtBalance] = useState<string>('');
+  const [fromTokenPrice, setFromTokenPrice] = useState<number | null>(null);
+  const [fromTokenBalance, setFromTokenBalance] = useState<string>('');
   const { saveTrade } = useTrades();
   const { searchOffers, offers, isLoading: isOfferLoading } = useOffers();
+  const [isPricesLoading, setIsPricesLoading] = useState(false);
   const loading = isOfferLoading || isLoading;
 
   const foundOffers = offers.filter(
     (offer: Offer) =>
       offer.isActive &&
       toTokenPrice &&
-      parseFloat(fromAmount) / toTokenPrice >= parseFloat(offer.min) &&
-      parseFloat(fromAmount) / toTokenPrice <= parseFloat(offer.max) &&
+      fromTokenPrice &&
+      parseFloat(fromAmount) * fromTokenPrice >=
+        parseFloat(offer.min) * toTokenPrice &&
+      parseFloat(fromAmount) * fromTokenPrice <=
+        parseFloat(offer.max) * toTokenPrice &&
       offer.chainId === (toChain?.value?.split(':')?.[1] || '0') &&
       typeof toToken !== 'string' &&
       offer.token === toToken?.symbol
@@ -168,8 +172,30 @@ export const BuyPageContextProvider = ({ children }: BuyPageContextProps) => {
         }
       : null;
 
-  const chainTokens = (
+  const toChainTokens = (
     (toChain && chains.find((c) => c.value === toChain.value)?.tokens) ||
+    []
+  ).filter(
+    (t: any) => !searchToken || t.symbol.toLowerCase().includes(searchToken)
+  );
+
+  const currentFromChain: Chain | null =
+    fromChain && chains.find((c) => c.value === fromChain.value)
+      ? {
+          id: fromChain
+            ? `0x${parseFloat(fromChain.value.split(':')[1]).toString(16)}`
+            : '',
+          value: chains.find((c) => c.value === fromChain.value)?.value || '',
+          label: chains.find((c) => c.value === fromChain.value)?.label || '',
+          icon: chains.find((c) => c.value === fromChain.value)?.icon || '',
+          rpc: chains.find((c) => c.value === fromChain.value)?.rpc || [],
+          nativeToken:
+            chains.find((c) => c.value === fromChain.value)?.token || '',
+        }
+      : null;
+
+  const fromChainTokens = (
+    (fromChain && chains.find((c) => c.value === fromChain.value)?.tokens) ||
     []
   ).filter(
     (t: any) => !searchToken || t.symbol.toLowerCase().includes(searchToken)
@@ -179,7 +205,8 @@ export const BuyPageContextProvider = ({ children }: BuyPageContextProps) => {
     handleSearchClick();
   }, 1000);
 
-  const getTokenPrice = async (symbol: string) => {
+  const getToTokenPrice = async (symbol: string) => {
+    setIsPricesLoading(true);
     try {
       const res = await axios.get(
         `${DELIGHT_API_URL}/coinmarketcap?token=${symbol}`,
@@ -191,34 +218,69 @@ export const BuyPageContextProvider = ({ children }: BuyPageContextProps) => {
       );
       if (res?.data?.price) {
         setToTokenPrice(res?.data?.price);
+        setIsPricesLoading(false);
       } else {
         setToTokenPrice(null);
+        setIsPricesLoading(false);
       }
     } catch (error: any) {
       console.error(error);
       setToTokenPrice(null);
+      setIsPricesLoading(false);
+    }
+  };
+
+  const getFromTokenPrice = async (symbol: string) => {
+    setIsPricesLoading(true);
+    try {
+      const res = await axios.get(
+        `${DELIGHT_API_URL}/coinmarketcap?token=${symbol}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token?.access_token || ''}`,
+          },
+        }
+      );
+      if (res?.data?.price) {
+        setFromTokenPrice(res?.data?.price);
+        setIsPricesLoading(false);
+      } else {
+        setFromTokenPrice(null);
+        setIsPricesLoading(false);
+      }
+    } catch (error: any) {
+      console.error(error);
+      setFromTokenPrice(null);
+      setIsPricesLoading(false);
     }
   };
 
   const handleRefreshOffersClick = async () => {
     if (toToken) {
-      getTokenPrice(toToken.symbol);
+      getToTokenPrice(toToken.symbol);
     }
-    handleSearchClick();
+    if (fromToken) {
+      getFromTokenPrice(fromToken.symbol);
+    }
+    handleSearchClick(true);
   };
 
   const handleFromAmountMaxClick = () => {
-    setFromAmount(currentGrtBalance || '0');
+    setFromAmount(fromTokenBalance || '0');
   };
 
   const handleFromChainChange = (chain: Chain) => {
     setFromChain(chain);
-    setFromToken({
-      id: '4',
-      address: GRT_CONTRACT_ADDRESS[chain.value] || '',
-      symbol: 'GRT',
-      icon: 'https://flow.grindery.org/logo192.png',
+  };
+
+  const handleFromTokenChange = (token: TokenType) => {
+    setFromToken(token);
+    setSearchToken('');
+    setErrorMessage({
+      type: '',
+      text: '',
     });
+    navigate(VIEWS.ROOT.fullPath);
   };
 
   const handleToChainChange = (chain: Chain) => {
@@ -242,7 +304,7 @@ export const BuyPageContextProvider = ({ children }: BuyPageContextProps) => {
     setFromAmount(event.target.value || '');
   };
 
-  const handleSearchClick = async () => {
+  const handleSearchClick = async (silent: boolean = false) => {
     // clear errors
     setErrorMessage({ type: '', text: '' });
 
@@ -303,7 +365,7 @@ export const BuyPageContextProvider = ({ children }: BuyPageContextProps) => {
       setIsLoading(false);
       return;
     }
-    if (parseFloat(fromAmount) > parseFloat(currentGrtBalance)) {
+    if (parseFloat(fromAmount) > parseFloat(fromTokenBalance)) {
       setErrorMessage({
         type: 'search',
         text: "You don't have enough GRT",
@@ -317,11 +379,14 @@ export const BuyPageContextProvider = ({ children }: BuyPageContextProps) => {
     // show offers card
     setIsOffersVisible(true);
 
-    searchOffers();
+    searchOffers(silent);
   };
 
-  const getGrtBalance = async () => {
+  const getFromTokenBalance = async () => {
     // switch chain if needed
+    if (!fromToken || typeof fromToken === 'string' || !fromToken.address) {
+      return;
+    }
     if (chain !== fromChain?.value && fromChain) {
       try {
         await window.ethereum.request({
@@ -346,40 +411,59 @@ export const BuyPageContextProvider = ({ children }: BuyPageContextProps) => {
       }
     }
 
-    // get signer
-    const signer = provider.getSigner();
+    // If native token
+    if (fromToken.address === '0x0') {
+      const balance = await provider.getBalance(address);
+      const balanceInEth = ethers.utils.formatEther(balance);
 
-    // set token contract
-    const _tokenContract = new ethers.Contract(
-      GRT_CONTRACT_ADDRESS[fromChain?.value || ''],
-      tokenAbi,
-      signer
-    );
+      setFromTokenBalance(balanceInEth);
+    } else {
+      // if ERC-20 token
 
-    // connect signer
-    const tokenContract = _tokenContract.connect(signer);
+      // get signer
+      const signer = provider.getSigner();
 
-    // get balance
-    const tx = await tokenContract.balanceOf(address).catch((error: any) => {
-      setErrorMessage({
-        type: 'fromAmount',
-        text: getErrorMessage(error.error, 'BalanceOf transaction error'),
+      // set token contract
+      const _tokenContract = new ethers.Contract(
+        fromToken.address,
+        tokenAbi,
+        signer
+      );
+
+      // connect signer
+      const tokenContract = _tokenContract.connect(signer);
+
+      // get balance
+      const tx = await tokenContract.balanceOf(address).catch((error: any) => {
+        setErrorMessage({
+          type: 'fromAmount',
+          text: getErrorMessage(error.error, 'BalanceOf transaction error'),
+        });
+        console.error('BalanceOf error', error.error);
+        return;
       });
-      console.error('BalanceOf error', error.error);
-      return;
-    });
 
-    // convert wei to string
-    const grtBalance = (tx / 10 ** 18).toString();
+      // convert wei to string
+      const _balance = (tx / 10 ** 18).toString();
 
-    // set current balance state
-    setcurrentGrtBalance(grtBalance);
+      // set current balance state
+      setFromTokenBalance(_balance);
+    }
   };
 
   const handleAcceptOfferClick = async (offer: Offer) => {
     setIsLoading(true);
 
     if (!toTokenPrice) {
+      setErrorMessage({
+        type: 'acceptOffer',
+        text: 'Token price is missing',
+      });
+      setIsLoading(false);
+      return;
+    }
+
+    if (!fromTokenPrice) {
       setErrorMessage({
         type: 'acceptOffer',
         text: 'Token price is missing',
@@ -531,7 +615,10 @@ export const BuyPageContextProvider = ({ children }: BuyPageContextProps) => {
         destAddr: address,
         offerId: offer.offerId,
         tradeId,
-        amountToken: (parseFloat(fromAmount) / toTokenPrice).toString(),
+        amountToken: (
+          (parseFloat(fromAmount) * fromTokenPrice) /
+          toTokenPrice
+        ).toString(),
       }).catch((error: any) => {
         console.error('saveTrade error', error);
         setErrorMessage({
@@ -555,14 +642,21 @@ export const BuyPageContextProvider = ({ children }: BuyPageContextProps) => {
   };
 
   useEffect(() => {
-    if (toChain && toToken && fromAmount && token?.access_token) {
+    if (
+      toChain &&
+      toToken &&
+      fromAmount &&
+      fromChain &&
+      fromToken &&
+      token?.access_token
+    ) {
       setIsOffersVisible(true);
       setIsLoading(true);
       debouncedChangeHandler();
     } else {
       setIsOffersVisible(false);
     }
-  }, [toChain, toToken, fromAmount, token?.access_token]);
+  }, [toChain, toToken, fromAmount, fromChain, fromToken, token?.access_token]);
 
   useEffect(() => {
     if (!isOfferLoading) {
@@ -572,15 +666,21 @@ export const BuyPageContextProvider = ({ children }: BuyPageContextProps) => {
 
   useEffect(() => {
     if (address && chain) {
-      getGrtBalance();
+      getFromTokenBalance();
     }
-  }, [address, chain, fromChain]);
+  }, [address, chain, fromChain, fromToken]);
 
   useEffect(() => {
     if (toToken && token?.access_token) {
-      getTokenPrice(toToken.symbol);
+      getToTokenPrice(toToken.symbol);
     }
   }, [toToken, token?.access_token]);
+
+  useEffect(() => {
+    if (fromToken && token?.access_token) {
+      getFromTokenPrice(fromToken.symbol);
+    }
+  }, [fromToken, token?.access_token]);
 
   return (
     <BuyPageContext.Provider
@@ -596,15 +696,20 @@ export const BuyPageContextProvider = ({ children }: BuyPageContextProps) => {
         isOffersVisible,
         searchToken,
         currentToChain,
-        chainTokens,
+        toChainTokens,
+        currentFromChain,
+        fromChainTokens,
         foundOffers,
         approved,
         accepted,
         toTokenPrice,
+        fromTokenPrice,
+        isPricesLoading,
         setAccepted,
         setApproved,
         setSearchToken,
         handleFromChainChange,
+        handleFromTokenChange,
         handleToChainChange,
         handleToTokenChange,
         handleFromAmountChange,

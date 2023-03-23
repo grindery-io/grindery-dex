@@ -15,6 +15,7 @@ import BuyPageOffersList from './BuyPageOffersList';
 import BuyPageOffersFilter from './BuyPageOffersFilter';
 import BuyPageOfferAccept from './BuyPageOfferAccept';
 import BuyPageHistory from './BuyPageHistory';
+import BuyPageSelectFromChainAndToken from './BuyPageSelectFromChainAndToken';
 
 type Props = {};
 
@@ -26,8 +27,8 @@ const BuyPage = (props: Props) => {
   const showRightColumn =
     [
       VIEWS.ROOT.fullPath,
-      VIEWS.SELECT_FROM_CHAIN.fullPath,
-      VIEWS.SELECT_TO_CHAIN_TOKEN.fullPath,
+      VIEWS.SELECT_FROM.fullPath,
+      VIEWS.SELECT_TO.fullPath,
     ].includes(location.pathname) && isOffersVisible;
 
   return (
@@ -44,11 +45,11 @@ const BuyPage = (props: Props) => {
             <Routes>
               <Route path={VIEWS.ROOT.path} element={<BuyPageOffersFilter />} />
               <Route
-                path={VIEWS.SELECT_FROM_CHAIN.path}
-                element={<BuyPageSelectFromChain />}
+                path={VIEWS.SELECT_FROM.path}
+                element={<BuyPageSelectFromChainAndToken />}
               />
               <Route
-                path={VIEWS.SELECT_TO_CHAIN_TOKEN.path}
+                path={VIEWS.SELECT_TO.path}
                 element={<BuyPageSelectToChainAndToken />}
               />
               <Route

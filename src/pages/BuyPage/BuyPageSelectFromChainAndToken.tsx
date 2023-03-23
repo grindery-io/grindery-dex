@@ -16,20 +16,20 @@ import { Chain } from '../../types/Chain';
 
 type Props = {};
 
-const BuyPageSelectChainAndToken = (props: Props) => {
+const BuyPageSelectFromChainAndToken = (props: Props) => {
   const {
     VIEWS,
     searchToken,
     setSearchToken,
-    toChain,
-    handleToChainChange,
-    toChainTokens,
-    currentToChain,
-    handleToTokenChange,
+    fromChain,
+    handleFromChainChange,
+    fromChainTokens,
+    currentFromChain,
+    handleFromTokenChange,
   } = useBuyPage();
   const { chains } = useGrinderyChains();
   let navigate = useNavigate();
-  const filteredChains = chains.filter((c: Chain) => c.value === 'eip155:97');
+  const filteredChains = chains.filter((c: Chain) => c.value === 'eip155:5');
   return (
     <DexCard>
       <DexCardHeader
@@ -52,9 +52,9 @@ const BuyPageSelectChainAndToken = (props: Props) => {
       />
       <DexCardBody>
         <DexChainsList
-          chain={toChain?.value || ''}
+          chain={fromChain?.value || ''}
           chains={filteredChains}
-          onClick={handleToChainChange}
+          onClick={handleFromChainChange}
         />
         <DexTokenSearch
           value={searchToken}
@@ -63,18 +63,23 @@ const BuyPageSelectChainAndToken = (props: Props) => {
           }}
         />
 
-        {currentToChain && toChainTokens && toChainTokens.length > 0 ? (
-          <DexTokensList tokens={toChainTokens} onClick={handleToTokenChange} />
+        {currentFromChain && fromChainTokens && fromChainTokens.length > 0 ? (
+          <DexTokensList
+            tokens={fromChainTokens}
+            onClick={handleFromTokenChange}
+          />
         ) : (
           <DexTokensNotFound
             text={
-              !currentToChain ? (
+              !currentFromChain ? (
                 <>Please, select a chain to see a list of tokens.</>
               ) : (
                 <>
                   We couldn't find tokens{' '}
-                  {currentToChain ? `on ${currentToChain?.label} chain` : ''}.
-                  Please try search again or switch the chain.
+                  {currentFromChain
+                    ? `on ${currentFromChain?.label} chain`
+                    : ''}
+                  . Please try search again or switch the chain.
                 </>
               )
             }
@@ -86,4 +91,4 @@ const BuyPageSelectChainAndToken = (props: Props) => {
   );
 };
 
-export default BuyPageSelectChainAndToken;
+export default BuyPageSelectFromChainAndToken;

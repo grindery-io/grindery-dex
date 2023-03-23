@@ -1,15 +1,23 @@
 import React from 'react';
 import DexCard from '../../components/grindery/DexCard/DexCard';
-import { Route, Routes } from 'react-router-dom';
+import { Navigate, Route, Routes } from 'react-router-dom';
 import useFaucetPage from '../../hooks/useFaucetPage';
 import FaucetPageRoot from './FaucetPageRoot';
 import FaucetPageSelectChain from './FaucetPageSelectChain';
+import DexFaucetMenu from '../../components/grindery/DexFaucetMenu/DexFaucetMenu';
+import useAdmin from '../../hooks/useAdmin';
+import DexLoading from '../../components/grindery/DexLoading/DexLoading';
 
 function FaucetPage() {
   const { VIEWS } = useFaucetPage();
+  const { isLoading, isAdmin } = useAdmin();
+  if (isLoading) {
+    return <DexLoading />;
+  }
 
-  return (
+  return isAdmin ? (
     <>
+      <DexFaucetMenu />
       <DexCard>
         <Routes>
           <Route path={VIEWS.ROOT.path} element={<FaucetPageRoot />} />
@@ -20,6 +28,8 @@ function FaucetPage() {
         </Routes>
       </DexCard>
     </>
+  ) : (
+    <Navigate to="/" />
   );
 }
 

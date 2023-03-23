@@ -22,6 +22,8 @@ const BuyPageOffersList = (props: Props) => {
     foundOffers,
     fromAmount,
     toTokenPrice,
+    fromTokenPrice,
+    isPricesLoading,
     handleRefreshOffersClick,
   } = useBuyPage();
   const { chains } = useGrinderyChains();
@@ -51,7 +53,7 @@ const BuyPageOffersList = (props: Props) => {
         title="Offers"
         endAdornment={
           <Box ml="auto">
-            <Tooltip title={loading ? 'Refreshing...' : 'Refresh'}>
+            <Tooltip title={isPricesLoading ? 'Refreshing...' : 'Refresh'}>
               <IconButton
                 sx={{ marginRight: '-8px', position: 'realtive' }}
                 onClick={() => {
@@ -68,8 +70,8 @@ const BuyPageOffersList = (props: Props) => {
                 />
                 <CircularProgress
                   size={20}
-                  variant={loading ? undefined : 'determinate'}
-                  value={loading ? undefined : progress}
+                  variant={isPricesLoading ? undefined : 'determinate'}
+                  value={isPricesLoading ? undefined : progress}
                   sx={{
                     color: '#3f49e1',
                     position: 'absolute',
@@ -126,8 +128,9 @@ const BuyPageOffersList = (props: Props) => {
                 offer={offer}
                 chain={offerChain}
                 token={offerToken}
-                grt={fromAmount}
-                tokenPrice={toTokenPrice}
+                fromAmount={fromAmount}
+                toTokenPrice={toTokenPrice}
+                fromTokenPrice={fromTokenPrice}
                 onClick={(o: Offer) => {
                   navigate(
                     VIEWS.ACCEPT_OFFER.fullPath.replace(

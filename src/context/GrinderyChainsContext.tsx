@@ -1,4 +1,6 @@
+import axios from 'axios';
 import React, { createContext, useEffect, useState } from 'react';
+import { DELIGHT_API_URL } from '../constants';
 import { Chain } from '../types/Chain';
 
 // Context props
@@ -24,6 +26,27 @@ export const GrinderyChainsContextProvider = ({
   const [isLoading, setIsLoading] = useState(true);
   const [chains, setChains] = useState<Chain[]>([]);
 
+  /*const getChains = async () => {
+    setIsLoading(true);
+    let chainsRes;
+    try {
+      chainsRes = await axios.get(`${DELIGHT_API_URL}/blockchains`);
+    } catch (error: any) {
+      // TODO: handle chains fetching error
+    }
+    let fetchedChains = chainsRes?.data || [];
+    const tokens = await Promise.all(
+      fetchedChains.map((fetchedChain: any) =>
+        axios
+          .get(`${DELIGHT_API_URL}/tokens`)
+          .then((res) => res)
+          .catch(() => ({}))
+      )
+    );
+    console.log('tokens', tokens);
+    setIsLoading(false);
+  };*/
+
   const getDemoChains = async () => {
     setChains([
       {
@@ -42,13 +65,13 @@ export const GrinderyChainsContextProvider = ({
         ],
         tokens: [
           {
-            id: '1',
+            id: '1839',
             address: '0x0',
             symbol: 'BNB',
 
-            icon: 'https://bscscan.com/token/images/binance_32.png',
+            icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1839.png',
           },
-          {
+          /*{
             id: '2',
             address: '0x8965349fb649A33a30cbFDa057D8eC2C48AbE2A2',
             symbol: 'USDC',
@@ -60,7 +83,7 @@ export const GrinderyChainsContextProvider = ({
             address: '0x2170ed0880ac9a755fd29b2688956bd959f933f8',
             symbol: 'ETH',
             icon: 'https://bscscan.com/token/images/ethereum_32.png',
-          },
+          },*/
         ],
       },
       {
@@ -78,12 +101,12 @@ export const GrinderyChainsContextProvider = ({
         ],
         tokens: [
           {
-            id: '5',
-            address: '0xFfb99f4A02712C909d8F7cC44e67C87Ea1E71E83',
+            id: '1027',
+            address: '0x0',
             symbol: 'ETH',
-            icon: 'https://bscscan.com/token/images/ethereum_32.png',
+            icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
           },
-          {
+          /*{
             id: '6',
             address: '0xfb501A48aFFC39aa4b4C83A025D4F0b5C1ca4A6C',
             symbol: 'BNB',
@@ -94,10 +117,10 @@ export const GrinderyChainsContextProvider = ({
             address: '0xF2001B145b43032AAF5Ee2884e456CCd805F677D',
             symbol: 'DAI',
             icon: 'https://cronoscan.com/token/images/MCDDai_32.png',
-          },
+          },*/
         ],
       },
-      {
+      /*{
         value: 'eip155:338',
         label: 'Cronos Testnet',
         icon: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAYAAACM/rhtAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAVFSURBVHgBxVhLbBtVFD3zSeqiNJhSiFV+TkRFC3GULPgUgeSs6IJFkBBUYkHMCla2i7NEtVcIKWmcHRuUdAMVAtXsYJWphEJ3SUlAUQXKSHyatBWYEmiaeOb1vvFvPm/GYztVj/I08bzfmXvvu58H7BeiySgOPj+Lofc2kPhwAvsEBfuBgyfTMM0SZDmJ/lgUPZHTGDgZx+EXr+Dm5TK6gIRu0PdKEnLPZ2CVoca72Akg0m/fIQ+5MoeVYkdEOyMYTcbBME8t6ekbeIYIHnJvowNGAavnFtAm2iPI7QxqmlT5EUxDbB6PHgMO9PksQET39saxXtSx7wQPv5YGWJ7TDBx3ZCiAYB1sAXsk0RBEWx+SI6eSeODYPCTpfUhyhBqEDbIOWXoDD8cKYNJD9HLUf1HqU+RJxF6OYGvpUtD2/hKMnSI7i3xCB+Ct5jBWm2J7MqkMxubw+NNFx0EYzcRhKIs0Lo5ABNunl2B0IooI0rR3hnqD1SkrC/jfyKJc8j+hiTOTtM3Z1kShYa+ScqvdSfCJt0/D2PvYuRiDR4KMFmP01ZslDWEwmomiovIPPtt6sNM+nTbY/9wq2VPUZlf0V3tW3+lQerP448ssttd1z9pxInL01eO4sbTpeL95eQfXlzQcfeF8KPuU5X+s8dWd7X2Ks8n1p1omcgX07I7ht88XhOuOTKVxSN2AwpYp1M3jONmgGyskldWZSdLAOElKRwg4CcqKtylqCYo5ht8v5KELbG04l8Tw1DIdlCIaLkiaRA+RHcmJVbo2rRHRQcBMtSLqIqh6m9SbgX7BuwiXUCK3SHZFjYlVxijMJaY2qgdFgOrJvdQGwbrk5Ob/bnA745LpUZfpV9LFSKd23vUuTgvNW1IWqb0FfAiqNoIR54w+ddGSjCOiMPKFKEAxxiwbUyqDHtVxKavqvHWi24DqJGj/ycQzJCnq6GPSHNRK3uGkVywXMdjwgdyZA1nL9tqEi6CCWnRoBoyI6T+bR5C16Yxvf9XGFtAFnASlms3V/bLEyfYGTJe6SkbDQCBBO4iggfsKlwTdobmu53sI0xTs24SK+w3TEBBsCqU7ghJ7quWYZzOjMFH2TU6ZYeNT11iToIyuQCHNihSCMrPq0GcpVC4Hhj0uQa5mq9n+75ggM79xvYgT0YuOBKGeOPCcsjGMnPsIRRO3o2YVImRvRvXZMcG1mYw4yNcShETub2fi0CBYgEwFk7v8rBg1UkaTnE2Cndlg3QGPnMmQU0+7smU3MY0iTaoWXbxg5oOOnNh6144NqrLmm438eK5I8XfcmyBYu+hW3rc2PS4kx0uLJ9+h2tqYsA6KjwSd5zuRC3B6Uolq2qzvaeRFUkW9SCc7DlMq4KfponAcJ9YXSZNr4fYpThwYK1j5Z3sEG7ODa1p+CPyuOWJv0lUJpV4S4giESWXFV9YHOmNb2JpBUSYw8BLVDT+seLp5/eHGYxOj6DvxhXVPAzNKdgdhg1km9X6Aa19/2thNyCF0qchrWvra1ZmSsJtflRzo5+tkgtchRy5R2raDoruEDb76CE1UoPZHXqfT7U5shdDImaeohNVFna3vZqo3BHka+m7LsVyFm79cgbEz2/KjJJB5sCxufqsFDwuLKlG+cfDt6Y1fgd3//PuZpc4C/vquiBBo/36wldqvXwXubPtMJjuDkUdZC53odn7DOpzLk8/jUcRpY1vrwM6/7l003JFS2NF0tInuroBF9nntZyJ4q7Y6nXLGUtj+XkOH6I5gHfartj9Xgdu3ypY6e3uL7agT94xgHdw+t67GsbvdNbE67gLGASCUUYAwaQAAAABJRU5ErkJggg==',
@@ -123,7 +146,7 @@ export const GrinderyChainsContextProvider = ({
             icon: 'https://cronoscan.com/token/images/MCDDai_32.png',
           },
         ],
-      },
+      },*/
     ]);
     setIsLoading(false);
   };

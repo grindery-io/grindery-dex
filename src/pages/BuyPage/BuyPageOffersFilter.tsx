@@ -27,6 +27,7 @@ const BuyPageOffersFilter = (props: Props) => {
     loading,
     fromChain,
     fromToken,
+    fromTokenPrice,
     handleFromAmountChange,
     handleSearchClick,
     handleFromAmountMaxClick,
@@ -58,7 +59,7 @@ const BuyPageOffersFilter = (props: Props) => {
           token={fromToken}
           error={errorMessage}
           onClick={() => {
-            navigate(VIEWS.SELECT_FROM_CHAIN.fullPath);
+            navigate(VIEWS.SELECT_FROM.fullPath);
           }}
           name="fromChain"
         />
@@ -66,7 +67,7 @@ const BuyPageOffersFilter = (props: Props) => {
           <DexSelectChainAndTokenButton
             title="Receive"
             onClick={() => {
-              navigate(VIEWS.SELECT_TO_CHAIN_TOKEN.fullPath);
+              navigate(VIEWS.SELECT_TO.fullPath);
             }}
             chain={toChain}
             token={toToken}
@@ -84,7 +85,17 @@ const BuyPageOffersFilter = (props: Props) => {
           placeholder="0"
           chain={fromChain}
           token={fromToken}
-          helpText={`${parseFloat(fromAmount || '0').toLocaleString()} $`}
+          helpText={
+            <span style={{ whiteSpace: 'pre-wrap' }}>{`$${(
+              parseFloat(fromAmount || '0') * (fromTokenPrice || 0)
+            ).toLocaleString()}\n${
+              typeof fromToken !== 'string'
+                ? `1 ${
+                    fromToken?.symbol
+                  } = $${fromTokenPrice?.toLocaleString()}`
+                : ''
+            }`}</span>
+          }
           endAdornment={
             GRT_CONTRACT_ADDRESS[fromChain?.value || ''] ? (
               <Box>
@@ -98,7 +109,7 @@ const BuyPageOffersFilter = (props: Props) => {
                     padding: '4px 8px 5px',
                     display: 'inline-block',
                     width: 'auto',
-                    margin: '0',
+                    margin: '0 0 0 4px',
                     background: 'rgba(63, 73, 225, 0.08)',
                     color: 'rgb(63, 73, 225)',
                     borderRadius: '8px',

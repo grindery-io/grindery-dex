@@ -30,19 +30,28 @@ type Props = {
   chain: OfferChain;
   token: OfferToken;
   onClick?: (offer: Offer) => void;
-  grt?: string;
+  fromAmount?: string;
   label?: string;
-  tokenPrice?: number | null;
+  toTokenPrice?: number | null;
+  fromTokenPrice?: number | null;
 };
 
 const DexOfferPublic = (props: Props) => {
-  const { offer, chain, token, onClick, grt, label, tokenPrice } = props;
+  const {
+    offer,
+    chain,
+    token,
+    onClick,
+    fromAmount,
+    label,
+    toTokenPrice,
+    fromTokenPrice,
+  } = props;
 
-  const amount = tokenPrice
-    ? grt
-      ? (parseFloat(grt) / tokenPrice).toString()
-      : '1'
-    : '1';
+  const amount =
+    toTokenPrice && fromTokenPrice && fromAmount
+      ? (parseFloat(fromAmount) * fromTokenPrice) / toTokenPrice
+      : 0;
 
   return (
     <Card
@@ -56,7 +65,7 @@ const DexOfferPublic = (props: Props) => {
         },
       }}
       onClick={
-        onClick && tokenPrice
+        onClick && amount
           ? () => {
               onClick(offer);
             }
@@ -120,19 +129,15 @@ const DexOfferPublic = (props: Props) => {
             }}
             mb={'3px'}
           >
-            {tokenPrice ? (
-              <>{parseFloat(amount).toLocaleString()}</>
-            ) : (
-              <Skeleton />
-            )}
+            {amount ? <>{amount.toFixed(4).toLocaleString()}</> : <Skeleton />}
           </Box>
         }
         subheader={
           <span style={{ whiteSpace: 'pre-wrap' }}>
-            {tokenPrice ? (
+            {amount ? (
               `${token.label} on ${chain.label}.\n1 ${
                 token.label
-              } = $${tokenPrice?.toLocaleString()}`
+              } = $${toTokenPrice?.toLocaleString()}`
             ) : (
               <Skeleton />
             )}
@@ -141,7 +146,7 @@ const DexOfferPublic = (props: Props) => {
         selected={true}
         compact={false}
         action={
-          Boolean(onClick) && tokenPrice ? (
+          Boolean(onClick) && amount ? (
             <Tooltip title="Review offer">
               <IconButton>
                 <KeyboardArrowRightIcon />

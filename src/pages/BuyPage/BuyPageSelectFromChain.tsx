@@ -10,7 +10,6 @@ import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
 import DexChainsList from '../../components/grindery/DexChainsList/DexChainsList';
 import useGrinderyChains from '../../hooks/useGrinderyChains';
 import { Chain } from '../../types/Chain';
-import { GRT_CONTRACT_ADDRESS } from '../../constants';
 
 type Props = {};
 
@@ -43,14 +42,6 @@ const BuyPageSelectFromChain = (props: Props) => {
           chain={fromChain?.value || ''}
           chains={chains.map((chain: Chain) => ({
             ...chain,
-            tokens: [
-              {
-                id: 4,
-                address: GRT_CONTRACT_ADDRESS[chain.value] || '',
-                symbol: 'GRT',
-                icon: 'https://flow.grindery.org/logo192.png',
-              },
-            ],
           }))}
           onClick={(chain: Chain) => {
             handleFromChainChange(chain);

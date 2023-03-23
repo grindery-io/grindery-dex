@@ -2,7 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { Card, CardTitle } from '../../Card';
 import { Trade } from '../../../types/Trade';
 import { SelectTokenCardHeader } from '../../SelectTokenButton/SelectTokenButton.style';
-import { Avatar, Badge, Chip, Stack, Typography } from '@mui/material';
+import {
+  Avatar,
+  Badge,
+  Chip,
+  Skeleton,
+  Stack,
+  Typography,
+} from '@mui/material';
 import { Box } from '@mui/system';
 import useOffers from '../../../hooks/useOffers';
 import { Offer } from '../../../types/Offer';
@@ -28,9 +35,9 @@ const DexTrade = (props: Props) => {
   const { chains } = useGrinderyChains();
   const [loading, setLoading] = useState(false);
 
-  const grtToken = {
-    symbol: 'GRT',
-    icon: 'https://flow.grindery.org/logo192.png',
+  const fromToken = {
+    symbol: 'ETH',
+    icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
   };
 
   const offerChain = chains.find(
@@ -58,6 +65,8 @@ const DexTrade = (props: Props) => {
   useEffect(() => {
     getOffer();
   }, [trade.offerId]);
+
+  console.log('trade', trade);
 
   return (
     <Card
@@ -100,15 +109,15 @@ const DexTrade = (props: Props) => {
         style={{ height: 'auto' }}
         avatar={
           <Avatar
-            src={grtToken.icon}
-            alt={grtToken.symbol}
+            src={fromToken.icon}
+            alt={fromToken.symbol}
             sx={{
               width: '32px',
               height: '32px',
               background: '#fff',
             }}
           >
-            {grtToken.symbol}
+            {fromToken.symbol}
           </Avatar>
         }
         title={
@@ -122,7 +131,9 @@ const DexTrade = (props: Props) => {
             {parseFloat(trade.amountGRT).toLocaleString()}
           </Box>
         }
-        subheader={<span style={{ whiteSpace: 'pre-wrap' }}>GRT</span>}
+        subheader={
+          <span style={{ whiteSpace: 'pre-wrap' }}>{fromToken.symbol}</span>
+        }
         selected={true}
         compact={false}
       />
@@ -185,9 +196,11 @@ const DexTrade = (props: Props) => {
         }
         subheader={
           <span style={{ whiteSpace: 'pre-wrap' }}>
-            {offerToken && offerChain
-              ? `${offerToken.symbol} on ${offerChain.label}`
-              : ''}
+            {offerToken && offerChain ? (
+              `${offerToken.symbol} on ${offerChain.label}`
+            ) : (
+              <Skeleton width="150px" />
+            )}
           </span>
         }
         selected={true}

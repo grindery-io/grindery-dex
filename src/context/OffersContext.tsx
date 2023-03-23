@@ -13,7 +13,7 @@ type ContextProps = {
   setOffers: React.Dispatch<React.SetStateAction<Offer[]>>;
   saveOffer: (body: { [key: string]: any }) => Promise<Offer | boolean>;
   updateOffer: (id: string) => Promise<boolean>;
-  searchOffers: () => void;
+  searchOffers: (silent: boolean) => void;
   getOfferById: (offerId: string) => Promise<Offer | false>;
 };
 
@@ -122,9 +122,12 @@ export const OffersContextProvider = ({ children }: OffersContextProps) => {
     }
   };
 
-  const searchOffers = async () => {
+  const searchOffers = async (silent: boolean = false) => {
     setError('');
-    setIsLoading(true);
+    if (!silent) {
+      setIsLoading(true);
+    }
+
     let res;
     try {
       res = await axios.get(`${DELIGHT_API_URL}/offers`, params);

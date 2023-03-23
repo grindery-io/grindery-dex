@@ -31,6 +31,7 @@ import OffersContextProvider from './context/OffersContext';
 import TradesContextProvider from './context/TradesContext';
 import StakesContextProvider from './context/StakesContext';
 import LiquidityWalletsContextProvider from './context/LiquidityWalletsContext';
+import AdminContextProvider from './context/AdminContext';
 
 declare global {
   interface Window {
@@ -182,48 +183,49 @@ export const App = () => {
     <GrinderyNexusContextProvider>
       <AppContextProvider>
         <BrowserRouter>
-          <GrinderyThemeProvider>
-            <EarlyAccessModal />
-            <AppHeader />
-          </GrinderyThemeProvider>
-          <GrinderyChainsContextProvider>
-            <AbiContextProvider>
-              <StakesContextProvider>
-                <OffersContextProvider>
-                  <LiquidityWalletsContextProvider>
-                    <Routes>
-                      <Route
-                        path="/buy/*"
-                        element={
-                          <OffersContextProvider>
-                            <TradesContextProvider>
-                              <BuyPageContextProvider>
-                                <BuyPage />
-                              </BuyPageContextProvider>
-                            </TradesContextProvider>
-                          </OffersContextProvider>
-                        }
-                      />
-                      <Route path="/sell/*" element={<SellPage />} />
-                      <Route
-                        path="/faucet/*"
-                        element={
-                          <DexPageContainer>
-                            <DexFaucetMenu />
-                            <FaucetPageContextProvider>
-                              <FaucetPage />
-                            </FaucetPageContextProvider>
-                          </DexPageContainer>
-                        }
-                      />
+          <AdminContextProvider>
+            <GrinderyThemeProvider>
+              <EarlyAccessModal />
+              <AppHeader />
+            </GrinderyThemeProvider>
+            <GrinderyChainsContextProvider>
+              <AbiContextProvider>
+                <StakesContextProvider>
+                  <OffersContextProvider>
+                    <LiquidityWalletsContextProvider>
+                      <Routes>
+                        <Route
+                          path="/buy/*"
+                          element={
+                            <OffersContextProvider>
+                              <TradesContextProvider>
+                                <BuyPageContextProvider>
+                                  <BuyPage />
+                                </BuyPageContextProvider>
+                              </TradesContextProvider>
+                            </OffersContextProvider>
+                          }
+                        />
+                        <Route path="/sell/*" element={<SellPage />} />
+                        <Route
+                          path="/faucet/*"
+                          element={
+                            <DexPageContainer>
+                              <FaucetPageContextProvider>
+                                <FaucetPage />
+                              </FaucetPageContextProvider>
+                            </DexPageContainer>
+                          }
+                        />
 
-                      <Route path="*" element={<Navigate to="/buy" />} />
-                    </Routes>
-                  </LiquidityWalletsContextProvider>
-                </OffersContextProvider>
-              </StakesContextProvider>
-            </AbiContextProvider>
-          </GrinderyChainsContextProvider>
+                        <Route path="*" element={<Navigate to="/buy" />} />
+                      </Routes>
+                    </LiquidityWalletsContextProvider>
+                  </OffersContextProvider>
+                </StakesContextProvider>
+              </AbiContextProvider>
+            </GrinderyChainsContextProvider>
+          </AdminContextProvider>
         </BrowserRouter>
       </AppContextProvider>
     </GrinderyNexusContextProvider>

@@ -1,13 +1,19 @@
 import React from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
+import DexLoading from '../../components/grindery/DexLoading/DexLoading';
 import DexPageContainer from '../../components/grindery/DexPageContainer/DexPageContainer';
 import DexSellMenu from '../../components/grindery/DexSellMenu/DexSellMenu';
 import { sellPages } from '../../components/pages/dexPages';
+import useAdmin from '../../hooks/useAdmin';
 
 type Props = {};
 
 const SellPage = (props: Props) => {
-  return (
+  const { isLoading, isAdmin } = useAdmin();
+  if (isLoading) {
+    return <DexLoading />;
+  }
+  return isAdmin ? (
     <div>
       <DexPageContainer>
         <DexSellMenu />
@@ -26,6 +32,8 @@ const SellPage = (props: Props) => {
         </Routes>
       </DexPageContainer>
     </div>
+  ) : (
+    <Navigate to="/" />
   );
 };
 
