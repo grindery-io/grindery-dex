@@ -231,18 +231,13 @@ export const LiquidityWalletPageContextProvider = ({
         type: 'tx',
         text: 'Transaction error',
       });
+      return;
     }
 
-    setTimeout(() => {
+    if (typeof wallet !== 'boolean') {
       setWallets([
         {
-          //...wallet,
-          _id:
-            wallets.length > 0
-              ? (parseFloat(wallets[wallets.length - 1]._id) + 1).toString()
-              : '1',
-          chainId: chain.toString().split(':')[1],
-          tokens: {},
+          ...wallet,
           new: true,
         },
         ...[...wallets],
@@ -253,7 +248,7 @@ export const LiquidityWalletPageContextProvider = ({
         text: '',
       });
       navigate(VIEWS.ROOT.fullPath);
-    }, 1500);
+    }
   };
 
   const handleWithdrawClick = async (id: string) => {
@@ -387,12 +382,10 @@ export const LiquidityWalletPageContextProvider = ({
       return;
     }
 
-    setTimeout(() => {
-      setAmountAdd('');
-      setToken('');
-      setLoading(false);
-      navigate(VIEWS.ROOT.fullPath);
-    });
+    setAmountAdd('');
+    setToken('');
+    setLoading(false);
+    navigate(VIEWS.ROOT.fullPath);
   };
 
   const handleAddClick = async (id: string) => {
@@ -484,12 +477,10 @@ export const LiquidityWalletPageContextProvider = ({
     }
 
     setLoading(false);
-    setTimeout(() => {
-      setAmountAdd('');
-      setToken('');
-      setLoading(false);
-      navigate(VIEWS.ROOT.fullPath);
-    });
+    setAmountAdd('');
+    setToken('');
+    setLoading(false);
+    navigate(VIEWS.ROOT.fullPath);
   };
 
   useEffect(() => {
