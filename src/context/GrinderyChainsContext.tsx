@@ -24,7 +24,7 @@ export const GrinderyChainsContextProvider = ({
   const [isLoading, setIsLoading] = useState(true);
   const [chains, setChains] = useState<Chain[]>([]);
 
-  const getChains = async () => {
+  const getDemoChains = async () => {
     setChains([
       {
         value: 'eip155:97',
@@ -129,7 +129,7 @@ export const GrinderyChainsContextProvider = ({
   };
 
   useEffect(() => {
-    getChains();
+    getDemoChains();
   }, []);
 
   return (
