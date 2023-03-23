@@ -112,6 +112,7 @@ export const LiquidityWalletsContextProvider = ({
     }
 
     if (res?.data?.modifiedCount) {
+      getWallets();
       return true;
     } else {
       return false;
