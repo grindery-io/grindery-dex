@@ -223,7 +223,7 @@ export const LiquidityWalletPageContextProvider = ({
 
     const wallet = await saveWallet({
       chainId: chain.toString().split(':')[1],
-      walletAddress: receipt.events[1].args[0],
+      walletAddress: receipt.events[2].args[0],
     });
 
     if (!wallet) {
@@ -305,8 +305,16 @@ export const LiquidityWalletPageContextProvider = ({
     setLoading(true);
 
     const signer = provider.getSigner();
-
     const wallet = await getWallet(id);
+
+    if (!wallet) {
+      setErrorMessage({
+        type: 'tx',
+        text: 'Wallet not found.',
+      });
+      setLoading(false);
+      return;
+    }
 
     const _grtLiquidityWallet = new ethers.Contract(
       wallet.walletAddress,
@@ -402,6 +410,15 @@ export const LiquidityWalletPageContextProvider = ({
     const signer = provider.getSigner();
 
     const wallet = await getWallet(id);
+
+    if (!wallet) {
+      setErrorMessage({
+        type: 'tx',
+        text: 'Wallet not found.',
+      });
+      setLoading(false);
+      return;
+    }
 
     const txTransfer = await signer
       .sendTransaction({
