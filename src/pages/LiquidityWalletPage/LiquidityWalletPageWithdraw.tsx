@@ -12,6 +12,7 @@ import { LiquidityWallet } from '../../types/LiquidityWallet';
 import { useNavigate, useParams } from 'react-router-dom';
 import useLiquidityWalletPage from '../../hooks/useLiquidityWalletPage';
 import useLiquidityWallets from '../../hooks/useLiquidityWallets';
+import DexAlertBox from '../../components/grindery/DexAlertBox/DexAlertBox';
 
 function LiquidityWalletPageWithdraw() {
   const { user, connect } = useGrinderyNexus();
@@ -120,7 +121,13 @@ function LiquidityWalletPageWithdraw() {
               }
               error={errorMessage}
             />
-
+            {errorMessage &&
+              errorMessage.type === 'tx' &&
+              errorMessage.text && (
+                <DexAlertBox color="error">
+                  <p>{errorMessage.text}</p>
+                </DexAlertBox>
+              )}
             {loading && <DexLoading />}
             <DexCardSubmitButton
               disabled={loading}

@@ -16,6 +16,7 @@ import { LiquidityWallet } from '../../types/LiquidityWallet';
 import useGrinderyChains from '../../hooks/useGrinderyChains';
 import { Chain } from '../../types/Chain';
 import useLiquidityWallets from '../../hooks/useLiquidityWallets';
+import DexAlertBox from '../../components/grindery/DexAlertBox/DexAlertBox';
 
 function LiquidityWalletPageAdd() {
   const { user, connect } = useGrinderyNexus();
@@ -110,7 +111,13 @@ function LiquidityWalletPageAdd() {
               disabled={false}
               error={errorMessage}
             />
-
+            {errorMessage &&
+              errorMessage.type === 'tx' &&
+              errorMessage.text && (
+                <DexAlertBox color="error">
+                  <p>{errorMessage.text}</p>
+                </DexAlertBox>
+              )}
             {loading && <DexLoading />}
             <DexCardSubmitButton
               disabled={loading}
