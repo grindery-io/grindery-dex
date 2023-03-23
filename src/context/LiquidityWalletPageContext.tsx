@@ -180,6 +180,29 @@ export const LiquidityWalletPageContextProvider = ({
     }
 
     setLoading(true);
+    if (currentChain && currentChain?.value !== selectedChain) {
+      try {
+        await window.ethereum.request({
+          method: 'wallet_addEthereumChain',
+          params: [
+            {
+              chainId: currentChain.id,
+              chainName: currentChain.label,
+              rpcUrls: currentChain.rpc,
+              nativeCurrency: {
+                name: currentChain.nativeToken,
+                symbol: currentChain.nativeToken,
+                decimals: 18,
+              },
+            },
+          ],
+        });
+      } catch (error: any) {
+        // TODO: handle chain switching error
+        setLoading(false);
+        return;
+      }
+    }
 
     const signer = provider.getSigner();
 
@@ -299,6 +322,30 @@ export const LiquidityWalletPageContextProvider = ({
 
     setLoading(true);
 
+    if (currentChain && currentChain?.value !== selectedChain) {
+      try {
+        await window.ethereum.request({
+          method: 'wallet_addEthereumChain',
+          params: [
+            {
+              chainId: currentChain.id,
+              chainName: currentChain.label,
+              rpcUrls: currentChain.rpc,
+              nativeCurrency: {
+                name: currentChain.nativeToken,
+                symbol: currentChain.nativeToken,
+                decimals: 18,
+              },
+            },
+          ],
+        });
+      } catch (error: any) {
+        // TODO: handle chain switching error
+        setLoading(false);
+        return;
+      }
+    }
+
     const signer = provider.getSigner();
     const wallet = await getWallet(id);
 
@@ -417,6 +464,30 @@ export const LiquidityWalletPageContextProvider = ({
 
     setLoading(true);
 
+    if (currentChain && currentChain?.value !== selectedChain) {
+      try {
+        await window.ethereum.request({
+          method: 'wallet_addEthereumChain',
+          params: [
+            {
+              chainId: currentChain.id,
+              chainName: currentChain.label,
+              rpcUrls: currentChain.rpc,
+              nativeCurrency: {
+                name: currentChain.nativeToken,
+                symbol: currentChain.nativeToken,
+                decimals: 18,
+              },
+            },
+          ],
+        });
+      } catch (error: any) {
+        // TODO: handle chain switching error
+        setLoading(false);
+        return;
+      }
+    }
+
     const signer = provider.getSigner();
 
     const wallet = await getWallet(id);
@@ -486,26 +557,6 @@ export const LiquidityWalletPageContextProvider = ({
   useEffect(() => {
     setChain(selectedChain?.toString() || '');
   }, [selectedChain]);
-
-  useEffect(() => {
-    if (currentChain && currentChain.id) {
-      window.ethereum.request({
-        method: 'wallet_addEthereumChain',
-        params: [
-          {
-            chainId: currentChain.id,
-            chainName: currentChain.label,
-            rpcUrls: currentChain.rpc,
-            nativeCurrency: {
-              name: currentChain.nativeToken,
-              symbol: currentChain.nativeToken,
-              decimals: 18,
-            },
-          },
-        ],
-      });
-    }
-  }, [currentChain]);
 
   return (
     <LiquidityWalletPageContext.Provider
