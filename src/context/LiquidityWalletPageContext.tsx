@@ -322,19 +322,36 @@ export const LiquidityWalletPageContextProvider = ({
       signer
     );
 
+    const nativeToken = currentChain?.tokens?.find((t: any) => {
+      return t.address === '0x0';
+    });
+
+    const selectedToken = currentChain?.tokens?.find((t: any) => {
+      return t.symbol === token;
+    });
+
     const grtLiquidityWallet = _grtLiquidityWallet.connect(signer);
 
-    const txTransfer = await grtLiquidityWallet
-      .withdrawNative(ethers.utils.parseEther(amountAdd))
-      .catch((error: any) => {
-        setErrorMessage({
-          type: 'tx',
-          text: getErrorMessage(error.error, 'Transfer transaction error'),
-        });
-        console.error('transfer error', error.error);
-        setLoading(false);
-        return;
+    let txTransfer;
+    try {
+      txTransfer =
+        nativeToken?.symbol === token
+          ? await grtLiquidityWallet.withdrawNative(
+              ethers.utils.parseEther(amountAdd)
+            )
+          : await grtLiquidityWallet.withdrawERC20(
+              selectedToken?.address,
+              ethers.utils.parseEther(amountAdd)
+            );
+    } catch (error: any) {
+      setErrorMessage({
+        type: 'tx',
+        text: getErrorMessage(error.error, 'Transfer transaction error'),
       });
+      console.error('transfer error', error.error);
+      setLoading(false);
+      return;
+    }
 
     if (!txTransfer) {
       setLoading(false);
