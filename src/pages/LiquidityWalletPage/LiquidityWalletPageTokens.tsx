@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { IconButton, Tooltip } from '@mui/material';
+import { IconButton, Skeleton, Tooltip } from '@mui/material';
 import { useGrinderyNexus } from 'use-grindery-nexus';
 import { Box } from '@mui/system';
 import { AddCircleOutline as AddCircleOutlineIcon } from '@mui/icons-material';
@@ -50,7 +50,13 @@ function LiquidityWalletPageTokens() {
   return (
     <>
       <DexCardHeader
-        title={`${walletChain?.label || ''} chain wallet`}
+        title={
+          walletChain?.label ? (
+            `${walletChain?.label || ''} chain wallet`
+          ) : (
+            <Skeleton width="150px" sx={{ margin: '0 auto' }} />
+          )
+        }
         titleSize={18}
         titleAlign="center"
         startAdornment={

@@ -3,7 +3,7 @@ import { Box, Typography } from '@mui/material';
 import { DexCardHeaderAppBar } from './DexCardHeaderAppBar';
 
 type Props = {
-  title?: string;
+  title?: string | React.ReactNode;
   titleAlign?: 'left' | 'center' | 'right';
   titleSize?: number;
   startAdornment?: ReactNode;
