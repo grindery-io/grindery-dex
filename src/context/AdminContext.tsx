@@ -26,7 +26,7 @@ export const AdminContext = createContext<ContextProps>({
 export const AdminContextProvider = ({ children }: AdminContextProps) => {
   const { token } = useGrinderyNexus();
   const [isLoading, setIsLoading] = useState(true);
-  const [isAdmin, setIsAmin] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [error, setError] = useState('');
 
   const params = {
@@ -42,14 +42,14 @@ export const AdminContextProvider = ({ children }: AdminContextProps) => {
       res = await axios.get(`${DELIGHT_API_URL}/admins`, params);
     } catch (error: any) {
       setError(getErrorMessage(error, 'Server error'));
-      setIsAmin(false);
+      setIsAdmin(false);
       setIsLoading(false);
     }
     if (res?.data) {
-      setIsAmin(true);
+      setIsAdmin(true);
       setIsLoading(false);
     } else {
-      setIsAmin(false);
+      setIsAdmin(false);
       setIsLoading(false);
     }
   };
@@ -57,6 +57,8 @@ export const AdminContextProvider = ({ children }: AdminContextProps) => {
   useEffect(() => {
     if (token?.access_token) {
       checkIsAdmin();
+    } else {
+      setIsAdmin(false);
     }
   }, [token?.access_token]);
 
