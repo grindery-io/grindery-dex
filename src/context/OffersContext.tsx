@@ -14,6 +14,7 @@ type ContextProps = {
   saveOffer: (body: { [key: string]: any }) => Promise<Offer | boolean>;
   updateOffer: (id: string) => Promise<boolean>;
   searchOffers: () => void;
+  getOfferById: (offerId: string) => Promise<Offer | false>;
 };
 
 // Context provider props
@@ -30,6 +31,7 @@ export const OffersContext = createContext<ContextProps>({
   saveOffer: async () => false,
   updateOffer: async () => false,
   searchOffers: async () => {},
+  getOfferById: async () => false,
 });
 
 export const OffersContextProvider = ({ children }: OffersContextProps) => {
@@ -48,6 +50,19 @@ export const OffersContextProvider = ({ children }: OffersContextProps) => {
     let res;
     try {
       res = await axios.get(`${DELIGHT_API_URL}/offers/id?id=${id}`, params);
+    } catch (error: any) {
+      setError(getErrorMessage(error, 'Server error'));
+    }
+    return res?.data || false;
+  };
+
+  const getOfferById = async (offerId: string): Promise<Offer | false> => {
+    let res;
+    try {
+      res = await axios.get(
+        `${DELIGHT_API_URL}/offers/offerId?offerId=${offerId}`,
+        params
+      );
     } catch (error: any) {
       setError(getErrorMessage(error, 'Server error'));
     }
@@ -139,6 +154,7 @@ export const OffersContextProvider = ({ children }: OffersContextProps) => {
         saveOffer,
         updateOffer,
         searchOffers,
+        getOfferById,
       }}
     >
       {children}

@@ -14,6 +14,7 @@ import BuyPageSelectFromChain from './BuyPageSelectFromChain';
 import BuyPageOffersList from './BuyPageOffersList';
 import BuyPageOffersFilter from './BuyPageOffersFilter';
 import BuyPageOfferAccept from './BuyPageOfferAccept';
+import BuyPageHistory from './BuyPageHistory';
 
 type Props = {};
 
@@ -54,6 +55,7 @@ const BuyPage = (props: Props) => {
                 path={VIEWS.ACCEPT_OFFER.path}
                 element={<BuyPageOfferAccept />}
               />
+              <Route path={VIEWS.HISTORY.path} element={<BuyPageHistory />} />
             </Routes>
           </Box>
 
