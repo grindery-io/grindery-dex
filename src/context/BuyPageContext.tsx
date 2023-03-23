@@ -368,7 +368,7 @@ export const BuyPageContextProvider = ({ children }: BuyPageContextProps) => {
     if (parseFloat(fromAmount) > parseFloat(fromTokenBalance)) {
       setErrorMessage({
         type: 'search',
-        text: "You don't have enough GRT",
+        text: "You don't have enough funds",
       });
       setIsLoading(false);
       setIsOffersVisible(false);
