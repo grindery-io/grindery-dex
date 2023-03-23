@@ -7,6 +7,12 @@ import _ from 'lodash';
 import { LiquidityWallet } from '../types/LiquidityWallet';
 import { TokenType } from '../types/TokenType';
 import useLiquidityWallets from '../hooks/useLiquidityWallets';
+import {
+  GRTSATELLITE_CONTRACT_ADDRESS,
+  GRT_CONTRACT_ADDRESS,
+} from '../constants';
+import useAbi from '../hooks/useAbi';
+import { getErrorMessage } from '../utils/error';
 
 function isNumeric(value: string) {
   return /^\d*(\.\d+)?$/.test(value);
@@ -97,13 +103,15 @@ export const LiquidityWalletPageContextProvider = ({
     },
   };
 
-  const { chain: selectedChain } = useGrinderyNexus();
+  const { chain: selectedChain, provider, ethers } = useGrinderyNexus();
   let navigate = useNavigate();
   const {
     wallets,
     setWallets,
     isLoading: walletsIsLoading,
     saveWallet,
+    getWallet,
+    updateWallet,
   } = useLiquidityWallets();
   const [amountAdd, setAmountAdd] = useState<string>('');
   const [token, setToken] = useState<string>('');
@@ -112,6 +120,7 @@ export const LiquidityWalletPageContextProvider = ({
   const [chain, setChain] = useState(selectedChain?.toString() || '');
   const { chains } = useGrinderyChains();
   const [searchToken, setSearchToken] = useState('');
+  const { satelliteAbi, liquidityWalletAbi, tokenAbi } = useAbi();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const currentChain: Chain | null =
     chain && chains.find((c) => c.value === chain)
@@ -149,6 +158,14 @@ export const LiquidityWalletPageContextProvider = ({
       });
       return;
     }
+    if (!satelliteAbi) {
+      setErrorMessage({
+        type: 'tx',
+        text: 'Satellite ABI not found.',
+      });
+      return;
+    }
+
     if (
       chain &&
       wallets
@@ -161,32 +178,100 @@ export const LiquidityWalletPageContextProvider = ({
       });
       return;
     }
+
     setLoading(true);
+    if (currentChain && currentChain?.value !== selectedChain) {
+      try {
+        await window.ethereum.request({
+          method: 'wallet_addEthereumChain',
+          params: [
+            {
+              chainId: currentChain.id,
+              chainName: currentChain.label,
+              rpcUrls: currentChain.rpc,
+              nativeCurrency: {
+                name: currentChain.nativeToken,
+                symbol: currentChain.nativeToken,
+                decimals: 18,
+              },
+            },
+          ],
+        });
+      } catch (error: any) {
+        // TODO: handle chain switching error
+        setLoading(false);
+        return;
+      }
+    }
 
-    /*const wallet = await saveWallet({
+    const signer = provider.getSigner();
+
+    const _grtSatellite = new ethers.Contract(
+      GRTSATELLITE_CONTRACT_ADDRESS[chain.toString()],
+      satelliteAbi,
+      signer
+    );
+
+    const grtSatellite = _grtSatellite.connect(signer);
+
+    const tx = await grtSatellite
+      .deployLiquidityContract()
+      .catch((error: any) => {
+        setErrorMessage({
+          type: 'tx',
+          text: getErrorMessage(error.error, 'Create wallet transaction error'),
+        });
+        console.error('create wallet error', error.error);
+        setLoading(false);
+        return;
+      });
+
+    if (!tx) {
+      setLoading(false);
+      return;
+    }
+
+    let receipt;
+    try {
+      receipt = await tx.wait();
+    } catch (error: any) {
+      setErrorMessage({
+        type: 'tx',
+        text: error?.message || 'Transaction error',
+      });
+      console.error('tx.wait error', error);
+      setLoading(false);
+      return;
+    }
+
+    const wallet = await saveWallet({
       chainId: chain.toString().split(':')[1],
-      tokens: {},
-    }).catch((error: any) => {
-      /// handle saving error
-    });*/
+      walletAddress: receipt.events[2].args[0],
+    });
 
-    setTimeout(() => {
+    if (!wallet) {
+      setErrorMessage({
+        type: 'tx',
+        text: 'Transaction error',
+      });
+      return;
+    }
+
+    if (typeof wallet !== 'boolean') {
       setWallets([
         {
-          //...wallet,
-          id:
-            wallets.length > 0
-              ? (parseFloat(wallets[wallets.length - 1].id) + 1).toString()
-              : '1',
-          chainId: chain.toString().split(':')[1],
-          tokens: {},
+          ...wallet,
           new: true,
         },
         ...[...wallets],
       ]);
       setLoading(false);
+      setErrorMessage({
+        type: '',
+        text: '',
+      });
       navigate(VIEWS.ROOT.fullPath);
-    }, 1500);
+    }
   };
 
   const handleWithdrawClick = async (id: string) => {
@@ -212,7 +297,7 @@ export const LiquidityWalletPageContextProvider = ({
     if (
       parseFloat(amountAdd) >
       parseFloat(
-        wallets.find((wallet: LiquidityWallet) => id === wallet.id)?.tokens?.[
+        wallets.find((wallet: LiquidityWallet) => id === wallet._id)?.tokens?.[
           token
         ] || '0'
       )
@@ -220,37 +305,134 @@ export const LiquidityWalletPageContextProvider = ({
       setErrorMessage({
         type: 'amountAdd',
         text: `You can withdraw maximum ${
-          wallets.find((wallet: LiquidityWallet) => id === wallet.id)?.tokens?.[
-            token
-          ] || '0'
+          wallets.find((wallet: LiquidityWallet) => id === wallet._id)
+            ?.tokens?.[token] || '0'
         } tokens`,
       });
       return;
     }
+    if (!liquidityWalletAbi) {
+      setErrorMessage({
+        type: 'tx',
+        text: 'Contract ABI not found.',
+      });
+
+      return;
+    }
+
     setLoading(true);
-    setTimeout(() => {
-      setWallets((_wallets) => [
-        ..._wallets.map((wallet: LiquidityWallet) => {
-          if (wallet.id === id) {
-            return {
-              ...wallet,
-              tokens: {
-                ...wallet.tokens,
-                [token]: (
-                  parseFloat(wallet.tokens[token]) - parseFloat(amountAdd)
-                ).toString(),
+
+    if (currentChain && currentChain?.value !== selectedChain) {
+      try {
+        await window.ethereum.request({
+          method: 'wallet_addEthereumChain',
+          params: [
+            {
+              chainId: currentChain.id,
+              chainName: currentChain.label,
+              rpcUrls: currentChain.rpc,
+              nativeCurrency: {
+                name: currentChain.nativeToken,
+                symbol: currentChain.nativeToken,
+                decimals: 18,
               },
-            };
-          } else {
-            return wallet;
-          }
-        }),
-      ]);
-      setAmountAdd('');
-      setToken('');
+            },
+          ],
+        });
+      } catch (error: any) {
+        // TODO: handle chain switching error
+        setLoading(false);
+        return;
+      }
+    }
+
+    const signer = provider.getSigner();
+    const wallet = await getWallet(id);
+
+    if (!wallet) {
+      setErrorMessage({
+        type: 'tx',
+        text: 'Wallet not found.',
+      });
       setLoading(false);
-      navigate(VIEWS.TOKENS.fullPath.replace(':walletId', id));
-    }, 1500);
+      return;
+    }
+
+    const _grtLiquidityWallet = new ethers.Contract(
+      wallet.walletAddress,
+      liquidityWalletAbi,
+      signer
+    );
+
+    const nativeToken = currentChain?.tokens?.find((t: any) => {
+      return t.address === '0x0';
+    });
+
+    const selectedToken = currentChain?.tokens?.find((t: any) => {
+      return t.symbol === token;
+    });
+
+    const grtLiquidityWallet = _grtLiquidityWallet.connect(signer);
+
+    let txTransfer;
+    try {
+      txTransfer =
+        nativeToken?.symbol === token
+          ? await grtLiquidityWallet.withdrawNative(
+              ethers.utils.parseEther(amountAdd)
+            )
+          : await grtLiquidityWallet.withdrawERC20(
+              selectedToken?.address,
+              ethers.utils.parseEther(amountAdd)
+            );
+    } catch (error: any) {
+      setErrorMessage({
+        type: 'tx',
+        text: getErrorMessage(error.error, 'Transfer transaction error'),
+      });
+      console.error('transfer error', error.error);
+      setLoading(false);
+      return;
+    }
+
+    if (!txTransfer) {
+      setLoading(false);
+      return;
+    }
+
+    try {
+      await txTransfer.wait();
+    } catch (error: any) {
+      setErrorMessage({
+        type: 'tx',
+        text: error?.message || 'Transaction error',
+      });
+      console.error('txTransfer.wait error', error);
+      setLoading(false);
+      return;
+    }
+
+    const amountStored = wallet.tokens[token] || 0;
+
+    const isUpdated = await updateWallet({
+      walletAddress: wallet.walletAddress,
+      chainId: chain.toString().split(':')[1],
+      tokenId: token,
+      amount: (Number(amountStored) - Number(amountAdd)).toString(),
+    });
+
+    if (!isUpdated) {
+      setErrorMessage({
+        type: 'tx',
+        text: 'Transaction error',
+      });
+      return;
+    }
+
+    setAmountAdd('');
+    setToken('');
+    setLoading(false);
+    navigate(VIEWS.ROOT.fullPath);
   };
 
   const handleAddClick = async (id: string) => {
@@ -279,57 +461,102 @@ export const LiquidityWalletPageContextProvider = ({
       });
       return;
     }
-    // (parseFloat(wallet.balance) + parseFloat(amountAdd)).toString(),
+
     setLoading(true);
-    setTimeout(() => {
-      setWallets((_wallets) => [
-        ..._wallets.map((wallet: LiquidityWallet) => {
-          if (wallet.id === id) {
-            return {
-              ...wallet,
-              tokens: {
-                ...wallet.tokens,
-                [token]: (
-                  parseFloat(wallet.tokens[token] || '0') +
-                  parseFloat(amountAdd)
-                ).toString(),
+
+    if (currentChain && currentChain?.value !== selectedChain) {
+      try {
+        await window.ethereum.request({
+          method: 'wallet_addEthereumChain',
+          params: [
+            {
+              chainId: currentChain.id,
+              chainName: currentChain.label,
+              rpcUrls: currentChain.rpc,
+              nativeCurrency: {
+                name: currentChain.nativeToken,
+                symbol: currentChain.nativeToken,
+                decimals: 18,
               },
-            };
-          } else {
-            return wallet;
-          }
-        }),
-      ]);
-      setAmountAdd('');
-      setToken('');
+            },
+          ],
+        });
+      } catch (error: any) {
+        // TODO: handle chain switching error
+        setLoading(false);
+        return;
+      }
+    }
+
+    const signer = provider.getSigner();
+
+    const wallet = await getWallet(id);
+
+    if (!wallet) {
+      setErrorMessage({
+        type: 'tx',
+        text: 'Wallet not found.',
+      });
       setLoading(false);
-      navigate(VIEWS.TOKENS.fullPath.replace(':walletId', id));
-    }, 1500);
+      return;
+    }
+
+    const txTransfer = await signer
+      .sendTransaction({
+        to: wallet.walletAddress,
+        value: ethers.utils.parseEther(amountAdd),
+      })
+      .catch((error: any) => {
+        setErrorMessage({
+          type: 'tx',
+          text: getErrorMessage(error, 'Transfer transaction error'),
+        });
+        console.error('transfer error', error);
+        setLoading(false);
+        return;
+      });
+
+    if (!txTransfer) {
+      setLoading(false);
+      return;
+    }
+    try {
+      await txTransfer.wait();
+    } catch (error: any) {
+      setErrorMessage({
+        type: 'tx',
+        text: error?.message || 'Transaction error',
+      });
+      console.error('txTransfer.wait error', error);
+      setLoading(false);
+      return;
+    }
+
+    const amountStored = wallet.tokens[token] || 0;
+    const isUpdated = await updateWallet({
+      walletAddress: wallet.walletAddress,
+      chainId: chain.toString().split(':')[1],
+      tokenId: token,
+      amount: (Number(amountStored) + Number(amountAdd)).toString(),
+    });
+    if (!isUpdated) {
+      setErrorMessage({
+        type: 'tx',
+        text: 'Transaction error',
+      });
+      return;
+    }
+
+    setLoading(false);
+    setAmountAdd('');
+    setToken('');
+    setLoading(false);
+    navigate(VIEWS.ROOT.fullPath);
   };
 
   useEffect(() => {
     setChain(selectedChain?.toString() || '');
   }, [selectedChain]);
-
-  useEffect(() => {
-    if (currentChain && currentChain.id) {
-      window.ethereum.request({
-        method: 'wallet_addEthereumChain',
-        params: [
-          {
-            chainId: currentChain.id,
-            chainName: currentChain.label,
-            rpcUrls: currentChain.rpc,
-            nativeCurrency: {
-              name: currentChain.nativeToken,
-              symbol: currentChain.nativeToken,
-              decimals: 18,
-            },
-          },
-        ],
-      });
-    }
-  }, [currentChain]);
 
   return (
     <LiquidityWalletPageContext.Provider

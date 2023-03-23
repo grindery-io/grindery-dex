@@ -14,15 +14,8 @@ type ContextProps = {
   saveWallet: (body: {
     [key: string]: any;
   }) => Promise<LiquidityWallet | boolean>;
-  updateWallet: ({
-    chainId,
-    tokenId,
-    amount,
-  }: {
-    chainId: string;
-    tokenId: string;
-    amount: string;
-  }) => Promise<boolean>;
+  updateWallet: (body: { [key: string]: any }) => Promise<boolean>;
+  getWallet: (id: string) => Promise<any>;
 };
 
 // Context provider props
@@ -38,6 +31,7 @@ export const LiquidityWalletsContext = createContext<ContextProps>({
   setWallets: () => {},
   saveWallet: async () => false,
   updateWallet: async () => false,
+  getWallet: async () => false,
 });
 
 export const LiquidityWalletsContextProvider = ({
@@ -58,7 +52,7 @@ export const LiquidityWalletsContextProvider = ({
     let res;
     try {
       res = await axios.get(
-        `${DELIGHT_API_URL}/liquidity-wallets/${id}`,
+        `${DELIGHT_API_URL}/liquidity-wallets/id/${id}`,
         params
       );
     } catch (error: any) {
@@ -69,14 +63,13 @@ export const LiquidityWalletsContextProvider = ({
 
   const getWallets = async () => {
     setError('');
-    /*let res;
+    let res;
     try {
-      res = await axios.get(`${DELIGHT_API_URL}/liquidity-wallets`, params);
+      res = await axios.get(`${DELIGHT_API_URL}/liquidity-wallets/all`, params);
     } catch (error: any) {
       setError(getErrorMessage(error, 'Server error'));
     }
-    setWallets(res?.data || []);*/
-    setWallets([]);
+    setWallets(res?.data || []);
     setIsLoading(false);
   };
 
@@ -85,13 +78,14 @@ export const LiquidityWalletsContextProvider = ({
     let res;
     try {
       res = await axios.post(
-        `${DELIGHT_API_URL}/liquidity-wallets/create-wallet`,
+        `${DELIGHT_API_URL}/liquidity-wallets/`,
         body,
         params
       );
     } catch (error: any) {
       setError(getErrorMessage(error, 'Server error'));
     }
+
     if (res?.data?.insertedId) {
       const wallet = await getWallet(res?.data?.insertedId);
       if (wallet) {
@@ -104,25 +98,13 @@ export const LiquidityWalletsContextProvider = ({
     }
   };
 
-  const updateWallet = async ({
-    chainId,
-    tokenId,
-    amount,
-  }: {
-    chainId: string;
-    tokenId: string;
-    amount: string;
-  }) => {
+  const updateWallet = async (body: { [key: string]: any }) => {
     setError('');
     let res;
     try {
       res = await axios.put(
         `${DELIGHT_API_URL}/liquidity-wallets`,
-        {
-          chainId,
-          tokenId,
-          amount,
-        },
+        body,
         params
       );
     } catch (error: any) {
@@ -151,6 +133,7 @@ export const LiquidityWalletsContextProvider = ({
         error,
         saveWallet,
         updateWallet,
+        getWallet,
       }}
     >
       {children}

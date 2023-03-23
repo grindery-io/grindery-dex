@@ -94,9 +94,9 @@ export const StakesContextProvider = ({ children }: StakesContextProps) => {
     setError('');
     let res;
     try {
-      res = await axios.post(
-        `${DELIGHT_API_URL}/staking/modify/chainId/${chainId}/amount/${amount}`,
-        {},
+      res = await axios.put(
+        `${DELIGHT_API_URL}/staking`,
+        { chainId, amount },
         params
       );
     } catch (error: any) {

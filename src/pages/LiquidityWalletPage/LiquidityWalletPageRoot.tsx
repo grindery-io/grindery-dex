@@ -59,11 +59,11 @@ function LiquidityWalletPageRoot() {
               };
               return (
                 <DexLiquidityWallet
-                  key={wallet.id}
+                  key={wallet._id}
                   wallet={wallet}
                   walletChain={walletChain}
                   onClick={(w: LiquidityWallet) => {
-                    navigate(VIEWS.TOKENS.fullPath.replace(':walletId', w.id));
+                    navigate(VIEWS.TOKENS.fullPath.replace(':walletId', w._id));
                   }}
                 />
               );

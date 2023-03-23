@@ -10,6 +10,7 @@ import DexLoading from '../../components/grindery/DexLoading/DexLoading';
 import DexSelectChainButton from '../../components/grindery/DexSelectChainButton/DexSelectChainButton';
 import { useNavigate } from 'react-router-dom';
 import useLiquidityWalletPage from '../../hooks/useLiquidityWalletPage';
+import DexAlertBox from '../../components/grindery/DexAlertBox/DexAlertBox';
 
 function LiquidityWalletPageCreate() {
   const { user, connect } = useGrinderyNexus();
@@ -60,6 +61,13 @@ function LiquidityWalletPageCreate() {
         />
 
         {loading && <DexLoading />}
+
+        {errorMessage && errorMessage.type === 'tx' && errorMessage.text && (
+          <DexAlertBox color="error">
+            <p>{errorMessage.text}</p>
+          </DexAlertBox>
+        )}
+
         <DexCardSubmitButton
           disabled={loading}
           label={

@@ -61,9 +61,9 @@ const DexLiquidityWallet = (props: Props) => {
         subheader={Object.keys(wallet.tokens)
           .map(
             (key: string) =>
-              `${key}: ${parseFloat(
-                wallet.tokens[key] || '0'
-              ).toLocaleString()}`
+              `${key}: ${parseFloat(wallet.tokens[key] || '0')
+                .toFixed(4)
+                .toLocaleString()}`
           )
           .join(' ⋅ ')}
         selected={true}
