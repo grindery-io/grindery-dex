@@ -1,17 +1,11 @@
-import { Avatar, Badge, FormHelperText } from '@mui/material';
 import React from 'react';
+import { Avatar, Badge, FormHelperText } from '@mui/material';
 import { Chain } from '../../../types/Chain';
 import { TokenType } from '../../../types/TokenType';
-import { Card, CardTitle } from '../../Card';
-import { SelectTokenCardHeader } from '../../SelectTokenButton/SelectTokenButton.style';
-import { AvatarDefault } from '../../TokenAvatar';
-
-/*type Token = {
-  icon: string;
-  symbol: string;
-  address: string;
-};*/
-
+import { Card } from '../../Card/Card';
+import { CardTitle } from '../../Card/CardTitle';
+import { ChainTokenBox } from '../../ChainTokenBox/ChainTokenBox';
+import { AvatarDefault } from '../../Avatar/AvatarDefault';
 type Props = {
   onClick?: () => void;
   title: string;
@@ -30,7 +24,7 @@ const DexSelectChainAndTokenButton = (props: Props) => {
     <Card flex={1} onClick={onClick} style={{ borderRadius: '12px' }}>
       <CardTitle>{title}</CardTitle>
 
-      <SelectTokenCardHeader
+      <ChainTokenBox
         style={{ height: 'auto' }}
         avatar={
           <Badge

@@ -1,12 +1,12 @@
+import React from 'react';
 import { Avatar, IconButton, Tooltip } from '@mui/material';
 import { Box } from '@mui/system';
-import React from 'react';
-import { Card } from '../../Card';
-import { SelectTokenCardHeader } from '../../SelectTokenButton/SelectTokenButton.style';
-import { AvatarDefault } from '../../TokenAvatar';
 import { StakeBadge } from './DexStake.style';
 import { Remove as RemoveIcon } from '@mui/icons-material';
 import { Stake } from '../../../types/Stake';
+import { Card } from '../../Card/Card';
+import { ChainTokenBox } from '../../ChainTokenBox/ChainTokenBox';
+import { AvatarDefault } from '../../Avatar/AvatarDefault';
 
 type Props = {
   stake: Stake;
@@ -35,7 +35,7 @@ const DexStake = (props: Props) => {
         </Box>
       )}
 
-      <SelectTokenCardHeader
+      <ChainTokenBox
         style={{ height: 'auto' }}
         avatar={
           stakeChain ? (

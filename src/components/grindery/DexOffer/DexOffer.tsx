@@ -7,12 +7,12 @@ import {
   IconButton,
   Tooltip,
 } from '@mui/material';
-import { Card } from '../../Card';
-import { SelectTokenCardHeader } from '../../SelectTokenButton/SelectTokenButton.style';
-import { AvatarDefault } from '../../TokenAvatar';
 import DexOfferBadge from './DexOfferBadge';
 import { PowerSettingsNew as PowerSettingsNewIcon } from '@mui/icons-material';
 import { Offer } from '../../../types/Offer';
+import { Card } from '../../Card/Card';
+import { ChainTokenBox } from '../../ChainTokenBox/ChainTokenBox';
+import { AvatarDefault } from '../../Avatar/AvatarDefault';
 
 export type OfferChain = {
   label: string;
@@ -59,7 +59,7 @@ const DexOffer = (props: Props) => {
         )}
       </Box>
 
-      <SelectTokenCardHeader
+      <ChainTokenBox
         style={{ height: 'auto' }}
         avatar={
           <Badge

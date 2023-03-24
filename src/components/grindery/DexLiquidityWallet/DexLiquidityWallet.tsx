@@ -1,18 +1,15 @@
 import React from 'react';
-import { Avatar, IconButton, Tooltip } from '@mui/material';
+import { Avatar } from '@mui/material';
 import { Box } from '@mui/system';
-import { Card } from '../../Card';
-import { SelectTokenCardHeader } from '../../SelectTokenButton/SelectTokenButton.style';
-import { AvatarDefault } from '../../TokenAvatar';
 import { StakeBadge } from './DexLiquidityWallet.style';
-//import { Remove as RemoveIcon, Add as AddIcon } from '@mui/icons-material';
 import { LiquidityWallet } from '../../../types/LiquidityWallet';
+import { Card } from '../../Card/Card';
+import { ChainTokenBox } from '../../ChainTokenBox/ChainTokenBox';
+import { AvatarDefault } from '../../Avatar/AvatarDefault';
 
 type Props = {
   wallet: LiquidityWallet;
   walletChain: any;
-  //onWithdrawClick: (wallet: LiquidityWallet) => void;
-  //onAddClick: (wallet: LiquidityWallet) => void;
   onClick: (wallet: LiquidityWallet) => void;
 };
 
@@ -43,7 +40,7 @@ const DexLiquidityWallet = (props: Props) => {
         </Box>
       )}
 
-      <SelectTokenCardHeader
+      <ChainTokenBox
         sx={{
           height: 'auto',
           '& .MuiCardHeader-content': { overflow: 'hidden' },
@@ -68,34 +65,6 @@ const DexLiquidityWallet = (props: Props) => {
           .join(' ⋅ ')}
         selected={true}
         compact={false}
-        action={
-          <Box>
-            {/*<Tooltip title="Add funds">
-              <IconButton
-                aria-label="Add funds"
-                size="small"
-                onClick={() => {
-                  onAddClick(wallet);
-                }}
-              >
-                <AddIcon sx={{ color: 'black' }} fontSize="inherit" />
-              </IconButton>
-            </Tooltip>
-            {parseFloat(wallet.balance) > 0 && (
-              <Tooltip title="Withdraw">
-                <IconButton
-                  aria-label="Withdraw"
-                  size="small"
-                  onClick={() => {
-                    onWithdrawClick(wallet);
-                  }}
-                >
-                  <RemoveIcon sx={{ color: 'black' }} fontSize="inherit" />
-                </IconButton>
-              </Tooltip>
-                )}*/}
-          </Box>
-        }
       />
     </Card>
   );

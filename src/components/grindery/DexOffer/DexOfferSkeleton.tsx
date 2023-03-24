@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, Skeleton } from '@mui/material';
-import { Card } from '../../Card';
-import { SelectTokenCardHeader } from '../../SelectTokenButton/SelectTokenButton.style';
+import { Card } from '../../Card/Card';
+import { ChainTokenBox } from '../../ChainTokenBox/ChainTokenBox';
 
 type Props = {};
 
@@ -17,7 +17,7 @@ const DexOfferSkeleton = (props: Props) => {
     >
       <Box display={'flex'} flexDirection={'row'}></Box>
 
-      <SelectTokenCardHeader
+      <ChainTokenBox
         style={{ height: 'auto' }}
         avatar={<Skeleton variant="circular" width={40} height={40} />}
         title={

@@ -1,6 +1,7 @@
 import { FormHelperText } from '@mui/material';
 import React from 'react';
-import { Card, CardTitle } from '../../Card';
+import { Card } from '../../Card/Card';
+import { CardTitle } from '../../Card/CardTitle';
 import { FormControl, Input } from './DexTextInput.style';
 
 type Props = {

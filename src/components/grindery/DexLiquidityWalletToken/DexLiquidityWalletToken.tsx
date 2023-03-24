@@ -1,12 +1,11 @@
 import React from 'react';
 import { Avatar, IconButton, Tooltip } from '@mui/material';
 import { Box } from '@mui/system';
-import { Card } from '../../Card';
-import { SelectTokenCardHeader } from '../../SelectTokenButton/SelectTokenButton.style';
-import { AvatarDefault } from '../../TokenAvatar';
-//import { StakeBadge } from './DexLiquidityWalletToken.style';
 import { Remove as RemoveIcon, Add as AddIcon } from '@mui/icons-material';
 import { Chain } from '../../../types/Chain';
+import { Card } from '../../Card/Card';
+import { ChainTokenBox } from '../../ChainTokenBox/ChainTokenBox';
+import { AvatarDefault } from '../../Avatar/AvatarDefault';
 
 export type WalletToken = { label: string; icon: string; amount: string };
 
@@ -29,17 +28,7 @@ const DexLiquidityWalletToken = (props: Props) => {
         backgroundColor: '#fff',
       }}
     >
-      {/*(wallet.new || wallet.updated) && (
-        <Box>
-          {wallet.new && <StakeBadge>New</StakeBadge>}
-
-          {wallet.updated && (
-            <StakeBadge className="secondary">Updated</StakeBadge>
-          )}
-        </Box>
-          )*/}
-
-      <SelectTokenCardHeader
+      <ChainTokenBox
         style={{ height: 'auto' }}
         avatar={
           token ? (

@@ -1,6 +1,6 @@
 import { Box } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import { Card } from '../../Card';
+import { Card } from '../../Card/Card';
 
 export const ChainCard = styled(Card)({
   display: 'grid',

@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Card, CardTitle } from '../../Card';
 import { Trade } from '../../../types/Trade';
-import { SelectTokenCardHeader } from '../../SelectTokenButton/SelectTokenButton.style';
 import {
   Avatar,
   Badge,
@@ -16,12 +14,15 @@ import { Offer } from '../../../types/Offer';
 import useGrinderyChains from '../../../hooks/useGrinderyChains';
 import { Chain } from '../../../types/Chain';
 import { TokenType } from '../../../types/TokenType';
-import { AvatarDefault } from '../../TokenAvatar';
 import moment from 'moment';
 import CheckIcon from '@mui/icons-material/Check';
 import HourglassTopIcon from '@mui/icons-material/HourglassTop';
 import DexCardSubmitButton from '../DexCard/DexCardSubmitButton';
 import useTrades from '../../../hooks/useTrades';
+import { Card } from '../../Card/Card';
+import { CardTitle } from '../../Card/CardTitle';
+import { ChainTokenBox } from '../../ChainTokenBox/ChainTokenBox';
+import { AvatarDefault } from '../../Avatar/AvatarDefault';
 
 type Props = {
   trade: Trade;
@@ -66,8 +67,6 @@ const DexTrade = (props: Props) => {
     getOffer();
   }, [trade.offerId]);
 
-  console.log('trade', trade);
-
   return (
     <Card
       flex={1}
@@ -105,7 +104,7 @@ const DexTrade = (props: Props) => {
         )}
       </Stack>
       <CardTitle sx={{ paddingTop: '12px' }}>You paid</CardTitle>
-      <SelectTokenCardHeader
+      <ChainTokenBox
         style={{ height: 'auto' }}
         avatar={
           <Avatar
@@ -138,7 +137,7 @@ const DexTrade = (props: Props) => {
         compact={false}
       />
       <CardTitle sx={{ paddingTop: '0px' }}>You received</CardTitle>
-      <SelectTokenCardHeader
+      <ChainTokenBox
         style={{ height: 'auto' }}
         avatar={
           <Badge

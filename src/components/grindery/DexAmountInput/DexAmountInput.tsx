@@ -2,8 +2,9 @@ import { Avatar, Badge, Box, FormHelperText } from '@mui/material';
 import React from 'react';
 import { Chain } from '../../../types/Chain';
 import { TokenType } from '../../../types/TokenType';
-import { Card, CardTitle } from '../../Card';
-import { AvatarDefault } from '../../TokenAvatar';
+import { AvatarDefault } from '../../Avatar/AvatarDefault';
+import { Card } from '../../Card/Card';
+import { CardTitle } from '../../Card/CardTitle';
 import { FormControl, Input } from './DexAmountInput.style';
 
 type Props = {

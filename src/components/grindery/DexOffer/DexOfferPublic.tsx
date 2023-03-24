@@ -7,12 +7,12 @@ import {
   Skeleton,
   Tooltip,
 } from '@mui/material';
-import { Card, CardTitle } from '../../Card';
-import { SelectTokenCardHeader } from '../../SelectTokenButton/SelectTokenButton.style';
-import { AvatarDefault } from '../../TokenAvatar';
 import { Offer } from '../../../types/Offer';
-import useGrinderyChains from '../../../hooks/useGrinderyChains';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
+import { Card } from '../../Card/Card';
+import { CardTitle } from '../../Card/CardTitle';
+import { ChainTokenBox } from '../../ChainTokenBox/ChainTokenBox';
+import { AvatarDefault } from '../../Avatar/AvatarDefault';
 
 export type OfferChain = {
   label: string;
@@ -76,7 +76,7 @@ const DexOfferPublic = (props: Props) => {
 
       <Box display={'flex'} flexDirection={'row'}></Box>
 
-      <SelectTokenCardHeader
+      <ChainTokenBox
         style={{ height: 'auto' }}
         avatar={
           <Badge

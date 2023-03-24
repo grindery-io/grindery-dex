@@ -1,8 +1,8 @@
 import React from 'react';
 import { Box, InputAdornment } from '@mui/material';
-import { Card } from '../../Card';
 import { FormControl, Input } from './DexTokenSearch.style';
 import { Search as SearchIcon } from '@mui/icons-material';
+import { Card } from '../../Card/Card';
 
 type Props = {
   value: string;

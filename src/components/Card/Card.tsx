@@ -17,7 +17,7 @@ export type CardProps = {
 const getBackgroundColor = (
   theme: Theme,
   variant?: CardVariant,
-  selectionColor?: 'primary' | 'secondary',
+  selectionColor?: 'primary' | 'secondary'
 ) =>
   variant === 'selected'
     ? selectionColor === 'primary'
@@ -26,14 +26,14 @@ const getBackgroundColor = (
         : alpha(theme.palette.primary.main, 0.42)
       : alpha(
           theme.palette.secondary.main,
-          theme.palette.mode === 'light' ? 0.08 : 0.12,
+          theme.palette.mode === 'light' ? 0.08 : 0.12
         )
     : theme.palette.background.paper;
 
 export const Card = styled(Box, {
   shouldForwardProp: (prop) =>
     !['variant', 'indented', 'selectionColor', 'pointerEvents'].includes(
-      prop as string,
+      prop as string
     ),
 })<CardProps>(
   ({
@@ -81,5 +81,5 @@ export const Card = styled(Box, {
       }),
       pointerEvents,
     };
-  },
+  }
 );
