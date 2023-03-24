@@ -3,16 +3,16 @@ import { IconButton, Tooltip } from '@mui/material';
 import { useGrinderyNexus } from 'use-grindery-nexus';
 import { Box } from '@mui/system';
 import { AddCircleOutline as AddCircleOutlineIcon } from '@mui/icons-material';
-import DexCardHeader from '../../components/grindery/DexCard/DexCardHeader';
-import DexCardSubmitButton from '../../components/grindery/DexCard/DexCardSubmitButton';
-import DexCardBody from '../../components/grindery/DexCard/DexCardBody';
-import { LiquidityWallet } from '../../types/LiquidityWallet';
-import DexLiquidityWallet from '../../components/grindery/DexLiquidityWallet/DexLiquidityWallet';
+import DexCardHeader from '../../components/DexCard/DexCardHeader';
+import DexCardSubmitButton from '../../components/DexCard/DexCardSubmitButton';
+import DexCardBody from '../../components/DexCard/DexCardBody';
+import { LiquidityWallet as LiquidityWalletType } from '../../types/LiquidityWallet';
+import LiquidityWallet from '../../components/LiquidityWallet/LiquidityWallet';
 import { useNavigate } from 'react-router-dom';
 import useGrinderyChains from '../../hooks/useGrinderyChains';
 import useLiquidityWalletPage from '../../hooks/useLiquidityWalletPage';
 import useLiquidityWallets from '../../hooks/useLiquidityWallets';
-import DexLoading from '../../components/grindery/DexLoading/DexLoading';
+import Loading from '../../components/Loading/Loading';
 
 function LiquidityWalletPageRoot() {
   const { user, connect } = useGrinderyNexus();
@@ -45,7 +45,7 @@ function LiquidityWalletPageRoot() {
       <DexCardBody>
         <>
           {user &&
-            wallets.map((wallet: LiquidityWallet) => {
+            wallets.map((wallet: LiquidityWalletType) => {
               const walletChain = {
                 icon: chains.find(
                   (c) => c.value.split(':')[1] === wallet.chainId
@@ -58,17 +58,17 @@ function LiquidityWalletPageRoot() {
                 )?.nativeToken,
               };
               return (
-                <DexLiquidityWallet
+                <LiquidityWallet
                   key={wallet._id}
                   wallet={wallet}
                   walletChain={walletChain}
-                  onClick={(w: LiquidityWallet) => {
+                  onClick={(w: LiquidityWalletType) => {
                     navigate(VIEWS.TOKENS.fullPath.replace(':walletId', w._id));
                   }}
                 />
               );
             })}
-          {user && walletsIsLoading && <DexLoading />}
+          {user && walletsIsLoading && <Loading />}
           {wallets.length < chains.length ? (
             <DexCardSubmitButton
               label={user ? 'Create wallet' : 'Connect wallet'}

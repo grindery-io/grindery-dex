@@ -1,13 +1,13 @@
 import React from 'react';
 import { Box } from '@mui/system';
 import { useNavigate } from 'react-router-dom';
-import DexCard from '../../components/grindery/DexCard/DexCard';
-import DexCardBody from '../../components/grindery/DexCard/DexCardBody';
-import DexCardHeader from '../../components/grindery/DexCard/DexCardHeader';
+import DexCard from '../../components/DexCard/DexCard';
+import DexCardBody from '../../components/DexCard/DexCardBody';
+import DexCardHeader from '../../components/DexCard/DexCardHeader';
 import { IconButton } from '@mui/material';
 import useBuyPage from '../../hooks/useBuyPage';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
-import DexChainsList from '../../components/grindery/DexChainsList/DexChainsList';
+import ChainsList from '../../components/ChainsList/ChainsList';
 import useGrinderyChains from '../../hooks/useGrinderyChains';
 import { Chain } from '../../types/Chain';
 
@@ -38,7 +38,7 @@ const BuyPageSelectFromChain = (props: Props) => {
         endAdornment={<Box width={28} height={40} />}
       />
       <DexCardBody>
-        <DexChainsList
+        <ChainsList
           chain={fromChain?.value || ''}
           chains={chains.map((chain: Chain) => ({
             ...chain,

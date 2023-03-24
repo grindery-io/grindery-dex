@@ -1,6 +1,6 @@
 import React from 'react';
 import { Route, Routes } from 'react-router-dom';
-import DexCard from '../../components/grindery/DexCard/DexCard';
+import DexCard from '../../components/DexCard/DexCard';
 import useStakingPage from '../../hooks/useStakingPage';
 import StakingPageRoot from './StakingPageRoot';
 import StakingPageStake from './StakingPageStake';

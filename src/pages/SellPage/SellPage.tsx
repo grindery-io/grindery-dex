@@ -1,22 +1,60 @@
 import React from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
-import DexLoading from '../../components/grindery/DexLoading/DexLoading';
-import DexPageContainer from '../../components/grindery/DexPageContainer/DexPageContainer';
-import DexSellMenu from '../../components/grindery/DexSellMenu/DexSellMenu';
-import { sellPages } from '../../components/pages/dexPages';
+import Loading from '../../components/Loading/Loading';
+import PageContainer from '../../components/PageContainer/PageContainer';
+import SellMenu from '../../components/SellMenu/SellMenu';
+import LiquidityWalletPageContextProvider from '../../context/LiquidityWalletPageContext';
+import OffersPageContextProvider from '../../context/OffersPageContext';
+import StakingPageContextProvider from '../../context/StakingPageContext';
 import useAdmin from '../../hooks/useAdmin';
+import LiquidityWalletPage from '../LiquidityWalletPage/LiquidityWalletPage';
+import OffersPage from '../OffersPage/OffersPage';
+import StakingPage from '../StakingPage/StakingPage';
+
+export const sellPages = [
+  {
+    path: '/staking',
+    fullPath: '/sell/staking',
+    label: 'Staking',
+    component: (
+      <StakingPageContextProvider>
+        <StakingPage />
+      </StakingPageContextProvider>
+    ),
+  },
+  {
+    path: '/offers',
+    fullPath: '/sell/offers',
+    label: 'Offers',
+    component: (
+      <OffersPageContextProvider>
+        <OffersPage />
+      </OffersPageContextProvider>
+    ),
+  },
+  {
+    path: '/wallets',
+    fullPath: '/sell/wallets',
+    label: 'Wallets',
+    component: (
+      <LiquidityWalletPageContextProvider>
+        <LiquidityWalletPage />
+      </LiquidityWalletPageContextProvider>
+    ),
+  },
+];
 
 type Props = {};
 
 const SellPage = (props: Props) => {
   const { isLoading, isAdmin } = useAdmin();
   if (isLoading) {
-    return <DexLoading />;
+    return <Loading />;
   }
   return isAdmin ? (
     <div>
-      <DexPageContainer>
-        <DexSellMenu />
+      <PageContainer>
+        <SellMenu />
         <Routes>
           {sellPages.map((page: any) => (
             <Route
@@ -30,7 +68,7 @@ const SellPage = (props: Props) => {
             element={<Navigate to={`/sell${sellPages[0].path}`} />}
           />
         </Routes>
-      </DexPageContainer>
+      </PageContainer>
     </div>
   ) : (
     <Navigate to="/" />

@@ -2,17 +2,17 @@ import React from 'react';
 import { IconButton, Tooltip } from '@mui/material';
 import { useGrinderyNexus } from 'use-grindery-nexus';
 import { AddCircleOutline as AddCircleOutlineIcon } from '@mui/icons-material';
-import DexCardHeader from '../../components/grindery/DexCard/DexCardHeader';
-import DexOffer from '../../components/grindery/DexOffer/DexOffer';
-import DexCardSubmitButton from '../../components/grindery/DexCard/DexCardSubmitButton';
-import DexCardBody from '../../components/grindery/DexCard/DexCardBody';
-import DexLoading from '../../components/grindery/DexLoading/DexLoading';
-import { Offer } from '../../types/Offer';
+import DexCardHeader from '../../components/DexCard/DexCardHeader';
+import Offer from '../../components/Offer/Offer';
+import DexCardSubmitButton from '../../components/DexCard/DexCardSubmitButton';
+import DexCardBody from '../../components/DexCard/DexCardBody';
+import Loading from '../../components/Loading/Loading';
+import { Offer as OfferType } from '../../types/Offer';
 import { Chain } from '../../types/Chain';
 import { useNavigate } from 'react-router-dom';
 import useGrinderyChains from '../../hooks/useGrinderyChains';
 import useOffers from '../../hooks/useOffers';
-import DexListSubheader from '../../components/grindery/DexListSubheader/DexListSubheader';
+import ListSubheader from '../../components/ListSubheader/ListSubheader';
 import useOffersPage from '../../hooks/useOffersPage';
 import _ from 'lodash';
 
@@ -56,12 +56,12 @@ function OffersPageRoot() {
           offers.length > 0 &&
           Object.keys(groupedOffers).map((key: any) => (
             <React.Fragment key={key}>
-              <DexListSubheader>
+              <ListSubheader>
                 {chains.find((c: Chain) => c.value === `eip155:${key}`)
                   ?.label || ''}
-              </DexListSubheader>
+              </ListSubheader>
               {_.orderBy(groupedOffers[key], ['isActive'], ['desc']).map(
-                (offer: Offer) => {
+                (offer: OfferType) => {
                   const offerChain = {
                     label:
                       chains.find((c) => c.value === `eip155:${offer.chainId}`)
@@ -87,7 +87,7 @@ function OffersPageRoot() {
                       )?.icon || '',
                   };
                   return (
-                    <DexOffer
+                    <Offer
                       key={offer._id}
                       offer={offer}
                       chain={offerChain}
@@ -101,7 +101,7 @@ function OffersPageRoot() {
               )}
             </React.Fragment>
           ))}
-        {user && offersIsLoading && <DexLoading />}
+        {user && offersIsLoading && <Loading />}
         <DexCardSubmitButton
           label={user ? 'Create offer' : 'Connect wallet'}
           onClick={

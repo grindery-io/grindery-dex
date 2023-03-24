@@ -4,9 +4,9 @@ import { ThemeProvider as GrinderyThemeProvider } from 'grindery-ui';
 import GrinderyNexusContextProvider from 'use-grindery-nexus';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import AppContextProvider from './context/AppContext';
-import EarlyAccessModal from './components/grindery/EarlyAccessModal';
-import AppHeader from './components/grindery/AppHeader';
-import DexPageContainer from './components/grindery/DexPageContainer/DexPageContainer';
+import EarlyAccessModal from './components/EarlyAccessModal/EarlyAccessModal';
+import AppHeader from './components/AppHeader/AppHeader';
+import PageContainer from './components/PageContainer/PageContainer';
 import AbiContextProvider from './context/AbiContext';
 import GrinderyChainsContextProvider from './context/GrinderyChainsContext';
 import SellPage from './pages/SellPage/SellPage';
@@ -58,11 +58,11 @@ export const App = () => {
                         <Route
                           path="/faucet/*"
                           element={
-                            <DexPageContainer>
+                            <PageContainer>
                               <FaucetPageContextProvider>
                                 <FaucetPage />
                               </FaucetPageContextProvider>
-                            </DexPageContainer>
+                            </PageContainer>
                           }
                         />
 

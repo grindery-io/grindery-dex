@@ -1,17 +1,17 @@
 import React, { useEffect } from 'react';
 import { Box } from '@mui/system';
-import DexCard from '../../components/grindery/DexCard/DexCard';
-import DexCardHeader from '../../components/grindery/DexCard/DexCardHeader';
-import DexLoading from '../../components/grindery/DexLoading/DexLoading';
+import DexCard from '../../components/DexCard/DexCard';
+import DexCardHeader from '../../components/DexCard/DexCardHeader';
+import Loading from '../../components/Loading/Loading';
 import useBuyPage from '../../hooks/useBuyPage';
-import DexCardBody from '../../components/grindery/DexCard/DexCardBody';
-import DexTokensNotFound from '../../components/grindery/DexTokensNotFound/DexTokensNotFound';
+import DexCardBody from '../../components/DexCard/DexCardBody';
+import NotFound from '../../components/NotFound/NotFound';
 import { useNavigate } from 'react-router-dom';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
 import { IconButton } from '@mui/material';
 import useTrades from '../../hooks/useTrades';
-import { Trade } from '../../types/Trade';
-import DexTrade from '../../components/grindery/DexTrade/DexTrade';
+import { Trade as TradeType } from '../../types/Trade';
+import Trade from '../../components/Trade/Trade';
 
 type Props = {};
 
@@ -50,18 +50,18 @@ const BuyPageHistory = (props: Props) => {
       />
       <DexCardBody maxHeight="540px">
         {isLoading ? (
-          <DexLoading />
+          <Loading />
         ) : (
           <>
             {sortedTrades && sortedTrades.length > 0 ? (
               <>
-                {sortedTrades.map((trade: Trade) => (
-                  <DexTrade key={trade._id} trade={trade} />
+                {sortedTrades.map((trade: TradeType) => (
+                  <Trade key={trade._id} trade={trade} />
                 ))}
                 <Box height="10px" />
               </>
             ) : (
-              <DexTokensNotFound text="No trades found" />
+              <NotFound text="No trades found" />
             )}
           </>
         )}

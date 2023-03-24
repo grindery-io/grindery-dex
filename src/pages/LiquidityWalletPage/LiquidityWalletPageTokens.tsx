@@ -3,9 +3,9 @@ import { IconButton, Skeleton, Tooltip } from '@mui/material';
 import { useGrinderyNexus } from 'use-grindery-nexus';
 import { Box } from '@mui/system';
 import { AddCircleOutline as AddCircleOutlineIcon } from '@mui/icons-material';
-import DexCardHeader from '../../components/grindery/DexCard/DexCardHeader';
-import DexCardSubmitButton from '../../components/grindery/DexCard/DexCardSubmitButton';
-import DexCardBody from '../../components/grindery/DexCard/DexCardBody';
+import DexCardHeader from '../../components/DexCard/DexCardHeader';
+import DexCardSubmitButton from '../../components/DexCard/DexCardSubmitButton';
+import DexCardBody from '../../components/DexCard/DexCardBody';
 import { LiquidityWallet } from '../../types/LiquidityWallet';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -13,11 +13,11 @@ import useGrinderyChains from '../../hooks/useGrinderyChains';
 import useLiquidityWalletPage from '../../hooks/useLiquidityWalletPage';
 import { Chain } from '../../types/Chain';
 import { TokenType } from '../../types/TokenType';
-import DexLiquidityWalletToken, {
+import LiquidityWalletToken, {
   WalletToken,
-} from '../../components/grindery/DexLiquidityWalletToken/DexLiquidityWalletToken';
+} from '../../components/LiquidityWalletToken/LiquidityWalletToken';
 import useLiquidityWallets from '../../hooks/useLiquidityWallets';
-import DexLoading from '../../components/grindery/DexLoading/DexLoading';
+import Loading from '../../components/Loading/Loading';
 
 function LiquidityWalletPageTokens() {
   const { user, connect } = useGrinderyNexus();
@@ -92,7 +92,7 @@ function LiquidityWalletPageTokens() {
       />
       <DexCardBody>
         <>
-          {user && walletsIsLoading && <DexLoading />}
+          {user && walletsIsLoading && <Loading />}
           {user &&
             Object.keys(currentWallet?.tokens || {}).map((key: string) => {
               const token: WalletToken = {
@@ -103,7 +103,7 @@ function LiquidityWalletPageTokens() {
                 amount: currentWallet?.tokens?.[key] || '0',
               };
               return (
-                <DexLiquidityWalletToken
+                <LiquidityWalletToken
                   key={token.label}
                   token={token}
                   tokenChain={walletChain}

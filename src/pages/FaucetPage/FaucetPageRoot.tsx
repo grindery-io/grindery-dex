@@ -1,15 +1,14 @@
 import React from 'react';
 import { useGrinderyNexus } from 'use-grindery-nexus';
-import AlertBox from '../../components/grindery/AlertBox';
-import DexCardHeader from '../../components/grindery/DexCard/DexCardHeader';
-import DexCardBody from '../../components/grindery/DexCard/DexCardBody';
-import DexLoading from '../../components/grindery/DexLoading/DexLoading';
-import DexCardSubmitButton from '../../components/grindery/DexCard/DexCardSubmitButton';
-import DexSelectChainButton from '../../components/grindery/DexSelectChainButton/DexSelectChainButton';
-import DexTextInput from '../../components/grindery/DexTextInput/DexTextInput';
+import DexCardHeader from '../../components/DexCard/DexCardHeader';
+import DexCardBody from '../../components/DexCard/DexCardBody';
+import Loading from '../../components/Loading/Loading';
+import DexCardSubmitButton from '../../components/DexCard/DexCardSubmitButton';
+import SelectChainButton from '../../components/SelectChainButton/SelectChainButton';
+import TextInput from '../../components/TextInput/TextInput';
 import { useNavigate } from 'react-router-dom';
 import useFaucetPage from '../../hooks/useFaucetPage';
-import DexAlertBox from '../../components/grindery/DexAlertBox/DexAlertBox';
+import AlertBox from '../../components/AlertBox/AlertBox';
 import { TX_EXPLORER } from '../../constants';
 
 function FaucetPageRoot() {
@@ -35,7 +34,7 @@ function FaucetPageRoot() {
       <DexCardHeader title="Get GRT Tokens" />
 
       <DexCardBody>
-        <DexSelectChainButton
+        <SelectChainButton
           title="Blockchain"
           onClick={() => {
             navigate(VIEWS.SELECT_CHAIN.fullPath);
@@ -43,7 +42,7 @@ function FaucetPageRoot() {
           chain={currentChain}
         />
 
-        <DexTextInput
+        <TextInput
           label="Wallet address"
           value={userAddress || ''}
           onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
@@ -59,7 +58,7 @@ function FaucetPageRoot() {
           error={errorMessage}
         />
 
-        <DexTextInput
+        <TextInput
           label="Amount"
           value={amountGRT}
           onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
@@ -75,10 +74,10 @@ function FaucetPageRoot() {
           error={errorMessage}
         />
 
-        {loading && <DexLoading />}
+        {loading && <Loading />}
 
         {trxHash && (
-          <DexAlertBox color={error ? 'error' : 'success'}>
+          <AlertBox color={error ? 'error' : 'success'}>
             <p>Transaction {error ? 'failed' : 'success'}.</p>
             <p>
               <a
@@ -91,7 +90,7 @@ function FaucetPageRoot() {
                   trxHash.substring(trxHash.length - 4)}
               </a>
             </p>
-          </DexAlertBox>
+          </AlertBox>
         )}
 
         <DexCardSubmitButton

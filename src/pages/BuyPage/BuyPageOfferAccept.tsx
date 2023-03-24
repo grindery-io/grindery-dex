@@ -1,22 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import { Box } from '@mui/system';
-import DexCard from '../../components/grindery/DexCard/DexCard';
-import DexCardHeader from '../../components/grindery/DexCard/DexCardHeader';
-import DexLoading from '../../components/grindery/DexLoading/DexLoading';
+import DexCard from '../../components/DexCard/DexCard';
+import DexCardHeader from '../../components/DexCard/DexCardHeader';
+import Loading from '../../components/Loading/Loading';
 import useBuyPage from '../../hooks/useBuyPage';
-import DexCardBody from '../../components/grindery/DexCard/DexCardBody';
-import DexTokensNotFound from '../../components/grindery/DexTokensNotFound/DexTokensNotFound';
+import DexCardBody from '../../components/DexCard/DexCardBody';
+import NotFound from '../../components/NotFound/NotFound';
 import { Offer } from '../../types/Offer';
 import useGrinderyChains from '../../hooks/useGrinderyChains';
-import DexOfferPublic from '../../components/grindery/DexOffer/DexOfferPublic';
-import DexOfferSkeleton from '../../components/grindery/DexOffer/DexOfferSkeleton';
+import OfferPublic from '../../components/Offer/OfferPublic';
+import OfferSkeleton from '../../components/Offer/OfferSkeleton';
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
 import { CircularProgress, IconButton, Skeleton, Tooltip } from '@mui/material';
-import DexCardSubmitButton from '../../components/grindery/DexCard/DexCardSubmitButton';
+import DexCardSubmitButton from '../../components/DexCard/DexCardSubmitButton';
 import { useGrinderyNexus } from 'use-grindery-nexus';
-import DexAlertBox from '../../components/grindery/DexAlertBox/DexAlertBox';
-import DexAmountInput from '../../components/grindery/DexAmountInput/DexAmountInput';
+import AlertBox from '../../components/AlertBox/AlertBox';
+import AmountInput from '../../components/AmountInput/AmountInput';
 
 type Props = {};
 
@@ -144,7 +144,7 @@ const BuyPageOfferAccept = (props: Props) => {
       <DexCardBody maxHeight="540px">
         {!accepted ? (
           <>
-            <DexAmountInput
+            <AmountInput
               label="You pay"
               value={fromAmount}
               onChange={() => {}}
@@ -168,7 +168,7 @@ const BuyPageOfferAccept = (props: Props) => {
               }
             />
             <Box mt="20px">
-              <DexOfferPublic
+              <OfferPublic
                 key={offer._id}
                 offer={offer}
                 chain={offerChain}
@@ -180,21 +180,21 @@ const BuyPageOfferAccept = (props: Props) => {
               />
             </Box>
             {approved && (
-              <DexAlertBox color="success">
+              <AlertBox color="success">
                 <p>
                   Tokens have been approved.
                   <br />
                   You can accept offer now.
                 </p>
-              </DexAlertBox>
+              </AlertBox>
             )}
-            {loading && <DexLoading />}
+            {loading && <Loading />}
             {errorMessage &&
               errorMessage.type === 'acceptOffer' &&
               errorMessage.text && (
-                <DexAlertBox color="error">
+                <AlertBox color="error">
                   <p>{errorMessage.text}</p>
-                </DexAlertBox>
+                </AlertBox>
               )}
             <DexCardSubmitButton
               label={
@@ -218,9 +218,9 @@ const BuyPageOfferAccept = (props: Props) => {
           </>
         ) : (
           <>
-            <DexAlertBox color="success">
+            <AlertBox color="success">
               <p>Offer has been accepted.</p>
-            </DexAlertBox>
+            </AlertBox>
             <DexCardSubmitButton
               label="Close"
               onClick={() => {

@@ -3,14 +3,14 @@ import { IconButton } from '@mui/material';
 import { useGrinderyNexus } from 'use-grindery-nexus';
 import { Box } from '@mui/system';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
-import DexCardHeader from '../../components/grindery/DexCard/DexCardHeader';
-import DexCardSubmitButton from '../../components/grindery/DexCard/DexCardSubmitButton';
-import DexCardBody from '../../components/grindery/DexCard/DexCardBody';
-import DexSelectChainAndTokenButton from '../../components/grindery/DexSelectChainAndTokenButton/DexSelectChainAndTokenButton';
-import DexTextInput from '../../components/grindery/DexTextInput/DexTextInput';
-import DexLoading from '../../components/grindery/DexLoading/DexLoading';
+import DexCardHeader from '../../components/DexCard/DexCardHeader';
+import DexCardSubmitButton from '../../components/DexCard/DexCardSubmitButton';
+import DexCardBody from '../../components/DexCard/DexCardBody';
+import SelectChainAndTokenButton from '../../components/SelectChainAndTokenButton/SelectChainAndTokenButton';
+import TextInput from '../../components/TextInput/TextInput';
+import Loading from '../../components/Loading/Loading';
 import { useNavigate } from 'react-router-dom';
-import DexAlertBox from '../../components/grindery/DexAlertBox/DexAlertBox';
+import AlertBox from '../../components/AlertBox/AlertBox';
 import useOffersPage from '../../hooks/useOffersPage';
 
 function OffersPageCreate() {
@@ -53,7 +53,7 @@ function OffersPageCreate() {
       />
 
       <DexCardBody>
-        <DexSelectChainAndTokenButton
+        <SelectChainAndTokenButton
           onClick={() => {
             navigate(VIEWS.SELECT_CHAIN.fullPath);
           }}
@@ -64,7 +64,7 @@ function OffersPageCreate() {
         />
 
         <Box display="flex" flexDirection="row" gap="16px">
-          <DexTextInput
+          <TextInput
             label="Minimum amount"
             onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
               setErrorMessage({
@@ -79,7 +79,7 @@ function OffersPageCreate() {
             value={amountMin}
             error={errorMessage}
           />
-          <DexTextInput
+          <TextInput
             label="Maximum amount"
             value={amountMax}
             onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
@@ -98,11 +98,11 @@ function OffersPageCreate() {
         {errorMessage &&
           errorMessage.type === 'saveOffer' &&
           errorMessage.text && (
-            <DexAlertBox color="error">
+            <AlertBox color="error">
               <p>{errorMessage.text}</p>
-            </DexAlertBox>
+            </AlertBox>
           )}
-        {loading && <DexLoading />}
+        {loading && <Loading />}
         <DexCardSubmitButton
           label={
             loading ? 'Waiting transaction' : user ? 'Create' : 'Connect wallet'

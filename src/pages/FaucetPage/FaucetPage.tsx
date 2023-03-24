@@ -1,23 +1,23 @@
 import React from 'react';
-import DexCard from '../../components/grindery/DexCard/DexCard';
+import DexCard from '../../components/DexCard/DexCard';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import useFaucetPage from '../../hooks/useFaucetPage';
 import FaucetPageRoot from './FaucetPageRoot';
 import FaucetPageSelectChain from './FaucetPageSelectChain';
-import DexFaucetMenu from '../../components/grindery/DexFaucetMenu/DexFaucetMenu';
+import FaucetMenu from '../../components/FaucetMenu/FaucetMenu';
 import useAdmin from '../../hooks/useAdmin';
-import DexLoading from '../../components/grindery/DexLoading/DexLoading';
+import Loading from '../../components/Loading/Loading';
 
 function FaucetPage() {
   const { VIEWS } = useFaucetPage();
   const { isLoading, isAdmin } = useAdmin();
   if (isLoading) {
-    return <DexLoading />;
+    return <Loading />;
   }
 
   return isAdmin ? (
     <>
-      <DexFaucetMenu />
+      <FaucetMenu />
       <DexCard>
         <Routes>
           <Route path={VIEWS.ROOT.path} element={<FaucetPageRoot />} />

@@ -2,15 +2,15 @@ import React from 'react';
 import { IconButton } from '@mui/material';
 import { Box } from '@mui/system';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
-import DexCardHeader from '../../components/grindery/DexCard/DexCardHeader';
-import DexChainsList from '../../components/grindery/DexChainsList/DexChainsList';
-import DexTokenSearch from '../../components/grindery/DexTokenSearch/DexTokenSearch';
-import DexTokensList from '../../components/grindery/DexTokensList/DexTokensList';
-import DexTokensNotFound from '../../components/grindery/DexTokensNotFound/DexTokensNotFound';
+import DexCardHeader from '../../components/DexCard/DexCardHeader';
+import ChainsList from '../../components/ChainsList/ChainsList';
+import TokenSearch from '../../components/TokenSearch/TokenSearch';
+import TokensList from '../../components/TokensList/TokensList';
+import NotFound from '../../components/NotFound/NotFound';
 import { useNavigate } from 'react-router-dom';
 import useGrinderyChains from '../../hooks/useGrinderyChains';
 import useOffersPage from '../../hooks/useOffersPage';
-import DexCardBody from '../../components/grindery/DexCard/DexCardBody';
+import DexCardBody from '../../components/DexCard/DexCardBody';
 
 function OffersPageSelectChain() {
   const {
@@ -49,7 +49,7 @@ function OffersPageSelectChain() {
         endAdornment={<Box width={28} height={40} />}
       />
       <DexCardBody>
-        <DexChainsList
+        <ChainsList
           chain={chain}
           chains={chains}
           onClick={(blockchain: any) => {
@@ -57,7 +57,7 @@ function OffersPageSelectChain() {
             setToken('');
           }}
         />
-        <DexTokenSearch
+        <TokenSearch
           value={searchToken}
           onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
             setSearchToken(event.target.value);
@@ -65,7 +65,7 @@ function OffersPageSelectChain() {
         />
 
         {chain && chainTokens && chainTokens.length > 0 ? (
-          <DexTokensList
+          <TokensList
             tokens={chainTokens}
             onClick={(chainToken: any) => {
               setToken(chainToken);
@@ -78,7 +78,7 @@ function OffersPageSelectChain() {
             }}
           />
         ) : (
-          <DexTokensNotFound
+          <NotFound
             text={
               !currentChain ? (
                 <>Please, select a chain to see a list of tokens.</>

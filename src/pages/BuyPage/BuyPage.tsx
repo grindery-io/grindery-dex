@@ -7,7 +7,7 @@ import {
   useMatch,
   useMatches,
 } from 'react-router-dom';
-import DexPageContainer from '../../components/grindery/DexPageContainer/DexPageContainer';
+import PageContainer from '../../components/PageContainer/PageContainer';
 import useBuyPage from '../../hooks/useBuyPage';
 import BuyPageSelectToChainAndToken from './BuyPageSelectToChainAndToken';
 import BuyPageSelectFromChain from './BuyPageSelectFromChain';
@@ -33,7 +33,7 @@ const BuyPage = (props: Props) => {
 
   return (
     <div>
-      <DexPageContainer>
+      <PageContainer>
         <Box
           display="flex"
           flexDirection="row"
@@ -74,7 +74,7 @@ const BuyPage = (props: Props) => {
             <BuyPageOffersList />
           </Box>
         </Box>
-      </DexPageContainer>
+      </PageContainer>
     </div>
   );
 };

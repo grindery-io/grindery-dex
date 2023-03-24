@@ -1,17 +1,17 @@
 import React from 'react';
 import { Box } from '@mui/system';
 import { Navigate, Route, Routes, useNavigate } from 'react-router-dom';
-import DexCard from '../../components/grindery/DexCard/DexCard';
-import DexCardBody from '../../components/grindery/DexCard/DexCardBody';
-import DexCardHeader from '../../components/grindery/DexCard/DexCardHeader';
+import DexCard from '../../components/DexCard/DexCard';
+import DexCardBody from '../../components/DexCard/DexCardBody';
+import DexCardHeader from '../../components/DexCard/DexCardHeader';
 import { IconButton } from '@mui/material';
 import useBuyPage from '../../hooks/useBuyPage';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
-import DexChainsList from '../../components/grindery/DexChainsList/DexChainsList';
+import ChainsList from '../../components/ChainsList/ChainsList';
 import useGrinderyChains from '../../hooks/useGrinderyChains';
-import DexTokenSearch from '../../components/grindery/DexTokenSearch/DexTokenSearch';
-import DexTokensList from '../../components/grindery/DexTokensList/DexTokensList';
-import DexTokensNotFound from '../../components/grindery/DexTokensNotFound/DexTokensNotFound';
+import TokenSearch from '../../components/TokenSearch/TokenSearch';
+import TokensList from '../../components/TokensList/TokensList';
+import NotFound from '../../components/NotFound/NotFound';
 import { Chain } from '../../types/Chain';
 
 type Props = {};
@@ -51,12 +51,12 @@ const BuyPageSelectFromChainAndToken = (props: Props) => {
         endAdornment={<Box width={28} height={40} />}
       />
       <DexCardBody>
-        <DexChainsList
+        <ChainsList
           chain={fromChain?.value || ''}
           chains={filteredChains}
           onClick={handleFromChainChange}
         />
-        <DexTokenSearch
+        <TokenSearch
           value={searchToken}
           onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
             setSearchToken(event.target.value);
@@ -64,12 +64,12 @@ const BuyPageSelectFromChainAndToken = (props: Props) => {
         />
 
         {currentFromChain && fromChainTokens && fromChainTokens.length > 0 ? (
-          <DexTokensList
+          <TokensList
             tokens={fromChainTokens}
             onClick={handleFromTokenChange}
           />
         ) : (
-          <DexTokensNotFound
+          <NotFound
             text={
               !currentFromChain ? (
                 <>Please, select a chain to see a list of tokens.</>

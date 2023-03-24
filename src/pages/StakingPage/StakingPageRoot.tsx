@@ -2,13 +2,13 @@ import React from 'react';
 import { IconButton, Tooltip } from '@mui/material';
 import { useGrinderyNexus } from 'use-grindery-nexus';
 import { AddCircleOutline as AddCircleOutlineIcon } from '@mui/icons-material';
-import DexCardHeader from '../../components/grindery/DexCard/DexCardHeader';
-import DexStake from '../../components/grindery/DexStake/DexStake';
-import DexCardSubmitButton from '../../components/grindery/DexCard/DexCardSubmitButton';
-import DexCardBody from '../../components/grindery/DexCard/DexCardBody';
-import DexLoading from '../../components/grindery/DexLoading/DexLoading';
-import { Stake } from '../../types/Stake';
-import DexAlertBox from '../../components/grindery/DexAlertBox/DexAlertBox';
+import DexCardHeader from '../../components/DexCard/DexCardHeader';
+import Stake from '../../components/Stake/Stake';
+import DexCardSubmitButton from '../../components/DexCard/DexCardSubmitButton';
+import DexCardBody from '../../components/DexCard/DexCardBody';
+import Loading from '../../components/Loading/Loading';
+import { Stake as StakeType } from '../../types/Stake';
+import AlertBox from '../../components/AlertBox/AlertBox';
 import useGrinderyChains from '../../hooks/useGrinderyChains';
 import { useNavigate } from 'react-router-dom';
 import useStakes from '../../hooks/useStakes';
@@ -43,7 +43,7 @@ function StakingPageRoot() {
       />
       <DexCardBody>
         {user &&
-          stakes.map((stake: Stake) => {
+          stakes.map((stake: StakeType) => {
             const stakeChain = {
               icon: chains.find((c) => c.value === `eip155:${stake.chainId}`)
                 ?.icon,
@@ -54,7 +54,7 @@ function StakingPageRoot() {
               )?.nativeToken,
             };
             return (
-              <DexStake
+              <Stake
                 key={stake._id}
                 stake={stake}
                 stakeChain={stakeChain}
@@ -67,13 +67,13 @@ function StakingPageRoot() {
               />
             );
           })}
-        {user && stakesIsLoading && <DexLoading />}
+        {user && stakesIsLoading && <Loading />}
         {errorMessage &&
           errorMessage.type === 'getStakes' &&
           errorMessage.text && (
-            <DexAlertBox color="error">
+            <AlertBox color="error">
               <p>{errorMessage.text}</p>
-            </DexAlertBox>
+            </AlertBox>
           )}
         <DexCardSubmitButton
           label={user ? 'Stake' : 'Connect wallet'}

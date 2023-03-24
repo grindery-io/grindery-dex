@@ -3,13 +3,13 @@ import { Box } from '@mui/system';
 import React from 'react';
 import { Navigate, Route, Routes, useNavigate } from 'react-router-dom';
 import { useGrinderyNexus } from 'use-grindery-nexus';
-import DexAlertBox from '../../components/grindery/DexAlertBox/DexAlertBox';
-import DexAmountInput from '../../components/grindery/DexAmountInput/DexAmountInput';
-import DexCard from '../../components/grindery/DexCard/DexCard';
-import DexCardBody from '../../components/grindery/DexCard/DexCardBody';
-import DexCardHeader from '../../components/grindery/DexCard/DexCardHeader';
-import DexCardSubmitButton from '../../components/grindery/DexCard/DexCardSubmitButton';
-import DexSelectChainAndTokenButton from '../../components/grindery/DexSelectChainAndTokenButton/DexSelectChainAndTokenButton';
+import AlertBox from '../../components/AlertBox/AlertBox';
+import AmountInput from '../../components/AmountInput/AmountInput';
+import DexCard from '../../components/DexCard/DexCard';
+import DexCardBody from '../../components/DexCard/DexCardBody';
+import DexCardHeader from '../../components/DexCard/DexCardHeader';
+import DexCardSubmitButton from '../../components/DexCard/DexCardSubmitButton';
+import SelectChainAndTokenButton from '../../components/SelectChainAndTokenButton/SelectChainAndTokenButton';
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 import { GRT_CONTRACT_ADDRESS } from '../../constants';
 import useBuyPage from '../../hooks/useBuyPage';
@@ -53,7 +53,7 @@ const BuyPageOffersFilter = (props: Props) => {
         }
       />
       <DexCardBody>
-        <DexSelectChainAndTokenButton
+        <SelectChainAndTokenButton
           title="Deposit"
           chain={fromChain}
           token={fromToken}
@@ -64,7 +64,7 @@ const BuyPageOffersFilter = (props: Props) => {
           name="fromChain"
         />
         <Box mt="20px">
-          <DexSelectChainAndTokenButton
+          <SelectChainAndTokenButton
             title="Receive"
             onClick={() => {
               navigate(VIEWS.SELECT_TO.fullPath);
@@ -75,7 +75,7 @@ const BuyPageOffersFilter = (props: Props) => {
             name="toChain"
           />
         </Box>
-        <DexAmountInput
+        <AmountInput
           label="You pay"
           value={fromAmount}
           onChange={handleFromAmountChange}
@@ -129,9 +129,9 @@ const BuyPageOffersFilter = (props: Props) => {
         {errorMessage &&
           errorMessage.type === 'search' &&
           errorMessage.text && (
-            <DexAlertBox color="error">
+            <AlertBox color="error">
               <p>{errorMessage.text}</p>
-            </DexAlertBox>
+            </AlertBox>
           )}
 
         <DexCardSubmitButton

@@ -1,5 +1,5 @@
 import React from 'react';
-import DexCard from '../../components/grindery/DexCard/DexCard';
+import DexCard from '../../components/DexCard/DexCard';
 import { Route, Routes } from 'react-router-dom';
 import useOffersPage from '../../hooks/useOffersPage';
 import OffersPageRoot from './OffersPageRoot';

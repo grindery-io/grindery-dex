@@ -3,11 +3,11 @@ import { IconButton, Button as MuiButton } from '@mui/material';
 import { useGrinderyNexus } from 'use-grindery-nexus';
 import { Box } from '@mui/system';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
-import DexCardHeader from '../../components/grindery/DexCard/DexCardHeader';
-import DexCardSubmitButton from '../../components/grindery/DexCard/DexCardSubmitButton';
-import DexCardBody from '../../components/grindery/DexCard/DexCardBody';
-import DexLoading from '../../components/grindery/DexLoading/DexLoading';
-import DexTextInput from '../../components/grindery/DexTextInput/DexTextInput';
+import DexCardHeader from '../../components/DexCard/DexCardHeader';
+import DexCardSubmitButton from '../../components/DexCard/DexCardSubmitButton';
+import DexCardBody from '../../components/DexCard/DexCardBody';
+import Loading from '../../components/Loading/Loading';
+import TextInput from '../../components/TextInput/TextInput';
 import { useNavigate, useParams } from 'react-router-dom';
 import useStakes from '../../hooks/useStakes';
 import useStakingPage from '../../hooks/useStakingPage';
@@ -68,9 +68,9 @@ function StakingPageWithdraw() {
 
       <DexCardBody>
         {user && stakesIsLoading ? (
-          <DexLoading />
+          <Loading />
         ) : (
-          <DexTextInput
+          <TextInput
             label="GRT Amount"
             value={amountAdd}
             onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
@@ -121,7 +121,7 @@ function StakingPageWithdraw() {
           />
         )}
 
-        {loading && <DexLoading />}
+        {loading && <Loading />}
         <DexCardSubmitButton
           disabled={loading}
           label={

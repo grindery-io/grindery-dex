@@ -2,12 +2,12 @@ import React from 'react';
 import { IconButton } from '@mui/material';
 import { Box } from '@mui/system';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
-import DexCardHeader from '../../components/grindery/DexCard/DexCardHeader';
-import DexChainsList from '../../components/grindery/DexChainsList/DexChainsList';
+import DexCardHeader from '../../components/DexCard/DexCardHeader';
+import ChainsList from '../../components/ChainsList/ChainsList';
 import useGrinderyChains from '../../hooks/useGrinderyChains';
 import { useNavigate } from 'react-router-dom';
 import useStakingPage from '../../hooks/useStakingPage';
-import DexCardBody from '../../components/grindery/DexCard/DexCardBody';
+import DexCardBody from '../../components/DexCard/DexCardBody';
 
 function StakingPageSelectChain() {
   const { VIEWS, chain, setChain } = useStakingPage();
@@ -34,7 +34,7 @@ function StakingPageSelectChain() {
         endAdornment={<Box width={28} height={40} />}
       />
       <DexCardBody>
-        <DexChainsList
+        <ChainsList
           chain={chain}
           chains={chains}
           onClick={(blockchain: any) => {

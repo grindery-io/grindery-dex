@@ -3,20 +3,20 @@ import { IconButton } from '@mui/material';
 import { useGrinderyNexus } from 'use-grindery-nexus';
 import { Box } from '@mui/system';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
-import DexCardHeader from '../../components/grindery/DexCard/DexCardHeader';
-import DexCardSubmitButton from '../../components/grindery/DexCard/DexCardSubmitButton';
-import DexCardBody from '../../components/grindery/DexCard/DexCardBody';
-import DexLoading from '../../components/grindery/DexLoading/DexLoading';
-import DexTextInput from '../../components/grindery/DexTextInput/DexTextInput';
+import DexCardHeader from '../../components/DexCard/DexCardHeader';
+import DexCardSubmitButton from '../../components/DexCard/DexCardSubmitButton';
+import DexCardBody from '../../components/DexCard/DexCardBody';
+import Loading from '../../components/Loading/Loading';
+import TextInput from '../../components/TextInput/TextInput';
 import { useNavigate, useParams } from 'react-router-dom';
 import useLiquidityWalletPage from '../../hooks/useLiquidityWalletPage';
-import DexSelectTokenButton from '../../components/grindery/DexSelectTokenButton/DexSelectTokenButton';
+import SelectTokenButton from '../../components/SelectTokenButton/SelectTokenButton';
 import { TokenType } from '../../types/TokenType';
 import { LiquidityWallet } from '../../types/LiquidityWallet';
 import useGrinderyChains from '../../hooks/useGrinderyChains';
 import { Chain } from '../../types/Chain';
 import useLiquidityWallets from '../../hooks/useLiquidityWallets';
-import DexAlertBox from '../../components/grindery/DexAlertBox/DexAlertBox';
+import AlertBox from '../../components/AlertBox/AlertBox';
 
 function LiquidityWalletPageAdd() {
   const { user, connect } = useGrinderyNexus();
@@ -80,10 +80,10 @@ function LiquidityWalletPageAdd() {
 
       <DexCardBody>
         {user && walletsIsLoading ? (
-          <DexLoading />
+          <Loading />
         ) : (
           <>
-            <DexSelectTokenButton
+            <SelectTokenButton
               onClick={() => {
                 navigate(
                   VIEWS.SELECT_TOKEN.fullPath.replace(
@@ -96,7 +96,7 @@ function LiquidityWalletPageAdd() {
               token={selectedToken}
               error={errorMessage}
             />
-            <DexTextInput
+            <TextInput
               label="Amount"
               value={amountAdd}
               onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
@@ -114,11 +114,11 @@ function LiquidityWalletPageAdd() {
             {errorMessage &&
               errorMessage.type === 'tx' &&
               errorMessage.text && (
-                <DexAlertBox color="error">
+                <AlertBox color="error">
                   <p>{errorMessage.text}</p>
-                </DexAlertBox>
+                </AlertBox>
               )}
-            {loading && <DexLoading />}
+            {loading && <Loading />}
             <DexCardSubmitButton
               disabled={loading}
               label={

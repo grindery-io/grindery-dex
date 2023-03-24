@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { Box } from '@mui/system';
-import DexCard from '../../components/grindery/DexCard/DexCard';
-import DexCardHeader from '../../components/grindery/DexCard/DexCardHeader';
-import DexLoading from '../../components/grindery/DexLoading/DexLoading';
+import DexCard from '../../components/DexCard/DexCard';
+import DexCardHeader from '../../components/DexCard/DexCardHeader';
+import Loading from '../../components/Loading/Loading';
 import useBuyPage from '../../hooks/useBuyPage';
-import DexCardBody from '../../components/grindery/DexCard/DexCardBody';
-import DexTokensNotFound from '../../components/grindery/DexTokensNotFound/DexTokensNotFound';
+import DexCardBody from '../../components/DexCard/DexCardBody';
+import NotFound from '../../components/NotFound/NotFound';
 import { Offer } from '../../types/Offer';
 import useGrinderyChains from '../../hooks/useGrinderyChains';
-import DexOfferPublic from '../../components/grindery/DexOffer/DexOfferPublic';
-import DexOfferSkeleton from '../../components/grindery/DexOffer/DexOfferSkeleton';
+import OfferPublic from '../../components/Offer/OfferPublic';
+import OfferSkeleton from '../../components/Offer/OfferSkeleton';
 import { useNavigate } from 'react-router-dom';
 import { CircularProgress, IconButton, Tooltip } from '@mui/material';
 
@@ -86,9 +86,9 @@ const BuyPageOffersList = (props: Props) => {
         }
       />
       <DexCardBody maxHeight="540px">
-        {loading && [1, 2, 3].map((i: number) => <DexOfferSkeleton key={i} />)}
+        {loading && [1, 2, 3].map((i: number) => <OfferSkeleton key={i} />)}
         {!loading && foundOffers.length < 1 && (
-          <DexTokensNotFound
+          <NotFound
             text={
               <>
                 Offers not found. Please, try another chain, token or change the
@@ -123,7 +123,7 @@ const BuyPageOffersList = (props: Props) => {
                   ?.icon || '',
             };
             return (
-              <DexOfferPublic
+              <OfferPublic
                 key={offer._id}
                 offer={offer}
                 chain={offerChain}

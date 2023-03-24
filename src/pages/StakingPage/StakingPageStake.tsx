@@ -3,13 +3,13 @@ import { IconButton } from '@mui/material';
 import { useGrinderyNexus } from 'use-grindery-nexus';
 import { Box } from '@mui/system';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
-import DexCardHeader from '../../components/grindery/DexCard/DexCardHeader';
-import DexCardSubmitButton from '../../components/grindery/DexCard/DexCardSubmitButton';
-import DexCardBody from '../../components/grindery/DexCard/DexCardBody';
-import DexLoading from '../../components/grindery/DexLoading/DexLoading';
-import DexTextInput from '../../components/grindery/DexTextInput/DexTextInput';
-import DexSelectChainButton from '../../components/grindery/DexSelectChainButton/DexSelectChainButton';
-import DexAlertBox from '../../components/grindery/DexAlertBox/DexAlertBox';
+import DexCardHeader from '../../components/DexCard/DexCardHeader';
+import DexCardSubmitButton from '../../components/DexCard/DexCardSubmitButton';
+import DexCardBody from '../../components/DexCard/DexCardBody';
+import Loading from '../../components/Loading/Loading';
+import TextInput from '../../components/TextInput/TextInput';
+import SelectChainButton from '../../components/SelectChainButton/SelectChainButton';
+import AlertBox from '../../components/AlertBox/AlertBox';
 import { useNavigate } from 'react-router-dom';
 import useStakingPage from '../../hooks/useStakingPage';
 
@@ -50,7 +50,7 @@ function StakingPageStake() {
       />
 
       <DexCardBody>
-        <DexSelectChainButton
+        <SelectChainButton
           title="Blockchain"
           chain={currentChain}
           onClick={() => {
@@ -58,7 +58,7 @@ function StakingPageStake() {
           }}
         />
 
-        <DexTextInput
+        <TextInput
           label="GRT Amount"
           value={amountGRT}
           onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
@@ -74,19 +74,19 @@ function StakingPageStake() {
           error={errorMessage}
         />
         {approved && (
-          <DexAlertBox color="success">
+          <AlertBox color="success">
             <p>
               Tokens have been approved.
               <br />
               You can stake now.
             </p>
-          </DexAlertBox>
+          </AlertBox>
         )}
-        {loading && <DexLoading />}
+        {loading && <Loading />}
         {errorMessage && errorMessage.type === 'tx' && errorMessage.text && (
-          <DexAlertBox color="error">
+          <AlertBox color="error">
             <p>{errorMessage.text}</p>
-          </DexAlertBox>
+          </AlertBox>
         )}
 
         <DexCardSubmitButton

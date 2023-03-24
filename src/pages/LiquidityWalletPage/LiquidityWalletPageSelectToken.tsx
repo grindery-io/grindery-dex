@@ -2,19 +2,19 @@ import React, { useEffect } from 'react';
 import { IconButton } from '@mui/material';
 import { Box } from '@mui/system';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
-import DexCardHeader from '../../components/grindery/DexCard/DexCardHeader';
+import DexCardHeader from '../../components/DexCard/DexCardHeader';
 import { useNavigate, useParams } from 'react-router-dom';
 import useLiquidityWalletPage from '../../hooks/useLiquidityWalletPage';
-import DexTokenSearch from '../../components/grindery/DexTokenSearch/DexTokenSearch';
-import DexTokensList from '../../components/grindery/DexTokensList/DexTokensList';
-import DexTokensNotFound from '../../components/grindery/DexTokensNotFound/DexTokensNotFound';
+import TokenSearch from '../../components/TokenSearch/TokenSearch';
+import TokensList from '../../components/TokensList/TokensList';
+import NotFound from '../../components/NotFound/NotFound';
 import useGrinderyChains from '../../hooks/useGrinderyChains';
 import { LiquidityWallet } from '../../types/LiquidityWallet';
 import { Chain } from '../../types/Chain';
 import useLiquidityWallets from '../../hooks/useLiquidityWallets';
-import DexLoading from '../../components/grindery/DexLoading/DexLoading';
+import Loading from '../../components/Loading/Loading';
 import { useGrinderyNexus } from 'use-grindery-nexus';
-import DexCardBody from '../../components/grindery/DexCard/DexCardBody';
+import DexCardBody from '../../components/DexCard/DexCardBody';
 
 function LiquidityWalletPageSelectToken() {
   const { user } = useGrinderyNexus();
@@ -61,10 +61,10 @@ function LiquidityWalletPageSelectToken() {
       />
       <DexCardBody>
         {user && walletsIsLoading ? (
-          <DexLoading />
+          <Loading />
         ) : (
           <>
-            <DexTokenSearch
+            <TokenSearch
               value={searchToken}
               onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                 setSearchToken(event.target.value);
@@ -74,7 +74,7 @@ function LiquidityWalletPageSelectToken() {
             {walletChain &&
             walletChain.tokens &&
             walletChain.tokens.length > 0 ? (
-              <DexTokensList
+              <TokensList
                 tokens={walletChain.tokens}
                 onClick={(chainToken: any) => {
                   setToken(chainToken.symbol || '');
@@ -89,7 +89,7 @@ function LiquidityWalletPageSelectToken() {
                 }}
               />
             ) : (
-              <DexTokensNotFound
+              <NotFound
                 text={
                   !walletChain ? (
                     <>Please, select a chain to see a list of tokens.</>
