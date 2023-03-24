@@ -47,15 +47,10 @@ function LiquidityWalletPageRoot() {
           {user &&
             wallets.map((wallet: LiquidityWalletType) => {
               const walletChain = {
-                icon: chains.find(
-                  (c) => c.value.split(':')[1] === wallet.chainId
-                )?.icon,
-                label: chains.find(
-                  (c) => c.value.split(':')[1] === wallet.chainId
-                )?.label,
-                nativeToken: chains.find(
-                  (c) => c.value.split(':')[1] === wallet.chainId
-                )?.nativeToken,
+                icon: chains.find((c) => c.chainId === wallet.chainId)?.icon,
+                label: chains.find((c) => c.chainId === wallet.chainId)?.label,
+                nativeToken: chains.find((c) => c.chainId === wallet.chainId)
+                  ?.nativeToken,
               };
               return (
                 <LiquidityWallet

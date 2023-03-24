@@ -86,19 +86,21 @@ export const FaucetPageContextProvider = ({
   const [errorMessage, setErrorMessage] = useState({ type: '', text: '' });
   const [chain, setChain] = useState(selectedChain || '');
   const { chains } = useGrinderyChains();
+  const filteredChain = chains.find((c) => c.value === chain);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const currentChain: Chain | null =
-    chain && chains.find((c) => c.value === chain)
+    chain && filteredChain
       ? {
-          id:
+          ...(filteredChain || {}),
+          idHex:
             chain && typeof chain === 'string'
               ? `0x${parseFloat(chain.split(':')[1]).toString(16)}`
               : '',
-          value: chains.find((c) => c.value === chain)?.value || '',
-          label: chains.find((c) => c.value === chain)?.label || '',
-          icon: chains.find((c) => c.value === chain)?.icon || '',
-          rpc: chains.find((c) => c.value === chain)?.rpc || [],
-          nativeToken: chains.find((c) => c.value === chain)?.token || '',
+          value: filteredChain?.value || '',
+          label: filteredChain?.label || '',
+          icon: filteredChain?.icon || '',
+          rpc: filteredChain?.rpc || [],
+          nativeToken: filteredChain?.token || '',
         }
       : null;
 
@@ -136,6 +138,22 @@ export const FaucetPageContextProvider = ({
       });
       return;
     }
+    setLoading(true);
+    if (currentChain && chain !== selectedChain) {
+      try {
+        await window.ethereum.request({
+          method: 'wallet_switchEthereumChain',
+          params: [
+            {
+              chainId: currentChain.idHex,
+            },
+          ],
+        });
+      } catch (error: any) {
+        // handle change switching error
+      }
+    }
+
     const signer = provider.getSigner();
     const _grtContract = new ethers.Contract(
       GRT_CONTRACT_ADDRESS[chain.toString()],
@@ -148,15 +166,15 @@ export const FaucetPageContextProvider = ({
       ethers.utils.parseEther(amountGRT)
     );
     try {
-      setLoading(true);
       await tx.wait();
-      setLoading(false);
     } catch (e) {
       setError(true);
       setLoading(false);
+      return;
     }
 
     setTrxHash(tx.hash);
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -165,26 +183,6 @@ export const FaucetPageContextProvider = ({
       setChain(selectedChain || '');
     }
   }, [address, selectedChain]);
-
-  useEffect(() => {
-    if (currentChain && currentChain.id) {
-      window.ethereum.request({
-        method: 'wallet_addEthereumChain',
-        params: [
-          {
-            chainId: currentChain.id,
-            chainName: currentChain.label,
-            rpcUrls: currentChain.rpc,
-            nativeCurrency: {
-              name: currentChain.nativeToken,
-              symbol: currentChain.nativeToken,
-              decimals: 18,
-            },
-          },
-        ],
-      });
-    }
-  }, [currentChain]);
 
   useEffect(() => {
     setTrxHash('');

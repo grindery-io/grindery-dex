@@ -79,11 +79,11 @@ function OffersPageRoot() {
                   const offerToken = {
                     label:
                       currentOfferChain?.tokens?.find(
-                        (t) => t.id === offer.tokenId
+                        (t) => t.coinmarketcapId === offer.tokenId
                       )?.symbol || '',
                     icon:
                       currentOfferChain?.tokens?.find(
-                        (t) => t.id === offer.tokenId
+                        (t) => t.coinmarketcapId === offer.tokenId
                       )?.icon || '',
                   };
                   return (

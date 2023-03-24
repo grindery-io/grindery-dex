@@ -21,7 +21,7 @@ const TokensList = (props: Props) => {
       <List disablePadding>
         {tokens.map((token: any) => (
           <ListItem
-            key={token.id}
+            key={token._id}
             disablePadding
             style={{
               height: `64px`,

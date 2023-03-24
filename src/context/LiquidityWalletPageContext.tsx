@@ -121,20 +121,22 @@ export const LiquidityWalletPageContextProvider = ({
   const { chains } = useGrinderyChains();
   const [searchToken, setSearchToken] = useState('');
   const { satelliteAbi, liquidityWalletAbi, tokenAbi } = useAbi();
+  const filteredChain = chains.find((c) => c.value === chain);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const currentChain: Chain | null =
-    chain && chains.find((c) => c.value === chain)
+    chain && filteredChain
       ? {
-          id:
+          ...(filteredChain || {}),
+          idHex:
             chain && typeof chain === 'string'
               ? `0x${parseFloat(chain.split(':')[1]).toString(16)}`
               : '',
-          value: chains.find((c) => c.value === chain)?.value || '',
-          label: chains.find((c) => c.value === chain)?.label || '',
-          icon: chains.find((c) => c.value === chain)?.icon || '',
-          rpc: chains.find((c) => c.value === chain)?.rpc || [],
-          nativeToken: chains.find((c) => c.value === chain)?.token || '',
-          tokens: chains.find((c) => c.value === chain)?.tokens || [],
+          value: filteredChain?.value || '',
+          label: filteredChain?.label || '',
+          icon: filteredChain?.icon || '',
+          rpc: filteredChain?.rpc || [],
+          nativeToken: filteredChain?.token || '',
+          tokens: filteredChain?.tokens || [],
         }
       : null;
 
@@ -183,17 +185,10 @@ export const LiquidityWalletPageContextProvider = ({
     if (currentChain && currentChain?.value !== selectedChain) {
       try {
         await window.ethereum.request({
-          method: 'wallet_addEthereumChain',
+          method: 'wallet_switchEthereumChain',
           params: [
             {
-              chainId: currentChain.id,
-              chainName: currentChain.label,
-              rpcUrls: currentChain.rpc,
-              nativeCurrency: {
-                name: currentChain.nativeToken,
-                symbol: currentChain.nativeToken,
-                decimals: 18,
-              },
+              chainId: currentChain.idHex,
             },
           ],
         });
@@ -325,17 +320,10 @@ export const LiquidityWalletPageContextProvider = ({
     if (currentChain && currentChain?.value !== selectedChain) {
       try {
         await window.ethereum.request({
-          method: 'wallet_addEthereumChain',
+          method: 'wallet_switchEthereumChain',
           params: [
             {
-              chainId: currentChain.id,
-              chainName: currentChain.label,
-              rpcUrls: currentChain.rpc,
-              nativeCurrency: {
-                name: currentChain.nativeToken,
-                symbol: currentChain.nativeToken,
-                decimals: 18,
-              },
+              chainId: currentChain.idHex,
             },
           ],
         });
@@ -467,17 +455,10 @@ export const LiquidityWalletPageContextProvider = ({
     if (currentChain && currentChain?.value !== selectedChain) {
       try {
         await window.ethereum.request({
-          method: 'wallet_addEthereumChain',
+          method: 'wallet_switchEthereumChain',
           params: [
             {
-              chainId: currentChain.id,
-              chainName: currentChain.label,
-              rpcUrls: currentChain.rpc,
-              nativeCurrency: {
-                name: currentChain.nativeToken,
-                symbol: currentChain.nativeToken,
-                decimals: 18,
-              },
+              chainId: currentChain.idHex,
             },
           ],
         });

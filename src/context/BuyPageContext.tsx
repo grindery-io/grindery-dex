@@ -156,19 +156,19 @@ export const BuyPageContextProvider = ({ children }: BuyPageContextProps) => {
       typeof toToken !== 'string' &&
       offer.token === toToken?.symbol
   );
-
+  const filteredToChain = chains.find(
+    (c) => toChain && c.value === toChain.value
+  );
   const currentToChain: Chain | null =
-    toChain && chains.find((c) => c.value === toChain.value)
+    toChain && filteredToChain
       ? {
-          id: toChain
-            ? `0x${parseFloat(toChain.value.split(':')[1]).toString(16)}`
-            : '',
-          value: chains.find((c) => c.value === toChain.value)?.value || '',
-          label: chains.find((c) => c.value === toChain.value)?.label || '',
-          icon: chains.find((c) => c.value === toChain.value)?.icon || '',
-          rpc: chains.find((c) => c.value === toChain.value)?.rpc || [],
-          nativeToken:
-            chains.find((c) => c.value === toChain.value)?.token || '',
+          ...(filteredToChain || {}),
+          idHex: toChain ? `0x${parseFloat(toChain.chainId).toString(16)}` : '',
+          value: filteredToChain?.value || '',
+          label: filteredToChain?.label || '',
+          icon: filteredToChain?.icon || '',
+          rpc: filteredToChain?.rpc || [],
+          nativeToken: filteredToChain?.token || '',
         }
       : null;
 
@@ -178,19 +178,21 @@ export const BuyPageContextProvider = ({ children }: BuyPageContextProps) => {
   ).filter(
     (t: any) => !searchToken || t.symbol.toLowerCase().includes(searchToken)
   );
-
+  const filteredFromChain = chains.find(
+    (c) => fromChain && c.value === fromChain.value
+  );
   const currentFromChain: Chain | null =
-    fromChain && chains.find((c) => c.value === fromChain.value)
+    fromChain && filteredFromChain
       ? {
-          id: fromChain
-            ? `0x${parseFloat(fromChain.value.split(':')[1]).toString(16)}`
+          ...(filteredFromChain || {}),
+          idHex: fromChain
+            ? `0x${parseFloat(fromChain.chainId).toString(16)}`
             : '',
-          value: chains.find((c) => c.value === fromChain.value)?.value || '',
-          label: chains.find((c) => c.value === fromChain.value)?.label || '',
-          icon: chains.find((c) => c.value === fromChain.value)?.icon || '',
-          rpc: chains.find((c) => c.value === fromChain.value)?.rpc || [],
-          nativeToken:
-            chains.find((c) => c.value === fromChain.value)?.token || '',
+          value: filteredFromChain?.value || '',
+          label: filteredFromChain?.label || '',
+          icon: filteredFromChain?.icon || '',
+          rpc: filteredFromChain?.rpc || [],
+          nativeToken: filteredFromChain?.token || '',
         }
       : null;
 
@@ -390,19 +392,12 @@ export const BuyPageContextProvider = ({ children }: BuyPageContextProps) => {
     if (chain !== fromChain?.value && fromChain) {
       try {
         await window.ethereum.request({
-          method: 'wallet_addEthereumChain',
+          method: 'wallet_switchEthereumChain',
           params: [
             {
               chainId: fromChain
-                ? `0x${parseFloat(fromChain.value.split(':')[1]).toString(16)}`
+                ? `0x${parseFloat(fromChain.chainId).toString(16)}`
                 : '',
-              chainName: fromChain.label,
-              rpcUrls: fromChain.rpc,
-              nativeCurrency: {
-                name: fromChain.nativeToken,
-                symbol: fromChain.nativeToken,
-                decimals: 18,
-              },
             },
           ],
         });
@@ -476,19 +471,12 @@ export const BuyPageContextProvider = ({ children }: BuyPageContextProps) => {
     if (chain !== fromChain?.value && fromChain) {
       try {
         await window.ethereum.request({
-          method: 'wallet_addEthereumChain',
+          method: 'wallet_switchEthereumChain',
           params: [
             {
               chainId: fromChain
-                ? `0x${parseFloat(fromChain.value.split(':')[1]).toString(16)}`
+                ? `0x${parseFloat(fromChain.chainId).toString(16)}`
                 : '',
-              chainName: fromChain.label,
-              rpcUrls: fromChain.rpc,
-              nativeCurrency: {
-                name: fromChain.nativeToken,
-                symbol: fromChain.nativeToken,
-                decimals: 18,
-              },
             },
           ],
         });

@@ -108,19 +108,21 @@ export const OffersPageContextProvider = ({
     error: offersError,
     updateOffer,
   } = useOffers();
+  const filteredChain = chains.find((c) => c.value === chain);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const currentChain: Chain | null =
-    chain && chains.find((c) => c.value === chain)
+    chain && filteredChain
       ? {
-          id:
+          ...(filteredChain || {}),
+          idHex:
             chain && typeof chain === 'string'
               ? `0x${parseFloat(chain.split(':')[1]).toString(16)}`
               : '',
-          value: chains.find((c) => c.value === chain)?.value || '',
-          label: chains.find((c) => c.value === chain)?.label || '',
-          icon: chains.find((c) => c.value === chain)?.icon || '',
-          rpc: chains.find((c) => c.value === chain)?.rpc || [],
-          nativeToken: chains.find((c) => c.value === chain)?.token || '',
+          value: filteredChain?.value || '',
+          label: filteredChain?.label || '',
+          icon: filteredChain?.icon || '',
+          rpc: filteredChain?.rpc || [],
+          nativeToken: filteredChain?.token || '',
         }
       : null;
 
@@ -188,6 +190,21 @@ export const OffersPageContextProvider = ({
     // start executing
     setLoading(true);
 
+    if (currentChain && chain !== selectedChain) {
+      try {
+        await window.ethereum.request({
+          method: 'wallet_switchEthereumChain',
+          params: [
+            {
+              chainId: currentChain.idHex,
+            },
+          ],
+        });
+      } catch (error: any) {
+        // handle change switching error
+      }
+    }
+
     // get signer
     const signer = provider.getSigner();
 
@@ -231,7 +248,7 @@ export const OffersPageContextProvider = ({
       .catch((error: any) => {
         setErrorMessage({
           type: 'saveOffer',
-          text: getErrorMessage(error.error, 'Create offer transaction error'),
+          text: getErrorMessage(error, 'Create offer transaction error'),
         });
         console.error('setOffer error', error);
         setLoading(false);
@@ -269,7 +286,7 @@ export const OffersPageContextProvider = ({
       chainId: chain.toString().split(':')[1],
       min: amountMin,
       max: amountMax,
-      tokenId: token.id,
+      tokenId: token.coinmarketcapId,
       token: token.symbol || '',
       tokenAddress: token.address || '',
       hash: tx.hash || '',
@@ -316,22 +333,13 @@ export const OffersPageContextProvider = ({
     if (selectedChain !== `eip155:${offerChain}`) {
       try {
         await window.ethereum.request({
-          method: 'wallet_addEthereumChain',
+          method: 'wallet_switchEthereumChain',
           params: [
             {
               chainId:
                 chainToSelect && chainToSelect.value
-                  ? `0x${parseFloat(chainToSelect.value.split(':')[1]).toString(
-                      16
-                    )}`
+                  ? `0x${parseFloat(chainToSelect.chainId).toString(16)}`
                   : '',
-              chainName: chainToSelect?.label || '',
-              rpcUrls: chainToSelect?.rpc || [],
-              nativeCurrency: {
-                name: chainToSelect?.token || '',
-                symbol: chainToSelect?.token || '',
-                decimals: 18,
-              },
             },
           ],
         });
@@ -453,22 +461,13 @@ export const OffersPageContextProvider = ({
     if (selectedChain !== `eip155:${offerChain}`) {
       try {
         await window.ethereum.request({
-          method: 'wallet_addEthereumChain',
+          method: 'wallet_switchEthereumChain',
           params: [
             {
               chainId:
                 chainToSelect && chainToSelect.value
-                  ? `0x${parseFloat(chainToSelect.value.split(':')[1]).toString(
-                      16
-                    )}`
+                  ? `0x${parseFloat(chainToSelect.chainId).toString(16)}`
                   : '',
-              chainName: chainToSelect?.label || '',
-              rpcUrls: chainToSelect?.rpc || [],
-              nativeCurrency: {
-                name: chainToSelect?.token || '',
-                symbol: chainToSelect?.token || '',
-                decimals: 18,
-              },
             },
           ],
         });
@@ -559,26 +558,6 @@ export const OffersPageContextProvider = ({
   useEffect(() => {
     setChain(selectedChain || '');
   }, [selectedChain]);
-
-  useEffect(() => {
-    if (currentChain && currentChain.id) {
-      window.ethereum.request({
-        method: 'wallet_addEthereumChain',
-        params: [
-          {
-            chainId: currentChain.id,
-            chainName: currentChain.label,
-            rpcUrls: currentChain.rpc,
-            nativeCurrency: {
-              name: currentChain.nativeToken,
-              symbol: currentChain.nativeToken,
-              decimals: 18,
-            },
-          },
-        ],
-      });
-    }
-  }, [currentChain]);
 
   return (
     <OffersPageContext.Provider

@@ -98,7 +98,8 @@ export const StakingPageContextProvider = ({
   const currentChain: Chain | null =
     chain && filteredChain
       ? {
-          id:
+          ...filteredChain,
+          idHex:
             chain && typeof chain === 'string'
               ? `0x${parseFloat(chain.split(':')[1]).toString(16)}`
               : '',
@@ -177,6 +178,21 @@ export const StakingPageContextProvider = ({
     // start executing
     setLoading(true);
 
+    if (currentChain && chain !== selectedChain) {
+      try {
+        await window.ethereum.request({
+          method: 'wallet_switchEthereumChain',
+          params: [
+            {
+              chainId: currentChain.idHex,
+            },
+          ],
+        });
+      } catch (error: any) {
+        // handle change switching error
+      }
+    }
+
     // get signer
     const signer = provider.getSigner();
 
@@ -201,9 +217,9 @@ export const StakingPageContextProvider = ({
         .catch((error: any) => {
           setErrorMessage({
             type: 'tx',
-            text: getErrorMessage(error.error, 'Approval transaction error'),
+            text: getErrorMessage(error, 'Approval transaction error'),
           });
-          console.error('approve error', error.error);
+          console.error('approve error', error);
           setLoading(false);
           return;
         });
@@ -250,9 +266,9 @@ export const StakingPageContextProvider = ({
         .catch((error: any) => {
           setErrorMessage({
             type: 'tx',
-            text: getErrorMessage(error.error, 'Staking transaction error'),
+            text: getErrorMessage(error, 'Staking transaction error'),
           });
-          console.error('stakeGRT error', error.error);
+          console.error('stakeGRT error', error);
           setLoading(false);
           return;
         });
@@ -383,6 +399,21 @@ export const StakingPageContextProvider = ({
     // start executing
     setLoading(true);
 
+    if (currentChain && chain !== selectedChain) {
+      try {
+        await window.ethereum.request({
+          method: 'wallet_switchEthereumChain',
+          params: [
+            {
+              chainId: currentChain.idHex,
+            },
+          ],
+        });
+      } catch (error: any) {
+        // handle change switching error
+      }
+    }
+
     // get signer
     const signer = provider.getSigner();
 
@@ -405,9 +436,9 @@ export const StakingPageContextProvider = ({
       .catch((error: any) => {
         setErrorMessage({
           type: 'tx',
-          text: getErrorMessage(error.error, 'Withdrawal transaction error'),
+          text: getErrorMessage(error, 'Withdrawal transaction error'),
         });
-        console.error('unstakeGRT error', error.error);
+        console.error('unstakeGRT error', error);
         setLoading(false);
         return;
       });
@@ -475,27 +506,6 @@ export const StakingPageContextProvider = ({
   useEffect(() => {
     setChain(selectedChain || '');
   }, [selectedChain]);
-
-  // Switch chain in Metamask when new chain selected in UI
-  useEffect(() => {
-    if (currentChain && currentChain.id) {
-      window.ethereum.request({
-        method: 'wallet_addEthereumChain',
-        params: [
-          {
-            chainId: currentChain.id,
-            chainName: currentChain.label,
-            rpcUrls: currentChain.rpc,
-            nativeCurrency: {
-              name: currentChain.nativeToken,
-              symbol: currentChain.nativeToken,
-              decimals: 18,
-            },
-          },
-        ],
-      });
-    }
-  }, [currentChain]);
 
   return (
     <StakingPageContext.Provider

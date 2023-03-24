@@ -40,7 +40,7 @@ function FaucetPageSelectChain() {
           chains={chains}
           chain={chain}
           onClick={(blockchain: Chain) => {
-            setChain(blockchain.value);
+            setChain(blockchain.caipId);
             navigate(VIEWS.ROOT.fullPath);
           }}
         />

@@ -116,11 +116,13 @@ const BuyPageOffersList = (props: Props) => {
             );
             const offerToken = {
               label:
-                currentOfferChain?.tokens?.find((t) => t.id === offer.tokenId)
-                  ?.symbol || '',
+                currentOfferChain?.tokens?.find(
+                  (t) => t.coinmarketcapId === offer.tokenId
+                )?.symbol || '',
               icon:
-                currentOfferChain?.tokens?.find((t) => t.id === offer.tokenId)
-                  ?.icon || '',
+                currentOfferChain?.tokens?.find(
+                  (t) => t.coinmarketcapId === offer.tokenId
+                )?.icon || '',
             };
             return (
               <OfferPublic

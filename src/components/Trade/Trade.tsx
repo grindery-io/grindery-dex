@@ -42,11 +42,13 @@ const Trade = (props: Props) => {
   };
 
   const offerChain = chains.find(
-    (c: Chain) => offer && c.value.split(':')[1] === offer.chainId
+    (c: Chain) => offer && c.chainId === offer.chainId
   );
   const offerToken = chains
-    .find((c: Chain) => offer && c.value.split(':')[1] === offer.chainId)
-    ?.tokens?.find((t: TokenType) => offer && t.id === offer.tokenId);
+    .find((c: Chain) => offer && c.chainId === offer.chainId)
+    ?.tokens?.find(
+      (t: TokenType) => offer && t.coinmarketcapId === offer.tokenId
+    );
 
   const getOffer = async () => {
     if (trade.offerId) {
