@@ -316,7 +316,7 @@ const EarlyAccessModal = (props: Props) => {
                 { value: 'Learn', label: 'Browse and learn' },
                 { value: 'else', label: 'Something else' },
               ].map((option) => (
-                <CheckboxWrapper>
+                <CheckboxWrapper key={option.value}>
                   <CheckBox
                     checked={interest.includes(option.value)}
                     onChange={(val) => {
@@ -363,7 +363,7 @@ const EarlyAccessModal = (props: Props) => {
                 { value: 'code', label: "I'm a coding wizard" },
                 { value: 'human', label: "I'm only human" },
               ].map((option) => (
-                <CheckboxWrapper>
+                <CheckboxWrapper key={option.value}>
                   <CheckBox
                     checked={skill.includes(option.value)}
                     onChange={(val) => {
