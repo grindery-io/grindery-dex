@@ -19,7 +19,7 @@ const Wrapper = styled.div`
   align-items: stretch;
   justify-content: flex-end;
   flex-wrap: nowrap;
-  z-index: 1300;
+  z-index: 1301;
 `;
 
 const FormWrapper = styled.div`
