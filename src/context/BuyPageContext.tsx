@@ -563,14 +563,10 @@ export const BuyPageContextProvider = ({ children }: BuyPageContextProps) => {
 
       // create transaction
       const tx = await poolContract
-        .depositETHAndAcceptOffer(
-          offer.offerId,
-          address,
-          ethers.utils.parseEther(fromAmount),
-          {
-            gasLimit: 1000000,
-          }
-        )
+        .depositETHAndAcceptOffer(offer.offerId, address, {
+          value: ethers.utils.parseEther(fromAmount),
+          gasLimit: 1000000,
+        })
         .catch((error: any) => {
           setErrorMessage({
             type: 'acceptOffer',

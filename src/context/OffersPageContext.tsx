@@ -220,17 +220,17 @@ export const OffersPageContextProvider = ({
 
     // Format min and max limits
     const upperLimitOffer = ethers.utils.defaultAbiCoder.encode(
-      ['string', 'uint256'],
+      ['string', 'string'],
       [
         `https://api.coingecko.com/api/v3/coins/${token.symbol}`,
-        ethers.utils.parseEther(amountMax),
+        ethers.utils.parseEther(amountMax).toString(),
       ]
     );
     const lowerLimitOffer = ethers.utils.defaultAbiCoder.encode(
-      ['string', 'uint256'],
+      ['string', 'string'],
       [
         `https://api.coingecko.com/api/v3/coins/${token.symbol}`,
-        ethers.utils.parseEther(amountMin),
+        ethers.utils.parseEther(amountMin).toString(),
       ]
     );
 
@@ -241,9 +241,11 @@ export const OffersPageContextProvider = ({
           ? token.address
           : ethers.constants.AddressZero,
         parseFloat(chain.toString().split(':')[1]),
-        ethers.constants.AddressZero,
         upperLimitOffer,
-        lowerLimitOffer
+        lowerLimitOffer,
+        {
+          gasLimit: 1000000,
+        }
       )
       .catch((error: any) => {
         setErrorMessage({
