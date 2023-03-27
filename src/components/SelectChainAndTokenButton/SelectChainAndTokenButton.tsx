@@ -78,36 +78,18 @@ const SelectChainAndTokenButton = (props: Props) => {
         selected={Boolean(token && chain)}
         compact={false}
       />
-      {!name ? (
-        <>
-          {error.type === 'chain' && !!error.text && (
-            <FormHelperText
-              style={{
-                paddingLeft: '16px',
-                paddingRight: '16px',
-                paddingBottom: '6px',
-              }}
-              error={true}
-            >
-              {error.type === 'chain' && !!error.text ? error.text : ''}
-            </FormHelperText>
-          )}
-        </>
-      ) : (
-        <>
-          {error.type === name && !!error.text && (
-            <FormHelperText
-              style={{
-                paddingLeft: '16px',
-                paddingRight: '16px',
-                paddingBottom: '6px',
-              }}
-              error={true}
-            >
-              {error.type === name && !!error.text ? error.text : ''}
-            </FormHelperText>
-          )}
-        </>
+
+      {error.type === name && !!error.text && (
+        <FormHelperText
+          style={{
+            paddingLeft: '16px',
+            paddingRight: '16px',
+            paddingBottom: '6px',
+          }}
+          error={true}
+        >
+          {error.type === name && !!error.text ? error.text : ''}
+        </FormHelperText>
       )}
     </Card>
   );

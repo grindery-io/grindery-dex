@@ -24,6 +24,10 @@ const BuyPageOffersList = (props: Props) => {
     toTokenPrice,
     fromTokenPrice,
     isPricesLoading,
+    fromChain,
+    fromToken,
+    toChain,
+    toToken,
     handleRefreshOffersClick,
   } = useBuyPage();
   const { chains } = useGrinderyChains();
@@ -42,10 +46,18 @@ const BuyPageOffersList = (props: Props) => {
   }, []);
 
   useEffect(() => {
-    if (progress === 0 && !loading) {
+    if (
+      progress === 0 &&
+      !loading &&
+      fromChain &&
+      fromToken &&
+      toChain &&
+      toToken &&
+      fromAmount
+    ) {
       handleRefreshOffersClick();
     }
-  }, [progress, loading]);
+  }, [progress, loading, fromChain, fromToken, toChain, toToken, fromAmount]);
 
   return (
     <DexCard>

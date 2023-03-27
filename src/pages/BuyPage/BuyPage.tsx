@@ -1,16 +1,9 @@
 import React from 'react';
 import { Box } from '@mui/system';
-import {
-  Route,
-  Routes,
-  useLocation,
-  useMatch,
-  useMatches,
-} from 'react-router-dom';
+import { Route, Routes, useLocation } from 'react-router-dom';
 import PageContainer from '../../components/PageContainer/PageContainer';
 import useBuyPage from '../../hooks/useBuyPage';
 import BuyPageSelectToChainAndToken from './BuyPageSelectToChainAndToken';
-import BuyPageSelectFromChain from './BuyPageSelectFromChain';
 import BuyPageOffersList from './BuyPageOffersList';
 import BuyPageOffersFilter from './BuyPageOffersFilter';
 import BuyPageOfferAccept from './BuyPageOfferAccept';

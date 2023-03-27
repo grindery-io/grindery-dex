@@ -203,10 +203,6 @@ export const BuyPageContextProvider = ({ children }: BuyPageContextProps) => {
     (t: any) => !searchToken || t.symbol.toLowerCase().includes(searchToken)
   );
 
-  const debouncedChangeHandler = _.debounce(() => {
-    handleSearchClick();
-  }, 1000);
-
   const getToTokenPrice = async (symbol: string) => {
     setIsPricesLoading(true);
     try {
@@ -383,6 +379,13 @@ export const BuyPageContextProvider = ({ children }: BuyPageContextProps) => {
 
     searchOffers(silent);
   };
+
+  const debouncedChangeHandler = useCallback(
+    _.debounce(() => {
+      handleSearchClick();
+    }, 1000),
+    [fromChain, fromToken, toChain, toToken, fromAmount, fromTokenBalance]
+  );
 
   const getFromTokenBalance = async () => {
     // switch chain if needed
