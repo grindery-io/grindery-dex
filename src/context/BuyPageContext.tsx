@@ -599,11 +599,15 @@ export const BuyPageContextProvider = ({ children }: BuyPageContextProps) => {
 
       // save trade to DB
       const trade = await saveTrade({
-        amountGRT: fromAmount,
+        amountTokenDeposit: fromAmount,
+        addressTokenDeposit:
+          typeof fromToken !== 'string' ? fromToken.address || '' : '',
+        chainIdTokenDeposit:
+          typeof fromToken !== 'string' ? fromToken.chainId || '' : '',
         destAddr: address,
         offerId: offer.offerId,
         tradeId,
-        amountToken: (
+        amountTokenOffer: (
           (parseFloat(fromAmount) * fromTokenPrice) /
           toTokenPrice
         ).toString(),

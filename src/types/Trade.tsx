@@ -1,7 +1,9 @@
 export type Trade = {
   _id: string;
-  amountGRT: string;
-  amountToken: string;
+  amountTokenDeposit: string;
+  addressTokenDeposit: string;
+  chainIdTokenDeposit: string;
+  amountTokenOffer: string;
   date?: string;
   destAddr?: string;
   isComplete?: boolean;

@@ -36,10 +36,13 @@ const Trade = (props: Props) => {
   const { chains } = useGrinderyChains();
   const [loading, setLoading] = useState(false);
 
-  const fromToken = {
-    symbol: 'ETH',
-    icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
-  };
+  const fromChain = chains.find(
+    (c: Chain) => c.chainId === trade.chainIdTokenDeposit
+  );
+
+  const fromToken = fromChain?.tokens?.find(
+    (t: TokenType) => t.address === trade.addressTokenDeposit
+  );
 
   const offerChain = chains.find(
     (c: Chain) => offer && c.chainId === offer.chainId
@@ -110,15 +113,15 @@ const Trade = (props: Props) => {
         style={{ height: 'auto' }}
         avatar={
           <Avatar
-            src={fromToken.icon}
-            alt={fromToken.symbol}
+            src={fromToken?.icon || ''}
+            alt={fromToken?.symbol || ''}
             sx={{
               width: '32px',
               height: '32px',
               background: '#fff',
             }}
           >
-            {fromToken.symbol}
+            {fromToken?.symbol || ''}
           </Avatar>
         }
         title={
@@ -129,11 +132,15 @@ const Trade = (props: Props) => {
             }}
             mb={'3px'}
           >
-            {parseFloat(trade.amountGRT).toLocaleString()}
+            {parseFloat(trade.amountTokenDeposit).toLocaleString()}
           </Box>
         }
         subheader={
-          <span style={{ whiteSpace: 'pre-wrap' }}>{fromToken.symbol}</span>
+          fromToken?.symbol && fromChain?.label ? (
+            <span style={{ whiteSpace: 'pre-wrap' }}>
+              {fromToken?.symbol || ''} on {fromChain?.label || ''}
+            </span>
+          ) : undefined
         }
         selected={true}
         compact={false}
@@ -192,7 +199,7 @@ const Trade = (props: Props) => {
             }}
             mb={'3px'}
           >
-            {parseFloat(trade.amountToken).toLocaleString()}
+            {parseFloat(trade.amountTokenOffer).toLocaleString()}
           </Box>
         }
         subheader={
