@@ -20,7 +20,7 @@ function FaucetPage() {
       <FaucetMenu />
       <DexCard>
         <Routes>
-          <Route path={VIEWS.ROOT.path} element={<FaucetPageRoot />} />
+          {/* <Route path={VIEWS.ROOT.path} element={<FaucetPageRoot />} /> */}
           <Route
             path={VIEWS.SELECT_CHAIN.path}
             element={<FaucetPageSelectChain />}

@@ -12,16 +12,16 @@ import OffersPage from '../OffersPage/OffersPage';
 import StakingPage from '../StakingPage/StakingPage';
 
 export const sellPages = [
-  {
-    path: '/staking',
-    fullPath: '/sell/staking',
-    label: 'Staking',
-    component: (
-      <StakingPageContextProvider>
-        <StakingPage />
-      </StakingPageContextProvider>
-    ),
-  },
+  // {
+  //   path: '/staking',
+  //   fullPath: '/sell/staking',
+  //   label: 'Staking',
+  //   component: (
+  //     <StakingPageContextProvider>
+  //       <StakingPage />
+  //     </StakingPageContextProvider>
+  //   ),
+  // },
   {
     path: '/offers',
     fullPath: '/sell/offers',
@@ -32,16 +32,16 @@ export const sellPages = [
       </OffersPageContextProvider>
     ),
   },
-  {
-    path: '/wallets',
-    fullPath: '/sell/wallets',
-    label: 'Wallets',
-    component: (
-      <LiquidityWalletPageContextProvider>
-        <LiquidityWalletPage />
-      </LiquidityWalletPageContextProvider>
-    ),
-  },
+  // {
+  //   path: '/wallets',
+  //   fullPath: '/sell/wallets',
+  //   label: 'Wallets',
+  //   component: (
+  //     <LiquidityWalletPageContextProvider>
+  //       <LiquidityWalletPage />
+  //     </LiquidityWalletPageContextProvider>
+  //   ),
+  // },
 ];
 
 type Props = {};
