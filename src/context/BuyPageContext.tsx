@@ -450,14 +450,21 @@ export const BuyPageContextProvider = ({ children }: BuyPageContextProps) => {
   };
 
   const handleAcceptOfferClick = async (offer: Offer) => {
-    setIsLoading(true);
+    if (!fromToken) {
+      setErrorMessage({
+        type: 'acceptOffer',
+        text: 'Token price is missing',
+      });
+
+      return;
+    }
 
     if (!toTokenPrice) {
       setErrorMessage({
         type: 'acceptOffer',
         text: 'Token price is missing',
       });
-      setIsLoading(false);
+
       return;
     }
 
@@ -466,9 +473,11 @@ export const BuyPageContextProvider = ({ children }: BuyPageContextProps) => {
         type: 'acceptOffer',
         text: 'Token price is missing',
       });
-      setIsLoading(false);
+
       return;
     }
+
+    setIsLoading(true);
 
     // switch chain if needed
     if (chain !== fromChain?.value && fromChain) {
@@ -492,19 +501,19 @@ export const BuyPageContextProvider = ({ children }: BuyPageContextProps) => {
     const signer = provider.getSigner();
 
     // approve tokens first
-    if (!approved) {
-      // set GRT contract
-      const _grtContract = new ethers.Contract(
-        GRT_CONTRACT_ADDRESS[fromChain?.value || ''],
+    if (!approved && fromToken.address !== '0x0') {
+      // set token contract
+      const _fromTokenContract = new ethers.Contract(
+        fromToken.address,
         tokenAbi,
         signer
       );
 
       // connect signer
-      const grtContract = _grtContract.connect(signer);
+      const fromTokenContract = _fromTokenContract.connect(signer);
 
-      // approve GRT
-      const txApprove = await grtContract
+      // approve tokens
+      const txApprove = await fromTokenContract
         .approve(
           POOL_CONTRACT_ADDRESS[fromChain?.value || ''],
           ethers.utils.parseEther(fromAmount)
@@ -554,10 +563,10 @@ export const BuyPageContextProvider = ({ children }: BuyPageContextProps) => {
 
       // create transaction
       const tx = await poolContract
-        .depositGRTWithOffer(
-          ethers.utils.parseEther(fromAmount),
+        .depositETHAndAcceptOffer(
           offer.offerId,
           address,
+          ethers.utils.parseEther(fromAmount),
           {
             gasLimit: 1000000,
           }
@@ -603,10 +612,8 @@ export const BuyPageContextProvider = ({ children }: BuyPageContextProps) => {
       // save trade to DB
       const trade = await saveTrade({
         amountTokenDeposit: fromAmount,
-        addressTokenDeposit:
-          typeof fromToken !== 'string' ? fromToken.address || '' : '',
-        chainIdTokenDeposit:
-          typeof fromToken !== 'string' ? fromToken.chainId || '' : '',
+        addressTokenDeposit: fromToken.address,
+        chainIdTokenDeposit: fromToken.chainId,
         destAddr: address,
         offerId: offer.offerId,
         tradeId,

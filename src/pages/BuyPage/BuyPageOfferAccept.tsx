@@ -221,7 +221,9 @@ const BuyPageOfferAccept = (props: Props) => {
             <DexCardSubmitButton
               label={
                 user
-                  ? approved
+                  ? approved ||
+                    (typeof fromToken !== 'string' &&
+                      fromToken?.address === '0x0')
                     ? 'Accept offer'
                     : 'Approve tokens'
                   : 'Connect wallet'

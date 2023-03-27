@@ -7,53 +7,73 @@ import {
   ListItemButton,
   ListItemAvatar,
   ListItemText,
+  Skeleton,
 } from '@mui/material';
 
 type Props = {
   tokens: any[];
   onClick: (token: any) => void;
+  loading?: boolean;
 };
 
 const TokensList = (props: Props) => {
-  const { tokens, onClick } = props;
+  const { tokens, onClick, loading } = props;
   return (
     <Box style={{ height: '350px', overflow: 'auto' }} mt={2} pb="16px">
       <List disablePadding>
-        {tokens.map((token: any) => (
-          <ListItem
-            key={token._id}
-            disablePadding
-            style={{
-              height: `64px`,
-            }}
-          >
-            <ListItemButton
-              onClick={() => {
-                onClick(token);
-              }}
-              dense
-              style={{ borderRadius: '12px' }}
-            >
-              <ListItemAvatar>
-                <Avatar
-                  sx={{ width: 32, height: 32 }}
-                  src={token.icon}
-                  alt={token.symbol}
-                >
-                  {token.symbol}
-                </Avatar>
-              </ListItemAvatar>
-              <ListItemText
-                primary={
-                  <span style={{ fontWeight: '500', fontSize: '18px' }}>
-                    {token.symbol}
-                  </span>
-                }
-                secondary={token.symbol}
+        {loading ? (
+          <>
+            {[0, 1, 2].map((i: number) => (
+              <Skeleton
+                key={i}
+                height="65px"
+                sx={{
+                  transform: 'initial',
+                  borderRadius: '12px',
+                  marginBottom: '10px',
+                }}
               />
-            </ListItemButton>
-          </ListItem>
-        ))}
+            ))}
+          </>
+        ) : (
+          <>
+            {tokens.map((token: any) => (
+              <ListItem
+                key={token._id}
+                disablePadding
+                style={{
+                  height: `64px`,
+                }}
+              >
+                <ListItemButton
+                  onClick={() => {
+                    onClick(token);
+                  }}
+                  dense
+                  style={{ borderRadius: '12px' }}
+                >
+                  <ListItemAvatar>
+                    <Avatar
+                      sx={{ width: 32, height: 32 }}
+                      src={token.icon}
+                      alt={token.symbol}
+                    >
+                      {token.symbol}
+                    </Avatar>
+                  </ListItemAvatar>
+                  <ListItemText
+                    primary={
+                      <span style={{ fontWeight: '500', fontSize: '18px' }}>
+                        {token.symbol}
+                      </span>
+                    }
+                    secondary={token.symbol}
+                  />
+                </ListItemButton>
+              </ListItem>
+            ))}
+          </>
+        )}
       </List>
     </Box>
   );

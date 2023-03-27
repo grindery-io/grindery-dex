@@ -27,7 +27,7 @@ const BuyPageSelectFromChainAndToken = (props: Props) => {
     currentFromChain,
     handleFromTokenChange,
   } = useBuyPage();
-  const { chains } = useGrinderyChains();
+  const { chains, isLoading: chainsIsLoading } = useGrinderyChains();
   let navigate = useNavigate();
   const filteredChains = chains.filter((c: Chain) => c.value === 'eip155:5');
   return (
@@ -55,6 +55,7 @@ const BuyPageSelectFromChainAndToken = (props: Props) => {
           chain={fromChain?.value || ''}
           chains={filteredChains}
           onClick={handleFromChainChange}
+          loading={chainsIsLoading}
         />
         <TokenSearch
           value={searchToken}
@@ -62,29 +63,42 @@ const BuyPageSelectFromChainAndToken = (props: Props) => {
             setSearchToken(event.target.value);
           }}
         />
-
-        {currentFromChain && fromChainTokens && fromChainTokens.length > 0 ? (
+        {chainsIsLoading ? (
           <TokensList
             tokens={fromChainTokens}
             onClick={handleFromTokenChange}
+            loading={chainsIsLoading}
           />
         ) : (
-          <NotFound
-            text={
-              !currentFromChain ? (
-                <>Please, select a chain to see a list of tokens.</>
-              ) : (
-                <>
-                  We couldn't find tokens{' '}
-                  {currentFromChain
-                    ? `on ${currentFromChain?.label} chain`
-                    : ''}
-                  . Please try search again or switch the chain.
-                </>
-              )
-            }
-          />
+          <>
+            {currentFromChain &&
+            fromChainTokens &&
+            fromChainTokens.length > 0 ? (
+              <TokensList
+                tokens={fromChainTokens}
+                onClick={handleFromTokenChange}
+                loading={chainsIsLoading}
+              />
+            ) : (
+              <NotFound
+                text={
+                  !currentFromChain ? (
+                    <>Please, select a chain to see a list of tokens.</>
+                  ) : (
+                    <>
+                      We couldn't find tokens{' '}
+                      {currentFromChain
+                        ? `on ${currentFromChain?.label} chain`
+                        : ''}
+                      . Please try search again or switch the chain.
+                    </>
+                  )
+                }
+              />
+            )}
+          </>
         )}
+
         <Box height="20px" />
       </DexCardBody>
     </DexCard>

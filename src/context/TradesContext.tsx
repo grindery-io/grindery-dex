@@ -64,7 +64,9 @@ export const TradesContextProvider = ({ children }: TradesContextProps) => {
       setError(getErrorMessage(error, 'Server error'));
     }
     setTrades(res?.data || []);
-    setIsLoading(false);
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 800);
   };
 
   const saveTrade = async (body: { [key: string]: any }) => {
