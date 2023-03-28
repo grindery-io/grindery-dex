@@ -4,7 +4,7 @@ import { Card } from '../Card/Card';
 
 type Props = {};
 
-const TradeSkeleton = (props: Props) => {
+const OrderSkeleton = (props: Props) => {
   return (
     <Card
       flex={1}
@@ -74,4 +74,4 @@ const TradeSkeleton = (props: Props) => {
   );
 };
 
-export default TradeSkeleton;
+export default OrderSkeleton;

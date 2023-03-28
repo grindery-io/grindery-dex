@@ -1,4 +1,4 @@
-export type Trade = {
+export type OrderType = {
   _id: string;
   amountTokenDeposit: string;
   addressTokenDeposit: string;
@@ -8,6 +8,6 @@ export type Trade = {
   destAddr?: string;
   isComplete?: boolean;
   offerId?: string;
-  tradeId?: string;
+  orderId?: string;
   userId?: string;
 };

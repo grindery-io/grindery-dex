@@ -2,10 +2,8 @@ import React, { useState } from 'react';
 import DexCard from '../../components/DexCard/DexCard';
 import DexCardHeader from '../../components/DexCard/DexCardHeader';
 import DexCardBody from '../../components/DexCard/DexCardBody';
-import useTrades from '../../hooks/useTrades';
-import Loading from '../../components/Loading/Loading';
-import Trade from '../../components/Trade/Trade';
-import { Trade as TradeType } from '../../types/Trade';
+import Order from '../../components/Order/Order';
+import { OrderType } from '../../types/Order';
 import { LiquidityWallet } from '../../types/LiquidityWallet';
 import { Box } from '@mui/system';
 import NotFound from '../../components/NotFound/NotFound';
@@ -13,48 +11,49 @@ import { useGrinderyNexus } from 'use-grindery-nexus';
 import useAbi from '../../hooks/useAbi';
 import useLiquidityWallets from '../../hooks/useLiquidityWallets';
 import { getErrorMessage } from '../../utils/error';
-import TradeSkeleton from '../../components/Trade/TradeSkeleton';
+import OrderSkeleton from '../../components/Order/OrderSkeleton';
+import useOrders from '../../hooks/useOrders';
 
-function TradesBPage() {
+function OrdersPage() {
   const { chain: selectedChain, provider, ethers } = useGrinderyNexus();
-  const { tradesB: trades, isLoading, completeTrade } = useTrades();
+  const { ordersB: orders, isLoading, completeOrder } = useOrders();
   const { liquidityWalletAbi } = useAbi();
   const { wallets, updateWallet } = useLiquidityWallets();
   const [error, setError] = useState({ type: '', text: '' });
 
-  const sortedTrades = trades?.sort((a: any, b: any) => {
+  const sortedOrders = orders?.sort((a: any, b: any) => {
     return new Date(b.date).getTime() - new Date(a.date).getTime();
   });
 
-  const handleTradeCompleteClick = async (trade: TradeType) => {
+  const handleOrderCompleteClick = async (order: OrderType) => {
     setError({
       type: '',
       text: '',
     });
-    if (!trade || !trade.tradeId) {
-      console.error('handleTradeCompleteClick error: trade not found');
+    if (!order || !order.orderId) {
+      console.error('handleOrderCompleteClick error: order not found');
       return false;
     }
-    if (!trade.offerId) {
-      console.error('handleTradeCompleteClick error: trade has no offerId');
+    if (!order.offerId) {
+      console.error('handleOrderCompleteClick error: order has no offerId');
       setError({
-        type: trade.tradeId,
-        text: 'Trade has no associated offer id',
+        type: order.orderId,
+        text: 'Order has no associated offer id',
       });
       return false;
     }
     if (!liquidityWalletAbi) {
-      console.error('handleTradeCompleteClick error: abi not found');
+      console.error('handleOrderCompleteClick error: abi not found');
       setError({
-        type: trade.tradeId,
+        type: order.orderId,
         text: 'Wallet ABI is not found',
       });
       return false;
     }
     if (!wallets || wallets.length < 1) {
-      console.error('handleTradeCompleteClick error: user has no wallets');
+      console.error('handleOrderCompleteClick error: user has no wallets');
       setError({
-        type: trade.tradeId,
+        type: order.orderId,
         text: 'You have no liquidity wallet',
       });
       return false;
@@ -65,10 +64,10 @@ function TradesBPage() {
 
     if (!wallet || !wallet.walletAddress) {
       console.error(
-        'handleTradeCompleteClick error: wallet for the chain not found'
+        'handleOrderCompleteClick error: wallet for the chain not found'
       );
       setError({
-        type: trade.tradeId,
+        type: order.orderId,
         text: 'You have no liquidity wallet for BSC chain',
       });
       return false;
@@ -76,13 +75,13 @@ function TradesBPage() {
 
     if (
       !wallet.tokens['BNB'] ||
-      parseFloat(wallet.tokens['BNB']) < parseFloat(trade.amountTokenOffer)
+      parseFloat(wallet.tokens['BNB']) < parseFloat(order.amountTokenOffer)
     ) {
       console.error(
-        "handleTradeCompleteClick error: You don't have enough BNB. Fund your liquidity walletYou don't have enough BNB. Fund your liquidity wallet."
+        "handleOrderCompleteClick error: You don't have enough BNB. Fund your liquidity walletYou don't have enough BNB. Fund your liquidity wallet."
       );
       setError({
-        type: trade.tradeId,
+        type: order.orderId,
         text: "You don't have enough BNB. Fund your liquidity wallet.",
       });
       return false;
@@ -100,9 +99,9 @@ function TradesBPage() {
         });
       } catch (error: any) {
         // handle change switching error
-        console.error('handleTradeCompleteClick error: chain switching failed');
+        console.error('handleOrderCompleteClick error: chain switching failed');
         setError({
-          type: trade.tradeId,
+          type: order.orderId,
           text: 'Blockchain switching failed. Try again, please.',
         });
         return false;
@@ -122,23 +121,23 @@ function TradesBPage() {
     // connect signer
     const walletContract = _walletContract.connect(signer);
 
-    // pay trade transaction
+    // pay order transaction
     const tx = await walletContract
       .payOfferWithNativeTokens(
-        trade.offerId,
-        trade.destAddr,
-        ethers.utils.parseEther(parseFloat(trade.amountTokenOffer).toFixed(6))
+        order.offerId,
+        order.destAddr,
+        ethers.utils.parseEther(parseFloat(order.amountTokenOffer).toFixed(6))
       )
       .catch((error: any) => {
         console.error('payOfferWithNativeTokens error', error);
         setError({
-          type: trade.tradeId || '',
+          type: order.orderId || '',
           text: getErrorMessage(error) || 'Transaction error',
         });
         return false;
       });
 
-    // stop execution if trade payment failed
+    // stop execution if order payment failed
     if (!tx) {
       return false;
     }
@@ -149,7 +148,7 @@ function TradesBPage() {
     } catch (error: any) {
       console.error('tx.wait error', error);
       setError({
-        type: trade.tradeId || '',
+        type: order.orderId || '',
         text: getErrorMessage(error) || 'Transaction error',
       });
       return false;
@@ -162,30 +161,30 @@ function TradesBPage() {
       tokenId: 'BNB',
       amount: (
         parseFloat(wallet.tokens['BNB'] || '0') -
-        parseFloat(trade.amountTokenOffer)
+        parseFloat(order.amountTokenOffer)
       ).toString(),
     });
 
     if (!isUpdated) {
       console.error(
-        "handleTradeCompleteClick error: wallet balance wasn't updated"
+        "handleOrderCompleteClick error: wallet balance wasn't updated"
       );
       setError({
-        type: trade.tradeId || '',
+        type: order.orderId || '',
         text: "Server error: wallet balance wasn't updated",
       });
     }
 
-    // set trade as completed
-    const completed = await completeTrade(trade.tradeId);
+    // set order as completed
+    const completed = await completeOrder(order.orderId);
 
     if (!completed) {
       console.error(
-        "handleTradeCompleteClick error: trade wasn't marked as completed"
+        "handleOrderCompleteClick error: order wasn't marked as completed"
       );
       setError({
-        type: trade.tradeId || '',
-        text: "Server error: trade wasn't marked as complete",
+        type: order.orderId || '',
+        text: "Server error: order wasn't marked as complete",
       });
     }
 
@@ -199,21 +198,21 @@ function TradesBPage() {
         <DexCardBody maxHeight="540px">
           {isLoading ? (
             <>
-              <TradeSkeleton />
-              <TradeSkeleton />
+              <OrderSkeleton />
+              <OrderSkeleton />
             </>
           ) : (
             <>
-              {sortedTrades && sortedTrades.length > 0 ? (
+              {sortedOrders && sortedOrders.length > 0 ? (
                 <>
-                  {sortedTrades.map((trade: TradeType) => (
-                    <Trade
-                      key={trade._id}
-                      trade={trade}
+                  {sortedOrders.map((order: OrderType) => (
+                    <Order
+                      key={order._id}
+                      order={order}
                       userType="b"
-                      onCompleteClick={handleTradeCompleteClick}
+                      onCompleteClick={handleOrderCompleteClick}
                       error={
-                        error.type && error.type === trade.tradeId && error.text
+                        error.type && error.type === order.orderId && error.text
                           ? error.text
                           : ''
                       }
@@ -222,7 +221,7 @@ function TradesBPage() {
                   <Box height="10px" />
                 </>
               ) : (
-                <NotFound text="No trades found" />
+                <NotFound text="No orders found" />
               )}
             </>
           )}
@@ -232,4 +231,4 @@ function TradesBPage() {
   );
 }
 
-export default TradesBPage;
+export default OrdersPage;

@@ -15,7 +15,7 @@ import BuyPage from './pages/BuyPage/BuyPage';
 import FaucetPageContextProvider from './context/FaucetPageContext';
 import BuyPageContextProvider from './context/BuyPageContext';
 import OffersContextProvider from './context/OffersContext';
-import TradesContextProvider from './context/TradesContext';
+import { OrdersContextProvider } from './context/OrdersContext';
 import StakesContextProvider from './context/StakesContext';
 import LiquidityWalletsContextProvider from './context/LiquidityWalletsContext';
 import AdminContextProvider from './context/AdminContext';
@@ -46,11 +46,11 @@ export const App = () => {
                           path="/buy/*"
                           element={
                             <OffersContextProvider>
-                              <TradesContextProvider>
+                              <OrdersContextProvider>
                                 <BuyPageContextProvider>
                                   <BuyPage />
                                 </BuyPageContextProvider>
-                              </TradesContextProvider>
+                              </OrdersContextProvider>
                             </OffersContextProvider>
                           }
                         />

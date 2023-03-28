@@ -15,7 +15,7 @@ import _ from 'lodash';
 import { useGrinderyNexus } from 'use-grindery-nexus';
 import useAbi from '../hooks/useAbi';
 import { getErrorMessage } from '../utils/error';
-import useTrades from '../hooks/useTrades';
+import useOrders from '../hooks/useOrders';
 import axios from 'axios';
 
 // Context props
@@ -138,7 +138,7 @@ export const BuyPageContextProvider = ({ children }: BuyPageContextProps) => {
   const [toTokenPrice, setToTokenPrice] = useState<number | null>(null);
   const [fromTokenPrice, setFromTokenPrice] = useState<number | null>(null);
   const [fromTokenBalance, setFromTokenBalance] = useState<string>('');
-  const { saveTrade } = useTrades();
+  const { saveOrder } = useOrders();
   const { searchOffers, offers, isLoading: isOfferLoading } = useOffers();
   const [isPricesLoading, setIsPricesLoading] = useState(false);
   const loading = isOfferLoading || isLoading;
@@ -602,29 +602,29 @@ export const BuyPageContextProvider = ({ children }: BuyPageContextProps) => {
       // get receipt
       const receipt = await provider.getTransactionReceipt(tx.hash);
 
-      // get tradeId
-      const tradeId = receipt?.logs?.[0]?.topics?.[1] || '';
+      // get orderId
+      const orderId = receipt?.logs?.[0]?.topics?.[1] || '';
 
-      // save trade to DB
-      const trade = await saveTrade({
+      // save order to DB
+      const order = await saveOrder({
         amountTokenDeposit: fromAmount,
         addressTokenDeposit: fromToken.address,
         chainIdTokenDeposit: fromToken.chainId,
         destAddr: address,
         offerId: offer.offerId,
-        tradeId,
+        orderId,
         amountTokenOffer: (
           (parseFloat(fromAmount) * fromTokenPrice) /
           toTokenPrice
         ).toString(),
       }).catch((error: any) => {
-        console.error('saveTrade error', error);
+        console.error('saveOrder error', error);
         setErrorMessage({
           type: 'acceptOffer',
           text: error?.message || 'Server error',
         });
       });
-      if (trade) {
+      if (order) {
         // reset state
         setApproved(false);
         setIsLoading(false);
@@ -632,7 +632,7 @@ export const BuyPageContextProvider = ({ children }: BuyPageContextProps) => {
       } else {
         setErrorMessage({
           type: 'acceptOffer',
-          text: "Server error, trade wasn't saved",
+          text: "Server error, order wasn't saved",
         });
         setIsLoading(false);
       }

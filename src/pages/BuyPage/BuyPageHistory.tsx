@@ -2,38 +2,37 @@ import React, { useEffect } from 'react';
 import { Box } from '@mui/system';
 import DexCard from '../../components/DexCard/DexCard';
 import DexCardHeader from '../../components/DexCard/DexCardHeader';
-import Loading from '../../components/Loading/Loading';
 import useBuyPage from '../../hooks/useBuyPage';
 import DexCardBody from '../../components/DexCard/DexCardBody';
 import NotFound from '../../components/NotFound/NotFound';
 import { useNavigate } from 'react-router-dom';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
 import { IconButton } from '@mui/material';
-import useTrades from '../../hooks/useTrades';
-import { Trade as TradeType } from '../../types/Trade';
-import Trade from '../../components/Trade/Trade';
-import TradeSkeleton from '../../components/Trade/TradeSkeleton';
+import useOrders from '../../hooks/useOrders';
+import { OrderType } from '../../types/Order';
+import Order from '../../components/Order/Order';
+import OrderSkeleton from '../../components/Order/OrderSkeleton';
 
 type Props = {};
 
 const BuyPageHistory = (props: Props) => {
   const { VIEWS } = useBuyPage();
-  const { trades, getTrades, isLoading } = useTrades();
+  const { orders, getOrders, isLoading } = useOrders();
 
-  const sortedTrades = trades?.sort((a: any, b: any) => {
+  const sortedOrders = orders?.sort((a: any, b: any) => {
     return new Date(b.date).getTime() - new Date(a.date).getTime();
   });
 
   let navigate = useNavigate();
 
   useEffect(() => {
-    getTrades();
+    getOrders();
   }, []);
 
   return (
     <DexCard>
       <DexCardHeader
-        title="Trades history"
+        title="Orders history"
         titleSize={18}
         titleAlign="center"
         startAdornment={
@@ -52,20 +51,20 @@ const BuyPageHistory = (props: Props) => {
       <DexCardBody maxHeight="540px">
         {isLoading ? (
           <>
-            <TradeSkeleton />
-            <TradeSkeleton />
+            <OrderSkeleton />
+            <OrderSkeleton />
           </>
         ) : (
           <>
-            {sortedTrades && sortedTrades.length > 0 ? (
+            {sortedOrders && sortedOrders.length > 0 ? (
               <>
-                {sortedTrades.map((trade: TradeType) => (
-                  <Trade key={trade._id} trade={trade} userType="a" />
+                {sortedOrders.map((order: OrderType) => (
+                  <Order key={order._id} order={order} userType="a" />
                 ))}
                 <Box height="10px" />
               </>
             ) : (
-              <NotFound text="No trades found" />
+              <NotFound text="No orders found" />
             )}
           </>
         )}

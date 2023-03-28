@@ -6,13 +6,13 @@ import SellMenu from '../../components/SellMenu/SellMenu';
 import LiquidityWalletPageContextProvider from '../../context/LiquidityWalletPageContext';
 import OffersPageContextProvider from '../../context/OffersPageContext';
 import StakingPageContextProvider from '../../context/StakingPageContext';
-import TradesBPageContextProvider from '../../context/TradesBPageContext';
-import TradesContextProvider from '../../context/TradesContext';
+import OrdersPageContextProvider from '../../context/OrdersPageContext';
+import OrdersContextProvider from '../../context/OrdersContext';
 import useAdmin from '../../hooks/useAdmin';
 import LiquidityWalletPage from '../LiquidityWalletPage/LiquidityWalletPage';
 import OffersPage from '../OffersPage/OffersPage';
 import StakingPage from '../StakingPage/StakingPage';
-import TradesBPage from '../TradesBPage/TradesBPage';
+import OrdersBPage from '../OrdersPage/OrdersPage';
 
 export const sellPages = [
   // {
@@ -36,15 +36,15 @@ export const sellPages = [
     ),
   },
   {
-    path: '/trades',
-    fullPath: '/sell/trades',
+    path: '/orders',
+    fullPath: '/sell/orders',
     label: 'Orders',
     component: (
-      <TradesContextProvider userType="b">
-        <TradesBPageContextProvider>
-          <TradesBPage />
-        </TradesBPageContextProvider>
-      </TradesContextProvider>
+      <OrdersContextProvider userType="b">
+        <OrdersPageContextProvider>
+          <OrdersBPage />
+        </OrdersPageContextProvider>
+      </OrdersContextProvider>
     ),
   },
   // {

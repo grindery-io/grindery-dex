@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Trade as TradeType } from '../../types/Trade';
+import { OrderType } from '../../types/Order';
 import {
   Avatar,
   Badge,
@@ -18,7 +18,7 @@ import moment from 'moment';
 import CheckIcon from '@mui/icons-material/Check';
 import HourglassTopIcon from '@mui/icons-material/HourglassTop';
 import DexCardSubmitButton from '../DexCard/DexCardSubmitButton';
-//import useTrades from '../../hooks/useTrades';
+//import useOrders from '../../hooks/useOrders';
 import { Card } from '../Card/Card';
 import { CardTitle } from '../Card/CardTitle';
 import { ChainTokenBox } from '../ChainTokenBox/ChainTokenBox';
@@ -26,14 +26,14 @@ import { AvatarDefault } from '../Avatar/AvatarDefault';
 import AlertBox from '../AlertBox/AlertBox';
 
 type Props = {
-  trade: TradeType;
+  order: OrderType;
   userType: 'a' | 'b';
-  onCompleteClick?: (trade: TradeType) => Promise<boolean>;
+  onCompleteClick?: (order: OrderType) => Promise<boolean>;
   error?: string;
 };
 
-const Trade = (props: Props) => {
-  const { trade, userType, onCompleteClick, error } = props;
+const Order = (props: Props) => {
+  const { order, userType, onCompleteClick, error } = props;
   const { getOfferById } = useOffers();
   const [offer, setOffer] = useState<Offer | false>(false);
   const { chains } = useGrinderyChains();
@@ -41,11 +41,11 @@ const Trade = (props: Props) => {
   const isUserA = userType === 'a';
 
   const fromChain = chains.find(
-    (c: Chain) => c.chainId === trade.chainIdTokenDeposit
+    (c: Chain) => c.chainId === order.chainIdTokenDeposit
   );
 
   const fromToken = fromChain?.tokens?.find(
-    (t: TokenType) => t.address === trade.addressTokenDeposit
+    (t: TokenType) => t.address === order.addressTokenDeposit
   );
 
   const offerChain = chains.find(
@@ -58,16 +58,16 @@ const Trade = (props: Props) => {
     );
 
   const getOffer = async () => {
-    if (trade.offerId) {
-      const offerRes = await getOfferById(trade.offerId);
+    if (order.offerId) {
+      const offerRes = await getOfferById(order.offerId);
       setOffer(offerRes);
     }
   };
 
   const handleCompleteClick = async () => {
-    if (trade.tradeId && onCompleteClick) {
+    if (order.orderId && onCompleteClick) {
       setLoading(true);
-      const res = await onCompleteClick(trade);
+      const res = await onCompleteClick(order);
       if (res) {
         // handle success
       } else {
@@ -79,7 +79,7 @@ const Trade = (props: Props) => {
 
   useEffect(() => {
     getOffer();
-  }, [trade.offerId]);
+  }, [order.offerId]);
 
   return (
     <Card
@@ -96,7 +96,7 @@ const Trade = (props: Props) => {
         justifyContent="space-between"
         alignItems="center"
       >
-        {trade.date && (
+        {order.date && (
           <Typography
             variant="caption"
             sx={{
@@ -104,10 +104,10 @@ const Trade = (props: Props) => {
               color: 'rgba(0, 0, 0, 0.6)',
             }}
           >
-            {moment(trade.date).format('MMMM Do YYYY, h:mm:ss a')}
+            {moment(order.date).format('MMMM Do YYYY, h:mm:ss a')}
           </Typography>
         )}
-        {trade.isComplete ? (
+        {order.isComplete ? (
           <Chip
             icon={<CheckIcon />}
             label="Complete"
@@ -144,7 +144,7 @@ const Trade = (props: Props) => {
             }}
             mb={'3px'}
           >
-            {parseFloat(trade.amountTokenDeposit).toFixed(6).toLocaleString()}
+            {parseFloat(order.amountTokenDeposit).toFixed(6).toLocaleString()}
           </Box>
         }
         subheader={
@@ -213,7 +213,7 @@ const Trade = (props: Props) => {
             }}
             mb={'3px'}
           >
-            {parseFloat(trade.amountTokenOffer).toFixed(6).toLocaleString()}
+            {parseFloat(order.amountTokenOffer).toFixed(6).toLocaleString()}
           </Box>
         }
         subheader={
@@ -235,7 +235,7 @@ const Trade = (props: Props) => {
           </AlertBox>
         </Box>
       )}
-      {!trade.isComplete && !isUserA && (
+      {!order.isComplete && !isUserA && (
         <Box
           sx={{
             padding: '0 16px',
@@ -255,4 +255,4 @@ const Trade = (props: Props) => {
   );
 };
 
-export default Trade;
+export default Order;

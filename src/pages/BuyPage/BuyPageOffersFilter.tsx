@@ -39,7 +39,7 @@ const BuyPageOffersFilter = (props: Props) => {
         title="Buy"
         endAdornment={
           user ? (
-            <Tooltip title="Trades history">
+            <Tooltip title="Orders history">
               <IconButton
                 sx={{ marginRight: '-8px' }}
                 onClick={() => {
