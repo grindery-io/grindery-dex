@@ -224,7 +224,7 @@ const BuyPageOfferAccept = (props: Props) => {
                   ? approved ||
                     (typeof fromToken !== 'string' &&
                       fromToken?.address === '0x0')
-                    ? 'Accept offer'
+                    ? 'Place Order'
                     : 'Approve tokens'
                   : 'Connect wallet'
               }
