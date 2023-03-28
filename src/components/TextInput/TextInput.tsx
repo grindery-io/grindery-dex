@@ -1,4 +1,4 @@
-import { FormHelperText } from '@mui/material';
+import { FormHelperText, SxProps } from '@mui/material';
 import React from 'react';
 import { Card } from '../Card/Card';
 import { CardTitle } from '../Card/CardTitle';
@@ -16,6 +16,7 @@ type Props = {
   };
   placeholder?: string;
   endAdornment?: React.ReactNode;
+  sx?: SxProps;
 };
 
 const TextInput = (props: Props) => {
@@ -28,9 +29,10 @@ const TextInput = (props: Props) => {
     error,
     placeholder,
     endAdornment,
+    sx,
   } = props;
   return (
-    <Card style={{ borderRadius: '12px', marginTop: '20px' }}>
+    <Card sx={{ borderRadius: '12px', marginTop: '20px', ...(sx || {}) }}>
       <CardTitle>{label}</CardTitle>
       <FormControl fullWidth sx={{ paddingTop: '6px', paddingBottom: '5px' }}>
         <Input

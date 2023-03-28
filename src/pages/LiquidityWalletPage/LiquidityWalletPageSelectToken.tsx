@@ -87,6 +87,7 @@ function LiquidityWalletPageSelectToken() {
                     VIEWS.ADD.fullPath.replace(':walletId', walletId || '')
                   );
                 }}
+                chainLabel={walletChain.label}
               />
             ) : (
               <NotFound

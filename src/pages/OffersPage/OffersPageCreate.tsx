@@ -12,6 +12,7 @@ import Loading from '../../components/Loading/Loading';
 import { useNavigate } from 'react-router-dom';
 import AlertBox from '../../components/AlertBox/AlertBox';
 import useOffersPage from '../../hooks/useOffersPage';
+import { CardTitle } from '../../components/Card/CardTitle';
 
 function OffersPageCreate() {
   const { user, connect } = useGrinderyNexus();
@@ -63,38 +64,50 @@ function OffersPageCreate() {
           error={errorMessage}
         />
 
-        <Box display="flex" flexDirection="row" gap="16px">
-          <TextInput
-            label="Min. order"
-            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-              setErrorMessage({
-                type: '',
-                text: '',
-              });
-              setAmountMin(event.target.value);
-            }}
-            name="amountMin"
-            placeholder="0"
-            disabled={false}
-            value={amountMin}
-            error={errorMessage}
-          />
-          <TextInput
-            label="Max. order"
-            value={amountMax}
-            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-              setErrorMessage({
-                type: '',
-                text: '',
-              });
-              setAmountMax(event.target.value);
-            }}
-            name="amountMax"
-            placeholder="0"
-            disabled={false}
-            error={errorMessage}
-          />
-        </Box>
+        {token && (
+          <Box>
+            <CardTitle
+              sx={{ paddingLeft: 0, paddingRight: 0, marginBottom: '6px' }}
+            >
+              {token.symbol} order amounts:
+            </CardTitle>
+
+            <Box display="flex" flexDirection="row" gap="16px">
+              <TextInput
+                label="Min. order"
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                  setErrorMessage({
+                    type: '',
+                    text: '',
+                  });
+                  setAmountMin(event.target.value);
+                }}
+                name="amountMin"
+                placeholder="0"
+                disabled={false}
+                value={amountMin}
+                error={errorMessage}
+                sx={{ marginTop: 0 }}
+              />
+              <TextInput
+                label="Max. order"
+                value={amountMax}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                  setErrorMessage({
+                    type: '',
+                    text: '',
+                  });
+                  setAmountMax(event.target.value);
+                }}
+                name="amountMax"
+                placeholder="0"
+                disabled={false}
+                error={errorMessage}
+                sx={{ marginTop: 0 }}
+              />
+            </Box>
+          </Box>
+        )}
         {errorMessage &&
           errorMessage.type === 'saveOffer' &&
           errorMessage.text && (
