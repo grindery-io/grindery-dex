@@ -23,15 +23,17 @@ import { Card } from '../Card/Card';
 import { CardTitle } from '../Card/CardTitle';
 import { ChainTokenBox } from '../ChainTokenBox/ChainTokenBox';
 import { AvatarDefault } from '../Avatar/AvatarDefault';
+import AlertBox from '../AlertBox/AlertBox';
 
 type Props = {
   trade: TradeType;
   userType: 'a' | 'b';
   onCompleteClick?: (trade: TradeType) => Promise<boolean>;
+  error?: string;
 };
 
 const Trade = (props: Props) => {
-  const { trade, userType, onCompleteClick } = props;
+  const { trade, userType, onCompleteClick, error } = props;
   const { getOfferById } = useOffers();
   const [offer, setOffer] = useState<Offer | false>(false);
   const { chains } = useGrinderyChains();
@@ -92,6 +94,7 @@ const Trade = (props: Props) => {
         direction="row"
         sx={{ margin: '16px 16px 0' }}
         justifyContent="space-between"
+        alignItems="center"
       >
         {trade.date && (
           <Typography
@@ -225,6 +228,13 @@ const Trade = (props: Props) => {
         selected={true}
         compact={false}
       />
+      {error && (
+        <Box sx={{ margin: '0 16px' }}>
+          <AlertBox color="error" wrapperStyle={{ margin: '10px 0' }}>
+            <p style={{ fontSize: '14px' }}>{error}</p>
+          </AlertBox>
+        </Box>
+      )}
       {!trade.isComplete && !isUserA && (
         <Box
           sx={{

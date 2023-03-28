@@ -12,6 +12,7 @@ import { IconButton } from '@mui/material';
 import useTrades from '../../hooks/useTrades';
 import { Trade as TradeType } from '../../types/Trade';
 import Trade from '../../components/Trade/Trade';
+import TradeSkeleton from '../../components/Trade/TradeSkeleton';
 
 type Props = {};
 
@@ -50,7 +51,10 @@ const BuyPageHistory = (props: Props) => {
       />
       <DexCardBody maxHeight="540px">
         {isLoading ? (
-          <Loading />
+          <>
+            <TradeSkeleton />
+            <TradeSkeleton />
+          </>
         ) : (
           <>
             {sortedTrades && sortedTrades.length > 0 ? (

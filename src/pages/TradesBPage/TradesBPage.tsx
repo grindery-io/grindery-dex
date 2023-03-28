@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import DexCard from '../../components/DexCard/DexCard';
 import DexCardHeader from '../../components/DexCard/DexCardHeader';
 import DexCardBody from '../../components/DexCard/DexCardBody';
@@ -12,32 +12,51 @@ import NotFound from '../../components/NotFound/NotFound';
 import { useGrinderyNexus } from 'use-grindery-nexus';
 import useAbi from '../../hooks/useAbi';
 import useLiquidityWallets from '../../hooks/useLiquidityWallets';
+import { getErrorMessage } from '../../utils/error';
+import TradeSkeleton from '../../components/Trade/TradeSkeleton';
 
 function TradesBPage() {
   const { chain: selectedChain, provider, ethers } = useGrinderyNexus();
   const { tradesB: trades, isLoading, completeTrade } = useTrades();
   const { liquidityWalletAbi } = useAbi();
   const { wallets, updateWallet } = useLiquidityWallets();
+  const [error, setError] = useState({ type: '', text: '' });
 
   const sortedTrades = trades?.sort((a: any, b: any) => {
     return new Date(b.date).getTime() - new Date(a.date).getTime();
   });
 
   const handleTradeCompleteClick = async (trade: TradeType) => {
+    setError({
+      type: '',
+      text: '',
+    });
     if (!trade || !trade.tradeId) {
       console.error('handleTradeCompleteClick error: trade not found');
       return false;
     }
     if (!trade.offerId) {
       console.error('handleTradeCompleteClick error: trade has no offerId');
+      setError({
+        type: trade.tradeId,
+        text: 'Trade has no associated offer id',
+      });
       return false;
     }
     if (!liquidityWalletAbi) {
       console.error('handleTradeCompleteClick error: abi not found');
+      setError({
+        type: trade.tradeId,
+        text: 'Wallet ABI is not found',
+      });
       return false;
     }
     if (!wallets || wallets.length < 1) {
       console.error('handleTradeCompleteClick error: user has no wallets');
+      setError({
+        type: trade.tradeId,
+        text: 'You have no liquidity wallet',
+      });
       return false;
     }
 
@@ -48,6 +67,24 @@ function TradesBPage() {
       console.error(
         'handleTradeCompleteClick error: wallet for the chain not found'
       );
+      setError({
+        type: trade.tradeId,
+        text: 'You have no liquidity wallet for BSC chain',
+      });
+      return false;
+    }
+
+    if (
+      !wallet.tokens['BNB'] ||
+      parseFloat(wallet.tokens['BNB']) < parseFloat(trade.amountTokenOffer)
+    ) {
+      console.error(
+        "handleTradeCompleteClick error: You don't have enough BNB. Fund your liquidity walletYou don't have enough BNB. Fund your liquidity wallet."
+      );
+      setError({
+        type: trade.tradeId,
+        text: "You don't have enough BNB. Fund your liquidity wallet.",
+      });
       return false;
     }
 
@@ -64,6 +101,10 @@ function TradesBPage() {
       } catch (error: any) {
         // handle change switching error
         console.error('handleTradeCompleteClick error: chain switching failed');
+        setError({
+          type: trade.tradeId,
+          text: 'Blockchain switching failed. Try again, please.',
+        });
         return false;
       }
     }
@@ -90,6 +131,10 @@ function TradesBPage() {
       )
       .catch((error: any) => {
         console.error('payOfferWithNativeTokens error', error);
+        setError({
+          type: trade.tradeId || '',
+          text: getErrorMessage(error) || 'Transaction error',
+        });
         return false;
       });
 
@@ -103,6 +148,10 @@ function TradesBPage() {
       await tx.wait();
     } catch (error: any) {
       console.error('tx.wait error', error);
+      setError({
+        type: trade.tradeId || '',
+        text: getErrorMessage(error) || 'Transaction error',
+      });
       return false;
     }
 
@@ -121,6 +170,10 @@ function TradesBPage() {
       console.error(
         "handleTradeCompleteClick error: wallet balance wasn't updated"
       );
+      setError({
+        type: trade.tradeId || '',
+        text: "Server error: wallet balance wasn't updated",
+      });
     }
 
     // set trade as completed
@@ -130,6 +183,10 @@ function TradesBPage() {
       console.error(
         "handleTradeCompleteClick error: trade wasn't marked as completed"
       );
+      setError({
+        type: trade.tradeId || '',
+        text: "Server error: trade wasn't marked as complete",
+      });
     }
 
     return true;
@@ -141,7 +198,10 @@ function TradesBPage() {
         <DexCardHeader title="Trades" />
         <DexCardBody maxHeight="540px">
           {isLoading ? (
-            <Loading />
+            <>
+              <TradeSkeleton />
+              <TradeSkeleton />
+            </>
           ) : (
             <>
               {sortedTrades && sortedTrades.length > 0 ? (
@@ -152,6 +212,11 @@ function TradesBPage() {
                       trade={trade}
                       userType="b"
                       onCompleteClick={handleTradeCompleteClick}
+                      error={
+                        error.type && error.type === trade.tradeId && error.text
+                          ? error.text
+                          : ''
+                      }
                     />
                   ))}
                   <Box height="10px" />

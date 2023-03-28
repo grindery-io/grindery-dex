@@ -7,10 +7,11 @@ type Props = {
   color?: 'success' | 'error';
   icon?: ReactElement;
   children: React.ReactNode;
+  wrapperStyle?: { [key: string]: string };
 };
 
 const AlertBox = (props: Props) => {
-  const { color, icon, children } = props;
+  const { color, icon, children, wrapperStyle } = props;
 
   const icons = {
     success: iconSuccess,
@@ -18,7 +19,7 @@ const AlertBox = (props: Props) => {
   };
 
   return (
-    <Wrapper>
+    <Wrapper style={{ ...wrapperStyle }}>
       <Alert
         color={color || 'success'}
         icon={icon || icons[color || 'success']}
