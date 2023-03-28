@@ -130,7 +130,9 @@ const BuyPageOffersFilter = (props: Props) => {
           label={user ? 'Search offers' : 'Connect wallet'}
           onClick={
             user
-              ? handleSearchClick
+              ? () => {
+                  handleSearchClick(fromAmount);
+                }
               : () => {
                   connect();
                 }

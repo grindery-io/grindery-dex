@@ -53,7 +53,7 @@ type ContextProps = {
   handleToChainChange: (chain: Chain) => void;
   handleToTokenChange: (token: TokenType) => void;
   handleFromAmountChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  handleSearchClick: () => void;
+  handleSearchClick: (amount: string, silent?: boolean) => void;
   handleFromAmountMaxClick: () => void;
   handleAcceptOfferClick: (offer: Offer) => void;
   handleRefreshOffersClick: () => void;
@@ -260,7 +260,7 @@ export const BuyPageContextProvider = ({ children }: BuyPageContextProps) => {
     if (fromToken) {
       getFromTokenPrice(fromToken.symbol);
     }
-    handleSearchClick(true);
+    handleSearchClick(fromAmount, true);
   };
 
   const handleFromAmountMaxClick = () => {
@@ -303,7 +303,7 @@ export const BuyPageContextProvider = ({ children }: BuyPageContextProps) => {
     setFromAmount(event.target.value || '');
   };
 
-  const handleSearchClick = async (silent: boolean = false) => {
+  const handleSearchClick = async (amount: string, silent: boolean = false) => {
     // clear errors
     setErrorMessage({ type: '', text: '' });
 
@@ -340,7 +340,7 @@ export const BuyPageContextProvider = ({ children }: BuyPageContextProps) => {
       setIsLoading(false);
       return;
     }
-    if (!fromAmount) {
+    if (!amount) {
       setErrorMessage({
         type: 'fromAmount',
         text: 'Amount is required',
@@ -348,7 +348,7 @@ export const BuyPageContextProvider = ({ children }: BuyPageContextProps) => {
       setIsLoading(false);
       return;
     }
-    if (!isNumeric(fromAmount)) {
+    if (!isNumeric(amount)) {
       setErrorMessage({
         type: 'fromAmount',
         text: 'Amount must be a number',
@@ -356,7 +356,7 @@ export const BuyPageContextProvider = ({ children }: BuyPageContextProps) => {
       setIsLoading(false);
       return;
     }
-    if (parseFloat(fromAmount) <= 0) {
+    if (parseFloat(amount) <= 0) {
       setErrorMessage({
         type: 'fromAmount',
         text: 'Amount must be greater than 0',
@@ -364,7 +364,7 @@ export const BuyPageContextProvider = ({ children }: BuyPageContextProps) => {
       setIsLoading(false);
       return;
     }
-    if (parseFloat(fromAmount) > parseFloat(fromTokenBalance)) {
+    if (parseFloat(amount) > parseFloat(fromTokenBalance)) {
       setErrorMessage({
         type: 'search',
         text: "You don't have enough funds",
@@ -382,10 +382,10 @@ export const BuyPageContextProvider = ({ children }: BuyPageContextProps) => {
   };
 
   const debouncedChangeHandler = useCallback(
-    _.debounce(() => {
-      handleSearchClick();
+    _.debounce((amount: string) => {
+      handleSearchClick(amount);
     }, 1000),
-    [fromChain, fromToken, toChain, toToken, fromAmount, fromTokenBalance]
+    [fromChain, fromToken, toChain, toToken, fromTokenBalance]
   );
 
   const getFromTokenBalance = async () => {
@@ -651,7 +651,7 @@ export const BuyPageContextProvider = ({ children }: BuyPageContextProps) => {
     ) {
       setIsOffersVisible(true);
       setIsLoading(true);
-      debouncedChangeHandler();
+      debouncedChangeHandler(fromAmount);
     } else {
       setIsOffersVisible(false);
     }
