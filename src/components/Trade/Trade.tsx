@@ -141,7 +141,7 @@ const Trade = (props: Props) => {
             }}
             mb={'3px'}
           >
-            {parseFloat(trade.amountTokenDeposit).toLocaleString()}
+            {parseFloat(trade.amountTokenDeposit).toFixed(6).toLocaleString()}
           </Box>
         }
         subheader={
@@ -210,7 +210,7 @@ const Trade = (props: Props) => {
             }}
             mb={'3px'}
           >
-            {parseFloat(trade.amountTokenOffer).toLocaleString()}
+            {parseFloat(trade.amountTokenOffer).toFixed(6).toLocaleString()}
           </Box>
         }
         subheader={

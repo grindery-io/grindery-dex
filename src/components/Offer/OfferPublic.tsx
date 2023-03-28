@@ -129,7 +129,7 @@ const OfferPublic = (props: Props) => {
             }}
             mb={'3px'}
           >
-            {amount ? <>{amount.toFixed(4).toLocaleString()}</> : <Skeleton />}
+            {amount ? <>{amount.toFixed(6).toLocaleString()}</> : <Skeleton />}
           </Box>
         }
         subheader={

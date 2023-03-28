@@ -168,7 +168,7 @@ const BuyPageOfferAccept = (props: Props) => {
           <>
             <AmountInput
               label="You pay"
-              value={fromAmount}
+              value={parseFloat(fromAmount).toFixed(6).toLocaleString()}
               onChange={() => {}}
               name="fromAmount"
               disabled={true}
