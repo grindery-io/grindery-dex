@@ -127,7 +127,7 @@ export const BuyPageContextProvider = ({ children }: BuyPageContextProps) => {
   const [approved, setApproved] = useState<boolean>(false);
   const [accepted, setAccepted] = useState<boolean>(false);
   const [toChain, setToChain] = useState<Chain | null>(null);
-  const { chains } = useGrinderyChains();
+  const { chains, isLoading: chainsIsLoading } = useGrinderyChains();
   const [fromChain, setFromChain] = useState<Chain | null>(null);
   const [fromToken, setFromToken] = useState<TokenType | ''>('');
   const [toToken, setToToken] = useState<TokenType | ''>('');
@@ -269,6 +269,7 @@ export const BuyPageContextProvider = ({ children }: BuyPageContextProps) => {
 
   const handleFromChainChange = (chain: Chain) => {
     setFromChain(chain);
+    setFromToken('');
   };
 
   const handleFromTokenChange = (token: TokenType) => {
@@ -679,6 +680,23 @@ export const BuyPageContextProvider = ({ children }: BuyPageContextProps) => {
       getFromTokenPrice(fromToken.symbol);
     }
   }, [fromToken, token?.access_token]);
+
+  useEffect(() => {
+    if (!chainsIsLoading) {
+      setToChain(chains.find((c: Chain) => c.chainId === '97') || null);
+      setToToken(
+        chains
+          .find((c: Chain) => c.chainId === '97')
+          ?.tokens?.find((t: TokenType) => t.symbol === 'BNB') || ''
+      );
+      setFromChain(chains.find((c: Chain) => c.chainId === '5') || null);
+      setFromToken(
+        chains
+          .find((c: Chain) => c.chainId === '5')
+          ?.tokens?.find((t: TokenType) => t.symbol === 'ETH') || ''
+      );
+    }
+  }, [chains, chainsIsLoading]);
 
   return (
     <BuyPageContext.Provider
