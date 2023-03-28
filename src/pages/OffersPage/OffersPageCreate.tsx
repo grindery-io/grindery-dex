@@ -13,6 +13,9 @@ import { useNavigate } from 'react-router-dom';
 import AlertBox from '../../components/AlertBox/AlertBox';
 import useOffersPage from '../../hooks/useOffersPage';
 import { CardTitle } from '../../components/Card/CardTitle';
+import { chain } from 'lodash';
+import useGrinderyChains from '../../hooks/useGrinderyChains';
+import { Chain } from '../../types/Chain';
 
 function OffersPageCreate() {
   const { user, connect } = useGrinderyNexus();
@@ -23,13 +26,20 @@ function OffersPageCreate() {
     errorMessage,
     token,
     currentChain,
+    exchangeRate,
     setAmountMin,
     setAmountMax,
     setErrorMessage,
     handleCreateClick,
+    setExchangeRate,
     VIEWS,
+    chain,
   } = useOffersPage();
   let navigate = useNavigate();
+
+  const { chains } = useGrinderyChains();
+
+  const chainLabel = chains.find((c: Chain) => c.value === chain)?.label;
 
   return (
     <>
@@ -65,9 +75,9 @@ function OffersPageCreate() {
         />
 
         {token && (
-          <Box>
+          <>
             <CardTitle
-              sx={{ paddingLeft: 0, paddingRight: 0, marginBottom: '6px' }}
+              sx={{ paddingLeft: '4px', paddingRight: 0, marginBottom: '6px' }}
             >
               {token.symbol} order amounts:
             </CardTitle>
@@ -106,7 +116,29 @@ function OffersPageCreate() {
                 sx={{ marginTop: 0 }}
               />
             </Box>
-          </Box>
+            <CardTitle
+              sx={{ paddingLeft: '4px', paddingRight: 0, marginBottom: '6px' }}
+            >
+              Exchange rate:
+            </CardTitle>
+            <TextInput
+              label={`1 ${token.symbol} on ${chainLabel} is traded for`}
+              value={exchangeRate}
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                setErrorMessage({
+                  type: '',
+                  text: '',
+                });
+                setExchangeRate(event.target.value);
+              }}
+              name="exchangeRate"
+              placeholder="0"
+              disabled={false}
+              error={errorMessage}
+              sx={{ marginTop: 0 }}
+              helpText="ETH on Goerli Testnet"
+            />
+          </>
         )}
         {errorMessage &&
           errorMessage.type === 'saveOffer' &&

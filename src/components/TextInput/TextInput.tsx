@@ -17,6 +17,7 @@ type Props = {
   placeholder?: string;
   endAdornment?: React.ReactNode;
   sx?: SxProps;
+  helpText?: string | React.ReactNode;
 };
 
 const TextInput = (props: Props) => {
@@ -30,6 +31,7 @@ const TextInput = (props: Props) => {
     placeholder,
     endAdornment,
     sx,
+    helpText,
   } = props;
   return (
     <Card sx={{ borderRadius: '12px', marginTop: '20px', ...(sx || {}) }}>
@@ -49,6 +51,13 @@ const TextInput = (props: Props) => {
           style={{ padding: `0px ${endAdornment ? '0px' : '16px'} 0px 0` }}
           endAdornment={endAdornment}
         />
+        {helpText && (
+          <FormHelperText
+            sx={{ paddingLeft: '5px', marginTop: 0, lineHeight: 1.4 }}
+          >
+            {helpText}
+          </FormHelperText>
+        )}
         <FormHelperText error={error && error.type === name && !!error.text}>
           {error && error.type === name && !!error.text ? error.text : ''}
         </FormHelperText>

@@ -28,6 +28,8 @@ type ContextProps = {
   currentChain: Chain | null;
   chainTokens: TokenType[];
   groupedOffers: { [key: string]: Offer[] };
+  exchangeRate: string;
+  setExchangeRate: React.Dispatch<React.SetStateAction<string>>;
   setAmountMin: React.Dispatch<React.SetStateAction<string>>;
   setAmountMax: React.Dispatch<React.SetStateAction<string>>;
   setErrorMessage: React.Dispatch<
@@ -65,6 +67,8 @@ export const OffersPageContext = createContext<ContextProps>({
   currentChain: null,
   chainTokens: [],
   groupedOffers: {},
+  exchangeRate: '',
+  setExchangeRate: () => {},
   setAmountMin: () => {},
   setAmountMax: () => {},
   setErrorMessage: () => {},
@@ -99,6 +103,7 @@ export const OffersPageContextProvider = ({
   const { chains, isLoading: chainsIsLoading } = useGrinderyChains();
   const [chain, setChain] = useState('');
   const [token, setToken] = useState<TokenType | ''>('');
+  const [exchangeRate, setExchangeRate] = useState<string>('');
   const [searchToken, setSearchToken] = useState('');
   const [isActivating, setIsActivating] = useState('');
   const {
@@ -186,6 +191,21 @@ export const OffersPageContextProvider = ({
       });
       return;
     }
+    if (!exchangeRate) {
+      setErrorMessage({
+        type: 'exchangeRate',
+        text: 'Exchange rate is required',
+      });
+      return;
+    }
+    if (!isNumeric(exchangeRate)) {
+      setErrorMessage({
+        type: 'exchangeRate',
+        text: 'Must be a number',
+      });
+      return;
+    }
+
     // end validation
 
     // start executing
@@ -293,6 +313,9 @@ export const OffersPageContextProvider = ({
       token: token.symbol || '',
       tokenAddress: token.address || '',
       hash: tx.hash || '',
+      exchangeRate: exchangeRate || '',
+      exchangeToken: 'ETH',
+      exchangeChainId: '5',
       offerId: offerId,
       isActive: true,
     });
@@ -576,6 +599,8 @@ export const OffersPageContextProvider = ({
         currentChain,
         chainTokens,
         groupedOffers,
+        exchangeRate,
+        setExchangeRate,
         setAmountMin,
         setAmountMax,
         setErrorMessage,
