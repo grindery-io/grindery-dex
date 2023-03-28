@@ -85,18 +85,9 @@ const BuyPageOffersFilter = (props: Props) => {
           placeholder="0"
           chain={fromChain}
           token={fromToken}
-          helpText={
-            <span style={{ whiteSpace: 'pre-wrap' }}>{`$${(
-              parseFloat(fromAmount || '0') * (fromTokenPrice || 0)
-            ).toLocaleString()}\n${
-              typeof fromToken !== 'string'
-                ? ''
-                : // `1 ${
-                  //     fromToken?.symbol
-                  //   } = $${fromTokenPrice?.toLocaleString()}`
-                  ''
-            }`}</span>
-          }
+          helpText={`${(fromToken && fromToken.symbol) || ''} on ${
+            fromChain?.label
+          }`}
           endAdornment={
             GRT_CONTRACT_ADDRESS[fromChain?.value || ''] ? (
               <Box>
