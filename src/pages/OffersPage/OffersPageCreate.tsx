@@ -27,6 +27,8 @@ function OffersPageCreate() {
     token,
     currentChain,
     exchangeRate,
+    estimatedTime,
+    setEstimatedTime,
     setAmountMin,
     setAmountMax,
     setErrorMessage,
@@ -54,6 +56,8 @@ function OffersPageCreate() {
             onClick={() => {
               setAmountMin('');
               setAmountMax('');
+              setExchangeRate('');
+              setEstimatedTime('');
               navigate(VIEWS.ROOT.fullPath);
             }}
           >
@@ -77,7 +81,12 @@ function OffersPageCreate() {
         {token && (
           <>
             <CardTitle
-              sx={{ paddingLeft: '4px', paddingRight: 0, marginBottom: '6px' }}
+              sx={{
+                paddingTop: '20px',
+                paddingLeft: '4px',
+                paddingRight: 0,
+                marginBottom: '6px',
+              }}
             >
               {token.symbol} order amounts:
             </CardTitle>
@@ -117,7 +126,12 @@ function OffersPageCreate() {
               />
             </Box>
             <CardTitle
-              sx={{ paddingLeft: '4px', paddingRight: 0, marginBottom: '6px' }}
+              sx={{
+                paddingTop: '20px',
+                paddingLeft: '4px',
+                paddingRight: 0,
+                marginBottom: '6px',
+              }}
             >
               Exchange rate:
             </CardTitle>
@@ -137,6 +151,22 @@ function OffersPageCreate() {
               error={errorMessage}
               sx={{ marginTop: 0 }}
               helpText="ETH on Goerli Testnet"
+            />
+            <TextInput
+              label={`Average execution time`}
+              value={estimatedTime}
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                setErrorMessage({
+                  type: '',
+                  text: '',
+                });
+                setEstimatedTime(event.target.value);
+              }}
+              name="estimatedTime"
+              placeholder="0"
+              disabled={false}
+              error={errorMessage}
+              helpText="seconds"
             />
           </>
         )}

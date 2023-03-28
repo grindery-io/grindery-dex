@@ -29,6 +29,8 @@ type ContextProps = {
   chainTokens: TokenType[];
   groupedOffers: { [key: string]: Offer[] };
   exchangeRate: string;
+  estimatedTime: string;
+  setEstimatedTime: React.Dispatch<React.SetStateAction<string>>;
   setExchangeRate: React.Dispatch<React.SetStateAction<string>>;
   setAmountMin: React.Dispatch<React.SetStateAction<string>>;
   setAmountMax: React.Dispatch<React.SetStateAction<string>>;
@@ -68,6 +70,8 @@ export const OffersPageContext = createContext<ContextProps>({
   chainTokens: [],
   groupedOffers: {},
   exchangeRate: '',
+  estimatedTime: '',
+  setEstimatedTime: () => {},
   setExchangeRate: () => {},
   setAmountMin: () => {},
   setAmountMax: () => {},
@@ -104,6 +108,7 @@ export const OffersPageContextProvider = ({
   const [chain, setChain] = useState('');
   const [token, setToken] = useState<TokenType | ''>('');
   const [exchangeRate, setExchangeRate] = useState<string>('');
+  const [estimatedTime, setEstimatedTime] = useState<string>('');
   const [searchToken, setSearchToken] = useState('');
   const [isActivating, setIsActivating] = useState('');
   const {
@@ -205,7 +210,20 @@ export const OffersPageContextProvider = ({
       });
       return;
     }
-
+    if (!estimatedTime) {
+      setErrorMessage({
+        type: 'estimatedTime',
+        text: 'Execution time is required',
+      });
+      return;
+    }
+    if (!isNumeric(estimatedTime)) {
+      setErrorMessage({
+        type: 'estimatedTime',
+        text: 'Must be a number',
+      });
+      return;
+    }
     // end validation
 
     // start executing
@@ -316,6 +334,7 @@ export const OffersPageContextProvider = ({
       exchangeRate: exchangeRate || '',
       exchangeToken: 'ETH',
       exchangeChainId: '5',
+      estimatedTime: estimatedTime || '',
       offerId: offerId,
       isActive: true,
     });
@@ -327,6 +346,8 @@ export const OffersPageContextProvider = ({
       // clear input fields
       setAmountMin('');
       setAmountMax('');
+      setExchangeRate('');
+      setEstimatedTime('');
       setSearchToken('');
 
       // complete execution
@@ -600,6 +621,8 @@ export const OffersPageContextProvider = ({
         chainTokens,
         groupedOffers,
         exchangeRate,
+        estimatedTime,
+        setEstimatedTime,
         setExchangeRate,
         setAmountMin,
         setAmountMax,
