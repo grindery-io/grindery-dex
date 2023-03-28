@@ -68,6 +68,7 @@ const BuyPageSelectChainAndToken = (props: Props) => {
             tokens={toChainTokens}
             onClick={handleToTokenChange}
             loading={chainsIsLoading}
+            chainLabel={toChain?.label}
           />
         ) : (
           <>
@@ -76,6 +77,7 @@ const BuyPageSelectChainAndToken = (props: Props) => {
                 tokens={toChainTokens}
                 onClick={handleToTokenChange}
                 loading={chainsIsLoading}
+                chainLabel={toChain?.label}
               />
             ) : (
               <NotFound

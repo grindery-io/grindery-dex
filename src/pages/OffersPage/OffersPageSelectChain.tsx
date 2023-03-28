@@ -29,6 +29,8 @@ function OffersPageSelectChain() {
 
   const { chains } = useGrinderyChains();
 
+  const chainLabel = chains.find((c: Chain) => c.caipId === chain)?.label;
+
   return (
     <>
       <DexCardHeader
@@ -77,6 +79,7 @@ function OffersPageSelectChain() {
               });
               navigate(VIEWS.CREATE.fullPath);
             }}
+            chainLabel={chainLabel}
           />
         ) : (
           <NotFound

@@ -14,10 +14,11 @@ type Props = {
   tokens: any[];
   onClick: (token: any) => void;
   loading?: boolean;
+  chainLabel?: string;
 };
 
 const TokensList = (props: Props) => {
-  const { tokens, onClick, loading } = props;
+  const { tokens, onClick, loading, chainLabel } = props;
   return (
     <Box style={{ height: '350px', overflow: 'auto' }} mt={2} pb="16px">
       <List disablePadding>
@@ -67,7 +68,9 @@ const TokensList = (props: Props) => {
                         {token.symbol}
                       </span>
                     }
-                    secondary={token.symbol}
+                    secondary={`${token.symbol}${
+                      chainLabel ? ` on ${chainLabel}` : ''
+                    }`}
                   />
                 </ListItemButton>
               </ListItem>
