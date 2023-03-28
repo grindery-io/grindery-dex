@@ -27,7 +27,7 @@ export const Wrapper = styled.div`
     font-weight: 400;
     font-size: 14px;
     line-height: 150%;
-    color: #6d6f78;
+    color: #0b0d17;
 
     & a {
       color: #170b10;

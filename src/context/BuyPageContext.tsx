@@ -41,11 +41,11 @@ type ContextProps = {
   fromChainTokens: TokenType[];
   foundOffers: Offer[];
   approved: boolean;
-  accepted: boolean;
+  accepted: string;
   toTokenPrice: number | null;
   fromTokenPrice: number | null;
   isPricesLoading: boolean;
-  setAccepted: React.Dispatch<React.SetStateAction<boolean>>;
+  setAccepted: React.Dispatch<React.SetStateAction<string>>;
   setApproved: React.Dispatch<React.SetStateAction<boolean>>;
   setSearchToken: React.Dispatch<React.SetStateAction<string>>;
   handleFromChainChange: (chain: Chain) => void;
@@ -82,7 +82,7 @@ export const BuyPageContext = createContext<ContextProps>({
   fromChainTokens: [],
   foundOffers: [],
   approved: false,
-  accepted: false,
+  accepted: '',
   toTokenPrice: null,
   fromTokenPrice: null,
   isPricesLoading: false,
@@ -125,7 +125,7 @@ export const BuyPageContextProvider = ({ children }: BuyPageContextProps) => {
   const { tokenAbi, poolAbi } = useAbi();
   const [errorMessage, setErrorMessage] = useState({ type: '', text: '' });
   const [approved, setApproved] = useState<boolean>(false);
-  const [accepted, setAccepted] = useState<boolean>(false);
+  const [accepted, setAccepted] = useState<string>('');
   const [toChain, setToChain] = useState<Chain | null>(null);
   const { chains, isLoading: chainsIsLoading } = useGrinderyChains();
   const [fromChain, setFromChain] = useState<Chain | null>(null);
@@ -618,6 +618,7 @@ export const BuyPageContextProvider = ({ children }: BuyPageContextProps) => {
           (parseFloat(fromAmount) * fromTokenPrice) /
           toTokenPrice
         ).toString(),
+        hash: tx.hash || '',
       }).catch((error: any) => {
         console.error('saveOrder error', error);
         setErrorMessage({
@@ -629,7 +630,7 @@ export const BuyPageContextProvider = ({ children }: BuyPageContextProps) => {
         // reset state
         setApproved(false);
         setIsLoading(false);
-        setAccepted(Boolean(offer.offerId));
+        setAccepted(tx.hash || '');
       } else {
         setErrorMessage({
           type: 'acceptOffer',

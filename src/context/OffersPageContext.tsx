@@ -97,7 +97,7 @@ export const OffersPageContextProvider = ({
     },
   };
 
-  const { chain: selectedChain, provider, ethers } = useGrinderyNexus();
+  const { user, chain: selectedChain, provider, ethers } = useGrinderyNexus();
   let navigate = useNavigate();
   const { poolAbi } = useAbi();
   const [amountMin, setAmountMin] = useState<string>('');
@@ -335,6 +335,7 @@ export const OffersPageContextProvider = ({
       exchangeToken: 'ETH',
       exchangeChainId: '5',
       estimatedTime: estimatedTime || '',
+      provider: user,
       offerId: offerId,
       isActive: true,
     });

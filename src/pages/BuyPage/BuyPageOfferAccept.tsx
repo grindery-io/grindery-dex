@@ -5,18 +5,20 @@ import DexCardHeader from '../../components/DexCard/DexCardHeader';
 import Loading from '../../components/Loading/Loading';
 import useBuyPage from '../../hooks/useBuyPage';
 import DexCardBody from '../../components/DexCard/DexCardBody';
-import NotFound from '../../components/NotFound/NotFound';
 import { Offer } from '../../types/Offer';
 import useGrinderyChains from '../../hooks/useGrinderyChains';
 import OfferPublic from '../../components/Offer/OfferPublic';
-import OfferSkeleton from '../../components/Offer/OfferSkeleton';
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
-import { CircularProgress, IconButton, Skeleton, Tooltip } from '@mui/material';
+import Countdown from 'react-countdown';
+import { IconButton, Skeleton, Stack, Tooltip } from '@mui/material';
 import DexCardSubmitButton from '../../components/DexCard/DexCardSubmitButton';
 import { useGrinderyNexus } from 'use-grindery-nexus';
 import AlertBox from '../../components/AlertBox/AlertBox';
 import AmountInput from '../../components/AmountInput/AmountInput';
+import { formatAddress } from '../../utils/address';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 
 type Props = {};
 
@@ -37,14 +39,11 @@ const BuyPageOfferAccept = (props: Props) => {
     fromToken,
     toTokenPrice,
     fromTokenPrice,
-    isPricesLoading,
-    toChain,
-    toToken,
-    handleRefreshOffersClick,
   } = useBuyPage();
   const { chains } = useGrinderyChains();
   let navigate = useNavigate();
   let { offerId } = useParams();
+  const [copied, setCopied] = useState(false);
   const offer = foundOffers.find((o: Offer) => o.offerId === offerId);
   const offerChain = {
     label:
@@ -55,6 +54,14 @@ const BuyPageOfferAccept = (props: Props) => {
       chains.find((c) => c.value === `eip155:${offer?.chainId}`)?.nativeToken ||
       '',
   };
+
+  const explorerLink = accepted
+    ? (chains.find((c) => c.value === `eip155:5`)?.explorerUrl || '').replace(
+        '{hash}',
+        accepted
+      )
+    : '';
+
   const currentOfferChain = chains.find(
     (c) => c.value === `eip155:${offer?.chainId}`
   );
@@ -69,42 +76,21 @@ const BuyPageOfferAccept = (props: Props) => {
       )?.icon || '',
   };
 
-  const [progress, setProgress] = useState(0);
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setProgress((_progress) => (_progress >= 100 ? 0 : _progress + 100 / 60));
-    }, 1000);
-
-    return () => {
-      clearInterval(timer);
-      setProgress(0);
-    };
-  }, []);
-
-  useEffect(() => {
-    if (
-      progress === 0 &&
-      !loading &&
-      !accepted &&
-      fromAmount &&
-      fromChain &&
-      fromToken &&
-      toChain &&
-      toToken
-    ) {
-      handleRefreshOffersClick();
+  const countdownRenderer = ({
+    total,
+    completed,
+  }: {
+    total: any;
+    completed: any;
+  }) => {
+    if (completed) {
+      // Render a completed state
+      return <span>0</span>;
+    } else {
+      // Render a countdown
+      return <span>{total / 1000}</span>;
     }
-  }, [
-    progress,
-    loading,
-    accepted,
-    fromAmount,
-    fromChain,
-    fromToken,
-    toChain,
-    toToken,
-  ]);
+  };
 
   return offer ? (
     <DexCard>
@@ -117,7 +103,7 @@ const BuyPageOfferAccept = (props: Props) => {
             size="medium"
             edge="start"
             onClick={() => {
-              setAccepted(false);
+              setAccepted('');
               setApproved(false);
               navigate(VIEWS.ROOT.fullPath);
             }}
@@ -125,43 +111,7 @@ const BuyPageOfferAccept = (props: Props) => {
             <ArrowBackIcon />
           </IconButton>
         }
-        endAdornment={
-          !accepted ? (
-            <Box ml="auto">
-              <Tooltip title={isPricesLoading ? 'Refreshing...' : 'Refresh'}>
-                <IconButton
-                  sx={{ marginRight: '-8px', position: 'realtive' }}
-                  onClick={() => {
-                    setProgress(0);
-                  }}
-                >
-                  <CircularProgress
-                    size={20}
-                    variant="determinate"
-                    value={100}
-                    sx={{
-                      color: 'rgba(0,0,0,0.1)',
-                    }}
-                  />
-                  <CircularProgress
-                    size={20}
-                    variant={isPricesLoading ? undefined : 'determinate'}
-                    value={isPricesLoading ? undefined : progress}
-                    sx={{
-                      color: '#3f49e1',
-                      position: 'absolute',
-                      left: '8px',
-                      top: '8px',
-                      zIndex: 2,
-                    }}
-                  />
-                </IconButton>
-              </Tooltip>
-            </Box>
-          ) : (
-            <Box width={28} height={40} />
-          )
-        }
+        endAdornment={<Box width={28} height={40} />}
       />
       <DexCardBody maxHeight="540px">
         {!accepted ? (
@@ -218,6 +168,7 @@ const BuyPageOfferAccept = (props: Props) => {
                   <p>{errorMessage.text}</p>
                 </AlertBox>
               )}
+
             <DexCardSubmitButton
               label={
                 user
@@ -243,12 +194,81 @@ const BuyPageOfferAccept = (props: Props) => {
         ) : (
           <>
             <AlertBox color="success">
-              <p>Offer has been accepted.</p>
+              <p>
+                {offer.estimatedTime ? (
+                  <>
+                    Your order has been placed and is expected to complete
+                    within{' '}
+                    <Countdown
+                      date={
+                        Date.now() +
+                        (offer.estimatedTime
+                          ? parseInt(offer.estimatedTime) * 1000
+                          : 0)
+                      }
+                      renderer={countdownRenderer}
+                    />
+                    {} seconds. Hang tight.
+                  </>
+                ) : (
+                  <>
+                    Your order has been placed and is expected to complete soon.
+                    Hang tight.
+                  </>
+                )}
+              </p>
+              <Stack
+                direction="row"
+                alignItems="center"
+                justifyContent="flex-start"
+                mt="10px"
+                gap="4px"
+              >
+                <p>Transaction ID: {formatAddress(accepted)}</p>
+                <Stack
+                  direction="row"
+                  alignItems="center"
+                  justifyContent="flex-start"
+                >
+                  <Tooltip
+                    title={copied ? 'Copied' : 'Copy to clipboard'}
+                    onClose={() => {
+                      setTimeout(() => {
+                        setCopied(false);
+                      }, 300);
+                    }}
+                  >
+                    <IconButton
+                      size="small"
+                      sx={{ fontSize: '14px' }}
+                      onClick={() => {
+                        navigator.clipboard.writeText(accepted);
+                        setCopied(true);
+                      }}
+                    >
+                      <ContentCopyIcon fontSize="inherit" />
+                    </IconButton>
+                  </Tooltip>
+                  {explorerLink && (
+                    <Tooltip title="View on blockchain explorer">
+                      <IconButton
+                        size="small"
+                        sx={{ fontSize: '14px' }}
+                        onClick={() => {
+                          window.open(explorerLink, '_blank');
+                        }}
+                      >
+                        <OpenInNewIcon fontSize="inherit" />
+                      </IconButton>
+                    </Tooltip>
+                  )}
+                </Stack>
+              </Stack>
             </AlertBox>
             <DexCardSubmitButton
               label="Close"
               onClick={() => {
-                setAccepted(false);
+                setAccepted('');
                 setApproved(false);
                 navigate(VIEWS.ROOT.fullPath);
               }}
