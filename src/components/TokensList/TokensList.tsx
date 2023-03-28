@@ -68,9 +68,7 @@ const TokensList = (props: Props) => {
                         {token.symbol}
                       </span>
                     }
-                    secondary={`${token.symbol}${
-                      chainLabel ? ` on ${chainLabel}` : ''
-                    }`}
+                    secondary={chainLabel || ''}
                   />
                 </ListItemButton>
               </ListItem>
