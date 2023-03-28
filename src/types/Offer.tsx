@@ -9,5 +9,9 @@ export type Offer = {
   hash?: string;
   offerId?: string;
   tokenId?: string;
+  exchangeRate?: string;
+  estimatedTime?: string;
+  exchangeToken?: string;
+  exchangeChainId?: string;
   new?: boolean;
 };

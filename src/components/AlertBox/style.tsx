@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 
 export const Wrapper = styled.div`
   margin: 20px 0 0;
@@ -16,7 +16,7 @@ export const Wrapper = styled.div`
     padding: 0;
 
     & svg {
-      margin-top: 2px;
+      margin-top: 0px;
     }
   }
 
@@ -25,7 +25,7 @@ export const Wrapper = styled.div`
     padding: 0;
     margin: 0;
     font-weight: 400;
-    font-size: 16px;
+    font-size: 14px;
     line-height: 150%;
     color: #6d6f78;
 

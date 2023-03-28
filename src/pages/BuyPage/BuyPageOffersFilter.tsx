@@ -85,9 +85,13 @@ const BuyPageOffersFilter = (props: Props) => {
           placeholder="0"
           chain={fromChain}
           token={fromToken}
-          helpText={`${(fromToken && fromToken.symbol) || ''} on ${
-            fromChain?.label
-          }`}
+          helpText={
+            fromToken && fromChain
+              ? `${(fromToken && fromToken.symbol) || ''} on ${
+                  fromChain?.label
+                }`
+              : ''
+          }
           endAdornment={
             GRT_CONTRACT_ADDRESS[fromChain?.value || ''] ? (
               <Box>

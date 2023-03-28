@@ -137,7 +137,9 @@ const OfferPublic = (props: Props) => {
             {amount ? (
               `${token.label} on ${chain.label}.\n1 ${
                 token.label
-              } = $${toTokenPrice?.toLocaleString()}`
+              } = ${offer.exchangeRate?.toLocaleString()} ${
+                offer.exchangeToken
+              }`
             ) : (
               <Skeleton />
             )}
