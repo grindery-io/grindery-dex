@@ -90,10 +90,11 @@ const BuyPageOffersFilter = (props: Props) => {
               parseFloat(fromAmount || '0') * (fromTokenPrice || 0)
             ).toLocaleString()}\n${
               typeof fromToken !== 'string'
-                ? `1 ${
-                    fromToken?.symbol
-                  } = $${fromTokenPrice?.toLocaleString()}`
-                : ''
+                ? ''
+                : // `1 ${
+                  //     fromToken?.symbol
+                  //   } = $${fromTokenPrice?.toLocaleString()}`
+                  ''
             }`}</span>
           }
           endAdornment={

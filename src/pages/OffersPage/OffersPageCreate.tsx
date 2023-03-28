@@ -65,7 +65,7 @@ function OffersPageCreate() {
 
         <Box display="flex" flexDirection="row" gap="16px">
           <TextInput
-            label="Minimum amount"
+            label="Min. order"
             onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
               setErrorMessage({
                 type: '',
@@ -80,7 +80,7 @@ function OffersPageCreate() {
             error={errorMessage}
           />
           <TextInput
-            label="Maximum amount"
+            label="Max. order"
             value={amountMax}
             onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
               setErrorMessage({

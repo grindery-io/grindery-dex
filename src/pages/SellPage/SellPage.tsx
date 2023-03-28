@@ -38,7 +38,7 @@ export const sellPages = [
   {
     path: '/trades',
     fullPath: '/sell/trades',
-    label: 'Trades',
+    label: 'Orders',
     component: (
       <TradesContextProvider userType="b">
         <TradesBPageContextProvider>

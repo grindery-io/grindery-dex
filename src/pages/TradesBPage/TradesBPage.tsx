@@ -195,7 +195,7 @@ function TradesBPage() {
   return (
     <>
       <DexCard>
-        <DexCardHeader title="Trades" />
+        <DexCardHeader title="Orders" />
         <DexCardBody maxHeight="540px">
           {isLoading ? (
             <>
