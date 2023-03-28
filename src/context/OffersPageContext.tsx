@@ -96,8 +96,8 @@ export const OffersPageContextProvider = ({
   const [amountMax, setAmountMax] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState({ type: '', text: '' });
+  const { chains, isLoading: chainsIsLoading } = useGrinderyChains();
   const [chain, setChain] = useState('');
-  const { chains } = useGrinderyChains();
   const [token, setToken] = useState<TokenType | ''>('');
   const [searchToken, setSearchToken] = useState('');
   const [isActivating, setIsActivating] = useState('');
@@ -109,6 +109,7 @@ export const OffersPageContextProvider = ({
     updateOffer,
   } = useOffers();
   const filteredChain = chains.find((c) => c.value === chain);
+
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const currentChain: Chain | null =
     chain && filteredChain
@@ -303,7 +304,6 @@ export const OffersPageContextProvider = ({
       // clear input fields
       setAmountMin('');
       setAmountMax('');
-      setToken('');
       setSearchToken('');
 
       // complete execution
@@ -551,9 +551,16 @@ export const OffersPageContextProvider = ({
     setIsActivating('');
   };
 
-  /*useEffect(() => {
-    setChain(selectedChain || '');
-  }, [selectedChain]);*/
+  useEffect(() => {
+    if (!chainsIsLoading) {
+      setChain(chains.find((c: Chain) => c.chainId === '97')?.value || '');
+      setToken(
+        chains
+          .find((c: Chain) => c.chainId === '97')
+          ?.tokens?.find((t: TokenType) => t.symbol === 'BNB') || ''
+      );
+    }
+  }, [chains, chainsIsLoading]);
 
   return (
     <OffersPageContext.Provider
