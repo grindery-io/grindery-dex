@@ -18,7 +18,7 @@ import moment from 'moment';
 import CheckIcon from '@mui/icons-material/Check';
 import HourglassTopIcon from '@mui/icons-material/HourglassTop';
 import DexCardSubmitButton from '../DexCard/DexCardSubmitButton';
-import useTrades from '../../hooks/useTrades';
+//import useTrades from '../../hooks/useTrades';
 import { Card } from '../Card/Card';
 import { CardTitle } from '../Card/CardTitle';
 import { ChainTokenBox } from '../ChainTokenBox/ChainTokenBox';
@@ -26,15 +26,17 @@ import { AvatarDefault } from '../Avatar/AvatarDefault';
 
 type Props = {
   trade: TradeType;
+  userType: 'a' | 'b';
+  onCompleteClick?: (trade: TradeType) => Promise<boolean>;
 };
 
 const Trade = (props: Props) => {
-  const { trade } = props;
-  const { completeTrade } = useTrades();
+  const { trade, userType, onCompleteClick } = props;
   const { getOfferById } = useOffers();
   const [offer, setOffer] = useState<Offer | false>(false);
   const { chains } = useGrinderyChains();
   const [loading, setLoading] = useState(false);
+  const isUserA = userType === 'a';
 
   const fromChain = chains.find(
     (c: Chain) => c.chainId === trade.chainIdTokenDeposit
@@ -61,9 +63,14 @@ const Trade = (props: Props) => {
   };
 
   const handleCompleteClick = async () => {
-    if (trade.tradeId) {
+    if (trade.tradeId && onCompleteClick) {
       setLoading(true);
-      const res = await completeTrade(trade.tradeId);
+      const res = await onCompleteClick(trade);
+      if (res) {
+        // handle success
+      } else {
+        // handle fail
+      }
       setLoading(false);
     }
   };
@@ -108,7 +115,9 @@ const Trade = (props: Props) => {
           <Chip icon={<HourglassTopIcon />} label="Pending" size="small" />
         )}
       </Stack>
-      <CardTitle sx={{ paddingTop: '12px' }}>You paid</CardTitle>
+      <CardTitle sx={{ paddingTop: '12px' }}>
+        {isUserA ? 'You pay' : 'You receive'}
+      </CardTitle>
       <ChainTokenBox
         style={{ height: 'auto' }}
         avatar={
@@ -145,7 +154,9 @@ const Trade = (props: Props) => {
         selected={true}
         compact={false}
       />
-      <CardTitle sx={{ paddingTop: '0px' }}>You received</CardTitle>
+      <CardTitle sx={{ paddingTop: '0px' }}>
+        {isUserA ? 'You receive' : 'You pay'}
+      </CardTitle>
       <ChainTokenBox
         style={{ height: 'auto' }}
         avatar={
@@ -214,7 +225,7 @@ const Trade = (props: Props) => {
         selected={true}
         compact={false}
       />
-      {!trade.isComplete && (
+      {!trade.isComplete && !isUserA && (
         <Box
           sx={{
             padding: '0 16px',
@@ -223,7 +234,7 @@ const Trade = (props: Props) => {
         >
           <DexCardSubmitButton
             disabled={loading}
-            label={loading ? 'Saving' : 'Confirm received tokens'}
+            label={loading ? 'Paying' : 'Pay'}
             onClick={() => {
               handleCompleteClick();
             }}

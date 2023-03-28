@@ -6,10 +6,13 @@ import SellMenu from '../../components/SellMenu/SellMenu';
 import LiquidityWalletPageContextProvider from '../../context/LiquidityWalletPageContext';
 import OffersPageContextProvider from '../../context/OffersPageContext';
 import StakingPageContextProvider from '../../context/StakingPageContext';
+import TradesBPageContextProvider from '../../context/TradesBPageContext';
+import TradesContextProvider from '../../context/TradesContext';
 import useAdmin from '../../hooks/useAdmin';
 import LiquidityWalletPage from '../LiquidityWalletPage/LiquidityWalletPage';
 import OffersPage from '../OffersPage/OffersPage';
 import StakingPage from '../StakingPage/StakingPage';
+import TradesBPage from '../TradesBPage/TradesBPage';
 
 export const sellPages = [
   // {
@@ -30,6 +33,18 @@ export const sellPages = [
       <OffersPageContextProvider>
         <OffersPage />
       </OffersPageContextProvider>
+    ),
+  },
+  {
+    path: '/trades',
+    fullPath: '/sell/trades',
+    label: 'Trades',
+    component: (
+      <TradesContextProvider userType="b">
+        <TradesBPageContextProvider>
+          <TradesBPage />
+        </TradesBPageContextProvider>
+      </TradesContextProvider>
     ),
   },
   // {

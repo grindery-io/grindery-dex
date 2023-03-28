@@ -48,12 +48,12 @@ type ContextProps = {
 };
 
 // Context provider props
-type OffersPageContextProps = {
+type TradesBPageContextProps = {
   children: React.ReactNode;
 };
 
 // Init context
-export const OffersPageContext = createContext<ContextProps>({
+export const TradesBPageContext = createContext<ContextProps>({
   amountMin: '',
   amountMax: '',
   loading: false,
@@ -77,9 +77,9 @@ export const OffersPageContext = createContext<ContextProps>({
   VIEWS: {},
 });
 
-export const OffersPageContextProvider = ({
+export const TradesBPageContextProvider = ({
   children,
-}: OffersPageContextProps) => {
+}: TradesBPageContextProps) => {
   const VIEWS = {
     ROOT: { path: '', fullPath: '/sell/offers' },
     CREATE: { path: '/create', fullPath: '/sell/offers/create' },
@@ -556,7 +556,7 @@ export const OffersPageContextProvider = ({
   }, [selectedChain]);*/
 
   return (
-    <OffersPageContext.Provider
+    <TradesBPageContext.Provider
       value={{
         amountMin,
         amountMax,
@@ -582,8 +582,8 @@ export const OffersPageContextProvider = ({
       }}
     >
       {children}
-    </OffersPageContext.Provider>
+    </TradesBPageContext.Provider>
   );
 };
 
-export default OffersPageContextProvider;
+export default TradesBPageContextProvider;

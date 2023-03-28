@@ -603,7 +603,7 @@ export const BuyPageContextProvider = ({ children }: BuyPageContextProps) => {
       const receipt = await provider.getTransactionReceipt(tx.hash);
 
       // get tradeId
-      const tradeId = receipt?.logs?.[2]?.topics?.[1] || '';
+      const tradeId = receipt?.logs?.[0]?.topics?.[1] || '';
 
       // save trade to DB
       const trade = await saveTrade({

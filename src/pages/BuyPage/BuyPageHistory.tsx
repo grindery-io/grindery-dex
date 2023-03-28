@@ -56,7 +56,7 @@ const BuyPageHistory = (props: Props) => {
             {sortedTrades && sortedTrades.length > 0 ? (
               <>
                 {sortedTrades.map((trade: TradeType) => (
-                  <Trade key={trade._id} trade={trade} />
+                  <Trade key={trade._id} trade={trade} userType="a" />
                 ))}
                 <Box height="10px" />
               </>

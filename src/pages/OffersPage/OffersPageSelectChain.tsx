@@ -11,6 +11,7 @@ import { useNavigate } from 'react-router-dom';
 import useGrinderyChains from '../../hooks/useGrinderyChains';
 import useOffersPage from '../../hooks/useOffersPage';
 import DexCardBody from '../../components/DexCard/DexCardBody';
+import { Chain } from '../../types/Chain';
 
 function OffersPageSelectChain() {
   const {
@@ -51,7 +52,7 @@ function OffersPageSelectChain() {
       <DexCardBody>
         <ChainsList
           chain={chain}
-          chains={chains}
+          chains={chains.filter((c: Chain) => c.chainId === '97')}
           onClick={(blockchain: any) => {
             setChain(blockchain.value);
             setToken('');

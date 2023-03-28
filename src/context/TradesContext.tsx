@@ -9,8 +9,10 @@ import { getErrorMessage } from '../utils/error';
 type ContextProps = {
   isLoading: boolean;
   trades: Trade[];
+  tradesB: Trade[];
   error: string;
   setTrades: React.Dispatch<React.SetStateAction<Trade[]>>;
+  setTradesB: React.Dispatch<React.SetStateAction<Trade[]>>;
   saveTrade: (body: { [key: string]: any }) => Promise<Trade | boolean>;
   getTrades: () => void;
   completeTrade: (tradeId: string) => Promise<boolean>;
@@ -19,23 +21,30 @@ type ContextProps = {
 // Context provider props
 type TradesContextProps = {
   children: React.ReactNode;
+  userType?: 'a' | 'b';
 };
 
 // Init context
 export const TradesContext = createContext<ContextProps>({
   isLoading: true,
   trades: [],
+  tradesB: [],
   error: '',
   setTrades: () => {},
+  setTradesB: () => {},
   saveTrade: async () => false,
   getTrades: () => {},
   completeTrade: async () => false,
 });
 
-export const TradesContextProvider = ({ children }: TradesContextProps) => {
+export const TradesContextProvider = ({
+  children,
+  userType,
+}: TradesContextProps) => {
   const { token } = useGrinderyNexus();
   const [isLoading, setIsLoading] = useState(true);
   const [trades, setTrades] = useState<Trade[]>([]);
+  const [tradesB, setTradesB] = useState<Trade[]>([]);
   const [error, setError] = useState('');
 
   const params = {
@@ -64,6 +73,24 @@ export const TradesContextProvider = ({ children }: TradesContextProps) => {
       setError(getErrorMessage(error, 'Server error'));
     }
     setTrades(res?.data || []);
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 800);
+  };
+
+  const getTradesB = async () => {
+    setIsLoading(true);
+    setError('');
+    let res;
+    try {
+      res = await axios.get(
+        `${DELIGHT_API_URL}/trades/liquidity-provider`,
+        params
+      );
+    } catch (error: any) {
+      setError(getErrorMessage(error, 'Server error'));
+    }
+    setTradesB(res?.data || []);
     setTimeout(() => {
       setIsLoading(false);
     }, 800);
@@ -109,11 +136,14 @@ export const TradesContextProvider = ({ children }: TradesContextProps) => {
     if (res?.data?.modifiedCount) {
       let res2;
       try {
-        res2 = await axios.get(`${DELIGHT_API_URL}/trades/user`, params);
+        res2 = await axios.get(
+          `${DELIGHT_API_URL}/trades/liquidity-provider`,
+          params
+        );
       } catch (error: any) {
         setError(getErrorMessage(error, 'Server error'));
       }
-      setTrades(res2?.data || []);
+      setTradesB(res2?.data || []);
       return true;
     } else {
       return false;
@@ -126,13 +156,21 @@ export const TradesContextProvider = ({ children }: TradesContextProps) => {
     }
   }, [token?.access_token]);
 
+  useEffect(() => {
+    if (token?.access_token && userType && userType === 'b') {
+      getTradesB();
+    }
+  }, [token?.access_token, userType]);
+
   return (
     <TradesContext.Provider
       value={{
         isLoading,
         trades,
+        tradesB,
         error,
         setTrades,
+        setTradesB,
         saveTrade,
         getTrades,
         completeTrade,
