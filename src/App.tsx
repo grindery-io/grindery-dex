@@ -39,37 +39,42 @@ export const App = () => {
             <GrinderyChainsContextProvider>
               <AbiContextProvider>
                 <StakesContextProvider>
-                  <OffersContextProvider>
-                    <LiquidityWalletsContextProvider>
-                      <Routes>
-                        <Route
-                          path="/buy/*"
-                          element={
-                            <OffersContextProvider>
-                              <OrdersContextProvider>
-                                <BuyPageContextProvider>
-                                  <BuyPage />
-                                </BuyPageContextProvider>
-                              </OrdersContextProvider>
-                            </OffersContextProvider>
-                          }
-                        />
-                        <Route path="/sell/*" element={<SellPage />} />
-                        <Route
-                          path="/faucet/*"
-                          element={
-                            <PageContainer>
-                              <FaucetPageContextProvider>
-                                <FaucetPage />
-                              </FaucetPageContextProvider>
-                            </PageContainer>
-                          }
-                        />
+                  <LiquidityWalletsContextProvider>
+                    <Routes>
+                      <Route
+                        path="/buy/*"
+                        element={
+                          <OffersContextProvider userType="a">
+                            <OrdersContextProvider>
+                              <BuyPageContextProvider>
+                                <BuyPage />
+                              </BuyPageContextProvider>
+                            </OrdersContextProvider>
+                          </OffersContextProvider>
+                        }
+                      />
+                      <Route
+                        path="/sell/*"
+                        element={
+                          <OffersContextProvider userType="b">
+                            <SellPage />
+                          </OffersContextProvider>
+                        }
+                      />
+                      <Route
+                        path="/faucet/*"
+                        element={
+                          <PageContainer>
+                            <FaucetPageContextProvider>
+                              <FaucetPage />
+                            </FaucetPageContextProvider>
+                          </PageContainer>
+                        }
+                      />
 
-                        <Route path="*" element={<Navigate to="/buy" />} />
-                      </Routes>
-                    </LiquidityWalletsContextProvider>
-                  </OffersContextProvider>
+                      <Route path="*" element={<Navigate to="/buy" />} />
+                    </Routes>
+                  </LiquidityWalletsContextProvider>
                 </StakesContextProvider>
               </AbiContextProvider>
             </GrinderyChainsContextProvider>

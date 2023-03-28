@@ -13,13 +13,14 @@ type ContextProps = {
   setOffers: React.Dispatch<React.SetStateAction<Offer[]>>;
   saveOffer: (body: { [key: string]: any }) => Promise<Offer | boolean>;
   updateOffer: (id: string) => Promise<boolean>;
-  searchOffers: (silent: boolean) => void;
+  searchOffers: (silent: boolean, query?: string) => void;
   getOfferById: (offerId: string) => Promise<Offer | false>;
 };
 
 // Context provider props
 type OffersContextProps = {
   children: React.ReactNode;
+  userType: 'a' | 'b';
 };
 
 // Init context
@@ -34,7 +35,10 @@ export const OffersContext = createContext<ContextProps>({
   getOfferById: async () => false,
 });
 
-export const OffersContextProvider = ({ children }: OffersContextProps) => {
+export const OffersContextProvider = ({
+  children,
+  userType,
+}: OffersContextProps) => {
   const { token } = useGrinderyNexus();
   const [isLoading, setIsLoading] = useState(true);
   const [offers, setOffers] = useState<Offer[]>([]);
@@ -122,7 +126,7 @@ export const OffersContextProvider = ({ children }: OffersContextProps) => {
     }
   };
 
-  const searchOffers = async (silent: boolean = false) => {
+  const searchOffers = async (silent: boolean = false, query?: string) => {
     setError('');
     if (!silent) {
       setIsLoading(true);
@@ -130,22 +134,24 @@ export const OffersContextProvider = ({ children }: OffersContextProps) => {
 
     let res;
     try {
-      res = await axios.get(`${DELIGHT_API_URL}/offers`, params);
+      res = await axios.get(`${DELIGHT_API_URL}/offers/search${query}`, params);
     } catch (error: any) {
       setError(getErrorMessage(error, 'Server error'));
       setIsLoading(false);
       setOffers([]);
       return;
     }
+    console.log('setOffers', res?.data || []);
+
     setOffers(res?.data || []);
     setIsLoading(false);
   };
 
   useEffect(() => {
-    if (token?.access_token) {
+    if (token?.access_token && userType && userType === 'b') {
       getOffers();
     }
-  }, [token?.access_token]);
+  }, [token?.access_token, userType]);
 
   return (
     <OffersContext.Provider

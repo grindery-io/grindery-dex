@@ -49,8 +49,8 @@ const OfferPublic = (props: Props) => {
   } = props;
 
   const amount =
-    toTokenPrice && fromTokenPrice && fromAmount
-      ? (parseFloat(fromAmount) * fromTokenPrice) / toTokenPrice
+    toTokenPrice && fromTokenPrice && fromAmount && offer && offer.exchangeRate
+      ? parseFloat(fromAmount) / parseFloat(offer.exchangeRate)
       : 0;
 
   return (

@@ -143,19 +143,8 @@ export const BuyPageContextProvider = ({ children }: BuyPageContextProps) => {
   const [isPricesLoading, setIsPricesLoading] = useState(false);
   const loading = isOfferLoading || isLoading;
 
-  const foundOffers = offers.filter(
-    (offer: Offer) =>
-      offer.isActive &&
-      toTokenPrice &&
-      fromTokenPrice &&
-      parseFloat(fromAmount) * fromTokenPrice >=
-        parseFloat(offer.min) * toTokenPrice &&
-      parseFloat(fromAmount) * fromTokenPrice <=
-        parseFloat(offer.max) * toTokenPrice &&
-      offer.chainId === (toChain?.value?.split(':')?.[1] || '0') &&
-      typeof toToken !== 'string' &&
-      offer.token === toToken?.symbol
-  );
+  const foundOffers = offers;
+
   const filteredToChain = chains.find(
     (c) => toChain && c.value === toChain.value
   );
@@ -378,7 +367,10 @@ export const BuyPageContextProvider = ({ children }: BuyPageContextProps) => {
     // show offers card
     setIsOffersVisible(true);
 
-    searchOffers(silent);
+    searchOffers(
+      silent,
+      `?depositChainId=${fromChain.chainId}&depositTokenId=${fromToken.symbol}&offerChain=${toChain.chainId}&offerToken=${toToken.symbol}&depositAmount=${amount}`
+    );
   };
 
   const debouncedChangeHandler = useCallback(
