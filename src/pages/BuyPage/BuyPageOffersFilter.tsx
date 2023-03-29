@@ -1,4 +1,4 @@
-import { Button, IconButton, Tooltip } from '@mui/material';
+import { Button, IconButton, Stack, Tooltip } from '@mui/material';
 import { Box } from '@mui/system';
 import React from 'react';
 import { Navigate, Route, Routes, useNavigate } from 'react-router-dom';
@@ -53,28 +53,38 @@ const BuyPageOffersFilter = (props: Props) => {
         }
       />
       <DexCardBody>
-        <SelectChainAndTokenButton
-          title="Deposit"
-          chain={fromChain}
-          token={fromToken}
-          error={errorMessage}
-          onClick={() => {
-            navigate(VIEWS.SELECT_FROM.fullPath);
-          }}
-          name="fromChain"
-        />
-        <Box mt="20px">
-          <SelectChainAndTokenButton
-            title="Receive"
-            onClick={() => {
-              navigate(VIEWS.SELECT_TO.fullPath);
-            }}
-            chain={toChain}
-            token={toToken}
-            error={errorMessage}
-            name="toChain"
-          />
-        </Box>
+        <Stack
+          direction="row"
+          alignItems="stretch"
+          justifyContent="space-between"
+          gap="16px"
+        >
+          <Box sx={{ maxWidth: 'calc(50% - 8px)', overflow: 'hidden' }}>
+            <SelectChainAndTokenButton
+              title="Deposit"
+              chain={fromChain}
+              token={fromToken}
+              error={errorMessage}
+              onClick={() => {
+                navigate(VIEWS.SELECT_FROM.fullPath);
+              }}
+              name="fromChain"
+            />
+          </Box>
+          <Box sx={{ maxWidth: 'calc(50% - 8px)' }}>
+            <SelectChainAndTokenButton
+              title="Receive"
+              onClick={() => {
+                navigate(VIEWS.SELECT_TO.fullPath);
+              }}
+              chain={toChain}
+              token={toToken}
+              error={errorMessage}
+              name="toChain"
+            />
+          </Box>
+        </Stack>
+
         <AmountInput
           label="You pay"
           value={fromAmount}

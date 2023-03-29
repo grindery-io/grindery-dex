@@ -61,6 +61,23 @@ export const LiquidityWalletsContextProvider = ({
     return res?.data || false;
   };
 
+  const getWalletBalance = async (
+    chainId: string,
+    tokenAddress: string,
+    address: string
+  ) => {
+    let res;
+    try {
+      res = await axios.get(
+        `${DELIGHT_API_URL}/balance-token/id/${id}`,
+        params
+      );
+    } catch (error: any) {
+      setError(getErrorMessage(error, 'Server error'));
+    }
+    return res?.data || false;
+  };
+
   const getWallets = async () => {
     setError('');
     let res;
