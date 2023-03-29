@@ -153,6 +153,65 @@ const OfferPublic = (props: Props) => {
           : undefined
       }
     >
+      <Stack
+        direction="row"
+        alignItems="center"
+        justifyContent="space-between"
+        sx={{
+          padding: '12px 16px 0',
+          fontSize: '12px',
+          '& p': {
+            fontSize: '14px',
+            margin: 0,
+            padding: 0,
+            lineHeight: 1,
+            fontWeight: '500',
+          },
+        }}
+      >
+        <Tooltip title="Execution time">
+          <Stack
+            direction="row"
+            alignItems="center"
+            justifyContent="flex-start"
+            gap="3px"
+          >
+            <AccessTimeFilledIcon
+              fontSize="small"
+              sx={{ marginTop: '-2px', color: 'rgba(0, 0, 0, 0.24)' }}
+            />
+            <p>{offer.estimatedTime}s</p>
+          </Stack>
+        </Tooltip>
+        <Tooltip title="Estimated network fee">
+          <Stack
+            direction="row"
+            alignItems="center"
+            justifyContent="flex-start"
+            gap="3px"
+          >
+            <EvStationIcon
+              fontSize="small"
+              sx={{ marginTop: '-2px', color: 'rgba(0, 0, 0, 0.24)' }}
+            />
+            <p>$2.5</p>
+          </Stack>
+        </Tooltip>
+        <Tooltip title="Chains">
+          <Stack
+            direction="row"
+            alignItems="center"
+            justifyContent="flex-start"
+            gap="3px"
+          >
+            <LayersIcon
+              fontSize="small"
+              sx={{ marginTop: '-2px', color: 'rgba(0, 0, 0, 0.24)' }}
+            />
+            <p>1</p>
+          </Stack>
+        </Tooltip>
+      </Stack>
       {label && <CardTitle>{label}</CardTitle>}
 
       <Box display={'flex'} flexDirection={'row'}></Box>
@@ -367,65 +426,6 @@ const OfferPublic = (props: Props) => {
           </Stack>
         </Box>
       </Collapse>
-      <Stack
-        direction="row"
-        alignItems="center"
-        justifyContent="space-between"
-        sx={{
-          padding: '0 16px 12px',
-          fontSize: '12px',
-          '& p': {
-            fontSize: '14px',
-            margin: 0,
-            padding: 0,
-            lineHeight: 1,
-            fontWeight: '500',
-          },
-        }}
-      >
-        <Tooltip title="Execution time">
-          <Stack
-            direction="row"
-            alignItems="center"
-            justifyContent="flex-start"
-            gap="3px"
-          >
-            <AccessTimeFilledIcon
-              fontSize="small"
-              sx={{ marginTop: '-2px', color: 'rgba(0, 0, 0, 0.24)' }}
-            />
-            <p>{offer.estimatedTime}s</p>
-          </Stack>
-        </Tooltip>
-        <Tooltip title="Estimated network fee">
-          <Stack
-            direction="row"
-            alignItems="center"
-            justifyContent="flex-start"
-            gap="3px"
-          >
-            <EvStationIcon
-              fontSize="small"
-              sx={{ marginTop: '-2px', color: 'rgba(0, 0, 0, 0.24)' }}
-            />
-            <p>$2.5</p>
-          </Stack>
-        </Tooltip>
-        <Tooltip title="Chains">
-          <Stack
-            direction="row"
-            alignItems="center"
-            justifyContent="flex-start"
-            gap="3px"
-          >
-            <LayersIcon
-              fontSize="small"
-              sx={{ marginTop: '-2px', color: 'rgba(0, 0, 0, 0.24)' }}
-            />
-            <p>1</p>
-          </Stack>
-        </Tooltip>
-      </Stack>
     </Card>
   );
 };
