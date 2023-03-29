@@ -5,6 +5,7 @@ import {
   Box,
   IconButton,
   Skeleton,
+  Stack,
   Tooltip,
 } from '@mui/material';
 import { Offer } from '../../types/Offer';
@@ -13,6 +14,9 @@ import { Card } from '../Card/Card';
 import { CardTitle } from '../Card/CardTitle';
 import { ChainTokenBox } from '../ChainTokenBox/ChainTokenBox';
 import { AvatarDefault } from '../Avatar/AvatarDefault';
+import EvStationIcon from '@mui/icons-material/EvStation';
+import AccessTimeFilledIcon from '@mui/icons-material/AccessTimeFilled';
+import LayersIcon from '@mui/icons-material/Layers';
 
 export type OfferChain = {
   label: string;
@@ -157,6 +161,65 @@ const OfferPublic = (props: Props) => {
           ) : undefined
         }
       />
+      <Stack
+        direction="row"
+        alignItems="center"
+        justifyContent="space-between"
+        sx={{
+          padding: '0 16px 12px',
+          fontSize: '12px',
+          '& p': {
+            fontSize: '14px',
+            margin: 0,
+            padding: 0,
+            lineHeight: 1,
+            fontWeight: '500',
+          },
+        }}
+      >
+        <Tooltip title="Execution time">
+          <Stack
+            direction="row"
+            alignItems="center"
+            justifyContent="flex-start"
+            gap="3px"
+          >
+            <AccessTimeFilledIcon
+              fontSize="small"
+              sx={{ marginTop: '-2px', color: 'rgba(0, 0, 0, 0.24)' }}
+            />
+            <p>{offer.estimatedTime}s</p>
+          </Stack>
+        </Tooltip>
+        <Tooltip title="Estimated network fee">
+          <Stack
+            direction="row"
+            alignItems="center"
+            justifyContent="flex-start"
+            gap="3px"
+          >
+            <EvStationIcon
+              fontSize="small"
+              sx={{ marginTop: '-2px', color: 'rgba(0, 0, 0, 0.24)' }}
+            />
+            <p>$2.5</p>
+          </Stack>
+        </Tooltip>
+        <Tooltip title="Chains">
+          <Stack
+            direction="row"
+            alignItems="center"
+            justifyContent="flex-start"
+            gap="3px"
+          >
+            <LayersIcon
+              fontSize="small"
+              sx={{ marginTop: '-2px', color: 'rgba(0, 0, 0, 0.24)' }}
+            />
+            <p>1</p>
+          </Stack>
+        </Tooltip>
+      </Stack>
     </Card>
   );
 };
