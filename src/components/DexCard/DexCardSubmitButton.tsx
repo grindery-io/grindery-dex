@@ -24,13 +24,20 @@ type Props = {
   label: string;
   onClick: () => void;
   disabled?: boolean;
+  loading?: boolean;
 };
 
 const DexCardSubmitButton = (props: Props) => {
-  const { label, onClick, disabled } = props;
+  const { label, onClick, disabled, loading } = props;
   return (
     <ButtonWrapper>
-      <Button disabled={disabled} fullWidth value={label} onClick={onClick} />
+      <Button
+        loading={loading}
+        disabled={disabled}
+        fullWidth
+        value={label}
+        onClick={onClick}
+      />
     </ButtonWrapper>
   );
 };

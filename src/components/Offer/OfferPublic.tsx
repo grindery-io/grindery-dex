@@ -3,13 +3,13 @@ import {
   Avatar,
   Badge,
   Box,
+  Chip,
   Collapse,
   IconButton,
   IconButtonProps,
   Skeleton,
   Stack,
   Step,
-  StepIcon,
   StepIconProps,
   StepLabel,
   Stepper,
@@ -35,6 +35,7 @@ import axios from 'axios';
 import { DELIGHT_API_URL } from '../../constants';
 import { useGrinderyNexus } from 'use-grindery-nexus';
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
+import DexCardSubmitButton from '../DexCard/DexCardSubmitButton';
 
 export type OfferChain = {
   label: string;
@@ -57,6 +58,11 @@ type Props = {
   toTokenPrice?: number | null;
   fromTokenPrice?: number | null;
   compact?: boolean;
+  defaultProvider?: LiquidityWallet;
+  userType?: 'a' | 'b';
+  isActivating?: string;
+  onDeactivateClick?: (offerId: string) => void;
+  onActivateClick?: (offerId: string) => void;
 };
 
 interface ExpandMoreProps extends IconButtonProps {
@@ -87,8 +93,15 @@ const OfferPublic = (props: Props) => {
     toTokenPrice,
     fromTokenPrice,
     compact,
+    defaultProvider,
+    userType,
+    isActivating,
+    onDeactivateClick,
+    onActivateClick,
   } = props;
   const { token: userToken } = useGrinderyNexus();
+
+  const isUserA = !userType || userType === 'a';
 
   const params = {
     headers: {
@@ -98,14 +111,23 @@ const OfferPublic = (props: Props) => {
 
   const { chains } = useGrinderyChains();
 
-  const amount =
-    toTokenPrice && fromTokenPrice && fromAmount && offer && offer.exchangeRate
+  const amount = isUserA
+    ? toTokenPrice &&
+      fromTokenPrice &&
+      fromAmount &&
+      offer &&
+      offer.exchangeRate
       ? parseFloat(fromAmount) / parseFloat(offer.exchangeRate)
-      : 0;
+      : 0
+    : `${parseFloat(offer.min).toLocaleString()} — ${parseFloat(
+        offer.max
+      ).toLocaleString()}`;
 
   const [expanded, setExpanded] = useState(false);
   const [copied, setCopied] = useState(false);
-  const [provider, setProvider] = useState<LiquidityWallet | null>(null);
+  const [provider, setProvider] = useState<LiquidityWallet | null>(
+    defaultProvider || null
+  );
 
   const explorerLink = offer.hash
     ? (
@@ -137,16 +159,20 @@ const OfferPublic = (props: Props) => {
   };
 
   useEffect(() => {
-    if (compact) {
-      if (expanded && !provider) {
-        getProvider();
+    if (!defaultProvider) {
+      if (compact) {
+        if (expanded && !provider) {
+          getProvider();
+        }
+      } else {
+        if (!provider) {
+          getProvider();
+        }
       }
     } else {
-      if (!provider) {
-        getProvider();
-      }
+      setProvider(defaultProvider);
     }
-  }, [compact, expanded, provider]);
+  }, [compact, expanded, provider, defaultProvider]);
 
   return (
     <Card
@@ -184,6 +210,7 @@ const OfferPublic = (props: Props) => {
             },
           }}
         >
+          {!offer.isActive && <Chip size="small" label="Inactive" />}
           <Tooltip title="Execution time">
             <Stack
               direction="row"
@@ -195,7 +222,9 @@ const OfferPublic = (props: Props) => {
                 fontSize="small"
                 sx={{ marginTop: '-2px', color: 'rgba(0, 0, 0, 0.24)' }}
               />
-              <p>{offer.estimatedTime}s</p>
+              <p style={{ color: offer.isActive ? '#000' : '#aaa' }}>
+                {offer.estimatedTime}s
+              </p>
             </Stack>
           </Tooltip>
           <Tooltip title="Estimated network fee">
@@ -209,7 +238,7 @@ const OfferPublic = (props: Props) => {
                 fontSize="small"
                 sx={{ marginTop: '-2px', color: 'rgba(0, 0, 0, 0.24)' }}
               />
-              <p>$2.5</p>
+              <p style={{ color: offer.isActive ? '#000' : '#aaa' }}>$2.5</p>
             </Stack>
           </Tooltip>
           <Tooltip title="Chains">
@@ -223,7 +252,7 @@ const OfferPublic = (props: Props) => {
                 fontSize="small"
                 sx={{ marginTop: '-2px', color: 'rgba(0, 0, 0, 0.24)' }}
               />
-              <p>1</p>
+              <p style={{ color: offer.isActive ? '#000' : '#aaa' }}>1</p>
             </Stack>
           </Tooltip>
         </Stack>
@@ -285,7 +314,17 @@ const OfferPublic = (props: Props) => {
             }}
             mb={'3px'}
           >
-            {amount ? <>{amount.toFixed(6).toLocaleString()}</> : <Skeleton />}
+            {!amount ? (
+              <Skeleton />
+            ) : (
+              <>
+                {typeof amount === 'number' && (
+                  <>{amount.toFixed(6).toLocaleString()}</>
+                )}
+
+                {typeof amount === 'string' && <>{amount}</>}
+              </>
+            )}
           </Box>
         }
         subheader={
@@ -327,14 +366,11 @@ const OfferPublic = (props: Props) => {
                 gap="4px"
                 mb="4px"
               >
-                <Tooltip title={`Provider: ${provider?.walletAddress || ''}`}>
-                  <span
-                    style={{ color: 'rgb(116, 116, 116)', fontSize: '14px' }}
-                  >
-                    Provider:{' '}
-                    {formatAddress(provider?.walletAddress || '', 10, 10)}
-                  </span>
-                </Tooltip>
+                <span style={{ color: 'rgb(116, 116, 116)', fontSize: '14px' }}>
+                  Provider:{' '}
+                  {formatAddress(provider?.walletAddress || '', 10, 10)}
+                </span>
+
                 <Stack
                   direction="row"
                   alignItems="center"
@@ -399,11 +435,10 @@ const OfferPublic = (props: Props) => {
               justifyContent="flex-start"
               gap="4px"
             >
-              <Tooltip title={`Offer ID: ${offer.hash || ''}`}>
-                <span style={{ color: 'rgb(116, 116, 116)', fontSize: '14px' }}>
-                  Offer ID: {formatAddress(offer.hash || '', 10, 10)}
-                </span>
-              </Tooltip>
+              <span style={{ color: 'rgb(116, 116, 116)', fontSize: '14px' }}>
+                Offer ID: {formatAddress(offer.hash || '', 10, 10)}
+              </span>
+
               <Stack
                 direction="row"
                 alignItems="center"
@@ -445,6 +480,42 @@ const OfferPublic = (props: Props) => {
                 )}
               </Stack>
             </Stack>
+            {!isUserA && onActivateClick && onDeactivateClick && (
+              <Box>
+                <Box
+                  sx={{
+                    padding: '6px 0 0',
+                    '& > div': { paddingBottom: '0' },
+                    '& button': {
+                      margin: 0,
+                      fontSize: '13px',
+                      padding: '8px 20px',
+                      backgroundColor: 'transparent',
+                      border: '1px solid #3f49e1',
+                      color: '#3f49e1',
+                      '&:hover': {
+                        backgroundColor: '#3f49e1',
+                        border: '1px solid #3f49e1',
+                        color: '#ffffff',
+                      },
+                    },
+                  }}
+                >
+                  <DexCardSubmitButton
+                    loading={isActivating === offer._id}
+                    disabled={Boolean(isActivating)}
+                    label={offer.isActive ? 'Deactivate' : 'Activate'}
+                    onClick={() => {
+                      if (offer.isActive) {
+                        onDeactivateClick(offer._id);
+                      } else {
+                        onActivateClick(offer._id);
+                      }
+                    }}
+                  />
+                </Box>
+              </Box>
+            )}
           </Box>
         </Collapse>
       ) : (
