@@ -25,7 +25,10 @@ const SelectChainAndTokenButton = (props: Props) => {
       <CardTitle>{title}</CardTitle>
 
       <ChainTokenBox
-        style={{ height: 'auto' }}
+        sx={{
+          height: 'auto',
+          '& .MuiCardHeader-content': { overflow: 'hidden' },
+        }}
         avatar={
           <Badge
             overlap="circular"
