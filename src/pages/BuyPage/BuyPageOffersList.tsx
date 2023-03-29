@@ -43,31 +43,13 @@ const BuyPageOffersList = (props: Props) => {
         {!loading &&
           foundOffers.length > 0 &&
           foundOffers.map((offer: Offer) => {
-            const offerChain = {
-              label:
-                chains.find((c) => c.value === `eip155:${offer.chainId}`)
-                  ?.label || '',
-              icon:
-                chains.find((c) => c.value === `eip155:${offer.chainId}`)
-                  ?.icon || '',
-              token:
-                chains.find((c) => c.value === `eip155:${offer.chainId}`)
-                  ?.nativeToken || '',
-            };
-            const currentOfferChain = chains.find(
+            const offerChain = chains.find(
               (c) => c.value === `eip155:${offer.chainId}`
             );
-            const offerToken = {
-              label:
-                currentOfferChain?.tokens?.find(
-                  (t) => t.coinmarketcapId === offer.tokenId
-                )?.symbol || '',
-              icon:
-                currentOfferChain?.tokens?.find(
-                  (t) => t.coinmarketcapId === offer.tokenId
-                )?.icon || '',
-            };
-            return (
+            const offerToken = offerChain?.tokens?.find(
+              (t) => t.coinmarketcapId === offer.tokenId
+            );
+            return offerChain && offerToken ? (
               <OfferPublic
                 key={offer._id}
                 compact
@@ -75,8 +57,6 @@ const BuyPageOffersList = (props: Props) => {
                 chain={offerChain}
                 token={offerToken}
                 fromAmount={fromAmount}
-                toTokenPrice={toTokenPrice}
-                fromTokenPrice={fromTokenPrice}
                 onClick={(o: Offer) => {
                   navigate(
                     VIEWS.ACCEPT_OFFER.fullPath.replace(
@@ -86,7 +66,7 @@ const BuyPageOffersList = (props: Props) => {
                   );
                 }}
               />
-            );
+            ) : null;
           })}
 
         <Box height="10px" />

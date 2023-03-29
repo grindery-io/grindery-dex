@@ -1,13 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { OrderType } from '../../types/Order';
-import {
-  Avatar,
-  Badge,
-  Chip,
-  Skeleton,
-  Stack,
-  Typography,
-} from '@mui/material';
+import { Skeleton, Typography } from '@mui/material';
 import { Box } from '@mui/system';
 import useOffers from '../../hooks/useOffers';
 import { Offer } from '../../types/Offer';
@@ -15,15 +8,11 @@ import useGrinderyChains from '../../hooks/useGrinderyChains';
 import { Chain } from '../../types/Chain';
 import { TokenType } from '../../types/TokenType';
 import moment from 'moment';
-import CheckIcon from '@mui/icons-material/Check';
-import HourglassTopIcon from '@mui/icons-material/HourglassTop';
 import DexCardSubmitButton from '../DexCard/DexCardSubmitButton';
-//import useOrders from '../../hooks/useOrders';
 import { Card } from '../Card/Card';
-import { CardTitle } from '../Card/CardTitle';
-import { ChainTokenBox } from '../ChainTokenBox/ChainTokenBox';
-import { AvatarDefault } from '../Avatar/AvatarDefault';
 import AlertBox from '../AlertBox/AlertBox';
+import TransactionID from '../TransactionHash/TransactionHash';
+import OfferPublic from '../Offer/OfferPublic';
 
 type Props = {
   order: OrderType;
@@ -40,13 +29,20 @@ const Order = (props: Props) => {
   const [loading, setLoading] = useState(false);
   const isUserA = userType === 'a';
 
-  const fromChain = chains.find(
-    (c: Chain) => c.chainId === order.chainIdTokenDeposit
-  );
+  const explorerLink = order.hash
+    ? (
+        chains.find((c: Chain) => c.value === `eip155:5`)
+          ?.transactionExplorerUrl || ''
+      ).replace('{hash}', order.hash || '')
+    : '';
 
-  const fromToken = fromChain?.tokens?.find(
+  /*const fromChain = chains.find(
+    (c: Chain) => c.chainId === order.chainIdTokenDeposit
+  );*/
+
+  /*const fromToken = fromChain?.tokens?.find(
     (t: TokenType) => t.address === order.addressTokenDeposit
-  );
+  );*/
 
   const offerChain = chains.find(
     (c: Chain) => offer && c.chainId === offer.chainId
@@ -90,144 +86,55 @@ const Order = (props: Props) => {
         backgroundColor: '#fff',
       }}
     >
-      <Stack
-        direction="row"
-        sx={{ margin: '16px 16px 0' }}
-        justifyContent="space-between"
-        alignItems="center"
-      >
-        {order.date && (
-          <Typography
-            variant="caption"
-            sx={{
-              display: 'block',
-              color: 'rgba(0, 0, 0, 0.6)',
-            }}
-          >
-            {moment(order.date).format('MMMM Do YYYY, h:mm:ss a')}
-          </Typography>
-        )}
-        {order.isComplete ? (
-          <Chip
-            icon={<CheckIcon />}
-            label="Complete"
-            color="success"
-            size="small"
-          />
-        ) : (
-          <Chip icon={<HourglassTopIcon />} label="Pending" size="small" />
-        )}
-      </Stack>
-      <CardTitle sx={{ paddingTop: '12px' }}>
-        {isUserA ? 'You pay' : 'You receive'}
-      </CardTitle>
-      <ChainTokenBox
-        style={{ height: 'auto' }}
-        avatar={
-          <Avatar
-            src={fromToken?.icon || ''}
-            alt={fromToken?.symbol || ''}
-            sx={{
-              width: '32px',
-              height: '32px',
-              background: '#fff',
-            }}
-          >
-            {fromToken?.symbol || ''}
-          </Avatar>
-        }
-        title={
-          <Box
-            style={{
-              whiteSpace: 'pre-wrap',
-              color: '#000',
-            }}
-            mb={'3px'}
-          >
-            {parseFloat(order.amountTokenDeposit).toFixed(6).toLocaleString()}
+      {order.hash && (
+        <TransactionID
+          containerStyle={{ padding: '16px 16px 0' }}
+          value={order.hash || ''}
+          label="Order ID"
+          link={explorerLink}
+        />
+      )}
+      {order.date && (
+        <Typography
+          variant="caption"
+          sx={{
+            display: 'block',
+            color: 'rgba(0, 0, 0, 0.6)',
+            margin: '2px 16px 0',
+          }}
+        >
+          {moment(order.date).format('MMMM Do YYYY, h:mm:ss a')}
+        </Typography>
+      )}
+      {offer && offerChain && offerToken ? (
+        <OfferPublic
+          key={offer._id}
+          offer={offer}
+          chain={offerChain}
+          token={offerToken}
+          fromAmount={order.amountTokenDeposit}
+          containerStyle={{
+            border: 'none',
+            marginTop: '8px',
+            marginBottom: '0',
+          }}
+        />
+      ) : (
+        <>
+          <Box sx={{ margin: '16px 16px 0' }}>
+            <Skeleton width="150px" height="60px" />
           </Box>
-        }
-        subheader={
-          fromToken?.symbol && fromChain?.label ? (
-            <span style={{ whiteSpace: 'pre-wrap' }}>
-              {fromToken?.symbol || ''} on {fromChain?.label || ''}
-            </span>
-          ) : undefined
-        }
-        selected={true}
-        compact={false}
-      />
-      <CardTitle sx={{ paddingTop: '0px' }}>
-        {isUserA ? 'You receive' : 'You pay'}
-      </CardTitle>
-      <ChainTokenBox
-        style={{ height: 'auto' }}
-        avatar={
-          <Badge
-            overlap="circular"
-            anchorOrigin={{
-              vertical: 'bottom',
-              horizontal: 'right',
-            }}
-            badgeContent={
-              offerChain && offerChain.label ? (
-                <Avatar
-                  src={offerChain.icon}
-                  alt={offerChain.label}
-                  sx={{
-                    width: '16px',
-                    height: '16px',
-                    border: '2px solid #fff',
-                    background: '#fff',
-                  }}
-                >
-                  {offerChain.label}
-                </Avatar>
-              ) : (
-                <AvatarDefault
-                  width={16}
-                  height={16}
-                  sx={{ border: '2px solid #fff' }}
-                />
-              )
-            }
-          >
-            {offerToken ? (
-              <Avatar
-                sx={{ width: '32px', height: '32px' }}
-                src={offerToken.icon}
-                alt={offerToken.symbol || ''}
-              >
-                {offerToken.symbol || ''}
-              </Avatar>
-            ) : (
-              <AvatarDefault width={32} height={32} />
-            )}
-          </Badge>
-        }
-        title={
-          <Box
-            style={{
-              whiteSpace: 'pre-wrap',
-              color: '#000',
-            }}
-            mb={'3px'}
-          >
-            {parseFloat(order.amountTokenOffer).toFixed(6).toLocaleString()}
+          <Box sx={{ margin: '16px 16px 0' }}>
+            <Skeleton width="150px" height="30px" />
           </Box>
-        }
-        subheader={
-          <span style={{ whiteSpace: 'pre-wrap' }}>
-            {offerToken && offerChain ? (
-              `${offerToken.symbol} on ${offerChain.label}`
-            ) : (
-              <Skeleton width="150px" />
-            )}
-          </span>
-        }
-        selected={true}
-        compact={false}
-      />
+          <Box sx={{ margin: '16px 16px 0' }}>
+            <Skeleton width="150px" height="30px" />
+          </Box>
+          <Box sx={{ margin: '16px 16px 32px' }}>
+            <Skeleton width="150px" height="30px" />
+          </Box>
+        </>
+      )}
       {error && (
         <Box sx={{ margin: '0 16px' }}>
           <AlertBox color="error" wrapperStyle={{ margin: '10px 0' }}>
@@ -235,22 +142,62 @@ const Order = (props: Props) => {
           </AlertBox>
         </Box>
       )}
-      {!order.isComplete && !isUserA && (
-        <Box
-          sx={{
-            padding: '0 16px',
-            '& button': { margin: 0, fontSize: '13px', padding: '8px 20px' },
+
+      <Box
+        sx={{
+          padding: '0 16px',
+          '& button': {
+            margin: 0,
+            fontSize: '13px',
+            padding: '8px 20px',
+            color: '#fff',
+            backgroundColor: order.isComplete
+              ? '#00B674'
+              : loading || isUserA
+              ? '#FFB930'
+              : '#FF5858',
+            '&:hover': {
+              color: '#fff',
+              backgroundColor: order.isComplete
+                ? '#00B674'
+                : loading || isUserA
+                ? '#FFB930'
+                : '#FF5858',
+              cursor: isUserA
+                ? 'default'
+                : loading
+                ? 'not-allowed'
+                : order.isComplete
+                ? 'default'
+                : 'pointer',
+            },
+          },
+          '& > div': {
+            marginTop: 0,
+          },
+        }}
+      >
+        <DexCardSubmitButton
+          label={
+            order.isComplete
+              ? 'Completed'
+              : loading
+              ? 'Processing'
+              : isUserA
+              ? 'Processing'
+              : `Send ${parseFloat(order.amountTokenOffer)
+                  .toFixed(6)
+                  .toLocaleString()} ${offer ? offer.token : ''}`
+          }
+          onClick={() => {
+            if (!isUserA) {
+              if (!order.isComplete && !loading) {
+                handleCompleteClick();
+              }
+            }
           }}
-        >
-          <DexCardSubmitButton
-            disabled={loading}
-            label={loading ? 'Paying' : 'Pay'}
-            onClick={() => {
-              handleCompleteClick();
-            }}
-          />
-        </Box>
-      )}
+        />
+      </Box>
     </Card>
   );
 };

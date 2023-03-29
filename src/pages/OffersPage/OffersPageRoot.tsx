@@ -17,6 +17,7 @@ import _ from 'lodash';
 import OfferPublic from '../../components/Offer/OfferPublic';
 import { LiquidityWallet } from '../../types/LiquidityWallet';
 import useLiquidityWallets from '../../hooks/useLiquidityWallets';
+import OfferSkeleton from '../../components/Offer/OfferSkeleton';
 
 function OffersPageRoot() {
   const { user, connect } = useGrinderyNexus();
@@ -55,61 +56,59 @@ function OffersPageRoot() {
       />
 
       <DexCardBody maxHeight="540px">
-        {user &&
-          offers.length > 0 &&
-          Object.keys(groupedOffers).map((key: any) => (
-            <React.Fragment key={key}>
-              <ListSubheader>
-                {chains.find((c: Chain) => c.value === `eip155:${key}`)
-                  ?.label || ''}
-              </ListSubheader>
-              {_.orderBy(groupedOffers[key], ['isActive'], ['desc']).map(
-                (offer: OfferType) => {
-                  const offerChain = {
-                    label:
-                      chains.find((c) => c.value === `eip155:${offer.chainId}`)
-                        ?.label || '',
-                    icon:
-                      chains.find((c) => c.value === `eip155:${offer.chainId}`)
-                        ?.icon || '',
-                    token:
-                      chains.find((c) => c.value === `eip155:${offer.chainId}`)
-                        ?.nativeToken || '',
-                  };
-                  const currentOfferChain = chains.find(
-                    (c) => c.value === `eip155:${offer.chainId}`
-                  );
-                  const offerToken = {
-                    label:
-                      currentOfferChain?.tokens?.find(
-                        (t) => t.coinmarketcapId === offer.tokenId
-                      )?.symbol || '',
-                    icon:
-                      currentOfferChain?.tokens?.find(
-                        (t) => t.coinmarketcapId === offer.tokenId
-                      )?.icon || '',
-                  };
-                  return (
-                    <OfferPublic
-                      key={offer._id}
-                      compact
-                      userType="b"
-                      offer={offer}
-                      chain={offerChain}
-                      isActivating={isActivating}
-                      onDeactivateClick={handleDeactivateClick}
-                      onActivateClick={handleActivateClick}
-                      token={offerToken}
-                      defaultProvider={wallets.find(
-                        (w: LiquidityWallet) => w.chainId === offer.chainId
-                      )}
-                    />
-                  );
-                }
-              )}
-            </React.Fragment>
-          ))}
-        {user && offersIsLoading && <Loading />}
+        {user && (
+          <>
+            {offersIsLoading ? (
+              <>
+                {[0, 1].map((i: number) => (
+                  <OfferSkeleton key={i} />
+                ))}
+              </>
+            ) : (
+              <>
+                {offers.length > 0 &&
+                  Object.keys(groupedOffers).map((key: any) => (
+                    <React.Fragment key={key}>
+                      <ListSubheader>
+                        {chains.find((c: Chain) => c.value === `eip155:${key}`)
+                          ?.label || ''}
+                      </ListSubheader>
+                      {_.orderBy(
+                        groupedOffers[key],
+                        ['isActive'],
+                        ['desc']
+                      ).map((offer: OfferType) => {
+                        const offerChain = chains.find(
+                          (c) => c.value === `eip155:${offer.chainId}`
+                        );
+                        const offerToken = offerChain?.tokens?.find(
+                          (t) => t.coinmarketcapId === offer.tokenId
+                        );
+                        return offerChain && offerToken ? (
+                          <OfferPublic
+                            key={offer._id}
+                            compact
+                            userType="b"
+                            offer={offer}
+                            chain={offerChain}
+                            isActivating={isActivating}
+                            onDeactivateClick={handleDeactivateClick}
+                            onActivateClick={handleActivateClick}
+                            token={offerToken}
+                            defaultProvider={wallets.find(
+                              (w: LiquidityWallet) =>
+                                w.chainId === offer.chainId
+                            )}
+                          />
+                        ) : null;
+                      })}
+                    </React.Fragment>
+                  ))}
+              </>
+            )}
+          </>
+        )}
+
         <DexCardSubmitButton
           label={user ? 'Create offer' : 'Connect wallet'}
           onClick={

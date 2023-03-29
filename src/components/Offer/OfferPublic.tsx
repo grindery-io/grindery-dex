@@ -14,6 +14,7 @@ import {
   StepLabel,
   Stepper,
   styled,
+  SxProps,
   Tooltip,
 } from '@mui/material';
 import { Offer } from '../../types/Offer';
@@ -36,6 +37,8 @@ import { DELIGHT_API_URL } from '../../constants';
 import { useGrinderyNexus } from 'use-grindery-nexus';
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
 import DexCardSubmitButton from '../DexCard/DexCardSubmitButton';
+import { TokenType } from '../../types/TokenType';
+import TransactionID from '../TransactionHash/TransactionHash';
 
 export type OfferChain = {
   label: string;
@@ -50,19 +53,18 @@ export type OfferToken = {
 
 type Props = {
   offer: Offer;
-  chain: OfferChain;
-  token: OfferToken;
+  chain: Chain;
+  token: TokenType;
   onClick?: (offer: Offer) => void;
   fromAmount?: string;
   label?: string;
-  toTokenPrice?: number | null;
-  fromTokenPrice?: number | null;
   compact?: boolean;
   defaultProvider?: LiquidityWallet;
   userType?: 'a' | 'b';
   isActivating?: string;
   onDeactivateClick?: (offerId: string) => void;
   onActivateClick?: (offerId: string) => void;
+  containerStyle?: SxProps | React.CSSProperties;
 };
 
 interface ExpandMoreProps extends IconButtonProps {
@@ -90,14 +92,13 @@ const OfferPublic = (props: Props) => {
     onClick,
     fromAmount,
     label,
-    toTokenPrice,
-    fromTokenPrice,
     compact,
     defaultProvider,
     userType,
     isActivating,
     onDeactivateClick,
     onActivateClick,
+    containerStyle,
   } = props;
   const { token: userToken } = useGrinderyNexus();
 
@@ -112,11 +113,7 @@ const OfferPublic = (props: Props) => {
   const { chains } = useGrinderyChains();
 
   const amount = isUserA
-    ? toTokenPrice &&
-      fromTokenPrice &&
-      fromAmount &&
-      offer &&
-      offer.exchangeRate
+    ? fromAmount && offer && offer.exchangeRate
       ? parseFloat(fromAmount) / parseFloat(offer.exchangeRate)
       : 0
     : `${parseFloat(offer.min).toLocaleString()} — ${parseFloat(
@@ -184,6 +181,7 @@ const OfferPublic = (props: Props) => {
         '&:hover': {
           backgroundColor: onClick ? 'rgb(249, 249, 249)' : '#fff',
         },
+        ...(containerStyle || {}),
       }}
       onClick={
         onClick && amount
@@ -297,9 +295,9 @@ const OfferPublic = (props: Props) => {
               <Avatar
                 sx={{ width: '32px', height: '32px' }}
                 src={token.icon}
-                alt={token.label || offer.token || ''}
+                alt={token.symbol || offer.token || ''}
               >
-                {token.label || offer.token || ''}
+                {token.symbol || offer.token || ''}
               </Avatar>
             ) : (
               <AvatarDefault width={32} height={32} />
@@ -330,8 +328,8 @@ const OfferPublic = (props: Props) => {
         subheader={
           <span style={{ whiteSpace: 'pre-wrap' }}>
             {amount ? (
-              `${token.label} on ${chain.label}.\n1 ${
-                token.label
+              `${token.symbol} on ${chain.label}.\n1 ${
+                token.symbol
               } = ${offer.exchangeRate?.toLocaleString()} ${
                 offer.exchangeToken
               }`
@@ -359,61 +357,11 @@ const OfferPublic = (props: Props) => {
         <Collapse in={expanded} timeout="auto" unmountOnExit>
           <Box p="0 16px 16px">
             {provider?.walletAddress ? (
-              <Stack
-                direction="row"
-                alignItems="center"
-                justifyContent="flex-start"
-                gap="4px"
-                mb="4px"
-              >
-                <span style={{ color: 'rgb(116, 116, 116)', fontSize: '14px' }}>
-                  Provider:{' '}
-                  {formatAddress(provider?.walletAddress || '', 10, 10)}
-                </span>
-
-                <Stack
-                  direction="row"
-                  alignItems="center"
-                  justifyContent="flex-start"
-                >
-                  <Tooltip
-                    title={copied ? 'Copied' : 'Copy to clipboard'}
-                    onClose={() => {
-                      setTimeout(() => {
-                        setCopied(false);
-                      }, 300);
-                    }}
-                  >
-                    <IconButton
-                      size="small"
-                      sx={{ fontSize: '14px', color: '#3f49e1' }}
-                      onClick={(event: any) => {
-                        event.stopPropagation();
-                        navigator.clipboard.writeText(
-                          provider?.walletAddress || ''
-                        );
-                        setCopied(true);
-                      }}
-                    >
-                      <ContentCopyIcon fontSize="inherit" />
-                    </IconButton>
-                  </Tooltip>
-                  {providerLink && (
-                    <Tooltip title="View on blockchain explorer">
-                      <IconButton
-                        size="small"
-                        sx={{ fontSize: '14px', color: '#3f49e1' }}
-                        onClick={(event: any) => {
-                          event.stopPropagation();
-                          window.open(providerLink, '_blank');
-                        }}
-                      >
-                        <OpenInNewIcon fontSize="inherit" />
-                      </IconButton>
-                    </Tooltip>
-                  )}
-                </Stack>
-              </Stack>
+              <TransactionID
+                value={provider?.walletAddress || ''}
+                label="Provider"
+                link={providerLink}
+              />
             ) : (
               <Stack
                 direction="row"
@@ -428,58 +376,11 @@ const OfferPublic = (props: Props) => {
                 <Skeleton width="16px" />
               </Stack>
             )}
-
-            <Stack
-              direction="row"
-              alignItems="center"
-              justifyContent="flex-start"
-              gap="4px"
-            >
-              <span style={{ color: 'rgb(116, 116, 116)', fontSize: '14px' }}>
-                Offer ID: {formatAddress(offer.hash || '', 10, 10)}
-              </span>
-
-              <Stack
-                direction="row"
-                alignItems="center"
-                justifyContent="flex-start"
-              >
-                <Tooltip
-                  title={copied ? 'Copied' : 'Copy to clipboard'}
-                  onClose={() => {
-                    setTimeout(() => {
-                      setCopied(false);
-                    }, 300);
-                  }}
-                >
-                  <IconButton
-                    size="small"
-                    sx={{ fontSize: '14px', color: '#3f49e1' }}
-                    onClick={(event: any) => {
-                      event.stopPropagation();
-                      navigator.clipboard.writeText(offer.hash || '');
-                      setCopied(true);
-                    }}
-                  >
-                    <ContentCopyIcon fontSize="inherit" />
-                  </IconButton>
-                </Tooltip>
-                {explorerLink && (
-                  <Tooltip title="View on blockchain explorer">
-                    <IconButton
-                      size="small"
-                      sx={{ fontSize: '14px', color: '#3f49e1' }}
-                      onClick={(event: any) => {
-                        event.stopPropagation();
-                        window.open(explorerLink, '_blank');
-                      }}
-                    >
-                      <OpenInNewIcon fontSize="inherit" />
-                    </IconButton>
-                  </Tooltip>
-                )}
-              </Stack>
-            </Stack>
+            <TransactionID
+              value={offer.hash || ''}
+              label="Offer ID"
+              link={explorerLink}
+            />
             {!isUserA && onActivateClick && onDeactivateClick && (
               <Box>
                 <Box
@@ -491,15 +392,17 @@ const OfferPublic = (props: Props) => {
                       fontSize: '13px',
                       padding: '8px 20px',
                       backgroundColor: 'transparent',
-                      border: `1px solid ${
-                        offer.isActive ? '#FF5858' : '#00B674'
-                      }`,
+                      border: Boolean(isActivating)
+                        ? 'none'
+                        : `1px solid ${offer.isActive ? '#FF5858' : '#00B674'}`,
                       color: offer.isActive ? '#FF5858' : '#00B674',
                       '&:hover': {
                         backgroundColor: offer.isActive ? '#FF5858' : '#00B674',
-                        border: `1px solid ${
-                          offer.isActive ? '#FF5858' : '#00B674'
-                        }`,
+                        border: Boolean(isActivating)
+                          ? 'none'
+                          : `1px solid ${
+                              offer.isActive ? '#FF5858' : '#00B674'
+                            }`,
                         color: '#ffffff',
                       },
                     },
@@ -556,64 +459,11 @@ const OfferPublic = (props: Props) => {
           </Stepper>
           <Box p="16px">
             {provider?.walletAddress ? (
-              <Stack
-                direction="row"
-                alignItems="center"
-                justifyContent="flex-start"
-                gap="4px"
-                mb="4px"
-              >
-                <Tooltip title={`Provider: ${provider?.walletAddress || ''}`}>
-                  <span
-                    style={{ color: 'rgb(116, 116, 116)', fontSize: '14px' }}
-                  >
-                    Provider:{' '}
-                    {formatAddress(provider?.walletAddress || '', 10, 10)}
-                  </span>
-                </Tooltip>
-                <Stack
-                  direction="row"
-                  alignItems="center"
-                  justifyContent="flex-start"
-                >
-                  <Tooltip
-                    title={copied ? 'Copied' : 'Copy to clipboard'}
-                    onClose={() => {
-                      setTimeout(() => {
-                        setCopied(false);
-                      }, 300);
-                    }}
-                  >
-                    <IconButton
-                      size="small"
-                      sx={{ fontSize: '14px', color: '#3f49e1' }}
-                      onClick={(event: any) => {
-                        event.stopPropagation();
-                        navigator.clipboard.writeText(
-                          provider?.walletAddress || ''
-                        );
-                        setCopied(true);
-                      }}
-                    >
-                      <ContentCopyIcon fontSize="inherit" />
-                    </IconButton>
-                  </Tooltip>
-                  {providerLink && (
-                    <Tooltip title="View on blockchain explorer">
-                      <IconButton
-                        size="small"
-                        sx={{ fontSize: '14px', color: '#3f49e1' }}
-                        onClick={(event: any) => {
-                          event.stopPropagation();
-                          window.open(providerLink, '_blank');
-                        }}
-                      >
-                        <OpenInNewIcon fontSize="inherit" />
-                      </IconButton>
-                    </Tooltip>
-                  )}
-                </Stack>
-              </Stack>
+              <TransactionID
+                value={provider?.walletAddress || ''}
+                label="Provider"
+                link={providerLink}
+              />
             ) : (
               <Stack
                 direction="row"
@@ -628,59 +478,11 @@ const OfferPublic = (props: Props) => {
                 <Skeleton width="16px" />
               </Stack>
             )}
-
-            <Stack
-              direction="row"
-              alignItems="center"
-              justifyContent="flex-start"
-              gap="4px"
-            >
-              <Tooltip title={`Offer ID: ${offer.hash || ''}`}>
-                <span style={{ color: 'rgb(116, 116, 116)', fontSize: '14px' }}>
-                  Offer ID: {formatAddress(offer.hash || '', 10, 10)}
-                </span>
-              </Tooltip>
-              <Stack
-                direction="row"
-                alignItems="center"
-                justifyContent="flex-start"
-              >
-                <Tooltip
-                  title={copied ? 'Copied' : 'Copy to clipboard'}
-                  onClose={() => {
-                    setTimeout(() => {
-                      setCopied(false);
-                    }, 300);
-                  }}
-                >
-                  <IconButton
-                    size="small"
-                    sx={{ fontSize: '14px', color: '#3f49e1' }}
-                    onClick={(event: any) => {
-                      event.stopPropagation();
-                      navigator.clipboard.writeText(offer.hash || '');
-                      setCopied(true);
-                    }}
-                  >
-                    <ContentCopyIcon fontSize="inherit" />
-                  </IconButton>
-                </Tooltip>
-                {explorerLink && (
-                  <Tooltip title="View on blockchain explorer">
-                    <IconButton
-                      size="small"
-                      sx={{ fontSize: '14px', color: '#3f49e1' }}
-                      onClick={(event: any) => {
-                        event.stopPropagation();
-                        window.open(explorerLink, '_blank');
-                      }}
-                    >
-                      <OpenInNewIcon fontSize="inherit" />
-                    </IconButton>
-                  </Tooltip>
-                )}
-              </Stack>
-            </Stack>
+            <TransactionID
+              value={offer.hash || ''}
+              label="Offer ID"
+              link={explorerLink}
+            />
           </Box>
         </>
       )}

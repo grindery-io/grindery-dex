@@ -21,54 +21,26 @@ const OrderSkeleton = (props: Props) => {
           },
         }}
       >
-        <Stack
-          direction="row"
-          sx={{ margin: '16px 16px 0' }}
-          justifyContent="space-between"
-          alignItems="center"
-        >
-          <Skeleton width="150px" height="14px" />
-          <Skeleton width="80px" height="24px" sx={{ borderRadius: '16px' }} />
-        </Stack>
-        <Box sx={{ margin: '20px 16px 0' }}>
-          <Skeleton width="100px" height="16px" />
-          <Stack
-            sx={{ marginTop: '16px' }}
-            direction="row"
-            justifyContent="flex-start"
-            alignItems="center"
-          >
-            <Skeleton
-              width="40px"
-              height="40px"
-              variant="circular"
-              sx={{ marginRight: '16px' }}
-            />
-            <Box>
-              <Skeleton width="80px" height="22px" />
-              <Skeleton width="150px" height="14px" sx={{ marginTop: '4px' }} />
-            </Box>
-          </Stack>
-          <Skeleton width="100px" height="16px" sx={{ marginTop: '24px' }} />
-          <Stack
-            sx={{ marginTop: '16px' }}
-            direction="row"
-            justifyContent="flex-start"
-            alignItems="center"
-          >
-            <Skeleton
-              width="40px"
-              height="40px"
-              variant="circular"
-              sx={{ marginRight: '16px' }}
-            />
-            <Box>
-              <Skeleton width="80px" height="22px" />
-              <Skeleton width="150px" height="14px" sx={{ marginTop: '4px' }} />
-            </Box>
-          </Stack>
+        <Box sx={{ margin: '16px 16px 0' }}>
+          <Skeleton height="14px" sx={{ marginBottom: '6px' }} />
+          <Skeleton height="14px" />
         </Box>
-        <Box height="16px" />
+
+        <Box sx={{ margin: '16px 16px 0' }}>
+          <Skeleton width="150px" height="60px" />
+        </Box>
+        <Box sx={{ margin: '16px 16px 0' }}>
+          <Skeleton width="150px" height="30px" />
+        </Box>
+        <Box sx={{ margin: '16px 16px 0' }}>
+          <Skeleton width="150px" height="30px" />
+        </Box>
+        <Box sx={{ margin: '16px 16px 0' }}>
+          <Skeleton width="150px" height="30px" />
+        </Box>
+        <Box sx={{ margin: '16px' }}>
+          <Skeleton height="35px" />
+        </Box>
       </Box>
     </Card>
   );

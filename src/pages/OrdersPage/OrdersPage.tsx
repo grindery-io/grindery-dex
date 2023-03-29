@@ -73,19 +73,6 @@ function OrdersPage() {
       return false;
     }
 
-    let balance = await provider.getBalance(wallet.walletAddress);
-
-    if (parseFloat(balance) < parseFloat(order.amountTokenOffer)) {
-      console.error(
-        "handleOrderCompleteClick error: You don't have enough BNB. Fund your liquidity wallet."
-      );
-      setError({
-        type: order.orderId,
-        text: "You don't have enough BNB. Fund your liquidity wallet.",
-      });
-      return false;
-    }
-
     if (selectedChain !== 'eip155:97') {
       try {
         await window.ethereum.request({
@@ -105,6 +92,19 @@ function OrdersPage() {
         });
         return false;
       }
+    }
+
+    let balance = await provider.getBalance(wallet.walletAddress);
+
+    if (parseFloat(balance) < parseFloat(order.amountTokenOffer)) {
+      console.error(
+        "handleOrderCompleteClick error: You don't have enough BNB. Fund your liquidity wallet."
+      );
+      setError({
+        type: order.orderId,
+        text: "You don't have enough BNB. Fund your liquidity wallet.",
+      });
+      return false;
     }
 
     // get signer

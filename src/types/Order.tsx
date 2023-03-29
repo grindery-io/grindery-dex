@@ -10,4 +10,5 @@ export type OrderType = {
   offerId?: string;
   orderId?: string;
   userId?: string;
+  hash?: string;
 };

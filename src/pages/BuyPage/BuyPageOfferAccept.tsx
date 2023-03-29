@@ -45,15 +45,7 @@ const BuyPageOfferAccept = (props: Props) => {
   let { offerId } = useParams();
   const [copied, setCopied] = useState(false);
   const offer = foundOffers.find((o: Offer) => o.offerId === offerId);
-  const offerChain = {
-    label:
-      chains.find((c) => c.value === `eip155:${offer?.chainId}`)?.label || '',
-    icon:
-      chains.find((c) => c.value === `eip155:${offer?.chainId}`)?.icon || '',
-    token:
-      chains.find((c) => c.value === `eip155:${offer?.chainId}`)?.nativeToken ||
-      '',
-  };
+  const offerChain = chains.find((c) => c.value === `eip155:${offer?.chainId}`);
 
   const explorerLink = accepted
     ? (
@@ -61,19 +53,9 @@ const BuyPageOfferAccept = (props: Props) => {
       ).replace('{hash}', accepted)
     : '';
 
-  const currentOfferChain = chains.find(
-    (c) => c.value === `eip155:${offer?.chainId}`
+  const offerToken = offerChain?.tokens?.find(
+    (t) => t.coinmarketcapId === offer?.tokenId
   );
-  const offerToken = {
-    label:
-      currentOfferChain?.tokens?.find(
-        (t) => t.coinmarketcapId === offer?.tokenId
-      )?.symbol || '',
-    icon:
-      currentOfferChain?.tokens?.find(
-        (t) => t.coinmarketcapId === offer?.tokenId
-      )?.icon || '',
-  };
 
   const countdownRenderer = ({
     total,
@@ -139,16 +121,16 @@ const BuyPageOfferAccept = (props: Props) => {
               }
             />*/}
             <Box mt="0px">
-              <OfferPublic
-                key={offer._id}
-                offer={offer}
-                chain={offerChain}
-                token={offerToken}
-                fromAmount={fromAmount}
-                //label="You receive"
-                toTokenPrice={toTokenPrice}
-                fromTokenPrice={fromTokenPrice}
-              />
+              {offerChain && offerToken && (
+                <OfferPublic
+                  key={offer._id}
+                  offer={offer}
+                  chain={offerChain}
+                  token={offerToken}
+                  fromAmount={fromAmount}
+                  //label="You receive"
+                />
+              )}
             </Box>
             {approved && (
               <AlertBox color="success">

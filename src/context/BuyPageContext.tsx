@@ -607,8 +607,7 @@ export const BuyPageContextProvider = ({ children }: BuyPageContextProps) => {
         offerId: offer.offerId,
         orderId,
         amountTokenOffer: (
-          (parseFloat(fromAmount) * fromTokenPrice) /
-          toTokenPrice
+          parseFloat(fromAmount) / parseFloat(offer.exchangeRate || '1')
         ).toString(),
         hash: tx.hash || '',
       }).catch((error: any) => {
