@@ -491,11 +491,15 @@ const OfferPublic = (props: Props) => {
                       fontSize: '13px',
                       padding: '8px 20px',
                       backgroundColor: 'transparent',
-                      border: '1px solid #3f49e1',
-                      color: '#3f49e1',
+                      border: `1px solid ${
+                        offer.isActive ? '#FF5858' : '#00B674'
+                      }`,
+                      color: offer.isActive ? '#FF5858' : '#00B674',
                       '&:hover': {
-                        backgroundColor: '#3f49e1',
-                        border: '1px solid #3f49e1',
+                        backgroundColor: offer.isActive ? '#FF5858' : '#00B674',
+                        border: `1px solid ${
+                          offer.isActive ? '#FF5858' : '#00B674'
+                        }`,
                         color: '#ffffff',
                       },
                     },
