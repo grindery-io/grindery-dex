@@ -15,5 +15,6 @@ export type Chain = {
   isEvm?: boolean;
   chainId: string;
   idHex?: string;
-  explorerUrl?: string;
+  transactionExplorerUrl?: string;
+  addressExplorerUrl?: string;
 };

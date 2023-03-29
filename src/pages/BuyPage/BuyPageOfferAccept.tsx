@@ -56,10 +56,9 @@ const BuyPageOfferAccept = (props: Props) => {
   };
 
   const explorerLink = accepted
-    ? (chains.find((c) => c.value === `eip155:5`)?.explorerUrl || '').replace(
-        '{hash}',
-        accepted
-      )
+    ? (
+        chains.find((c) => c.value === `eip155:5`)?.transactionExplorerUrl || ''
+      ).replace('{hash}', accepted)
     : '';
 
   const currentOfferChain = chains.find(

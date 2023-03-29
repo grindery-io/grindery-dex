@@ -28,6 +28,7 @@ import { formatAddress } from '../../utils/address';
 import { LiquidityWallet } from '../../types/LiquidityWallet';
 import axios from 'axios';
 import { DELIGHT_API_URL } from '../../constants';
+import { useGrinderyNexus } from 'use-grindery-nexus';
 
 export type OfferChain = {
   label: string;
@@ -79,6 +80,13 @@ const OfferPublic = (props: Props) => {
     toTokenPrice,
     fromTokenPrice,
   } = props;
+  const { token: userToken } = useGrinderyNexus();
+
+  const params = {
+    headers: {
+      Authorization: `Bearer ${userToken?.access_token || ''}`,
+    },
+  };
 
   const { chains } = useGrinderyChains();
 
@@ -93,19 +101,22 @@ const OfferPublic = (props: Props) => {
 
   const explorerLink = offer.hash
     ? (
-        chains.find((c: Chain) => c.value === `eip155:5`)?.explorerUrl || ''
+        chains.find((c: Chain) => c.value === `eip155:5`)
+          ?.transactionExplorerUrl || ''
       ).replace('{hash}', offer.hash || '')
     : '';
 
   const providerLink = offer.hash
     ? (
-        chains.find((c: Chain) => c.value === `eip155:5`)?.explorerUrl || ''
+        chains.find((c: Chain) => c.chainId === offer.chainId)
+          ?.addressExplorerUrl || ''
       ).replace('{hash}', provider?.walletAddress || '')
     : '';
 
   const getProvider = async () => {
     const providerRes = await axios.get(
-      `${DELIGHT_API_URL}/liquidity-wallets/single?chainId=${offer.chainId}&userId=${offer.userId}`
+      `${DELIGHT_API_URL}/liquidity-wallets/single?chainId=${offer.chainId}&userId=${offer.userId}`,
+      params
     );
     setProvider(providerRes?.data || null);
   };
@@ -241,7 +252,7 @@ const OfferPublic = (props: Props) => {
               <Tooltip title={`Provider: ${provider?.walletAddress || ''}`}>
                 <span style={{ color: 'rgb(116, 116, 116)', fontSize: '14px' }}>
                   Provider:{' '}
-                  {formatAddress(provider?.walletAddress || '', 11, 11)}
+                  {formatAddress(provider?.walletAddress || '', 10, 10)}
                 </span>
               </Tooltip>
               <Stack
@@ -294,8 +305,9 @@ const OfferPublic = (props: Props) => {
               justifyContent="flex-start"
               gap="4px"
               mb="4px"
+              sx={{ minHeight: '24px' }}
             >
-              <Skeleton sx={{ flex: 1 }} />
+              <Skeleton width="220px" />
               <Skeleton width="16px" />
               <Skeleton width="16px" />
             </Stack>
@@ -309,7 +321,7 @@ const OfferPublic = (props: Props) => {
           >
             <Tooltip title={`Offer ID: ${offer.hash || ''}`}>
               <span style={{ color: 'rgb(116, 116, 116)', fontSize: '14px' }}>
-                Offer ID: {formatAddress(offer.hash || '', 11, 11)}
+                Offer ID: {formatAddress(offer.hash || '', 10, 10)}
               </span>
             </Tooltip>
             <Stack
