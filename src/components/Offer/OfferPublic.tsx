@@ -8,6 +8,11 @@ import {
   IconButtonProps,
   Skeleton,
   Stack,
+  Step,
+  StepIcon,
+  StepIconProps,
+  StepLabel,
+  Stepper,
   styled,
   Tooltip,
 } from '@mui/material';
@@ -29,6 +34,7 @@ import { LiquidityWallet } from '../../types/LiquidityWallet';
 import axios from 'axios';
 import { DELIGHT_API_URL } from '../../constants';
 import { useGrinderyNexus } from 'use-grindery-nexus';
+import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
 
 export type OfferChain = {
   label: string;
@@ -50,6 +56,7 @@ type Props = {
   label?: string;
   toTokenPrice?: number | null;
   fromTokenPrice?: number | null;
+  compact?: boolean;
 };
 
 interface ExpandMoreProps extends IconButtonProps {
@@ -79,6 +86,7 @@ const OfferPublic = (props: Props) => {
     label,
     toTokenPrice,
     fromTokenPrice,
+    compact,
   } = props;
   const { token: userToken } = useGrinderyNexus();
 
@@ -129,10 +137,16 @@ const OfferPublic = (props: Props) => {
   };
 
   useEffect(() => {
-    if (expanded && !provider) {
-      getProvider();
+    if (compact) {
+      if (expanded && !provider) {
+        getProvider();
+      }
+    } else {
+      if (!provider) {
+        getProvider();
+      }
     }
-  }, [expanded, provider]);
+  }, [compact, expanded, provider]);
 
   return (
     <Card
@@ -153,65 +167,67 @@ const OfferPublic = (props: Props) => {
           : undefined
       }
     >
-      <Stack
-        direction="row"
-        alignItems="center"
-        justifyContent="space-between"
-        sx={{
-          padding: '12px 16px 0',
-          fontSize: '12px',
-          '& p': {
-            fontSize: '14px',
-            margin: 0,
-            padding: 0,
-            lineHeight: 1,
-            fontWeight: '500',
-          },
-        }}
-      >
-        <Tooltip title="Execution time">
-          <Stack
-            direction="row"
-            alignItems="center"
-            justifyContent="flex-start"
-            gap="3px"
-          >
-            <AccessTimeFilledIcon
-              fontSize="small"
-              sx={{ marginTop: '-2px', color: 'rgba(0, 0, 0, 0.24)' }}
-            />
-            <p>{offer.estimatedTime}s</p>
-          </Stack>
-        </Tooltip>
-        <Tooltip title="Estimated network fee">
-          <Stack
-            direction="row"
-            alignItems="center"
-            justifyContent="flex-start"
-            gap="3px"
-          >
-            <EvStationIcon
-              fontSize="small"
-              sx={{ marginTop: '-2px', color: 'rgba(0, 0, 0, 0.24)' }}
-            />
-            <p>$2.5</p>
-          </Stack>
-        </Tooltip>
-        <Tooltip title="Chains">
-          <Stack
-            direction="row"
-            alignItems="center"
-            justifyContent="flex-start"
-            gap="3px"
-          >
-            <LayersIcon
-              fontSize="small"
-              sx={{ marginTop: '-2px', color: 'rgba(0, 0, 0, 0.24)' }}
-            />
-            <p>1</p>
-          </Stack>
-        </Tooltip>
-      </Stack>
+      {compact && (
+        <Stack
+          direction="row"
+          alignItems="center"
+          justifyContent="space-between"
+          sx={{
+            padding: '12px 16px 0',
+            fontSize: '12px',
+            '& p': {
+              fontSize: '14px',
+              margin: 0,
+              padding: 0,
+              lineHeight: 1,
+              fontWeight: '500',
+            },
+          }}
+        >
+          <Tooltip title="Execution time">
+            <Stack
+              direction="row"
+              alignItems="center"
+              justifyContent="flex-start"
+              gap="3px"
+            >
+              <AccessTimeFilledIcon
+                fontSize="small"
+                sx={{ marginTop: '-2px', color: 'rgba(0, 0, 0, 0.24)' }}
+              />
+              <p>{offer.estimatedTime}s</p>
+            </Stack>
+          </Tooltip>
+          <Tooltip title="Estimated network fee">
+            <Stack
+              direction="row"
+              alignItems="center"
+              justifyContent="flex-start"
+              gap="3px"
+            >
+              <EvStationIcon
+                fontSize="small"
+                sx={{ marginTop: '-2px', color: 'rgba(0, 0, 0, 0.24)' }}
+              />
+              <p>$2.5</p>
+            </Stack>
+          </Tooltip>
+          <Tooltip title="Chains">
+            <Stack
+              direction="row"
+              alignItems="center"
+              justifyContent="flex-start"
+              gap="3px"
+            >
+              <LayersIcon
+                fontSize="small"
+                sx={{ marginTop: '-2px', color: 'rgba(0, 0, 0, 0.24)' }}
+              />
+              <p>1</p>
+            </Stack>
+          </Tooltip>
+        </Stack>
+      )}
       {label && <CardTitle>{label}</CardTitle>}
 
       <Box display={'flex'} flexDirection={'row'}></Box>
@@ -288,30 +304,104 @@ const OfferPublic = (props: Props) => {
         selected={true}
         compact={false}
         action={
-          <ExpandMore
-            expand={expanded}
-            onClick={handleExpandClick}
-            aria-expanded={expanded}
-            aria-label="show more"
-          >
-            <ExpandMoreIcon />
-          </ExpandMore>
+          compact ? (
+            <ExpandMore
+              expand={expanded}
+              onClick={handleExpandClick}
+              aria-expanded={expanded}
+              aria-label="show more"
+            >
+              <ExpandMoreIcon />
+            </ExpandMore>
+          ) : undefined
         }
       />
-      <Collapse in={expanded} timeout="auto" unmountOnExit>
-        <Box p="0 16px 16px">
-          {provider?.walletAddress ? (
+      {compact ? (
+        <Collapse in={expanded} timeout="auto" unmountOnExit>
+          <Box p="0 16px 16px">
+            {provider?.walletAddress ? (
+              <Stack
+                direction="row"
+                alignItems="center"
+                justifyContent="flex-start"
+                gap="4px"
+                mb="4px"
+              >
+                <Tooltip title={`Provider: ${provider?.walletAddress || ''}`}>
+                  <span
+                    style={{ color: 'rgb(116, 116, 116)', fontSize: '14px' }}
+                  >
+                    Provider:{' '}
+                    {formatAddress(provider?.walletAddress || '', 10, 10)}
+                  </span>
+                </Tooltip>
+                <Stack
+                  direction="row"
+                  alignItems="center"
+                  justifyContent="flex-start"
+                >
+                  <Tooltip
+                    title={copied ? 'Copied' : 'Copy to clipboard'}
+                    onClose={() => {
+                      setTimeout(() => {
+                        setCopied(false);
+                      }, 300);
+                    }}
+                  >
+                    <IconButton
+                      size="small"
+                      sx={{ fontSize: '14px', color: '#3f49e1' }}
+                      onClick={(event: any) => {
+                        event.stopPropagation();
+                        navigator.clipboard.writeText(
+                          provider?.walletAddress || ''
+                        );
+                        setCopied(true);
+                      }}
+                    >
+                      <ContentCopyIcon fontSize="inherit" />
+                    </IconButton>
+                  </Tooltip>
+                  {providerLink && (
+                    <Tooltip title="View on blockchain explorer">
+                      <IconButton
+                        size="small"
+                        sx={{ fontSize: '14px', color: '#3f49e1' }}
+                        onClick={(event: any) => {
+                          event.stopPropagation();
+                          window.open(providerLink, '_blank');
+                        }}
+                      >
+                        <OpenInNewIcon fontSize="inherit" />
+                      </IconButton>
+                    </Tooltip>
+                  )}
+                </Stack>
+              </Stack>
+            ) : (
+              <Stack
+                direction="row"
+                alignItems="center"
+                justifyContent="flex-start"
+                gap="4px"
+                mb="4px"
+                sx={{ minHeight: '24px' }}
+              >
+                <Skeleton width="220px" />
+                <Skeleton width="16px" />
+                <Skeleton width="16px" />
+              </Stack>
+            )}
+
             <Stack
               direction="row"
               alignItems="center"
               justifyContent="flex-start"
               gap="4px"
-              mb="4px"
             >
-              <Tooltip title={`Provider: ${provider?.walletAddress || ''}`}>
+              <Tooltip title={`Offer ID: ${offer.hash || ''}`}>
                 <span style={{ color: 'rgb(116, 116, 116)', fontSize: '14px' }}>
-                  Provider:{' '}
-                  {formatAddress(provider?.walletAddress || '', 10, 10)}
+                  Offer ID: {formatAddress(offer.hash || '', 10, 10)}
                 </span>
               </Tooltip>
               <Stack
@@ -332,23 +422,21 @@ const OfferPublic = (props: Props) => {
                     sx={{ fontSize: '14px', color: '#3f49e1' }}
                     onClick={(event: any) => {
                       event.stopPropagation();
-                      navigator.clipboard.writeText(
-                        provider?.walletAddress || ''
-                      );
+                      navigator.clipboard.writeText(offer.hash || '');
                       setCopied(true);
                     }}
                   >
                     <ContentCopyIcon fontSize="inherit" />
                   </IconButton>
                 </Tooltip>
-                {providerLink && (
+                {explorerLink && (
                   <Tooltip title="View on blockchain explorer">
                     <IconButton
                       size="small"
                       sx={{ fontSize: '14px', color: '#3f49e1' }}
                       onClick={(event: any) => {
                         event.stopPropagation();
-                        window.open(providerLink, '_blank');
+                        window.open(explorerLink, '_blank');
                       }}
                     >
                       <OpenInNewIcon fontSize="inherit" />
@@ -357,77 +445,184 @@ const OfferPublic = (props: Props) => {
                 )}
               </Stack>
             </Stack>
-          ) : (
+          </Box>
+        </Collapse>
+      ) : (
+        <>
+          <Stepper
+            orientation="vertical"
+            activeStep={-1}
+            sx={{
+              padding: '0 16px',
+              //'& .MuiStepConnector-root': { display: 'none' },
+              '& .MuiStepConnector-line': {
+                minHeight: '12px',
+              },
+              '& .MuiStepLabel-root': {
+                paddingBottom: '5px',
+              },
+            }}
+          >
+            <Step expanded>
+              <StepLabel StepIconComponent={StepCustomIcon}>
+                Estimated gas fee: $2.5
+              </StepLabel>
+            </Step>
+            <Step expanded>
+              <StepLabel StepIconComponent={StepCustomIcon}>
+                Price impact: 0
+              </StepLabel>
+            </Step>
+            <Step expanded>
+              <StepLabel StepIconComponent={StepCustomIcon}>
+                Time to execute: {offer.estimatedTime}s
+              </StepLabel>
+            </Step>
+          </Stepper>
+          <Box p="16px">
+            {provider?.walletAddress ? (
+              <Stack
+                direction="row"
+                alignItems="center"
+                justifyContent="flex-start"
+                gap="4px"
+                mb="4px"
+              >
+                <Tooltip title={`Provider: ${provider?.walletAddress || ''}`}>
+                  <span
+                    style={{ color: 'rgb(116, 116, 116)', fontSize: '14px' }}
+                  >
+                    Provider:{' '}
+                    {formatAddress(provider?.walletAddress || '', 10, 10)}
+                  </span>
+                </Tooltip>
+                <Stack
+                  direction="row"
+                  alignItems="center"
+                  justifyContent="flex-start"
+                >
+                  <Tooltip
+                    title={copied ? 'Copied' : 'Copy to clipboard'}
+                    onClose={() => {
+                      setTimeout(() => {
+                        setCopied(false);
+                      }, 300);
+                    }}
+                  >
+                    <IconButton
+                      size="small"
+                      sx={{ fontSize: '14px', color: '#3f49e1' }}
+                      onClick={(event: any) => {
+                        event.stopPropagation();
+                        navigator.clipboard.writeText(
+                          provider?.walletAddress || ''
+                        );
+                        setCopied(true);
+                      }}
+                    >
+                      <ContentCopyIcon fontSize="inherit" />
+                    </IconButton>
+                  </Tooltip>
+                  {providerLink && (
+                    <Tooltip title="View on blockchain explorer">
+                      <IconButton
+                        size="small"
+                        sx={{ fontSize: '14px', color: '#3f49e1' }}
+                        onClick={(event: any) => {
+                          event.stopPropagation();
+                          window.open(providerLink, '_blank');
+                        }}
+                      >
+                        <OpenInNewIcon fontSize="inherit" />
+                      </IconButton>
+                    </Tooltip>
+                  )}
+                </Stack>
+              </Stack>
+            ) : (
+              <Stack
+                direction="row"
+                alignItems="center"
+                justifyContent="flex-start"
+                gap="4px"
+                mb="4px"
+                sx={{ minHeight: '24px' }}
+              >
+                <Skeleton width="220px" />
+                <Skeleton width="16px" />
+                <Skeleton width="16px" />
+              </Stack>
+            )}
+
             <Stack
               direction="row"
               alignItems="center"
               justifyContent="flex-start"
               gap="4px"
-              mb="4px"
-              sx={{ minHeight: '24px' }}
             >
-              <Skeleton width="220px" />
-              <Skeleton width="16px" />
-              <Skeleton width="16px" />
-            </Stack>
-          )}
-
-          <Stack
-            direction="row"
-            alignItems="center"
-            justifyContent="flex-start"
-            gap="4px"
-          >
-            <Tooltip title={`Offer ID: ${offer.hash || ''}`}>
-              <span style={{ color: 'rgb(116, 116, 116)', fontSize: '14px' }}>
-                Offer ID: {formatAddress(offer.hash || '', 10, 10)}
-              </span>
-            </Tooltip>
-            <Stack
-              direction="row"
-              alignItems="center"
-              justifyContent="flex-start"
-            >
-              <Tooltip
-                title={copied ? 'Copied' : 'Copy to clipboard'}
-                onClose={() => {
-                  setTimeout(() => {
-                    setCopied(false);
-                  }, 300);
-                }}
+              <Tooltip title={`Offer ID: ${offer.hash || ''}`}>
+                <span style={{ color: 'rgb(116, 116, 116)', fontSize: '14px' }}>
+                  Offer ID: {formatAddress(offer.hash || '', 10, 10)}
+                </span>
+              </Tooltip>
+              <Stack
+                direction="row"
+                alignItems="center"
+                justifyContent="flex-start"
               >
-                <IconButton
-                  size="small"
-                  sx={{ fontSize: '14px', color: '#3f49e1' }}
-                  onClick={(event: any) => {
-                    event.stopPropagation();
-                    navigator.clipboard.writeText(offer.hash || '');
-                    setCopied(true);
+                <Tooltip
+                  title={copied ? 'Copied' : 'Copy to clipboard'}
+                  onClose={() => {
+                    setTimeout(() => {
+                      setCopied(false);
+                    }, 300);
                   }}
                 >
-                  <ContentCopyIcon fontSize="inherit" />
-                </IconButton>
-              </Tooltip>
-              {explorerLink && (
-                <Tooltip title="View on blockchain explorer">
                   <IconButton
                     size="small"
                     sx={{ fontSize: '14px', color: '#3f49e1' }}
                     onClick={(event: any) => {
                       event.stopPropagation();
-                      window.open(explorerLink, '_blank');
+                      navigator.clipboard.writeText(offer.hash || '');
+                      setCopied(true);
                     }}
                   >
-                    <OpenInNewIcon fontSize="inherit" />
+                    <ContentCopyIcon fontSize="inherit" />
                   </IconButton>
                 </Tooltip>
-              )}
+                {explorerLink && (
+                  <Tooltip title="View on blockchain explorer">
+                    <IconButton
+                      size="small"
+                      sx={{ fontSize: '14px', color: '#3f49e1' }}
+                      onClick={(event: any) => {
+                        event.stopPropagation();
+                        window.open(explorerLink, '_blank');
+                      }}
+                    >
+                      <OpenInNewIcon fontSize="inherit" />
+                    </IconButton>
+                  </Tooltip>
+                )}
+              </Stack>
             </Stack>
-          </Stack>
-        </Box>
-      </Collapse>
+          </Box>
+        </>
+      )}
     </Card>
   );
 };
+
+function StepCustomIcon(props: StepIconProps) {
+  const { className } = props;
+
+  const icons: { [index: string]: React.ReactElement } = {
+    1: <EvStationIcon sx={{ color: 'rgba(0, 0, 0, 0.7)' }} />,
+    2: <MonetizationOnIcon sx={{ color: 'rgba(0, 0, 0, 0.7)' }} />,
+    3: <AccessTimeFilledIcon sx={{ color: 'rgba(0, 0, 0, 0.7)' }} />,
+  };
+
+  return <Box className={className}>{icons[String(props.icon)]}</Box>;
+}
 
 export default OfferPublic;

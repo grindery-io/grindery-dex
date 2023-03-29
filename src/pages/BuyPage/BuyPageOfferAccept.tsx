@@ -115,7 +115,7 @@ const BuyPageOfferAccept = (props: Props) => {
       <DexCardBody maxHeight="540px">
         {!accepted ? (
           <>
-            <AmountInput
+            {/*<AmountInput
               label="You pay"
               value={parseFloat(fromAmount).toFixed(6).toLocaleString()}
               onChange={() => {}}
@@ -137,15 +137,15 @@ const BuyPageOfferAccept = (props: Props) => {
                   <Skeleton />
                 )
               }
-            />
-            <Box mt="20px">
+            />*/}
+            <Box mt="0px">
               <OfferPublic
                 key={offer._id}
                 offer={offer}
                 chain={offerChain}
                 token={offerToken}
                 fromAmount={fromAmount}
-                label="You receive"
+                //label="You receive"
                 toTokenPrice={toTokenPrice}
                 fromTokenPrice={fromTokenPrice}
               />

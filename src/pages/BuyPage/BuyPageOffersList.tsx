@@ -70,6 +70,7 @@ const BuyPageOffersList = (props: Props) => {
             return (
               <OfferPublic
                 key={offer._id}
+                compact
                 offer={offer}
                 chain={offerChain}
                 token={offerToken}
