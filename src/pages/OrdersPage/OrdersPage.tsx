@@ -73,12 +73,11 @@ function OrdersPage() {
       return false;
     }
 
-    if (
-      !wallet.tokens['BNB'] ||
-      parseFloat(wallet.tokens['BNB']) < parseFloat(order.amountTokenOffer)
-    ) {
+    let balance = await provider.getBalance(wallet.walletAddress);
+
+    if (parseFloat(balance) < parseFloat(order.amountTokenOffer)) {
       console.error(
-        "handleOrderCompleteClick error: You don't have enough BNB. Fund your liquidity walletYou don't have enough BNB. Fund your liquidity wallet."
+        "handleOrderCompleteClick error: You don't have enough BNB. Fund your liquidity wallet."
       );
       setError({
         type: order.orderId,
@@ -154,15 +153,15 @@ function OrdersPage() {
       return false;
     }
 
+    // get liquidity wallet balance
+    balance = await provider.getBalance(wallet.walletAddress);
+
     // update wallet balance
     const isUpdated = await updateWallet({
       walletAddress: wallet.walletAddress,
       chainId: wallet.chainId,
       tokenId: 'BNB',
-      amount: (
-        parseFloat(wallet.tokens['BNB'] || '0') -
-        parseFloat(order.amountTokenOffer)
-      ).toString(),
+      amount: balance.toString(),
     });
 
     if (!isUpdated) {
