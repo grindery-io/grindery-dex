@@ -1,5 +1,11 @@
-export const formatAddress = (address: string): string => {
+export const formatAddress = (
+  address: string,
+  start?: number,
+  end?: number
+): string => {
   return (
-    address.substring(0, 6) + '...' + address.substring(address.length - 4)
+    address.substring(0, start || 6) +
+    '...' +
+    address.substring(address.length - (end || 4))
   );
 };

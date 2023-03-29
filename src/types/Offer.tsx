@@ -13,5 +13,6 @@ export type Offer = {
   estimatedTime?: string;
   exchangeToken?: string;
   exchangeChainId?: string;
+  userId?: string;
   new?: boolean;
 };
