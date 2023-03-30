@@ -16,6 +16,11 @@ type ContextProps = {
   }) => Promise<LiquidityWallet | boolean>;
   updateWallet: (body: { [key: string]: any }) => Promise<boolean>;
   getWallet: (id: string) => Promise<any>;
+  getWalletBalance: (
+    tokenAddress: string,
+    address: string,
+    chainId?: string
+  ) => Promise<any>;
 };
 
 // Context provider props
@@ -32,6 +37,7 @@ export const LiquidityWalletsContext = createContext<ContextProps>({
   saveWallet: async () => false,
   updateWallet: async () => false,
   getWallet: async () => false,
+  getWalletBalance: async () => false,
 });
 
 export const LiquidityWalletsContextProvider = ({
@@ -62,14 +68,14 @@ export const LiquidityWalletsContextProvider = ({
   };
 
   const getWalletBalance = async (
-    chainId: string,
     tokenAddress: string,
-    address: string
+    address: string,
+    chainId?: string
   ) => {
     let res;
     try {
       res = await axios.get(
-        `${DELIGHT_API_URL}/balance-token/id/${id}`,
+        `${DELIGHT_API_URL}/view-blockchains/balance-token?chainId=${chainId}&tokenAddress=${tokenAddress}&address=${address}`,
         params
       );
     } catch (error: any) {
@@ -152,6 +158,7 @@ export const LiquidityWalletsContextProvider = ({
         saveWallet,
         updateWallet,
         getWallet,
+        getWalletBalance,
       }}
     >
       {children}

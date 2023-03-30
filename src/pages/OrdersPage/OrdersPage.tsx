@@ -13,12 +13,14 @@ import useLiquidityWallets from '../../hooks/useLiquidityWallets';
 import { getErrorMessage } from '../../utils/error';
 import OrderSkeleton from '../../components/Order/OrderSkeleton';
 import useOrders from '../../hooks/useOrders';
+import { chain } from 'lodash';
+import { formatAddress } from '../../utils/address';
 
 function OrdersPage() {
   const { chain: selectedChain, provider, ethers } = useGrinderyNexus();
   const { ordersB: orders, isLoading, completeOrder } = useOrders();
   const { liquidityWalletAbi } = useAbi();
-  const { wallets, updateWallet } = useLiquidityWallets();
+  const { wallets, updateWallet, getWalletBalance } = useLiquidityWallets();
   const [error, setError] = useState({ type: '', text: '' });
 
   const sortedOrders = orders?.sort((a: any, b: any) => {
@@ -94,7 +96,11 @@ function OrdersPage() {
       }
     }
 
-    let balance = await provider.getBalance(wallet.walletAddress);
+    let balance = await getWalletBalance(
+      '0x0',
+      wallet.walletAddress,
+      selectedChain?.toString().substring(7)
+    );
 
     if (parseFloat(balance) < parseFloat(order.amountTokenOffer)) {
       console.error(
@@ -154,7 +160,11 @@ function OrdersPage() {
     }
 
     // get liquidity wallet balance
-    balance = await provider.getBalance(wallet.walletAddress);
+    balance = await getWalletBalance(
+      '0x0',
+      wallet.walletAddress,
+      selectedChain?.toString().substring(7)
+    );
 
     // update wallet balance
     const isUpdated = await updateWallet({
