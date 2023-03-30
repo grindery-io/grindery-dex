@@ -8,6 +8,10 @@ export const ChainTokenBox = styled(CardHeader, {
 })<{ selected?: boolean; compact?: boolean }>(
   ({ theme, selected, compact }) => ({
     height: 64,
+    overflow: 'hidden',
+    [`.${cardHeaderClasses.content}`]: {
+      overflow: 'hidden',
+    },
     [`.${cardHeaderClasses.title}`]: {
       color: selected
         ? theme.palette.text.primary
@@ -18,6 +22,11 @@ export const ChainTokenBox = styled(CardHeader, {
       width: compact ? (selected ? 92 : 142) : 256,
       fontWeight: selected ? 500 : 400,
       fontSize: compact && !selected ? '1rem' : '1.125rem',
+      '& > div': {
+        textOverflow: 'ellipsis',
+        whiteSpace: 'nowrap',
+        overflow: 'hidden',
+      },
     },
     [`.${cardHeaderClasses.subheader}`]: {
       textOverflow: 'ellipsis',

@@ -10,7 +10,6 @@ import {
   Skeleton,
   Stack,
   Step,
-  StepIconProps,
   StepLabel,
   Stepper,
   styled,
@@ -28,9 +27,6 @@ import LayersIcon from '@mui/icons-material/Layers';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import useGrinderyChains from '../../hooks/useGrinderyChains';
 import { Chain } from '../../types/Chain';
-import ContentCopyIcon from '@mui/icons-material/ContentCopy';
-import OpenInNewIcon from '@mui/icons-material/OpenInNew';
-import { formatAddress } from '../../utils/address';
 import { LiquidityWallet } from '../../types/LiquidityWallet';
 import axios from 'axios';
 import { DELIGHT_API_URL } from '../../constants';
@@ -39,6 +35,7 @@ import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
 import DexCardSubmitButton from '../DexCard/DexCardSubmitButton';
 import { TokenType } from '../../types/TokenType';
 import TransactionID from '../TransactionID/TransactionID';
+import SwapHorizontalCircleIcon from '@mui/icons-material/SwapHorizontalCircle';
 
 export type OfferChain = {
   label: string;
@@ -54,10 +51,13 @@ export type OfferToken = {
 type Props = {
   offer: Offer;
   chain: Chain;
+  fromChain?: Chain | null;
   token: TokenType;
+  fromToken?: TokenType | '';
   onClick?: (offer: Offer) => void;
   fromAmount?: string;
   label?: string;
+  fromLabel?: string;
   compact?: boolean;
   defaultProvider?: LiquidityWallet;
   userType?: 'a' | 'b';
@@ -65,6 +65,8 @@ type Props = {
   onDeactivateClick?: (offerId: string) => void;
   onActivateClick?: (offerId: string) => void;
   containerStyle?: SxProps | React.CSSProperties;
+  excludeSteps?: ('gas' | 'rate' | 'time' | 'impact')[];
+  calculateAmount?: boolean;
 };
 
 interface ExpandMoreProps extends IconButtonProps {
@@ -92,6 +94,7 @@ const OfferPublic = (props: Props) => {
     onClick,
     fromAmount,
     label,
+    fromLabel,
     compact,
     defaultProvider,
     userType,
@@ -99,6 +102,10 @@ const OfferPublic = (props: Props) => {
     onDeactivateClick,
     onActivateClick,
     containerStyle,
+    fromChain,
+    fromToken,
+    excludeSteps,
+    calculateAmount,
   } = props;
   const { token: userToken } = useGrinderyNexus();
 
@@ -112,16 +119,16 @@ const OfferPublic = (props: Props) => {
 
   const { chains } = useGrinderyChains();
 
-  const amount = isUserA
-    ? fromAmount && offer && offer.exchangeRate
-      ? parseFloat(fromAmount) / parseFloat(offer.exchangeRate)
-      : 0
-    : `${parseFloat(offer.min).toLocaleString()} — ${parseFloat(
-        offer.max
-      ).toLocaleString()}`;
+  const amount =
+    isUserA || calculateAmount
+      ? fromAmount && offer && offer.exchangeRate
+        ? parseFloat(fromAmount) / parseFloat(offer.exchangeRate)
+        : 0
+      : `${parseFloat(offer.min).toLocaleString()} — ${parseFloat(
+          offer.max
+        ).toLocaleString()}`;
 
   const [expanded, setExpanded] = useState(false);
-  const [copied, setCopied] = useState(false);
   const [provider, setProvider] = useState<LiquidityWallet | null>(
     defaultProvider || null
   );
@@ -255,104 +262,213 @@ const OfferPublic = (props: Props) => {
           </Tooltip>
         </Stack>
       )}
-      {label && <CardTitle>{label}</CardTitle>}
+      <Stack
+        direction="row"
+        alignItems="stretch"
+        justifyContent="space-between"
+      >
+        {label && (
+          <CardTitle
+            sx={{ flex: 1, order: !userType || userType === 'a' ? '2' : '1' }}
+          >
+            {label}
+          </CardTitle>
+        )}
+        {fromLabel && (
+          <CardTitle
+            sx={{ flex: 1, order: !userType || userType === 'a' ? '1' : '2' }}
+          >
+            {fromLabel}
+          </CardTitle>
+        )}
+      </Stack>
 
       <Box display={'flex'} flexDirection={'row'}></Box>
-
-      <ChainTokenBox
-        style={{ height: 'auto' }}
-        avatar={
-          <Badge
-            overlap="circular"
-            anchorOrigin={{
-              vertical: 'bottom',
-              horizontal: 'right',
-            }}
-            badgeContent={
-              chain.label ? (
+      <Stack
+        direction="row"
+        alignItems="stretch"
+        justifyContent="space-between"
+      >
+        <ChainTokenBox
+          style={{
+            flex: 1,
+            paddingLeft:
+              !compact && (!userType || userType === 'a') ? '0' : '16px',
+            height: 'auto',
+            order: !userType || userType === 'a' ? '2' : '1',
+          }}
+          avatar={
+            <Badge
+              overlap="circular"
+              anchorOrigin={{
+                vertical: 'bottom',
+                horizontal: 'right',
+              }}
+              badgeContent={
+                chain.label ? (
+                  <Avatar
+                    src={chain.icon}
+                    alt={chain.label}
+                    sx={{
+                      width: '16px',
+                      height: '16px',
+                      border: '2px solid #fff',
+                      background: '#fff',
+                    }}
+                  >
+                    {chain.label}
+                  </Avatar>
+                ) : (
+                  <AvatarDefault
+                    width={16}
+                    height={16}
+                    sx={{ border: '2px solid #fff' }}
+                  />
+                )
+              }
+            >
+              {token ? (
                 <Avatar
-                  src={chain.icon}
-                  alt={chain.label}
-                  sx={{
-                    width: '16px',
-                    height: '16px',
-                    border: '2px solid #fff',
-                    background: '#fff',
-                  }}
+                  sx={{ width: '32px', height: '32px' }}
+                  src={token.icon}
+                  alt={token.symbol || offer.token || ''}
                 >
-                  {chain.label}
+                  {token.symbol || offer.token || ''}
                 </Avatar>
               ) : (
-                <AvatarDefault
-                  width={16}
-                  height={16}
-                  sx={{ border: '2px solid #fff' }}
-                />
-              )
-            }
-          >
-            {token ? (
-              <Avatar
-                sx={{ width: '32px', height: '32px' }}
-                src={token.icon}
-                alt={token.symbol || offer.token || ''}
-              >
-                {token.symbol || offer.token || ''}
-              </Avatar>
-            ) : (
-              <AvatarDefault width={32} height={32} />
-            )}
-          </Badge>
-        }
-        title={
-          <Box
-            style={{
-              whiteSpace: 'pre-wrap',
-              color: offer.isActive ? '#000' : '#aaa',
-            }}
-            mb={'3px'}
-          >
-            {!amount ? (
-              <Skeleton />
-            ) : (
-              <>
-                {typeof amount === 'number' && (
-                  <>{amount.toFixed(6).toLocaleString()}</>
-                )}
-
-                {typeof amount === 'string' && <>{amount}</>}
-              </>
-            )}
-          </Box>
-        }
-        subheader={
-          <span style={{ whiteSpace: 'pre-wrap' }}>
-            {amount ? (
-              `${token.symbol} on ${chain.label}.\n1 ${
-                token.symbol
-              } = ${offer.exchangeRate?.toLocaleString()} ${
-                offer.exchangeToken
-              }`
-            ) : (
-              <Skeleton />
-            )}
-          </span>
-        }
-        selected={true}
-        compact={false}
-        action={
-          compact ? (
-            <ExpandMore
-              expand={expanded}
-              onClick={handleExpandClick}
-              aria-expanded={expanded}
-              aria-label="show more"
+                <AvatarDefault width={32} height={32} />
+              )}
+            </Badge>
+          }
+          title={
+            <Box
+              style={{
+                whiteSpace: 'pre-wrap',
+                color: offer.isActive ? '#000' : '#aaa',
+              }}
+              mb={'3px'}
             >
-              <ExpandMoreIcon />
-            </ExpandMore>
-          ) : undefined
-        }
-      />
+              {!amount ? (
+                <Skeleton />
+              ) : (
+                <>
+                  {typeof amount === 'number' && (
+                    <>{amount.toFixed(6).toLocaleString()}</>
+                  )}
+
+                  {typeof amount === 'string' && <>{amount}</>}
+                </>
+              )}
+            </Box>
+          }
+          subheader={
+            <span style={{ whiteSpace: 'pre-wrap' }}>
+              {amount ? (
+                `${token.symbol} on ${chain.label}.${
+                  compact
+                    ? `\n1 ${
+                        token.symbol
+                      } = ${offer.exchangeRate?.toLocaleString()} ${
+                        offer.exchangeToken
+                      }`
+                    : ''
+                }`
+              ) : (
+                <Skeleton />
+              )}
+            </span>
+          }
+          selected={true}
+          compact={false}
+          action={
+            compact ? (
+              <ExpandMore
+                expand={expanded}
+                onClick={handleExpandClick}
+                aria-expanded={expanded}
+                aria-label="show more"
+              >
+                <ExpandMoreIcon />
+              </ExpandMore>
+            ) : undefined
+          }
+        />
+        {!compact && fromChain && fromToken && (
+          <ChainTokenBox
+            style={{
+              paddingLeft: !userType || userType === 'a' ? '16px' : '0',
+              flex: 1,
+              height: 'auto',
+              order: !userType || userType === 'a' ? '1' : '2',
+            }}
+            avatar={
+              <Badge
+                overlap="circular"
+                anchorOrigin={{
+                  vertical: 'bottom',
+                  horizontal: 'right',
+                }}
+                badgeContent={
+                  fromChain ? (
+                    <Avatar
+                      src={fromChain.icon}
+                      alt={fromChain.label}
+                      sx={{
+                        width: '16px',
+                        height: '16px',
+                        border: '2px solid #fff',
+                        background: '#fff',
+                      }}
+                    >
+                      {fromChain.label}
+                    </Avatar>
+                  ) : (
+                    <AvatarDefault
+                      width={16}
+                      height={16}
+                      sx={{ border: '2px solid #fff' }}
+                    />
+                  )
+                }
+              >
+                {fromToken ? (
+                  <Avatar
+                    sx={{ width: '32px', height: '32px' }}
+                    src={fromToken.icon}
+                    alt={fromToken.symbol || ''}
+                  >
+                    {fromToken.symbol || ''}
+                  </Avatar>
+                ) : (
+                  <AvatarDefault width={32} height={32} />
+                )}
+              </Badge>
+            }
+            title={
+              <Box
+                style={{
+                  whiteSpace: 'pre-wrap',
+                  color: offer.isActive ? '#000' : '#aaa',
+                }}
+                mb={'3px'}
+              >
+                {!fromAmount ? <Skeleton /> : <>{fromAmount}</>}
+              </Box>
+            }
+            subheader={
+              <span style={{ whiteSpace: 'pre-wrap' }}>
+                {fromAmount && fromToken && fromChain ? (
+                  `${fromToken.symbol} on ${fromChain.label}`
+                ) : (
+                  <Skeleton />
+                )}
+              </span>
+            }
+            selected={true}
+            compact={false}
+          />
+        )}
+      </Stack>
       {compact ? (
         <Collapse in={expanded} timeout="auto" unmountOnExit>
           <Box p="0 16px 16px">
@@ -432,7 +548,6 @@ const OfferPublic = (props: Props) => {
             activeStep={-1}
             sx={{
               padding: '0 16px',
-              //'& .MuiStepConnector-root': { display: 'none' },
               '& .MuiStepConnector-line': {
                 minHeight: '12px',
               },
@@ -441,21 +556,68 @@ const OfferPublic = (props: Props) => {
               },
             }}
           >
-            <Step expanded>
-              <StepLabel StepIconComponent={StepCustomIcon}>
-                Estimated gas fee: $2.5
-              </StepLabel>
-            </Step>
-            <Step expanded>
-              <StepLabel StepIconComponent={StepCustomIcon}>
-                Price impact: 0
-              </StepLabel>
-            </Step>
-            <Step expanded>
-              <StepLabel StepIconComponent={StepCustomIcon}>
-                Time to execute: {offer.estimatedTime}s
-              </StepLabel>
-            </Step>
+            {(!excludeSteps || !excludeSteps.includes('rate')) && (
+              <Step expanded>
+                <StepLabel
+                  StepIconComponent={({ className }) => (
+                    <Box className={className}>
+                      <SwapHorizontalCircleIcon
+                        sx={{ color: 'rgba(0, 0, 0, 0.7)' }}
+                      />
+                    </Box>
+                  )}
+                >
+                  Exchange rate:{' '}
+                  <strong>
+                    1 {token.symbol} = {offer.exchangeRate?.toLocaleString()}{' '}
+                    {offer.exchangeToken}
+                  </strong>
+                </StepLabel>
+              </Step>
+            )}
+            {(!excludeSteps || !excludeSteps.includes('gas')) && (
+              <Step expanded>
+                <StepLabel
+                  StepIconComponent={({ className }) => (
+                    <Box className={className}>
+                      <EvStationIcon sx={{ color: 'rgba(0, 0, 0, 0.7)' }} />
+                    </Box>
+                  )}
+                >
+                  Estimated gas fee: <strong>$2.5</strong>
+                </StepLabel>
+              </Step>
+            )}
+            {(!excludeSteps || !excludeSteps.includes('impact')) && (
+              <Step expanded>
+                <StepLabel
+                  StepIconComponent={({ className }) => (
+                    <Box className={className}>
+                      <MonetizationOnIcon
+                        sx={{ color: 'rgba(0, 0, 0, 0.7)' }}
+                      />
+                    </Box>
+                  )}
+                >
+                  Price impact: <strong>0</strong>
+                </StepLabel>
+              </Step>
+            )}
+            {(!excludeSteps || !excludeSteps.includes('time')) && (
+              <Step expanded>
+                <StepLabel
+                  StepIconComponent={({ className }) => (
+                    <Box className={className}>
+                      <AccessTimeFilledIcon
+                        sx={{ color: 'rgba(0, 0, 0, 0.7)' }}
+                      />
+                    </Box>
+                  )}
+                >
+                  Time to execute: <strong>{offer.estimatedTime}s</strong>
+                </StepLabel>
+              </Step>
+            )}
           </Stepper>
           <Box p="16px">
             {provider?.walletAddress ? (
@@ -463,6 +625,7 @@ const OfferPublic = (props: Props) => {
                 value={provider?.walletAddress || ''}
                 label="Provider"
                 link={providerLink}
+                valueStyle={{ color: '#000' }}
               />
             ) : (
               <Stack
@@ -482,6 +645,7 @@ const OfferPublic = (props: Props) => {
               value={offer.hash || ''}
               label="Offer ID"
               link={explorerLink}
+              valueStyle={{ color: '#000' }}
             />
           </Box>
         </>
@@ -489,17 +653,5 @@ const OfferPublic = (props: Props) => {
     </Card>
   );
 };
-
-function StepCustomIcon(props: StepIconProps) {
-  const { className } = props;
-
-  const icons: { [index: string]: React.ReactElement } = {
-    1: <EvStationIcon sx={{ color: 'rgba(0, 0, 0, 0.7)' }} />,
-    2: <MonetizationOnIcon sx={{ color: 'rgba(0, 0, 0, 0.7)' }} />,
-    3: <AccessTimeFilledIcon sx={{ color: 'rgba(0, 0, 0, 0.7)' }} />,
-  };
-
-  return <Box className={className}>{icons[String(props.icon)]}</Box>;
-}
 
 export default OfferPublic;

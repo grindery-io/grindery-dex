@@ -53,6 +53,25 @@ const Order = (props: Props) => {
       (t: TokenType) => offer && t.coinmarketcapId === offer.tokenId
     );
 
+  const fromChain = chains.find(
+    (c: Chain) => order && c.chainId === order.chainIdTokenDeposit
+  );
+  const fromToken = chains
+    .find((c: Chain) => order && c.chainId === order.chainIdTokenDeposit)
+    ?.tokens?.find(
+      (t: TokenType) => order && t.address === order.addressTokenDeposit
+    );
+
+  const buyer = !isUserA && order && order.destAddr;
+  const buyerLink =
+    !isUserA &&
+    order &&
+    order.destAddr &&
+    (
+      chains.find((c: Chain) => c.value === `eip155:5`)?.addressExplorerUrl ||
+      ''
+    ).replace('{hash}', order.destAddr || '');
+
   const getOffer = async () => {
     if (order.offerId) {
       const offerRes = await getOfferById(order.offerId);
@@ -86,26 +105,35 @@ const Order = (props: Props) => {
         backgroundColor: '#fff',
       }}
     >
-      {order.hash && (
-        <TransactionID
-          containerStyle={{ padding: '16px 16px 0' }}
-          value={order.hash || ''}
-          label="Order ID"
-          link={explorerLink}
-        />
-      )}
       {order.date && (
         <Typography
           variant="caption"
           sx={{
             display: 'block',
             color: 'rgba(0, 0, 0, 0.6)',
-            margin: '2px 16px 0',
+            margin: '16px 16px 4px',
           }}
         >
           {moment(order.date).format('MMMM Do YYYY, h:mm:ss a')}
         </Typography>
       )}
+      {order.hash && (
+        <TransactionID
+          containerStyle={{ padding: '0 16px 0' }}
+          value={order.hash || ''}
+          label="Order ID"
+          link={explorerLink}
+        />
+      )}
+      {buyer && (
+        <TransactionID
+          containerStyle={{ padding: '0 16px 0' }}
+          value={buyer || ''}
+          label="Buyer"
+          link={buyerLink || undefined}
+        />
+      )}
+
       {offer && offerChain && offerToken ? (
         <OfferPublic
           key={offer._id}
@@ -118,6 +146,19 @@ const Order = (props: Props) => {
             marginTop: '8px',
             marginBottom: '0',
           }}
+          userType={userType}
+          fromChain={fromChain}
+          fromToken={fromToken}
+          label={isUserA ? 'You receive' : 'You sell'}
+          fromLabel={isUserA ? 'You pay' : 'You receive'}
+          excludeSteps={
+            isUserA
+              ? order.isComplete
+                ? ['gas', 'impact', 'time']
+                : ['gas', 'impact']
+              : ['gas', 'impact', 'time']
+          }
+          calculateAmount
         />
       ) : (
         <>
@@ -145,7 +186,7 @@ const Order = (props: Props) => {
 
       <Box
         sx={{
-          padding: '0 16px',
+          padding: '0 16px 6px',
           '& button': {
             margin: 0,
             fontSize: '13px',

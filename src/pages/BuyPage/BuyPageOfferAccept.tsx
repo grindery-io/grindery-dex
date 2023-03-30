@@ -128,7 +128,11 @@ const BuyPageOfferAccept = (props: Props) => {
                   chain={offerChain}
                   token={offerToken}
                   fromAmount={fromAmount}
-                  //label="You receive"
+                  fromChain={fromChain}
+                  fromToken={fromToken}
+                  label="You receive"
+                  fromLabel="You pay"
+                  userType="a"
                 />
               )}
             </Box>
