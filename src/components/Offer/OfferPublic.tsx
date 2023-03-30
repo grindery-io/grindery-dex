@@ -38,7 +38,7 @@ import { useGrinderyNexus } from 'use-grindery-nexus';
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
 import DexCardSubmitButton from '../DexCard/DexCardSubmitButton';
 import { TokenType } from '../../types/TokenType';
-import TransactionID from '../TransactionHash/TransactionHash';
+import TransactionID from '../TransactionID/TransactionID';
 
 export type OfferChain = {
   label: string;

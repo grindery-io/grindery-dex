@@ -11,7 +11,7 @@ import moment from 'moment';
 import DexCardSubmitButton from '../DexCard/DexCardSubmitButton';
 import { Card } from '../Card/Card';
 import AlertBox from '../AlertBox/AlertBox';
-import TransactionID from '../TransactionHash/TransactionHash';
+import TransactionID from '../TransactionID/TransactionID';
 import OfferPublic from '../Offer/OfferPublic';
 
 type Props = {

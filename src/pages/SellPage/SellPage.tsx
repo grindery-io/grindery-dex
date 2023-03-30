@@ -13,6 +13,8 @@ import LiquidityWalletPage from '../LiquidityWalletPage/LiquidityWalletPage';
 import OffersPage from '../OffersPage/OffersPage';
 import StakingPage from '../StakingPage/StakingPage';
 import OrdersBPage from '../OrdersPage/OrdersPage';
+import AutomationsPage from '../AutomationsPage/AutomationsPage';
+import AutomationsPageContextProvider from '../../context/AutomationsPageContext';
 
 export const sellPages = [
   // {
@@ -45,6 +47,16 @@ export const sellPages = [
           <OrdersBPage />
         </OrdersPageContextProvider>
       </OrdersContextProvider>
+    ),
+  },
+  {
+    path: '/automations',
+    fullPath: '/sell/automations',
+    label: 'Trading Automation',
+    component: (
+      <AutomationsPageContextProvider>
+        <AutomationsPage />
+      </AutomationsPageContextProvider>
     ),
   },
   // {

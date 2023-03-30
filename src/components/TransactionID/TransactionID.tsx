@@ -16,6 +16,7 @@ type Props = {
   linkTooltip?: string;
   labelStyle?: SxProps | React.CSSProperties;
   containerStyle?: SxProps | React.CSSProperties;
+  valueStyle?: SxProps | React.CSSProperties;
 };
 
 const TransactionID: React.FC<Props> = (props) => {
@@ -30,6 +31,7 @@ const TransactionID: React.FC<Props> = (props) => {
     linkTooltip = 'View on blockchain explorer',
     labelStyle,
     containerStyle,
+    valueStyle,
   } = props;
   const [copied, setCopied] = useState(false);
   return value ? (
@@ -50,7 +52,12 @@ const TransactionID: React.FC<Props> = (props) => {
         }}
       >
         {label ? `${label}: ` : ''}
-        {isShort ? formatAddress(value, startLength, endLength) : value}
+        <Typography
+          component="span"
+          sx={{ fontSize: 'inherit', color: 'inherit', ...(valueStyle || {}) }}
+        >
+          {isShort ? formatAddress(value, startLength, endLength) : value}
+        </Typography>
       </Typography>
       {showCopyButton || Boolean(link) ? (
         <Stack direction="row" alignItems="center" justifyContent="flex-start">

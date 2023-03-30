@@ -14,10 +14,11 @@ type Props = {
     type: string;
     text: string;
   };
+  subheader?: string;
 };
 
 const SelectChainButton = (props: Props) => {
-  const { title, onClick, chain, error } = props;
+  const { title, onClick, chain, error, subheader } = props;
   return (
     <Card flex={1} onClick={onClick} style={{ borderRadius: '12px' }}>
       <CardTitle>{title}</CardTitle>
@@ -34,7 +35,7 @@ const SelectChainButton = (props: Props) => {
           )
         }
         title={chain?.label || 'Select blockchain'}
-        subheader={null}
+        subheader={subheader || null}
         selected={!!chain}
         compact={false}
       />
