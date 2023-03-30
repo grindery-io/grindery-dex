@@ -1,10 +1,6 @@
 import React, { createContext, useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {
-  DELIGHT_API_URL,
-  GRT_CONTRACT_ADDRESS,
-  POOL_CONTRACT_ADDRESS,
-} from '../constants';
+import { DELIGHT_API_URL, POOL_CONTRACT_ADDRESS } from '../constants';
 import useGrinderyChains from '../hooks/useGrinderyChains';
 import useOffers from '../hooks/useOffers';
 import { Chain } from '../types/Chain';
@@ -380,66 +376,27 @@ export const BuyPageContextProvider = ({ children }: BuyPageContextProps) => {
     [fromChain, fromToken, toChain, toToken, fromTokenBalance]
   );
 
+  const params = {
+    headers: {
+      Authorization: `Bearer ${token?.access_token || ''}`,
+    },
+  };
+
   const getFromTokenBalance = async () => {
-    // switch chain if needed
     if (!fromToken || typeof fromToken === 'string' || !fromToken.address) {
       return;
     }
-    if (chain !== fromChain?.value && fromChain) {
-      try {
-        await window.ethereum.request({
-          method: 'wallet_switchEthereumChain',
-          params: [
-            {
-              chainId: fromChain
-                ? `0x${parseFloat(fromChain.chainId).toString(16)}`
-                : '',
-            },
-          ],
-        });
-      } catch (error: any) {
-        // TODO: handle chain switching error
-      }
-    }
 
-    // If native token
-    if (fromToken.address === '0x0') {
-      const balance = await provider.getBalance(address);
-      const balanceInEth = ethers.utils.formatEther(balance);
+    const res = await axios.get(
+      `${DELIGHT_API_URL}/view-blockchains/balance-token?chainId=${fromChain?.chainId}&address=${address}&tokenAddress=${fromToken.address}`,
+      params
+    );
 
-      setFromTokenBalance(balanceInEth);
-    } else {
-      // if ERC-20 token
+    // convert wei to string
+    const _balance = res?.data ? (res.data / 10 ** 18).toString() : '0';
 
-      // get signer
-      const signer = provider.getSigner();
-
-      // set token contract
-      const _tokenContract = new ethers.Contract(
-        fromToken.address,
-        tokenAbi,
-        signer
-      );
-
-      // connect signer
-      const tokenContract = _tokenContract.connect(signer);
-
-      // get balance
-      const tx = await tokenContract.balanceOf(address).catch((error: any) => {
-        setErrorMessage({
-          type: 'fromAmount',
-          text: getErrorMessage(error.error, 'BalanceOf transaction error'),
-        });
-        console.error('BalanceOf error', error.error);
-        return;
-      });
-
-      // convert wei to string
-      const _balance = (tx / 10 ** 18).toString();
-
-      // set current balance state
-      setFromTokenBalance(_balance);
-    }
+    // set current balance state
+    setFromTokenBalance(_balance);
   };
 
   const handleAcceptOfferClick = async (offer: Offer) => {
