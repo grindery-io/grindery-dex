@@ -7,6 +7,7 @@ const DrawerDesktop = (props: DrawerProps) => {
       {...props}
       sx={{
         '& .MuiPaper-root': {
+          background: 'transparent',
           borderRight: 'none',
           padding: '0 16px',
           '& .MuiListItem-root': {

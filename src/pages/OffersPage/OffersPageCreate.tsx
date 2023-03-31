@@ -253,7 +253,7 @@ function OffersPageCreate() {
                 setImage(img);
               }}
               name="image"
-              helpText="Optimal image size 128x128px"
+              helpText="Optimal image size 167x174px"
             />
           </>
         )}

@@ -4,6 +4,8 @@ import PageContainer from '../../components/PageContainer/PageContainer';
 import TradePageContextProvider from '../../context/TradePageContext';
 import TradePage from '../TradePage/TradePage';
 import BuyMenu from '../../components/BuyMenu/BuyMenu';
+import ShopPageContextProvider from '../../context/ShopPageContext';
+import ShopPage from '../ShopPage/ShopPage';
 
 export const buyPages = [
   {
@@ -14,6 +16,16 @@ export const buyPages = [
       <TradePageContextProvider>
         <TradePage />
       </TradePageContextProvider>
+    ),
+  },
+  {
+    path: '/shop',
+    fullPath: '/buy/shop',
+    label: 'Shop',
+    component: (
+      <ShopPageContextProvider>
+        <ShopPage />
+      </ShopPageContextProvider>
     ),
   },
 ];

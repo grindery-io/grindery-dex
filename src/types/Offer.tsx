@@ -14,5 +14,8 @@ export type Offer = {
   exchangeToken?: string;
   exchangeChainId?: string;
   userId?: string;
+  amount?: string;
+  image?: string;
+  title?: string;
   new?: boolean;
 };

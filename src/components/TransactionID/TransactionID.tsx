@@ -17,6 +17,7 @@ type Props = {
   labelStyle?: SxProps | React.CSSProperties;
   containerStyle?: SxProps | React.CSSProperties;
   valueStyle?: SxProps | React.CSSProperties;
+  iconStyle?: SxProps | React.CSSProperties;
 };
 
 const TransactionID: React.FC<Props> = (props) => {
@@ -32,6 +33,7 @@ const TransactionID: React.FC<Props> = (props) => {
     labelStyle,
     containerStyle,
     valueStyle,
+    iconStyle,
   } = props;
   const [copied, setCopied] = useState(false);
   return value ? (
@@ -79,7 +81,7 @@ const TransactionID: React.FC<Props> = (props) => {
                   setCopied(true);
                 }}
               >
-                <ContentCopyIcon fontSize="inherit" />
+                <ContentCopyIcon fontSize="inherit" sx={iconStyle || {}} />
               </IconButton>
             </Tooltip>
           )}
@@ -94,7 +96,7 @@ const TransactionID: React.FC<Props> = (props) => {
                   window.open(link, '_blank');
                 }}
               >
-                <OpenInNewIcon fontSize="inherit" />
+                <OpenInNewIcon fontSize="inherit" sx={iconStyle || {}} />
               </IconButton>
             </Tooltip>
           )}

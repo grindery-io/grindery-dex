@@ -53,7 +53,8 @@ const Wrapper = styled.div`
   position: fixed;
   left: 0;
   top: 0;
-  background: #ffffff;
+  backdrop-filter: blur(12px);
+  background: rgba(255, 255, 255, 0.84);
   width: 100%;
   max-width: 100%;
   box-sizing: border-box;
