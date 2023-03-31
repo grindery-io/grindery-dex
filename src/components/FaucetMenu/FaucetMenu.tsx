@@ -20,7 +20,7 @@ const FaucetMenu = (props: Props) => {
   let navigate = useNavigate();
   const location = useLocation();
   return (
-    <Box sx={{ display: { xs: 'none', md: 'block' } }}>
+    <Box sx={{ display: { xs: 'none', lg: 'block' } }}>
       <Drawer
         variant="permanent"
         sx={{

@@ -56,12 +56,12 @@ type ContextProps = {
 };
 
 // Context provider props
-type BuyPageContextProps = {
+type TradePageContextProps = {
   children: React.ReactNode;
 };
 
 // Init context
-export const BuyPageContext = createContext<ContextProps>({
+export const TradePageContext = createContext<ContextProps>({
   VIEWS: {},
   errorMessage: { type: '', text: '' },
   loading: false,
@@ -96,25 +96,27 @@ export const BuyPageContext = createContext<ContextProps>({
   handleRefreshOffersClick: () => {},
 });
 
-export const BuyPageContextProvider = ({ children }: BuyPageContextProps) => {
+export const TradePageContextProvider = ({
+  children,
+}: TradePageContextProps) => {
   const { token, provider, ethers, address, chain } = useGrinderyNexus();
   const VIEWS = {
-    ROOT: { path: '', fullPath: '/buy' },
+    ROOT: { path: '', fullPath: '/buy/trade' },
     SELECT_FROM: {
       path: '/select-from',
-      fullPath: '/buy/select-from',
+      fullPath: '/buy/trade/select-from',
     },
     SELECT_TO: {
       path: '/select-to',
-      fullPath: '/buy/select-to',
+      fullPath: '/buy/trade/select-to',
     },
     ACCEPT_OFFER: {
       path: '/accept/:offerId',
-      fullPath: '/buy/accept/:offerId',
+      fullPath: '/buy/trade/accept/:offerId',
     },
     HISTORY: {
       path: '/history',
-      fullPath: '/buy/history',
+      fullPath: '/buy/trade/history',
     },
   };
   let navigate = useNavigate();
@@ -657,7 +659,7 @@ export const BuyPageContextProvider = ({ children }: BuyPageContextProps) => {
   }, [chains, chainsIsLoading]);
 
   return (
-    <BuyPageContext.Provider
+    <TradePageContext.Provider
       value={{
         VIEWS,
         errorMessage,
@@ -694,8 +696,8 @@ export const BuyPageContextProvider = ({ children }: BuyPageContextProps) => {
       }}
     >
       {children}
-    </BuyPageContext.Provider>
+    </TradePageContext.Provider>
   );
 };
 
-export default BuyPageContextProvider;
+export default TradePageContextProvider;

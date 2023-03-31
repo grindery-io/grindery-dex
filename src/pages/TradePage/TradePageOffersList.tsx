@@ -2,7 +2,7 @@ import React from 'react';
 import { Box } from '@mui/system';
 import DexCard from '../../components/DexCard/DexCard';
 import DexCardHeader from '../../components/DexCard/DexCardHeader';
-import useBuyPage from '../../hooks/useBuyPage';
+import useTradePage from '../../hooks/useTradePage';
 import DexCardBody from '../../components/DexCard/DexCardBody';
 import NotFound from '../../components/NotFound/NotFound';
 import { Offer } from '../../types/Offer';
@@ -13,7 +13,7 @@ import { useNavigate } from 'react-router-dom';
 
 type Props = {};
 
-const BuyPageOffersList = (props: Props) => {
+const TradePageOffersList = (props: Props) => {
   const {
     VIEWS,
     loading,
@@ -21,7 +21,7 @@ const BuyPageOffersList = (props: Props) => {
     fromAmount,
     toTokenPrice,
     fromTokenPrice,
-  } = useBuyPage();
+  } = useTradePage();
   const { chains } = useGrinderyChains();
   let navigate = useNavigate();
 
@@ -75,4 +75,4 @@ const BuyPageOffersList = (props: Props) => {
   );
 };
 
-export default BuyPageOffersList;
+export default TradePageOffersList;

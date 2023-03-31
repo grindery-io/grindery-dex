@@ -5,7 +5,7 @@ import DexCard from '../../components/DexCard/DexCard';
 import DexCardBody from '../../components/DexCard/DexCardBody';
 import DexCardHeader from '../../components/DexCard/DexCardHeader';
 import { IconButton } from '@mui/material';
-import useBuyPage from '../../hooks/useBuyPage';
+import useTradePage from '../../hooks/useTradePage';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
 import ChainsList from '../../components/ChainsList/ChainsList';
 import useGrinderyChains from '../../hooks/useGrinderyChains';
@@ -16,20 +16,20 @@ import { Chain } from '../../types/Chain';
 
 type Props = {};
 
-const BuyPageSelectFromChainAndToken = (props: Props) => {
+const TradePageSelectChainAndToken = (props: Props) => {
   const {
     VIEWS,
     searchToken,
     setSearchToken,
-    fromChain,
-    handleFromChainChange,
-    fromChainTokens,
-    currentFromChain,
-    handleFromTokenChange,
-  } = useBuyPage();
+    toChain,
+    handleToChainChange,
+    toChainTokens,
+    currentToChain,
+    handleToTokenChange,
+  } = useTradePage();
   const { chains, isLoading: chainsIsLoading } = useGrinderyChains();
   let navigate = useNavigate();
-  const filteredChains = chains.filter((c: Chain) => c.value === 'eip155:5');
+  const filteredChains = chains.filter((c: Chain) => c.value === 'eip155:97');
   return (
     <DexCard>
       <DexCardHeader
@@ -52,9 +52,9 @@ const BuyPageSelectFromChainAndToken = (props: Props) => {
       />
       <DexCardBody>
         <ChainsList
-          chain={fromChain?.value || ''}
+          chain={toChain?.value || ''}
           chains={filteredChains}
-          onClick={handleFromChainChange}
+          onClick={handleToChainChange}
           loading={chainsIsLoading}
         />
         <TokenSearch
@@ -65,32 +65,30 @@ const BuyPageSelectFromChainAndToken = (props: Props) => {
         />
         {chainsIsLoading ? (
           <TokensList
-            tokens={fromChainTokens}
-            onClick={handleFromTokenChange}
+            tokens={toChainTokens}
+            onClick={handleToTokenChange}
             loading={chainsIsLoading}
-            chainLabel={fromChain?.label}
+            chainLabel={toChain?.label}
           />
         ) : (
           <>
-            {currentFromChain &&
-            fromChainTokens &&
-            fromChainTokens.length > 0 ? (
+            {currentToChain && toChainTokens && toChainTokens.length > 0 ? (
               <TokensList
-                tokens={fromChainTokens}
-                onClick={handleFromTokenChange}
+                tokens={toChainTokens}
+                onClick={handleToTokenChange}
                 loading={chainsIsLoading}
-                chainLabel={fromChain?.label}
+                chainLabel={toChain?.label}
               />
             ) : (
               <NotFound
                 text={
-                  !currentFromChain ? (
+                  !currentToChain ? (
                     <>Please, select a chain to see a list of tokens.</>
                   ) : (
                     <>
                       We couldn't find tokens{' '}
-                      {currentFromChain
-                        ? `on ${currentFromChain?.label} chain`
+                      {currentToChain
+                        ? `on ${currentToChain?.label} chain`
                         : ''}
                       . Please try search again or switch the chain.
                     </>
@@ -107,4 +105,4 @@ const BuyPageSelectFromChainAndToken = (props: Props) => {
   );
 };
 
-export default BuyPageSelectFromChainAndToken;
+export default TradePageSelectChainAndToken;

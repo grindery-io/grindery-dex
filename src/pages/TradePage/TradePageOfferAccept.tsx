@@ -3,7 +3,7 @@ import { Box } from '@mui/system';
 import DexCard from '../../components/DexCard/DexCard';
 import DexCardHeader from '../../components/DexCard/DexCardHeader';
 import Loading from '../../components/Loading/Loading';
-import useBuyPage from '../../hooks/useBuyPage';
+import useTradePage from '../../hooks/useTradePage';
 import DexCardBody from '../../components/DexCard/DexCardBody';
 import { Offer } from '../../types/Offer';
 import useGrinderyChains from '../../hooks/useGrinderyChains';
@@ -22,7 +22,7 @@ import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 
 type Props = {};
 
-const BuyPageOfferAccept = (props: Props) => {
+const TradePageOfferAccept = (props: Props) => {
   const { user, connect } = useGrinderyNexus();
   const {
     VIEWS,
@@ -39,7 +39,7 @@ const BuyPageOfferAccept = (props: Props) => {
     fromToken,
     toTokenPrice,
     fromTokenPrice,
-  } = useBuyPage();
+  } = useTradePage();
   const { chains } = useGrinderyChains();
   let navigate = useNavigate();
   let { offerId } = useParams();
@@ -267,4 +267,4 @@ const BuyPageOfferAccept = (props: Props) => {
   );
 };
 
-export default BuyPageOfferAccept;
+export default TradePageOfferAccept;

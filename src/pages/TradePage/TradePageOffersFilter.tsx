@@ -12,11 +12,11 @@ import DexCardSubmitButton from '../../components/DexCard/DexCardSubmitButton';
 import SelectChainAndTokenButton from '../../components/SelectChainAndTokenButton/SelectChainAndTokenButton';
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 import { GRT_CONTRACT_ADDRESS } from '../../constants';
-import useBuyPage from '../../hooks/useBuyPage';
+import useTradePage from '../../hooks/useTradePage';
 
 type Props = {};
 
-const BuyPageOffersFilter = (props: Props) => {
+const TradePageOffersFilter = (props: Props) => {
   const { user, connect } = useGrinderyNexus();
   const {
     VIEWS,
@@ -31,7 +31,7 @@ const BuyPageOffersFilter = (props: Props) => {
     handleFromAmountChange,
     handleSearchClick,
     handleFromAmountMaxClick,
-  } = useBuyPage();
+  } = useTradePage();
   let navigate = useNavigate();
   return (
     <DexCard>
@@ -166,4 +166,4 @@ const BuyPageOffersFilter = (props: Props) => {
   );
 };
 
-export default BuyPageOffersFilter;
+export default TradePageOffersFilter;

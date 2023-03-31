@@ -1,3 +1,4 @@
+import React from 'react';
 import {
   Drawer,
   List,
@@ -7,15 +8,14 @@ import {
   ListSubheader,
 } from '@mui/material';
 import { Box } from '@mui/system';
-import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { sellPages } from '../../pages/SellPage/SellPage';
+import { buyPages } from '../../pages/BuyPage/BuyPage';
 
 type Props = {};
 
 const drawerWidth = 240;
 
-const SellMenu = (props: Props) => {
+const BuyMenu = (props: Props) => {
   let navigate = useNavigate();
   const location = useLocation();
   return (
@@ -24,6 +24,7 @@ const SellMenu = (props: Props) => {
         variant="permanent"
         sx={{
           width: drawerWidth,
+
           flexShrink: 0,
           [`& .MuiDrawer-paper`]: {
             width: drawerWidth,
@@ -36,11 +37,11 @@ const SellMenu = (props: Props) => {
           <List
             subheader={
               <ListSubheader component="div" id="sell-list-subheader">
-                Sell
+                Buy
               </ListSubheader>
             }
           >
-            {sellPages.map((page: any) => (
+            {buyPages.map((page: any) => (
               <ListItem key={page.path} disablePadding>
                 <ListItemButton
                   onClick={(event: React.MouseEvent<HTMLElement>) => {
@@ -60,4 +61,4 @@ const SellMenu = (props: Props) => {
   );
 };
 
-export default SellMenu;
+export default BuyMenu;

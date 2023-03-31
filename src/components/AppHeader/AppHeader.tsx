@@ -21,6 +21,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import useAdmin from '../../hooks/useAdmin';
 import { sellPages } from '../../pages/SellPage/SellPage';
+import { buyPages } from '../../pages/BuyPage/BuyPage';
 
 const menu = [
   {
@@ -30,10 +31,6 @@ const menu = [
   {
     path: '/sell',
     label: 'Sell',
-  },
-  {
-    path: '/faucet',
-    label: 'Faucet',
   },
 ];
 
@@ -101,7 +98,7 @@ const LinksWrapper = styled.div`
   gap: 24px;
   order: 3;
 
-  @media (max-width: 899px) {
+  @media (max-width: 1199px) {
     display: none;
   }
 
@@ -160,6 +157,7 @@ const AppHeader = (props: Props) => {
   const location = useLocation();
   const [open, setOpen] = React.useState(true);
   const [faucetOpen, setFaucetOpen] = React.useState(true);
+  const [buyOpen, setBuyOpen] = React.useState(true);
   const [drawerOpen, setDrawerOpen] = React.useState(false);
 
   const handleClick = () => {
@@ -170,21 +168,23 @@ const AppHeader = (props: Props) => {
     setFaucetOpen(!faucetOpen);
   };
 
+  const handleBuyClick = () => {
+    setBuyOpen(!buyOpen);
+  };
+
   return (
     <>
       <Wrapper>
-        {isAdmin && (
-          <Box sx={{ display: { xs: 'block', md: 'none' } }}>
-            <IconButton
-              aria-label="menu"
-              onClick={(event: React.MouseEvent<HTMLElement>) => {
-                setDrawerOpen(!drawerOpen);
-              }}
-            >
-              <MenuIcon />
-            </IconButton>
-          </Box>
-        )}
+        <Box sx={{ display: { xs: 'block', lg: 'none' } }}>
+          <IconButton
+            aria-label="menu"
+            onClick={(event: React.MouseEvent<HTMLElement>) => {
+              setDrawerOpen(!drawerOpen);
+            }}
+          >
+            <MenuIcon />
+          </IconButton>
+        </Box>
 
         <LogoWrapper
           href="/"
@@ -241,25 +241,27 @@ const AppHeader = (props: Props) => {
           </UserWrapper>
         )}
       </Wrapper>
-      {isAdmin && (
-        <Box sx={{ display: { xs: 'block', md: 'none' } }}>
-          <Drawer
-            variant="persistent"
-            anchor="left"
-            open={drawerOpen}
-            sx={{
+
+      <Box sx={{ display: { xs: 'block', lg: 'none' } }}>
+        <Drawer
+          variant="persistent"
+          anchor="left"
+          open={drawerOpen}
+          sx={{
+            width: drawerWidth,
+            flexShrink: 0,
+            [`& .MuiDrawer-paper`]: {
               width: drawerWidth,
-              flexShrink: 0,
-              [`& .MuiDrawer-paper`]: {
-                width: drawerWidth,
-                boxSizing: 'border-box',
-              },
-            }}
-          >
-            <Box sx={{ height: '73px' }} />
-            <Box sx={{ overflow: 'auto' }}>
-              <List>
-                {menu.map((link: any) => (
+              boxSizing: 'border-box',
+            },
+          }}
+        >
+          <Box sx={{ height: '73px' }} />
+          <Box sx={{ overflow: 'auto' }}>
+            <List>
+              {menu
+                .filter((link: any) => isAdmin || link.path === '/buy')
+                .map((link: any) => (
                   <React.Fragment key={link.path}>
                     <ListItemButton
                       key={link.path}
@@ -269,6 +271,8 @@ const AppHeader = (props: Props) => {
                           handleClick();
                         } else if (link.path === '/faucet') {
                           handleFaucetClick();
+                        } else if (link.path === '/buy') {
+                          handleBuyClick();
                         } else {
                           setDrawerOpen(false);
                           navigate(link.path);
@@ -280,6 +284,9 @@ const AppHeader = (props: Props) => {
                       }
                     >
                       <ListItemText primary={link.label} />
+                      {link.path === '/buy' && (
+                        <>{buyOpen ? <ExpandLess /> : <ExpandMore />}</>
+                      )}
                       {link.path === '/sell' && (
                         <>{open ? <ExpandLess /> : <ExpandMore />}</>
                       )}
@@ -287,6 +294,30 @@ const AppHeader = (props: Props) => {
                         <>{faucetOpen ? <ExpandLess /> : <ExpandMore />}</>
                       )}
                     </ListItemButton>
+                    {link.path === '/buy' && (
+                      <Collapse in={buyOpen} timeout="auto">
+                        <List component="div" disablePadding>
+                          {buyPages.map((page: any) => (
+                            <ListItemButton
+                              sx={{ pl: 4 }}
+                              key={page.path}
+                              onClick={(
+                                event: React.MouseEvent<HTMLElement>
+                              ) => {
+                                event.preventDefault();
+                                setDrawerOpen(false);
+                                navigate(page.fullPath);
+                              }}
+                              selected={location.pathname.startsWith(
+                                page.fullPath
+                              )}
+                            >
+                              <ListItemText primary={page.label} />
+                            </ListItemButton>
+                          ))}
+                        </List>
+                      </Collapse>
+                    )}
                     {link.path === '/sell' && (
                       <Collapse in={open} timeout="auto">
                         <List component="div" disablePadding>
@@ -344,11 +375,10 @@ const AppHeader = (props: Props) => {
                     )}
                   </React.Fragment>
                 ))}
-              </List>
-            </Box>
-          </Drawer>
-        </Box>
-      )}
+            </List>
+          </Box>
+        </Drawer>
+      </Box>
     </>
   );
 };

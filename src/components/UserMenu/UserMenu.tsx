@@ -6,6 +6,9 @@ import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { ICONS } from '../../constants';
 import { useGrinderyNexus } from 'use-grindery-nexus';
 import { Snackbar } from 'grindery-ui';
+import { useNavigate } from 'react-router-dom';
+import Icon from '@mdi/react';
+import { mdiWaterPump } from '@mdi/js';
 
 const UserContainer = styled.div`
   position: relative;
@@ -126,6 +129,7 @@ const UserMenu = (props: Props) => {
   const { address, disconnect } = useGrinderyNexus();
   const [menuOpened, setMenuOpened] = useState(false);
   const [copied, setCopied] = useState(false);
+  let navigate = useNavigate();
 
   return address ? (
     <UserContainer>
@@ -167,6 +171,17 @@ const UserMenu = (props: Props) => {
                 <span>{'Copy wallet addres'}</span>
               </button>
             </CopyToClipboard>
+            <button
+              onClick={() => {
+                navigate('/faucet');
+              }}
+            >
+              <Icon
+                path={mdiWaterPump}
+                style={{ width: '20px', height: '20px' }}
+              />
+              <span>Faucet</span>
+            </button>
             <button
               onClick={() => {
                 disconnect();

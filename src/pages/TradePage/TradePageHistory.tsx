@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { Box } from '@mui/system';
 import DexCard from '../../components/DexCard/DexCard';
 import DexCardHeader from '../../components/DexCard/DexCardHeader';
-import useBuyPage from '../../hooks/useBuyPage';
+import useTradePage from '../../hooks/useTradePage';
 import DexCardBody from '../../components/DexCard/DexCardBody';
 import NotFound from '../../components/NotFound/NotFound';
 import { useNavigate } from 'react-router-dom';
@@ -15,8 +15,8 @@ import OrderSkeleton from '../../components/Order/OrderSkeleton';
 
 type Props = {};
 
-const BuyPageHistory = (props: Props) => {
-  const { VIEWS } = useBuyPage();
+const TradePageHistory = (props: Props) => {
+  const { VIEWS } = useTradePage();
   const { orders, getOrders, isLoading } = useOrders();
 
   const sortedOrders = orders?.sort((a: any, b: any) => {
@@ -73,4 +73,4 @@ const BuyPageHistory = (props: Props) => {
   );
 };
 
-export default BuyPageHistory;
+export default TradePageHistory;

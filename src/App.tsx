@@ -11,14 +11,13 @@ import AbiContextProvider from './context/AbiContext';
 import GrinderyChainsContextProvider from './context/GrinderyChainsContext';
 import SellPage from './pages/SellPage/SellPage';
 import FaucetPage from './pages/FaucetPage/FaucetPage';
-import BuyPage from './pages/BuyPage/BuyPage';
 import FaucetPageContextProvider from './context/FaucetPageContext';
-import BuyPageContextProvider from './context/BuyPageContext';
 import OffersContextProvider from './context/OffersContext';
 import { OrdersContextProvider } from './context/OrdersContext';
 import StakesContextProvider from './context/StakesContext';
 import LiquidityWalletsContextProvider from './context/LiquidityWalletsContext';
 import AdminContextProvider from './context/AdminContext';
+import BuyPage from './pages/BuyPage/BuyPage';
 
 declare global {
   interface Window {
@@ -46,9 +45,7 @@ export const App = () => {
                         element={
                           <OffersContextProvider userType="a">
                             <OrdersContextProvider>
-                              <BuyPageContextProvider>
-                                <BuyPage />
-                              </BuyPageContextProvider>
+                              <BuyPage />
                             </OrdersContextProvider>
                           </OffersContextProvider>
                         }
