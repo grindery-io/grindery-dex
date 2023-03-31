@@ -25,7 +25,7 @@ function FaucetPage() {
     <>
       <FaucetMenu />
       <DexCard>
-        <DexCardHeader title="Faucet" />
+        <DexCardHeader title="Faucet" titleAlign="center" />
         <DexCardBody>
           <Box sx={{ textAlign: 'center' }}>
             <Icon
