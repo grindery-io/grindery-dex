@@ -18,6 +18,7 @@ type Props = {
   endAdornment?: React.ReactNode;
   sx?: SxProps;
   helpText?: string | React.ReactNode;
+  readOnly?: boolean;
 };
 
 const TextInput = (props: Props) => {
@@ -32,6 +33,7 @@ const TextInput = (props: Props) => {
     endAdornment,
     sx,
     helpText,
+    readOnly,
   } = props;
   return (
     <Card sx={{ borderRadius: '12px', marginTop: '20px', ...(sx || {}) }}>
@@ -50,6 +52,7 @@ const TextInput = (props: Props) => {
           disabled={disabled}
           style={{ padding: `0px ${endAdornment ? '0px' : '16px'} 0px 0` }}
           endAdornment={endAdornment}
+          readOnly={readOnly}
         />
         {helpText && (
           <FormHelperText

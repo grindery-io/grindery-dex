@@ -23,13 +23,23 @@ type ContextProps = {
   errorMessage: { type: string; text: string };
   chain: string;
   token: TokenType | '';
+  toChain: string;
+  toToken: TokenType | '';
   searchToken: string;
   isActivating: string;
   currentChain: Chain | null;
+  currentToChain: Chain | null;
   chainTokens: TokenType[];
+  toChainTokens: TokenType[];
   groupedOffers: { [key: string]: Offer[] };
   exchangeRate: string;
   estimatedTime: string;
+  title: string;
+  image: string;
+  amount: string;
+  setAmount: React.Dispatch<React.SetStateAction<string>>;
+  setImage: React.Dispatch<React.SetStateAction<string>>;
+  setTitle: React.Dispatch<React.SetStateAction<string>>;
   setEstimatedTime: React.Dispatch<React.SetStateAction<string>>;
   setExchangeRate: React.Dispatch<React.SetStateAction<string>>;
   setAmountMin: React.Dispatch<React.SetStateAction<string>>;
@@ -39,6 +49,8 @@ type ContextProps = {
   >;
   setChain: React.Dispatch<React.SetStateAction<string>>;
   setToken: React.Dispatch<React.SetStateAction<TokenType | ''>>;
+  setToChain: React.Dispatch<React.SetStateAction<string>>;
+  setToToken: React.Dispatch<React.SetStateAction<TokenType | ''>>;
   setSearchToken: React.Dispatch<React.SetStateAction<string>>;
   handleDeactivateClick: (offerId: string) => void;
   handleActivateClick: (offerId: string) => void;
@@ -64,13 +76,23 @@ export const OffersPageContext = createContext<ContextProps>({
   errorMessage: { type: '', text: '' },
   chain: '',
   token: '',
+  toChain: '',
+  toToken: '',
   searchToken: '',
   isActivating: '',
   currentChain: null,
+  currentToChain: null,
   chainTokens: [],
+  toChainTokens: [],
   groupedOffers: {},
   exchangeRate: '',
   estimatedTime: '',
+  title: '',
+  image: '',
+  amount: '',
+  setAmount: () => {},
+  setImage: () => {},
+  setTitle: () => {},
   setEstimatedTime: () => {},
   setExchangeRate: () => {},
   setAmountMin: () => {},
@@ -78,6 +100,8 @@ export const OffersPageContext = createContext<ContextProps>({
   setErrorMessage: () => {},
   setChain: () => {},
   setToken: () => {},
+  setToChain: () => {},
+  setToToken: () => {},
   setSearchToken: () => {},
   handleDeactivateClick: () => {},
   handleActivateClick: () => {},
@@ -95,6 +119,10 @@ export const OffersPageContextProvider = ({
       path: '/select-chain',
       fullPath: '/sell/offers/select-chain',
     },
+    SELECT_TO_CHAIN: {
+      path: '/select-to-chain',
+      fullPath: '/sell/offers/select-to-chain',
+    },
   };
 
   const { user, chain: selectedChain, provider, ethers } = useGrinderyNexus();
@@ -107,10 +135,15 @@ export const OffersPageContextProvider = ({
   const { chains, isLoading: chainsIsLoading } = useGrinderyChains();
   const [chain, setChain] = useState('');
   const [token, setToken] = useState<TokenType | ''>('');
+  const [toChain, setToChain] = useState('');
+  const [toToken, setToToken] = useState<TokenType | ''>('');
   const [exchangeRate, setExchangeRate] = useState<string>('');
   const [estimatedTime, setEstimatedTime] = useState<string>('');
   const [searchToken, setSearchToken] = useState('');
   const [isActivating, setIsActivating] = useState('');
+  const [title, setTitle] = useState('');
+  const [amount, setAmount] = useState('');
+  const [image, setImage] = useState('');
   const {
     offers,
     setOffers,
@@ -137,8 +170,18 @@ export const OffersPageContextProvider = ({
         }
       : null;
 
+  const currentToChain =
+    (toChain && chains.find((c: Chain) => c.caipId === toChain)) || null;
+
   const chainTokens = (
     (chain && chains.find((c) => c.value === chain)?.tokens) ||
+    []
+  ).filter(
+    (t: any) => !searchToken || t.symbol.toLowerCase().includes(searchToken)
+  );
+
+  const toChainTokens = (
+    (toChain && chains.find((c) => c.value === toChain)?.tokens) ||
     []
   ).filter(
     (t: any) => !searchToken || t.symbol.toLowerCase().includes(searchToken)
@@ -158,6 +201,27 @@ export const OffersPageContextProvider = ({
       setErrorMessage({
         type: 'chain',
         text: 'Chain and token are required',
+      });
+      return;
+    }
+    if (!toChain || !toToken) {
+      setErrorMessage({
+        type: 'toChain',
+        text: 'Chain and token are required',
+      });
+      return;
+    }
+    if (!exchangeRate) {
+      setErrorMessage({
+        type: 'exchangeRate',
+        text: 'Exchange rate is required',
+      });
+      return;
+    }
+    if (!isNumeric(exchangeRate)) {
+      setErrorMessage({
+        type: 'exchangeRate',
+        text: 'Must be a number',
       });
       return;
     }
@@ -196,20 +260,7 @@ export const OffersPageContextProvider = ({
       });
       return;
     }
-    if (!exchangeRate) {
-      setErrorMessage({
-        type: 'exchangeRate',
-        text: 'Exchange rate is required',
-      });
-      return;
-    }
-    if (!isNumeric(exchangeRate)) {
-      setErrorMessage({
-        type: 'exchangeRate',
-        text: 'Must be a number',
-      });
-      return;
-    }
+
     if (!estimatedTime) {
       setErrorMessage({
         type: 'estimatedTime',
@@ -332,12 +383,15 @@ export const OffersPageContextProvider = ({
       tokenAddress: token.address || '',
       hash: tx.hash || '',
       exchangeRate: exchangeRate || '',
-      exchangeToken: 'ETH',
-      exchangeChainId: '5',
+      exchangeToken: toToken.symbol || 'ETH',
+      exchangeChainId: toChain.toString().split(':')[1] || '5',
       estimatedTime: estimatedTime || '',
       provider: user,
       offerId: offerId,
       isActive: true,
+      title,
+      image,
+      amount,
     });
 
     if (newOffer && typeof newOffer !== 'boolean') {
@@ -350,6 +404,9 @@ export const OffersPageContextProvider = ({
       setExchangeRate('');
       setEstimatedTime('');
       setSearchToken('');
+      setAmount('');
+      setImage('');
+      setTitle('');
 
       // complete execution
       setLoading(false);
@@ -604,6 +661,12 @@ export const OffersPageContextProvider = ({
           .find((c: Chain) => c.chainId === '97')
           ?.tokens?.find((t: TokenType) => t.symbol === 'BNB') || ''
       );
+      setToChain(chains.find((c: Chain) => c.chainId === '5')?.value || '');
+      setToToken(
+        chains
+          .find((c: Chain) => c.chainId === '5')
+          ?.tokens?.find((t: TokenType) => t.symbol === 'ETH') || ''
+      );
     }
   }, [chains, chainsIsLoading]);
 
@@ -616,13 +679,23 @@ export const OffersPageContextProvider = ({
         errorMessage,
         chain,
         token,
+        toChain,
+        toToken,
         searchToken,
         isActivating,
         currentChain,
+        currentToChain,
         chainTokens,
+        toChainTokens,
         groupedOffers,
         exchangeRate,
         estimatedTime,
+        title,
+        image,
+        amount,
+        setAmount,
+        setImage,
+        setTitle,
         setEstimatedTime,
         setExchangeRate,
         setAmountMin,
@@ -630,6 +703,8 @@ export const OffersPageContextProvider = ({
         setErrorMessage,
         setChain,
         setToken,
+        setToChain,
+        setToToken,
         setSearchToken,
         handleDeactivateClick,
         handleActivateClick,

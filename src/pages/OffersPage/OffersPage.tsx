@@ -5,6 +5,7 @@ import useOffersPage from '../../hooks/useOffersPage';
 import OffersPageRoot from './OffersPageRoot';
 import OffersPageCreate from './OffersPageCreate';
 import OffersPageSelectChain from './OffersPageSelectChain';
+import OffersPageSelectToChain from './OffersPageSelectToChain';
 
 function OffersPage() {
   const { VIEWS } = useOffersPage();
@@ -18,6 +19,10 @@ function OffersPage() {
           <Route
             path={VIEWS.SELECT_CHAIN.path}
             element={<OffersPageSelectChain />}
+          />
+          <Route
+            path={VIEWS.SELECT_TO_CHAIN.path}
+            element={<OffersPageSelectToChain />}
           />
         </Routes>
       </DexCard>

@@ -1,4 +1,4 @@
-import { Avatar, Badge, Box, FormHelperText } from '@mui/material';
+import { Avatar, Badge, Box, FormHelperText, SxProps } from '@mui/material';
 import React from 'react';
 import { Chain } from '../../types/Chain';
 import { TokenType } from '../../types/TokenType';
@@ -23,6 +23,8 @@ type Props = {
   token?: TokenType | '';
   disableTopMargin?: boolean;
   helpText?: string | React.ReactNode;
+  sx?: SxProps;
+  readOnly?: boolean;
 };
 
 const AmountInput = (props: Props) => {
@@ -39,12 +41,15 @@ const AmountInput = (props: Props) => {
     token,
     disableTopMargin,
     helpText,
+    sx,
+    readOnly,
   } = props;
   return (
     <Card
-      style={{
+      sx={{
         borderRadius: '12px',
         marginTop: !disableTopMargin ? '20px' : '0px',
+        ...(sx || {}),
       }}
     >
       <CardTitle>{label}</CardTitle>
@@ -115,6 +120,7 @@ const AmountInput = (props: Props) => {
               fontSize: '20px',
               fontWeight: '500',
             }}
+            readOnly={readOnly}
           />
           {helpText && (
             <FormHelperText

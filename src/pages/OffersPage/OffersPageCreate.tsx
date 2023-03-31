@@ -1,5 +1,5 @@
 import React from 'react';
-import { IconButton } from '@mui/material';
+import { IconButton, Stack } from '@mui/material';
 import { useGrinderyNexus } from 'use-grindery-nexus';
 import { Box } from '@mui/system';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
@@ -16,6 +16,8 @@ import { CardTitle } from '../../components/Card/CardTitle';
 import { chain } from 'lodash';
 import useGrinderyChains from '../../hooks/useGrinderyChains';
 import { Chain } from '../../types/Chain';
+import AmountInput from '../../components/AmountInput/AmountInput';
+import UploadButton from '../../components/UploadButton/UploadButton';
 
 function OffersPageCreate() {
   const { user, connect } = useGrinderyNexus();
@@ -36,6 +38,15 @@ function OffersPageCreate() {
     setExchangeRate,
     VIEWS,
     chain,
+    toChain,
+    toToken,
+    currentToChain,
+    title,
+    setTitle,
+    image,
+    setImage,
+    amount,
+    setAmount,
   } = useOffersPage();
   let navigate = useNavigate();
 
@@ -68,18 +79,79 @@ function OffersPageCreate() {
       />
 
       <DexCardBody>
-        <SelectChainAndTokenButton
-          onClick={() => {
-            navigate(VIEWS.SELECT_CHAIN.fullPath);
-          }}
-          title="Blockchain and token"
-          chain={currentChain}
-          token={token}
-          error={errorMessage}
-        />
+        <Stack
+          direction="row"
+          alignItems="stretch"
+          justifyContent="space-between"
+          gap="16px"
+        >
+          <SelectChainAndTokenButton
+            onClick={() => {
+              navigate(VIEWS.SELECT_CHAIN.fullPath);
+            }}
+            title="You sell"
+            chain={currentChain}
+            token={token}
+            error={errorMessage}
+          />
+          <SelectChainAndTokenButton
+            onClick={() => {
+              navigate(VIEWS.SELECT_TO_CHAIN.fullPath);
+            }}
+            title="You receive"
+            chain={currentToChain}
+            token={toToken}
+            error={errorMessage}
+            name="toChain"
+          />
+        </Stack>
 
-        {token && (
+        {token && toToken && (
           <>
+            <CardTitle
+              sx={{
+                paddingTop: '20px',
+                paddingLeft: '4px',
+                paddingRight: 0,
+                marginBottom: '6px',
+              }}
+            >
+              Exchange rate:
+            </CardTitle>
+            <Stack
+              direction="row"
+              alignItems="stretch"
+              justifyContent="space-between"
+              gap="16px"
+            >
+              <TextInput
+                label={`${token.symbol} value`}
+                value={'1'}
+                onChange={() => {}}
+                name="sellRate"
+                placeholder="0"
+                disabled={false}
+                sx={{ marginTop: 0 }}
+                readOnly
+              />
+              <TextInput
+                label={`${toToken.symbol} value`}
+                value={exchangeRate}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                  setErrorMessage({
+                    type: '',
+                    text: '',
+                  });
+                  setExchangeRate(event.target.value);
+                }}
+                name="exchangeRate"
+                placeholder="1"
+                disabled={false}
+                error={errorMessage}
+                sx={{ marginTop: 0 }}
+              />
+            </Stack>
+
             <CardTitle
               sx={{
                 paddingTop: '20px',
@@ -102,7 +174,7 @@ function OffersPageCreate() {
                   setAmountMin(event.target.value);
                 }}
                 name="amountMin"
-                placeholder="0"
+                placeholder="0.1"
                 disabled={false}
                 value={amountMin}
                 error={errorMessage}
@@ -119,38 +191,27 @@ function OffersPageCreate() {
                   setAmountMax(event.target.value);
                 }}
                 name="amountMax"
-                placeholder="0"
+                placeholder="10"
                 disabled={false}
                 error={errorMessage}
                 sx={{ marginTop: 0 }}
               />
             </Box>
-            <CardTitle
-              sx={{
-                paddingTop: '20px',
-                paddingLeft: '4px',
-                paddingRight: 0,
-                marginBottom: '6px',
-              }}
-            >
-              Exchange rate:
-            </CardTitle>
             <TextInput
-              label={`1 ${token.symbol} on ${chainLabel} is traded for`}
-              value={exchangeRate}
+              label={`Fixed amount`}
+              value={amount}
               onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                 setErrorMessage({
                   type: '',
                   text: '',
                 });
-                setExchangeRate(event.target.value);
+                setAmount(event.target.value);
               }}
-              name="exchangeRate"
-              placeholder="0"
+              name="amount"
+              placeholder="1"
               disabled={false}
               error={errorMessage}
-              sx={{ marginTop: 0 }}
-              helpText="ETH on Goerli Testnet"
+              helpText="Optional"
             />
             <TextInput
               label={`Average execution time`}
@@ -163,10 +224,36 @@ function OffersPageCreate() {
                 setEstimatedTime(event.target.value);
               }}
               name="estimatedTime"
-              placeholder="0"
+              placeholder="60"
               disabled={false}
               error={errorMessage}
-              helpText="seconds"
+              helpText="Seconds"
+            />
+            <TextInput
+              label={`Offer title`}
+              value={title}
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                setErrorMessage({
+                  type: '',
+                  text: '',
+                });
+                setTitle(event.target.value);
+              }}
+              name="title"
+              placeholder="Describe your offer"
+              disabled={false}
+              error={errorMessage}
+              helpText="Optional"
+            />
+
+            <UploadButton
+              label="Offer image"
+              value={image}
+              onChange={(img: string) => {
+                setImage(img);
+              }}
+              name="image"
+              helpText="Optimal image size 128x128px"
             />
           </>
         )}
