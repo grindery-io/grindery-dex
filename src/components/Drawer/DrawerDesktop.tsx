@@ -14,6 +14,15 @@ const DrawerDesktop = (props: DrawerProps) => {
           },
           '& .MuiListItemButton-root': {
             borderRadius: '12px',
+            '&:hover': {
+              backgroundColor: 'rgba(0, 0, 0, 0.04)',
+            },
+            '&.Mui-selected': {
+              backgroundColor: 'rgba(25, 118, 210, 0.08)',
+              '&:hover': {
+                backgroundColor: 'rgba(25, 118, 210, 0.08)',
+              },
+            },
           },
         },
         ...(props.sx || {}),
