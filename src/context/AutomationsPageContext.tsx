@@ -18,10 +18,11 @@ type ContextProps = {
     };
   };
   chain: Chain | null;
-  bots: { [key: string]: string };
   bot: string;
+  currentBot: string;
   loading: boolean;
   errorMessage: { type: string; text: string };
+  handleBotChange: (bot: string) => void;
   handleChainChange: (_chain: Chain) => void;
   handleDelegateClick: () => void;
 };
@@ -35,10 +36,11 @@ type AutomationsPageContextProps = {
 export const AutomationsPageContext = createContext<ContextProps>({
   VIEWS: {},
   chain: null,
-  bots: {},
   bot: '',
   loading: false,
+  currentBot: '',
   errorMessage: { type: '', text: '' },
+  handleBotChange: () => {},
   handleChainChange: () => {},
   handleDelegateClick: () => {},
 });
@@ -57,21 +59,20 @@ export const AutomationsPageContextProvider = ({
     chain: selectedChain,
     ethers,
     provider,
-    address,
     token,
+    address,
   } = useGrinderyNexus();
   const [chain, setChain] = useState<Chain | null>(null);
   const { chains, isLoading: chainsIsLoading } = useGrinderyChains();
   const [loading, setLoading] = useState(false);
-  const [bots, setBots] = useState<{ [key: string]: string }>({});
+  const [bot, setBot] = useState<string>('');
+  const [currentBot, setCurrentBot] = useState<string>('');
   const [errorMessage, setErrorMessage] = useState({ type: '', text: '' });
   const { wallets } = useLiquidityWallets();
   const { liquidityWalletAbi } = useAbi();
   const wallet = wallets.find(
     (w: LiquidityWallet) => w.chainId === chain?.chainId
   );
-  const botAddress = (wallet && bots[wallet?.walletAddress]) || '';
-  const bot = botAddress && botAddress !== address ? botAddress : '';
 
   const params = {
     headers: {
@@ -81,6 +82,10 @@ export const AutomationsPageContextProvider = ({
 
   const handleChainChange = (_chain: Chain) => {
     setChain(_chain);
+  };
+
+  const handleBotChange = (_bot: string) => {
+    setBot(_bot);
   };
 
   const checkDelegationState = async () => {
@@ -117,7 +122,7 @@ export const AutomationsPageContextProvider = ({
     const walletContract = _walletContract.connect(signer);
 
     // get wallet bot
-    const bot = await walletContract.getBot().catch((error: any) => {
+    const _bot = await walletContract.getBot().catch((error: any) => {
       setErrorMessage({
         type: 'saveOffer',
         text: getErrorMessage(error, 'Get wallet bot failed'),
@@ -127,18 +132,6 @@ export const AutomationsPageContextProvider = ({
       return;
     });
 
-    setBots({
-      ...bots,
-      ...{ [wallet?.walletAddress]: bot },
-    });
-    setLoading(false);
-  };
-
-  const handleDelegateClick = async () => {
-    if (!wallet || !chain) {
-      return;
-    }
-    setLoading(true);
     const botRes = await axios
       .get(
         `${DELIGHT_API_URL}/view-blockchains/drone-address?chainId=${chain?.chainId}`,
@@ -152,6 +145,27 @@ export const AutomationsPageContextProvider = ({
         setLoading(false);
         return;
       });
+    setCurrentBot(_bot || '');
+    setBot(botRes?.data || _bot || '');
+    setLoading(false);
+  };
+
+  const handleDelegateClick = async () => {
+    setErrorMessage({
+      type: '',
+      text: '',
+    });
+    if (!wallet || !chain) {
+      return;
+    }
+    if (!bot) {
+      setErrorMessage({
+        type: 'bot',
+        text: 'Bot address is required',
+      });
+      return;
+    }
+    setLoading(true);
 
     if (selectedChain !== 'eip155:97') {
       try {
@@ -173,15 +187,6 @@ export const AutomationsPageContextProvider = ({
       }
     }
 
-    if (!botRes?.data) {
-      setErrorMessage({
-        type: 'setBot',
-        text: 'Bot address not found',
-      });
-      setLoading(false);
-      return;
-    }
-
     // get signer
     const signer = provider.getSigner();
 
@@ -196,7 +201,7 @@ export const AutomationsPageContextProvider = ({
     const walletContract = _walletContract.connect(signer);
 
     // set wallet bot
-    const tx = await walletContract.setBot(botRes?.data).catch((error: any) => {
+    const tx = await walletContract.setBot(bot).catch((error: any) => {
       setErrorMessage({
         type: 'setBot',
         text: getErrorMessage(error, 'Transaction error'),
@@ -242,10 +247,11 @@ export const AutomationsPageContextProvider = ({
       value={{
         VIEWS,
         chain,
-        bots,
         bot,
         loading,
         errorMessage,
+        currentBot,
+        handleBotChange,
         handleChainChange,
         handleDelegateClick,
       }}

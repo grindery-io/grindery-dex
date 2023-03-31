@@ -13,13 +13,23 @@ import TransactionID from '../../components/TransactionID/TransactionID';
 import useAbi from '../../hooks/useAbi';
 import useAutomationsPage from '../../hooks/useAutomationsPage';
 import Loading from '../../components/Loading/Loading';
+import TextInput from '../../components/TextInput/TextInput';
+import { CardTitle } from '../../components/Card/CardTitle';
 
 type Props = {};
 
 const AutomationsPageRoot = (props: Props) => {
   const { user, connect } = useGrinderyNexus();
-  const { chain, VIEWS, bot, loading, handleDelegateClick, errorMessage } =
-    useAutomationsPage();
+  const {
+    chain,
+    VIEWS,
+    bot,
+    loading,
+    errorMessage,
+    currentBot,
+    handleDelegateClick,
+    handleBotChange,
+  } = useAutomationsPage();
   const { liquidityWalletAbi, poolAbi } = useAbi();
   let navigate = useNavigate();
 
@@ -54,16 +64,28 @@ const AutomationsPageRoot = (props: Props) => {
           readOnly
           maxRows={3}
         />
-
-        {user && bot && (
+        <CardTitle sx={{ padding: '30px 0 0' }}>Power delegation</CardTitle>
+        {user && currentBot && (
           <AlertBox wrapperStyle={{ marginBottom: '20px' }}>
             <Box sx={{ textAlign: 'center' }}></Box>
             <Typography variant="subtitle2" sx={{ marginbottom: '4px' }}>
-              Bot address has been added.
+              Power has been delegated to the bot
             </Typography>
-            <TransactionID label="Address" value={bot} />
+            <TransactionID label="Address" value={currentBot} />
           </AlertBox>
         )}
+
+        <TextInput
+          label="Bot address"
+          name="bot"
+          value={bot}
+          onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+            handleBotChange(event.target.value);
+          }}
+          helpText="Change this if you want to delegate power to&nbsp;a&nbsp;different address."
+          error={errorMessage}
+        />
+
         {errorMessage &&
           errorMessage.type === 'setBot' &&
           errorMessage.text && (
@@ -72,22 +94,21 @@ const AutomationsPageRoot = (props: Props) => {
             </AlertBox>
           )}
         {loading && <Loading />}
-        {!bot && (
-          <DexCardSubmitButton
-            loading={loading}
-            label={user ? 'Delegate power to Zapier' : 'Connect wallet'}
-            onClick={
-              user
-                ? () => {
-                    handleDelegateClick();
-                  }
-                : () => {
-                    connect();
-                  }
-            }
-            disabled={loading}
-          />
-        )}
+
+        <DexCardSubmitButton
+          loading={loading}
+          label={user ? 'Delegate power' : 'Connect wallet'}
+          onClick={
+            user
+              ? () => {
+                  handleDelegateClick();
+                }
+              : () => {
+                  connect();
+                }
+          }
+          disabled={loading}
+        />
       </DexCardBody>
     </>
   );
