@@ -1,6 +1,5 @@
 import React from 'react';
 import {
-  Drawer,
   List,
   ListItem,
   ListItemButton,
@@ -10,6 +9,7 @@ import {
 import { Box } from '@mui/system';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { buyPages } from '../../pages/BuyPage/BuyPage';
+import DrawerDesktop from '../Drawer/DrawerDesktop';
 
 type Props = {};
 
@@ -20,7 +20,7 @@ const BuyMenu = (props: Props) => {
   const location = useLocation();
   return (
     <Box sx={{ display: { xs: 'none', lg: 'block' } }}>
-      <Drawer
+      <DrawerDesktop
         variant="permanent"
         sx={{
           width: drawerWidth,
@@ -56,7 +56,7 @@ const BuyMenu = (props: Props) => {
             ))}
           </List>
         </Box>
-      </Drawer>
+      </DrawerDesktop>
     </Box>
   );
 };

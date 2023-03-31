@@ -30,9 +30,8 @@ const TradePage = (props: Props) => {
       flexDirection="row"
       justifyContent="center"
       flexWrap="wrap"
-      gap="20px"
     >
-      <Box width="375px">
+      <Box width="375px" mb="20px">
         <Routes>
           <Route path={VIEWS.ROOT.path} element={<TradePageOffersFilter />} />
           <Route
@@ -60,6 +59,7 @@ const TradePage = (props: Props) => {
             : 'scaleX(0) scaleY(0)',
           opacity: showRightColumn ? '1' : '0',
           transition: 'all 225ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
+          marginLeft: showRightColumn ? '20px' : 0,
         }}
       >
         <TradePageOffersList />

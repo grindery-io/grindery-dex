@@ -11,7 +11,6 @@ import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 import {
   Collapse,
-  Drawer,
   List,
   ListItemButton,
   ListItemText,
@@ -22,20 +21,28 @@ import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import useAdmin from '../../hooks/useAdmin';
 import { sellPages } from '../../pages/SellPage/SellPage';
 import { buyPages } from '../../pages/BuyPage/BuyPage';
+import NavTabs, { MenuItem } from '../NavTabs/NavTabs';
+import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
+import SellIcon from '@mui/icons-material/Sell';
+import Drawer from '../Drawer/Drawer';
 
-const menu = [
+const menu: MenuItem[] = [
   {
     path: '/buy',
     label: 'Buy',
+    icon: <AddShoppingCartIcon />,
+    iconPosition: 'start',
   },
   {
     path: '/sell',
     label: 'Sell',
+    icon: <SellIcon />,
+    iconPosition: 'start',
   },
 ];
 
+// border-bottom: 1px solid #dcdcdc;
 const Wrapper = styled.div`
-  border-bottom: 1px solid #dcdcdc;
   padding: 16px;
   display: flex;
   align-items: center;
@@ -91,6 +98,7 @@ const LinksWrapper = styled.div`
   transform: translateX(-50%);
 
   display: flex;
+  display: none;
   align-items: center;
   justify-content: flex-end;
   flex-direction: row;
@@ -115,6 +123,24 @@ const LinksWrapper = styled.div`
     &.active {
       font-weight: 700;
     }
+  }
+`;
+
+const NavTabsWrapper = styled.div`
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  gap: 24px;
+  order: 3;
+
+  @media (max-width: 1199px) {
+    display: none;
   }
 `;
 
@@ -202,8 +228,12 @@ const AppHeader = (props: Props) => {
             navigate('/');
           }}
         >
-          DELIGHT
+          MERCARI
         </CompanyNameWrapper>
+
+        <NavTabsWrapper>
+          <NavTabs menu={menu} />
+        </NavTabsWrapper>
 
         {isAdmin && (
           <LinksWrapper>
@@ -244,10 +274,14 @@ const AppHeader = (props: Props) => {
 
       <Box sx={{ display: { xs: 'block', lg: 'none' } }}>
         <Drawer
-          variant="persistent"
+          //variant="persistent"
           anchor="left"
           open={drawerOpen}
+          onClose={() => {
+            setDrawerOpen(false);
+          }}
           sx={{
+            zIndex: '1301',
             width: drawerWidth,
             flexShrink: 0,
             [`& .MuiDrawer-paper`]: {
@@ -256,7 +290,7 @@ const AppHeader = (props: Props) => {
             },
           }}
         >
-          <Box sx={{ height: '73px' }} />
+          <Box sx={{ height: '12px' }} />
           <Box sx={{ overflow: 'auto' }}>
             <List>
               {menu

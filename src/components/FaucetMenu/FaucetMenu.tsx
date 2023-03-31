@@ -1,5 +1,4 @@
 import {
-  Drawer,
   List,
   ListItem,
   ListItemButton,
@@ -11,6 +10,7 @@ import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import { FAUCET_MENU } from '../../constants';
+import DrawerDesktop from '../Drawer/DrawerDesktop';
 
 type Props = {};
 
@@ -21,7 +21,7 @@ const FaucetMenu = (props: Props) => {
   const location = useLocation();
   return (
     <Box sx={{ display: { xs: 'none', lg: 'block' } }}>
-      <Drawer
+      <DrawerDesktop
         variant="permanent"
         sx={{
           width: drawerWidth,
@@ -61,7 +61,7 @@ const FaucetMenu = (props: Props) => {
             ))}
           </List>
         </Box>
-      </Drawer>
+      </DrawerDesktop>
     </Box>
   );
 };

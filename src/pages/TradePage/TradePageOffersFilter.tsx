@@ -36,7 +36,7 @@ const TradePageOffersFilter = (props: Props) => {
   return (
     <DexCard>
       <DexCardHeader
-        title="Buy"
+        title="Trade"
         endAdornment={
           user ? (
             <Tooltip title="Orders history">

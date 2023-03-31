@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { ThemeProvider as GrinderyThemeProvider } from 'grindery-ui';
 import styled from 'styled-components';
 import Foco from 'react-foco';
 import Jdenticon from 'react-jdenticon';
@@ -132,78 +133,80 @@ const UserMenu = (props: Props) => {
   let navigate = useNavigate();
 
   return address ? (
-    <UserContainer>
-      <Foco
-        onClickOutside={() => {
-          setMenuOpened(false);
-        }}
-        onFocusOutside={() => {
-          setMenuOpened(false);
-        }}
-      >
-        <UserWrapper
-          onClick={() => {
-            setMenuOpened(!menuOpened);
+    <GrinderyThemeProvider>
+      <UserContainer>
+        <Foco
+          onClickOutside={() => {
+            setMenuOpened(false);
           }}
-          className={`${menuOpened ? 'opened' : ''} ${mode}`}
+          onFocusOutside={() => {
+            setMenuOpened(false);
+          }}
         >
-          <UserStatus>
-            <Jdenticon size="20" value={encodeURIComponent(address)} />
-          </UserStatus>
-          <UserId className={mode}>
-            {address.substring(0, 6) +
-              '...' +
-              address.substring(address.length - 4)}
-          </UserId>
-        </UserWrapper>
+          <UserWrapper
+            onClick={() => {
+              setMenuOpened(!menuOpened);
+            }}
+            className={`${menuOpened ? 'opened' : ''} ${mode}`}
+          >
+            <UserStatus>
+              <Jdenticon size="20" value={encodeURIComponent(address)} />
+            </UserStatus>
+            <UserId className={mode}>
+              {address.substring(0, 6) +
+                '...' +
+                address.substring(address.length - 4)}
+            </UserId>
+          </UserWrapper>
 
-        <UserDropdown className={menuOpened ? 'opened' : ''}>
-          <UserDropdownContent>
-            <CopyToClipboard
-              text={address}
-              onCopy={() => {
-                setMenuOpened(false);
-                setCopied(true);
-              }}
-            >
-              <button onClick={() => {}}>
-                <img src={ICONS.COPY} alt="" />
-                <span>{'Copy wallet addres'}</span>
+          <UserDropdown className={menuOpened ? 'opened' : ''}>
+            <UserDropdownContent>
+              <CopyToClipboard
+                text={address}
+                onCopy={() => {
+                  setMenuOpened(false);
+                  setCopied(true);
+                }}
+              >
+                <button onClick={() => {}}>
+                  <img src={ICONS.COPY} alt="" />
+                  <span>{'Copy wallet addres'}</span>
+                </button>
+              </CopyToClipboard>
+              <button
+                onClick={() => {
+                  navigate('/faucet');
+                }}
+              >
+                <Icon
+                  path={mdiWaterPump}
+                  style={{ width: '20px', height: '20px' }}
+                />
+                <span>Faucet</span>
               </button>
-            </CopyToClipboard>
-            <button
-              onClick={() => {
-                navigate('/faucet');
-              }}
-            >
-              <Icon
-                path={mdiWaterPump}
-                style={{ width: '20px', height: '20px' }}
-              />
-              <span>Faucet</span>
-            </button>
-            <button
-              onClick={() => {
-                disconnect();
-              }}
-            >
-              <img src={ICONS.DISCONNECT} alt="" />
-              <span>Disconnect</span>
-            </button>
-          </UserDropdownContent>
-        </UserDropdown>
-      </Foco>
-      <Snackbar
-        open={copied}
-        handleClose={() => {
-          setCopied(false);
-        }}
-        message="Wallet address copied!"
-        hideCloseButton
-        autoHideDuration={2000}
-        severity="success"
-      />
-    </UserContainer>
+              <button
+                onClick={() => {
+                  disconnect();
+                }}
+              >
+                <img src={ICONS.DISCONNECT} alt="" />
+                <span>Disconnect</span>
+              </button>
+            </UserDropdownContent>
+          </UserDropdown>
+        </Foco>
+        <Snackbar
+          open={copied}
+          handleClose={() => {
+            setCopied(false);
+          }}
+          message="Wallet address copied!"
+          hideCloseButton
+          autoHideDuration={2000}
+          severity="success"
+        />
+      </UserContainer>
+    </GrinderyThemeProvider>
   ) : null;
 };
 

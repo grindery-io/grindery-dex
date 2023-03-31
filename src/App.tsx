@@ -33,8 +33,9 @@ export const App = () => {
           <AdminContextProvider>
             <GrinderyThemeProvider>
               <EarlyAccessModal />
-              <AppHeader />
             </GrinderyThemeProvider>
+            <AppHeader />
+
             <GrinderyChainsContextProvider>
               <AbiContextProvider>
                 <StakesContextProvider>
