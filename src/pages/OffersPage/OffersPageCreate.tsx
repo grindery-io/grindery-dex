@@ -78,7 +78,7 @@ function OffersPageCreate() {
         endAdornment={<Box width={28} height={40} />}
       />
 
-      <DexCardBody>
+      <DexCardBody maxHeight="540px">
         <Stack
           direction="row"
           alignItems="stretch"
