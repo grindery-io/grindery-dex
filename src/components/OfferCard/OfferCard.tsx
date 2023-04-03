@@ -24,7 +24,7 @@ const OfferCard = (props: Props) => {
         boxShadow: '0px 8px 32px rgba(0, 0, 0, 0.08)',
         borderRadius: '18px',
         width: '100%',
-        maxWidth: '375px',
+        maxWidth: '335px',
         margin: '0',
       }}
     >

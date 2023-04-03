@@ -31,7 +31,7 @@ const ShopPageRoot = (props: Props) => {
           gap="24px"
           sx={{
             width: '100%',
-            maxWidth: '1174px',
+            maxWidth: '1053px',
             margin: '0 auto',
             justifyContent: { xs: 'center', lg: 'flex-start' },
           }}

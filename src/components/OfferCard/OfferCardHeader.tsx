@@ -53,7 +53,7 @@ const OfferCardHeader = (props: Props) => {
   return (
     <Box
       sx={{
-        padding: '24px 24px 18px',
+        padding: '16px 16px 10px',
         background: '#22252A',
         borderTopLeftRadius: '18px',
         borderTopRightRadius: '18px',
@@ -63,8 +63,8 @@ const OfferCardHeader = (props: Props) => {
       <Typography
         sx={{
           fontWeight: '700',
-          fontSize: '24px',
-          lineHeight: '29px',
+          fontSize: '16px',
+          lineHeight: '19px',
         }}
       >
         Provider
@@ -86,7 +86,7 @@ const OfferCardHeader = (props: Props) => {
         alignItems="center"
         justifyContent="flex-start"
         gap="24px"
-        sx={{ paddingTop: '18px' }}
+        sx={{ paddingTop: '10px' }}
       >
         <Box>
           <Tooltip title="Trades: 134">
@@ -105,8 +105,8 @@ const OfferCardHeader = (props: Props) => {
               <Typography
                 sx={{
                   fontWeight: '400',
-                  fontSize: '14px',
-                  lineHeight: '14px',
+                  fontSize: '12px',
+                  lineHeight: '12px',
                   color: '#E3E3E8',
                 }}
               >

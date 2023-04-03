@@ -26,7 +26,7 @@ const OfferCardBody = (props: Props) => {
 
   return (
     <Box>
-      <Box sx={{ padding: '24px 24px 0' }}>
+      <Box sx={{ padding: '16px 16px 0' }}>
         <Stack
           direction="row"
           alignItems="center"
@@ -67,8 +67,8 @@ const OfferCardBody = (props: Props) => {
               <Typography
                 sx={{
                   fontWeight: '700',
-                  fontSize: '22px',
-                  lineHeight: '27px',
+                  fontSize: '18px',
+                  lineHeight: '22px',
                   display: '-webkit-box',
                   '-webkit-line-clamp': '2',
                   '-webkit-box-orient': 'vertical',
@@ -86,7 +86,8 @@ const OfferCardBody = (props: Props) => {
                   flex: 1,
                   paddingLeft: '0',
                   height: 'auto',
-                  alignItems: 'flex-start',
+                  alignItems: 'center',
+                  paddingTop: '8px',
                   marginBottom: 0,
                   paddingBottom: 0,
                   '& .MuiCardHeader-avatar': {
@@ -94,9 +95,9 @@ const OfferCardBody = (props: Props) => {
                   },
                   '& .MuiCardHeader-title': {
                     fontWeight: '700',
-                    fontSize: '28px',
+                    fontSize: '18px',
                     lineHeight: '23px',
-                    margin: '0 0 10px',
+                    margin: '0',
                     padding: 0,
                     '& span': {
                       color: '#808898',
@@ -105,8 +106,8 @@ const OfferCardBody = (props: Props) => {
                   },
                   '& .MuiCardHeader-subheader': {
                     fontWeight: '500',
-                    fontSize: '14px',
-                    lineHeight: '12px',
+                    fontSize: '12px',
+                    lineHeight: '17px',
                     margin: '0',
                     padding: 0,
                   },
@@ -124,8 +125,8 @@ const OfferCardBody = (props: Props) => {
                           src={offerChain.icon}
                           alt={offerChain.label}
                           sx={{
-                            width: '11.5px',
-                            height: '11.5px',
+                            width: '16px',
+                            height: '16px',
                             border: '2px solid #fff',
                             background: '#fff',
                           }}
@@ -134,8 +135,8 @@ const OfferCardBody = (props: Props) => {
                         </Avatar>
                       ) : (
                         <AvatarDefault
-                          width={11.5}
-                          height={11.5}
+                          width={16}
+                          height={16}
                           sx={{ border: '2px solid #fff' }}
                         />
                       )
@@ -143,14 +144,14 @@ const OfferCardBody = (props: Props) => {
                   >
                     {offerToken ? (
                       <Avatar
-                        sx={{ width: '23px', height: '23px' }}
+                        sx={{ width: '32px', height: '32px' }}
                         src={offerToken.icon}
                         alt={offerToken.symbol || offer.token || ''}
                       >
                         {offerToken.symbol || offer.token || ''}
                       </Avatar>
                     ) : (
-                      <AvatarDefault width={23} height={23} />
+                      <AvatarDefault width={32} height={32} />
                     )}
                   </Badge>
                 }
@@ -180,7 +181,7 @@ const OfferCardBody = (props: Props) => {
           </Box>
         </Stack>
       </Box>
-      <Box sx={{ margin: '16px 24px 0', padding: '12px 16px' }}>
+      <Box sx={{ margin: '8px 16px 0', padding: '12px' }}>
         <Typography
           sx={{
             fontSize: '14px',

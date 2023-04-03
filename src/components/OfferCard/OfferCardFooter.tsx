@@ -24,7 +24,7 @@ const OfferCardFooter = (props: Props) => {
     : '';
 
   return (
-    <Box sx={{ padding: '16px 24px 24px', textAlign: 'center' }}>
+    <Box sx={{ padding: '16px', textAlign: 'center' }}>
       {offer.hash ? (
         <TransactionID
           containerStyle={{ justifyContent: 'center' }}
@@ -40,15 +40,6 @@ const OfferCardFooter = (props: Props) => {
       ) : (
         <Skeleton />
       )}
-      {/*errorMessage &&
-        errorMessage.type === 'acceptOffer' &&
-        errorMessage.offer &&
-        errorMessage.offer === offer.offerId &&
-        errorMessage.text && (
-          <AlertBox wrapperStyle={{ marginTop: '12px' }} color="error">
-            {errorMessage.text}
-          </AlertBox>
-        )*/}
     </Box>
   );
 };

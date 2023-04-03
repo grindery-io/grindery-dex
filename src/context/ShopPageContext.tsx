@@ -44,6 +44,7 @@ type ContextProps = {
   acceptedOffer: string | null;
   showModal: boolean;
   handleModalClosed: () => void;
+  handleModalOpened: () => void;
   setAccepted: React.Dispatch<React.SetStateAction<string>>;
   setApproved: React.Dispatch<React.SetStateAction<boolean>>;
   setSearchToken: React.Dispatch<React.SetStateAction<string>>;
@@ -87,6 +88,7 @@ export const ShopPageContext = createContext<ContextProps>({
   acceptedOffer: null,
   showModal: false,
   handleModalClosed: () => {},
+  handleModalOpened: () => {},
   setAccepted: () => {},
   setApproved: () => {},
   setSearchToken: () => {},
@@ -695,6 +697,7 @@ export const ShopPageContextProvider = ({ children }: ShopPageContextProps) => {
         acceptedOffer,
         showModal,
         handleModalClosed,
+        handleModalOpened,
         setAccepted,
         setApproved,
         setSearchToken,
