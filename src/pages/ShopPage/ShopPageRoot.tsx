@@ -2,8 +2,8 @@ import React from 'react';
 import { Box } from '@mui/system';
 import useShopPage from '../../hooks/useShopPage';
 import { Offer } from '../../types/Offer';
-import OfferCard from '../../components/Offer/OfferCard';
-import { Grid, Stack } from '@mui/material';
+import OfferCard from '../../components/OfferCard/OfferCard';
+import { Grid } from '@mui/material';
 import useGrinderyChains from '../../hooks/useGrinderyChains';
 
 type Props = {};
@@ -22,19 +22,7 @@ const ShopPageRoot = (props: Props) => {
       flex="1"
       gap="16px"
     >
-      <Grid
-        container
-        direction="row"
-        alignItems="stretch"
-        flexWrap="wrap"
-        spacing="24px"
-        sx={
-          {
-            //justifyContent: { xs: 'center', lg: 'flex-start' },
-            //gap: { xs: '16px', lg: '24px' },
-          }
-        }
-      >
+      <Grid container spacing="24px">
         {foundOffers.map((offer: Offer) => {
           const offerChain = chains.find(
             (c) => c.value === `eip155:${offer.chainId}`

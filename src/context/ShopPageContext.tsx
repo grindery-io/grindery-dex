@@ -22,7 +22,7 @@ type ContextProps = {
       fullPath: string;
     };
   };
-  errorMessage: { type: string; text: string };
+  errorMessage: { type: string; text: string; offer?: string };
   loading: boolean;
   fromChain: Chain | null;
   fromToken: TokenType | '';
@@ -38,9 +38,10 @@ type ContextProps = {
   foundOffers: Offer[];
   approved: boolean;
   accepted: string;
-  toTokenPrice: number | null;
-  fromTokenPrice: number | null;
+  tokenPrice: number | null;
   isPricesLoading: boolean;
+  accepting: string | null;
+  acceptedOffer: string | null;
   setAccepted: React.Dispatch<React.SetStateAction<string>>;
   setApproved: React.Dispatch<React.SetStateAction<boolean>>;
   setSearchToken: React.Dispatch<React.SetStateAction<string>>;
@@ -52,7 +53,6 @@ type ContextProps = {
   handleSearchClick: (amount: string, silent?: boolean) => void;
   handleFromAmountMaxClick: () => void;
   handleAcceptOfferClick: (offer: Offer) => void;
-  handleRefreshOffersClick: () => void;
 };
 
 // Context provider props
@@ -79,9 +79,10 @@ export const ShopPageContext = createContext<ContextProps>({
   foundOffers: [],
   approved: false,
   accepted: '',
-  toTokenPrice: null,
-  fromTokenPrice: null,
+  tokenPrice: null,
   isPricesLoading: false,
+  accepting: null,
+  acceptedOffer: null,
   setAccepted: () => {},
   setApproved: () => {},
   setSearchToken: () => {},
@@ -93,7 +94,6 @@ export const ShopPageContext = createContext<ContextProps>({
   handleSearchClick: () => {},
   handleFromAmountMaxClick: () => {},
   handleAcceptOfferClick: () => {},
-  handleRefreshOffersClick: () => {},
 });
 
 export const ShopPageContextProvider = ({ children }: ShopPageContextProps) => {
@@ -108,9 +108,14 @@ export const ShopPageContextProvider = ({ children }: ShopPageContextProps) => {
   };
   let navigate = useNavigate();
   const { tokenAbi, poolAbi } = useAbi();
-  const [errorMessage, setErrorMessage] = useState({ type: '', text: '' });
+  const [errorMessage, setErrorMessage] = useState<{
+    type: string;
+    text: string;
+    offer?: string;
+  }>({ type: '', text: '' });
   const [approved, setApproved] = useState<boolean>(false);
   const [accepted, setAccepted] = useState<string>('');
+  const [acceptedOffer, setAcceptedoffer] = useState<string | null>(null);
   const [toChain, setToChain] = useState<Chain | null>(null);
   const { chains, isLoading: chainsIsLoading } = useGrinderyChains();
   const [fromChain, setFromChain] = useState<Chain | null>(null);
@@ -120,8 +125,8 @@ export const ShopPageContextProvider = ({ children }: ShopPageContextProps) => {
   const [isOffersVisible, setIsOffersVisible] = useState<boolean>(false);
   const [searchToken, setSearchToken] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [toTokenPrice, setToTokenPrice] = useState<number | null>(null);
-  const [fromTokenPrice, setFromTokenPrice] = useState<number | null>(null);
+  const [tokenPrice, setTokenPrice] = useState<number | null>(null);
+  const [accepting, setAccepting] = useState<string | null>(null);
   const [fromTokenBalance, setFromTokenBalance] = useState<string>('');
   const { saveOrder } = useOrders();
   const { searchOffers, offers, isLoading: isOfferLoading } = useOffers();
@@ -181,7 +186,7 @@ export const ShopPageContextProvider = ({ children }: ShopPageContextProps) => {
     setIsPricesLoading(true);
     try {
       const res = await axios.get(
-        `${DELIGHT_API_URL}/coinmarketcap?token=${symbol}`,
+        `${DELIGHT_API_URL}/coinmarketcap?token=ETH`,
         {
           headers: {
             Authorization: `Bearer ${token?.access_token || ''}`,
@@ -189,52 +194,17 @@ export const ShopPageContextProvider = ({ children }: ShopPageContextProps) => {
         }
       );
       if (res?.data?.price) {
-        setToTokenPrice(res?.data?.price);
+        setTokenPrice(res?.data?.price);
         setIsPricesLoading(false);
       } else {
-        setToTokenPrice(null);
+        setTokenPrice(null);
         setIsPricesLoading(false);
       }
     } catch (error: any) {
       console.error(error);
-      setToTokenPrice(null);
+      setTokenPrice(null);
       setIsPricesLoading(false);
     }
-  };
-
-  const getFromTokenPrice = async (symbol: string) => {
-    setIsPricesLoading(true);
-    try {
-      const res = await axios.get(
-        `${DELIGHT_API_URL}/coinmarketcap?token=${symbol}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token?.access_token || ''}`,
-          },
-        }
-      );
-      if (res?.data?.price) {
-        setFromTokenPrice(res?.data?.price);
-        setIsPricesLoading(false);
-      } else {
-        setFromTokenPrice(null);
-        setIsPricesLoading(false);
-      }
-    } catch (error: any) {
-      console.error(error);
-      setFromTokenPrice(null);
-      setIsPricesLoading(false);
-    }
-  };
-
-  const handleRefreshOffersClick = async () => {
-    if (toToken) {
-      getToTokenPrice(toToken.symbol);
-    }
-    if (fromToken) {
-      getFromTokenPrice(fromToken.symbol);
-    }
-    handleSearchClick(fromAmount, true);
   };
 
   const handleFromAmountMaxClick = () => {
@@ -358,12 +328,12 @@ export const ShopPageContextProvider = ({ children }: ShopPageContextProps) => {
     );
   };
 
-  const debouncedChangeHandler = useCallback(
+  /*const debouncedChangeHandler = useCallback(
     _.debounce((amount: string) => {
       handleSearchClick(amount);
     }, 1000),
     [fromChain, fromToken, toChain, toToken, fromTokenBalance]
-  );
+  );*/
 
   const params = {
     headers: {
@@ -389,34 +359,76 @@ export const ShopPageContextProvider = ({ children }: ShopPageContextProps) => {
   };
 
   const handleAcceptOfferClick = async (offer: Offer) => {
+    setErrorMessage({
+      type: '',
+      text: '',
+      offer: '',
+    });
+    if (!offer.offerId) {
+      setErrorMessage({
+        type: 'acceptOffer',
+        text: 'offer id is missing',
+      });
+
+      return;
+    }
     if (!fromToken) {
       setErrorMessage({
         type: 'acceptOffer',
+        offer: offer.offerId,
         text: 'Token price is missing',
       });
 
       return;
     }
 
-    if (!toTokenPrice) {
+    if (!tokenPrice) {
       setErrorMessage({
         type: 'acceptOffer',
+        offer: offer.offerId,
         text: 'Token price is missing',
       });
 
       return;
     }
 
-    if (!fromTokenPrice) {
+    if (!offer.amount) {
       setErrorMessage({
         type: 'acceptOffer',
-        text: 'Token price is missing',
+        offer: offer.offerId,
+        text: 'Tokens amount is missing',
       });
 
       return;
     }
 
-    setIsLoading(true);
+    if (!offer.exchangeRate) {
+      setErrorMessage({
+        type: 'acceptOffer',
+        offer: offer.offerId,
+        text: 'Exchange rate is missing',
+      });
+
+      return;
+    }
+
+    const amount = (
+      parseFloat(offer.amount) * parseFloat(offer.exchangeRate)
+    ).toString();
+
+    console.log('amount', amount);
+
+    if (parseFloat(fromTokenBalance) < parseFloat(amount)) {
+      setErrorMessage({
+        type: 'acceptOffer',
+        offer: offer.offerId,
+        text: 'Not enough funds',
+      });
+
+      return;
+    }
+
+    setAccepting(offer.offerId || '');
 
     // switch chain if needed
     if (chain !== fromChain?.value && fromChain) {
@@ -455,21 +467,22 @@ export const ShopPageContextProvider = ({ children }: ShopPageContextProps) => {
       const txApprove = await fromTokenContract
         .approve(
           POOL_CONTRACT_ADDRESS[fromChain?.value || ''],
-          ethers.utils.parseEther(fromAmount)
+          ethers.utils.parseEther(amount)
         )
         .catch((error: any) => {
           setErrorMessage({
             type: 'acceptOffer',
             text: getErrorMessage(error.error, 'Approval transaction error'),
+            offer: offer.offerId,
           });
           console.error('approve error', error.error);
-          setIsLoading(false);
+          setAccepting(null);
           return;
         });
 
       // stop executing if approval failed
       if (!txApprove) {
-        setIsLoading(false);
+        setAccepting(null);
         return;
       }
 
@@ -480,12 +493,13 @@ export const ShopPageContextProvider = ({ children }: ShopPageContextProps) => {
         setErrorMessage({
           type: 'acceptOffer',
           text: error?.message || 'Transaction error',
+          offer: offer.offerId,
         });
         console.error('txApprove.wait error', error);
-        setIsLoading(false);
+        setAccepting(null);
         return;
       }
-      setIsLoading(false);
+      setAccepting(null);
       setApproved(true);
 
       // accept if tokens were approved
@@ -506,12 +520,10 @@ export const ShopPageContextProvider = ({ children }: ShopPageContextProps) => {
           offer.offerId,
           address,
           ethers.utils.parseEther(
-            (parseFloat(fromAmount) / parseFloat(offer.exchangeRate || '1'))
-              .toFixed(18)
-              .toString()
+            parseFloat(offer.amount).toFixed(18).toString()
           ),
           {
-            value: ethers.utils.parseEther(fromAmount),
+            value: ethers.utils.parseEther(amount),
             gasLimit: 1000000,
           }
         )
@@ -522,15 +534,16 @@ export const ShopPageContextProvider = ({ children }: ShopPageContextProps) => {
               error.error,
               'Accepting offer transaction error'
             ),
+            offer: offer.offerId,
           });
           console.error('depositGRTWithOffer error', error);
-          setIsLoading(false);
+          setAccepting(null);
           return;
         });
 
       // stop execution if offer activation failed
       if (!tx) {
-        setIsLoading(false);
+        setAccepting(null);
         return;
       }
 
@@ -541,9 +554,10 @@ export const ShopPageContextProvider = ({ children }: ShopPageContextProps) => {
         setErrorMessage({
           type: 'acceptOffer',
           text: error?.message || 'Transaction error',
+          offer: offer.offerId,
         });
         console.error('tx.wait error', error);
-        setIsLoading(false);
+        setAccepting(null);
         return;
       }
 
@@ -555,34 +569,35 @@ export const ShopPageContextProvider = ({ children }: ShopPageContextProps) => {
 
       // save order to DB
       const order = await saveOrder({
-        amountTokenDeposit: fromAmount,
+        amountTokenDeposit: amount,
         addressTokenDeposit: fromToken.address,
         chainIdTokenDeposit: fromToken.chainId,
         destAddr: address,
         offerId: offer.offerId,
         orderId,
-        amountTokenOffer: (
-          parseFloat(fromAmount) / parseFloat(offer.exchangeRate || '1')
-        ).toString(),
+        amountTokenOffer: offer.amount,
         hash: tx.hash || '',
       }).catch((error: any) => {
         console.error('saveOrder error', error);
         setErrorMessage({
           type: 'acceptOffer',
           text: error?.message || 'Server error',
+          offer: offer.offerId,
         });
       });
       if (order) {
         // reset state
         setApproved(false);
-        setIsLoading(false);
+        setAccepting(null);
         setAccepted(tx.hash || '');
+        setAcceptedoffer(offer.offerId || null);
       } else {
         setErrorMessage({
           type: 'acceptOffer',
           text: "Server error, order wasn't saved",
+          offer: offer.offerId,
         });
-        setIsLoading(false);
+        setAccepting(null);
       }
     }
   };
@@ -598,7 +613,7 @@ export const ShopPageContextProvider = ({ children }: ShopPageContextProps) => {
     ) {
       setIsOffersVisible(true);
       setIsLoading(true);
-      debouncedChangeHandler(fromAmount);
+      //debouncedChangeHandler(fromAmount);
     } else {
       setIsOffersVisible(false);
     }
@@ -621,12 +636,6 @@ export const ShopPageContextProvider = ({ children }: ShopPageContextProps) => {
       getToTokenPrice(toToken.symbol);
     }
   }, [toToken, token?.access_token]);
-
-  useEffect(() => {
-    if (fromToken && token?.access_token) {
-      getFromTokenPrice(fromToken.symbol);
-    }
-  }, [fromToken, token?.access_token]);
 
   useEffect(() => {
     if (!chainsIsLoading) {
@@ -665,9 +674,10 @@ export const ShopPageContextProvider = ({ children }: ShopPageContextProps) => {
         foundOffers,
         approved,
         accepted,
-        toTokenPrice,
-        fromTokenPrice,
+        tokenPrice,
         isPricesLoading,
+        accepting,
+        acceptedOffer,
         setAccepted,
         setApproved,
         setSearchToken,
@@ -679,7 +689,6 @@ export const ShopPageContextProvider = ({ children }: ShopPageContextProps) => {
         handleSearchClick,
         handleFromAmountMaxClick,
         handleAcceptOfferClick,
-        handleRefreshOffersClick,
       }}
     >
       {children}
