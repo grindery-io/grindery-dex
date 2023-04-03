@@ -514,6 +514,19 @@ export const ShopPageContextProvider = ({ children }: ShopPageContextProps) => {
       // connect signer
       const poolContract = _poolContract.connect(signer);
 
+      // get gas estimation
+      const gasEstimate =
+        await poolContract.estimateGas.depositETHAndAcceptOffer(
+          offer.offerId,
+          address,
+          ethers.utils.parseEther(
+            parseFloat(offer.amount).toFixed(18).toString()
+          ),
+          {
+            value: ethers.utils.parseEther(amount),
+          }
+        );
+
       // create transaction
       const tx = await poolContract
         .depositETHAndAcceptOffer(
@@ -524,7 +537,7 @@ export const ShopPageContextProvider = ({ children }: ShopPageContextProps) => {
           ),
           {
             value: ethers.utils.parseEther(amount),
-            gasLimit: 1000000,
+            gasLimit: gasEstimate,
           }
         )
         .catch((error: any) => {
