@@ -9,7 +9,7 @@ import useAbi from '../hooks/useAbi';
 import _ from 'lodash';
 import { getErrorMessage } from '../utils/error';
 import { TokenType } from '../types/TokenType';
-import { Offer } from '../types/Offer';
+import { OfferType } from '../types/OfferType';
 
 function isNumeric(value: string) {
   return /^\d*(\.\d+)?$/.test(value);
@@ -27,7 +27,7 @@ type ContextProps = {
   isActivating: string;
   currentChain: Chain | null;
   chainTokens: TokenType[];
-  groupedOffers: { [key: string]: Offer[] };
+  groupedOffers: { [key: string]: OfferType[] };
   setAmountMin: React.Dispatch<React.SetStateAction<string>>;
   setAmountMax: React.Dispatch<React.SetStateAction<string>>;
   setErrorMessage: React.Dispatch<
@@ -322,7 +322,9 @@ export const OrdersPageContextProvider = ({
   const handleDeactivateClick = async (offerId: string) => {
     setIsActivating(offerId);
 
-    const offerChain = offers.find((o: Offer) => o._id === offerId)?.chainId;
+    const offerChain = offers.find(
+      (o: OfferType) => o._id === offerId
+    )?.chainId;
 
     const chainToSelect = chains.find(
       (c: Chain) => c.value === `eip155:${offerChain}`
@@ -362,7 +364,7 @@ export const OrdersPageContextProvider = ({
     const poolContract = _poolContract.connect(signer);
 
     const offerToDeactivate = offers.find(
-      (o: Offer) => o._id === offerId
+      (o: OfferType) => o._id === offerId
     )?.offerId;
 
     if (!offerToDeactivate) {
@@ -446,7 +448,9 @@ export const OrdersPageContextProvider = ({
   const handleActivateClick = async (offerId: string) => {
     setIsActivating(offerId);
 
-    const offerChain = offers.find((o: Offer) => o._id === offerId)?.chainId;
+    const offerChain = offers.find(
+      (o: OfferType) => o._id === offerId
+    )?.chainId;
 
     const chainToSelect = chains.find(
       (c: Chain) => c.value === `eip155:${offerChain}`
@@ -474,7 +478,7 @@ export const OrdersPageContextProvider = ({
     }
 
     const offerToActivate = offers.find(
-      (o: Offer) => o._id === offerId
+      (o: OfferType) => o._id === offerId
     )?.offerId;
 
     if (!offerToActivate) {

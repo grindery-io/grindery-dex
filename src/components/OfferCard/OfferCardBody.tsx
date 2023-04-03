@@ -1,6 +1,6 @@
 import React from 'react';
 import { Avatar, Badge, Box, Skeleton, Stack, Typography } from '@mui/material';
-import { Offer } from '../../types/Offer';
+import { OfferType } from '../../types/OfferType';
 import { Chain } from '../../types/Chain';
 import { TokenType } from '../../types/TokenType';
 import { ChainTokenBox } from '../ChainTokenBox/ChainTokenBox';
@@ -8,7 +8,7 @@ import { AvatarDefault } from '../Avatar/AvatarDefault';
 import useShopPage from '../../hooks/useShopPage';
 
 type Props = {
-  offer: Offer;
+  offer: OfferType;
   offerChain?: Chain;
   offerToken?: TokenType;
 };

@@ -1,13 +1,13 @@
 import React from 'react';
 import { Box, Button } from '@mui/material';
-import { Offer } from '../../types/Offer';
+import { OfferType } from '../../types/OfferType';
 import useShopPage from '../../hooks/useShopPage';
 import LoadingButton from '@mui/lab/LoadingButton';
 import AlertBox from '../AlertBox/AlertBox';
 import Loading from '../Loading/Loading';
 
 type Props = {
-  offer: Offer;
+  offer: OfferType;
 };
 
 const OfferCardAction = (props: Props) => {

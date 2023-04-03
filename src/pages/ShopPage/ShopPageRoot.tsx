@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box } from '@mui/system';
 import useShopPage from '../../hooks/useShopPage';
-import { Offer } from '../../types/Offer';
+import { OfferType } from '../../types/OfferType';
 import OfferCard from '../../components/OfferCard/OfferCard';
 import { Stack } from '@mui/material';
 import useGrinderyChains from '../../hooks/useGrinderyChains';
@@ -36,7 +36,7 @@ const ShopPageRoot = (props: Props) => {
             justifyContent: { xs: 'center', lg: 'flex-start' },
           }}
         >
-          {foundOffers.map((offer: Offer) => {
+          {foundOffers.map((offer: OfferType) => {
             const offerChain = chains.find(
               (c) => c.value === `eip155:${offer.chainId}`
             );

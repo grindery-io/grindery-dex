@@ -16,7 +16,7 @@ import {
   SxProps,
   Tooltip,
 } from '@mui/material';
-import { Offer } from '../../types/Offer';
+import { OfferType } from '../../types/OfferType';
 import { Card } from '../Card/Card';
 import { CardTitle } from '../Card/CardTitle';
 import { ChainTokenBox } from '../ChainTokenBox/ChainTokenBox';
@@ -49,12 +49,12 @@ export type OfferToken = {
 };
 
 type Props = {
-  offer: Offer;
+  offer: OfferType;
   chain: Chain;
   fromChain?: Chain | null;
   token: TokenType;
   fromToken?: TokenType | '';
-  onClick?: (offer: Offer) => void;
+  onClick?: (offer: OfferType) => void;
   fromAmount?: string;
   label?: string;
   fromLabel?: string;

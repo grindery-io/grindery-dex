@@ -3,7 +3,7 @@ import { OrderType } from '../../types/Order';
 import { Skeleton, Typography } from '@mui/material';
 import { Box } from '@mui/system';
 import useOffers from '../../hooks/useOffers';
-import { Offer } from '../../types/Offer';
+import { OfferType } from '../../types/OfferType';
 import useGrinderyChains from '../../hooks/useGrinderyChains';
 import { Chain } from '../../types/Chain';
 import { TokenType } from '../../types/TokenType';
@@ -24,7 +24,7 @@ type Props = {
 const Order = (props: Props) => {
   const { order, userType, onCompleteClick, error } = props;
   const { getOfferById } = useOffers();
-  const [offer, setOffer] = useState<Offer | false>(false);
+  const [offer, setOffer] = useState<OfferType | false>(false);
   const { chains } = useGrinderyChains();
   const [loading, setLoading] = useState(false);
   const isUserA = userType === 'a';

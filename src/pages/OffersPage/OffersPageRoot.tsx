@@ -6,7 +6,7 @@ import DexCardHeader from '../../components/DexCard/DexCardHeader';
 import DexCardSubmitButton from '../../components/DexCard/DexCardSubmitButton';
 import DexCardBody from '../../components/DexCard/DexCardBody';
 import Loading from '../../components/Loading/Loading';
-import { Offer as OfferType } from '../../types/Offer';
+import { OfferType } from '../../types/OfferType';
 import { Chain } from '../../types/Chain';
 import { useNavigate } from 'react-router-dom';
 import useGrinderyChains from '../../hooks/useGrinderyChains';

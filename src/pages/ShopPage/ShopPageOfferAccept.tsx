@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box } from '@mui/system';
 import useShopPage from '../../hooks/useShopPage';
-import { Offer } from '../../types/Offer';
+import { OfferType } from '../../types/OfferType';
 import {
   Button,
   Dialog,
@@ -28,7 +28,7 @@ const ShopPageOfferAccept = (props: Props) => {
   } = useShopPage();
   const { chains } = useGrinderyChains();
   const acceptedOffer =
-    accepting && foundOffers.find((o: Offer) => o.offerId === accepting);
+    accepting && foundOffers.find((o: OfferType) => o.offerId === accepting);
 
   const explorerLink = accepted
     ? (

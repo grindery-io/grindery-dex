@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Skeleton, Stack, Tooltip, Typography } from '@mui/material';
-import { Offer } from '../../types/Offer';
+import { OfferType } from '../../types/OfferType';
 import { Chain } from '../../types/Chain';
 import { DELIGHT_API_URL } from '../../constants';
 import axios from 'axios';
@@ -13,7 +13,7 @@ import CurrencyExchangeIcon from '@mui/icons-material/CurrencyExchange';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 
 type Props = {
-  offer: Offer;
+  offer: OfferType;
 };
 
 const OfferCardHeader = (props: Props) => {

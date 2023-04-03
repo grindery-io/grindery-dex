@@ -9,7 +9,7 @@ import {
 } from '@mui/material';
 import OfferBadge from './OfferBadge';
 import { PowerSettingsNew as PowerSettingsNewIcon } from '@mui/icons-material';
-import { Offer as OfferType } from '../../types/Offer';
+import { OfferType } from '../../types/OfferType';
 import { Card } from '../Card/Card';
 import { ChainTokenBox } from '../ChainTokenBox/ChainTokenBox';
 import { AvatarDefault } from '../Avatar/AvatarDefault';

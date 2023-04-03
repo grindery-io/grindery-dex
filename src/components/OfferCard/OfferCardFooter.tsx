@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, Skeleton } from '@mui/material';
-import { Offer } from '../../types/Offer';
+import { OfferType } from '../../types/OfferType';
 import { Chain } from '../../types/Chain';
 import useGrinderyChains from '../../hooks/useGrinderyChains';
 import TransactionID from '../TransactionID/TransactionID';
@@ -8,7 +8,7 @@ import useShopPage from '../../hooks/useShopPage';
 import AlertBox from '../AlertBox/AlertBox';
 
 type Props = {
-  offer: Offer;
+  offer: OfferType;
 };
 
 const OfferCardFooter = (props: Props) => {

@@ -9,7 +9,7 @@ import useAbi from '../hooks/useAbi';
 import _ from 'lodash';
 import { getErrorMessage } from '../utils/error';
 import { TokenType } from '../types/TokenType';
-import { Offer } from '../types/Offer';
+import { OfferType } from '../types/OfferType';
 
 function isNumeric(value: string) {
   return /^\d*(\.\d+)?$/.test(value);
@@ -31,7 +31,7 @@ type ContextProps = {
   currentToChain: Chain | null;
   chainTokens: TokenType[];
   toChainTokens: TokenType[];
-  groupedOffers: { [key: string]: Offer[] };
+  groupedOffers: { [key: string]: OfferType[] };
   exchangeRate: string;
   estimatedTime: string;
   title: string;
@@ -424,7 +424,9 @@ export const OffersPageContextProvider = ({
   const handleDeactivateClick = async (offerId: string) => {
     setIsActivating(offerId);
 
-    const offerChain = offers.find((o: Offer) => o._id === offerId)?.chainId;
+    const offerChain = offers.find(
+      (o: OfferType) => o._id === offerId
+    )?.chainId;
 
     const chainToSelect = chains.find(
       (c: Chain) => c.value === `eip155:${offerChain}`
@@ -464,7 +466,7 @@ export const OffersPageContextProvider = ({
     const poolContract = _poolContract.connect(signer);
 
     const offerToDeactivate = offers.find(
-      (o: Offer) => o._id === offerId
+      (o: OfferType) => o._id === offerId
     )?.offerId;
 
     if (!offerToDeactivate) {
@@ -548,7 +550,9 @@ export const OffersPageContextProvider = ({
   const handleActivateClick = async (offerId: string) => {
     setIsActivating(offerId);
 
-    const offerChain = offers.find((o: Offer) => o._id === offerId)?.chainId;
+    const offerChain = offers.find(
+      (o: OfferType) => o._id === offerId
+    )?.chainId;
 
     const chainToSelect = chains.find(
       (c: Chain) => c.value === `eip155:${offerChain}`
@@ -576,7 +580,7 @@ export const OffersPageContextProvider = ({
     }
 
     const offerToActivate = offers.find(
-      (o: Offer) => o._id === offerId
+      (o: OfferType) => o._id === offerId
     )?.offerId;
 
     if (!offerToActivate) {

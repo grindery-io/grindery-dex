@@ -5,7 +5,7 @@ import DexCardHeader from '../../components/DexCard/DexCardHeader';
 import useTradePage from '../../hooks/useTradePage';
 import DexCardBody from '../../components/DexCard/DexCardBody';
 import NotFound from '../../components/NotFound/NotFound';
-import { Offer } from '../../types/Offer';
+import { OfferType } from '../../types/OfferType';
 import useGrinderyChains from '../../hooks/useGrinderyChains';
 import OfferPublic from '../../components/Offer/OfferPublic';
 import OfferSkeleton from '../../components/Offer/OfferSkeleton';
@@ -42,7 +42,7 @@ const TradePageOffersList = (props: Props) => {
         )}
         {!loading &&
           foundOffers.length > 0 &&
-          foundOffers.map((offer: Offer) => {
+          foundOffers.map((offer: OfferType) => {
             const offerChain = chains.find(
               (c) => c.value === `eip155:${offer.chainId}`
             );
@@ -57,7 +57,7 @@ const TradePageOffersList = (props: Props) => {
                 chain={offerChain}
                 token={offerToken}
                 fromAmount={fromAmount}
-                onClick={(o: Offer) => {
+                onClick={(o: OfferType) => {
                   navigate(
                     VIEWS.ACCEPT_OFFER.fullPath.replace(
                       ':offerId',

@@ -1,8 +1,8 @@
 import { Chain } from '../types/Chain';
-import { Offer } from '../types/Offer';
+import { OfferType } from '../types/OfferType';
 import { TokenType } from '../types/TokenType';
 
-class OfferModel {
+class Offer {
   public _id: string;
   public chainId: string;
   public min: string;
@@ -23,7 +23,7 @@ class OfferModel {
   public title?: string;
   public new?: boolean;
 
-  constructor(offer: Offer) {
+  constructor(offer: OfferType) {
     this._id = offer._id;
     this.chainId = offer.chainId;
     this.min = offer.min;
@@ -108,4 +108,4 @@ class OfferModel {
   }
 }
 
-export default OfferModel;
+export default Offer;

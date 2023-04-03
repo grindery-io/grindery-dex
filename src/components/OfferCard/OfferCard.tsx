@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box } from '@mui/material';
-import { Offer } from '../../types/Offer';
+import { OfferType } from '../../types/OfferType';
 import { Chain } from '../../types/Chain';
 import { TokenType } from '../../types/TokenType';
 import OfferCardHeader from './OfferCardHeader';
@@ -9,7 +9,7 @@ import OfferCardAction from './OfferCardAction';
 import OfferCardFooter from './OfferCardFooter';
 
 type Props = {
-  offer: Offer;
+  offer: OfferType;
   offerChain?: Chain;
   offerToken?: TokenType;
 };
