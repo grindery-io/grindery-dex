@@ -565,7 +565,7 @@ export const ShopPageContextProvider = ({ children }: ShopPageContextProps) => {
       const receipt = await provider.getTransactionReceipt(tx.hash);
 
       // get orderId
-      const orderId = receipt?.logs?.[0]?.topics?.[1] || '';
+      const orderId = receipt?.logs?.[0]?.topics?.[2] || '';
 
       // save order to DB
       const order = await saveOrder({
