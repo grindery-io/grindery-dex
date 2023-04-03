@@ -40,7 +40,7 @@ const OfferCardFooter = (props: Props) => {
       ) : (
         <Skeleton />
       )}
-      {errorMessage &&
+      {/*errorMessage &&
         errorMessage.type === 'acceptOffer' &&
         errorMessage.offer &&
         errorMessage.offer === offer.offerId &&
@@ -48,7 +48,7 @@ const OfferCardFooter = (props: Props) => {
           <AlertBox wrapperStyle={{ marginTop: '12px' }} color="error">
             {errorMessage.text}
           </AlertBox>
-        )}
+        )*/}
     </Box>
   );
 };

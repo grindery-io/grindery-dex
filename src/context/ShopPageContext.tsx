@@ -42,6 +42,8 @@ type ContextProps = {
   isPricesLoading: boolean;
   accepting: string | null;
   acceptedOffer: string | null;
+  showModal: boolean;
+  handleModalClosed: () => void;
   setAccepted: React.Dispatch<React.SetStateAction<string>>;
   setApproved: React.Dispatch<React.SetStateAction<boolean>>;
   setSearchToken: React.Dispatch<React.SetStateAction<string>>;
@@ -83,6 +85,8 @@ export const ShopPageContext = createContext<ContextProps>({
   isPricesLoading: false,
   accepting: null,
   acceptedOffer: null,
+  showModal: false,
+  handleModalClosed: () => {},
   setAccepted: () => {},
   setApproved: () => {},
   setSearchToken: () => {},
@@ -131,6 +135,7 @@ export const ShopPageContextProvider = ({ children }: ShopPageContextProps) => {
   const { saveOrder } = useOrders();
   const { searchOffers, offers, isLoading: isOfferLoading } = useOffers();
   const [isPricesLoading, setIsPricesLoading] = useState(false);
+  const [showModal, setShowModal] = useState(false);
   const loading = isOfferLoading || isLoading;
 
   const foundOffers = offers.filter((o: Offer) => o.isActive && o.amount);
@@ -181,6 +186,14 @@ export const ShopPageContextProvider = ({ children }: ShopPageContextProps) => {
   ).filter(
     (t: any) => !searchToken || t.symbol.toLowerCase().includes(searchToken)
   );
+
+  const handleModalClosed = () => {
+    setShowModal(false);
+  };
+
+  const handleModalOpened = () => {
+    setShowModal(true);
+  };
 
   const getToTokenPrice = async (symbol: string) => {
     setIsPricesLoading(true);
@@ -364,6 +377,8 @@ export const ShopPageContextProvider = ({ children }: ShopPageContextProps) => {
       text: '',
       offer: '',
     });
+    setAccepted('');
+    handleModalOpened();
     if (!offer.offerId) {
       setErrorMessage({
         type: 'acceptOffer',
@@ -678,6 +693,8 @@ export const ShopPageContextProvider = ({ children }: ShopPageContextProps) => {
         isPricesLoading,
         accepting,
         acceptedOffer,
+        showModal,
+        handleModalClosed,
         setAccepted,
         setApproved,
         setSearchToken,
