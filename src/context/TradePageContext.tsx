@@ -41,6 +41,7 @@ type ContextProps = {
   toTokenPrice: number | null;
   fromTokenPrice: number | null;
   isPricesLoading: boolean;
+  fromTokenBalance: string;
   setAccepted: React.Dispatch<React.SetStateAction<string>>;
   setApproved: React.Dispatch<React.SetStateAction<boolean>>;
   setSearchToken: React.Dispatch<React.SetStateAction<string>>;
@@ -82,6 +83,7 @@ export const TradePageContext = createContext<ContextProps>({
   toTokenPrice: null,
   fromTokenPrice: null,
   isPricesLoading: false,
+  fromTokenBalance: '',
   setAccepted: () => {},
   setApproved: () => {},
   setSearchToken: () => {},
@@ -681,6 +683,7 @@ export const TradePageContextProvider = ({
         toTokenPrice,
         fromTokenPrice,
         isPricesLoading,
+        fromTokenBalance,
         setAccepted,
         setApproved,
         setSearchToken,
