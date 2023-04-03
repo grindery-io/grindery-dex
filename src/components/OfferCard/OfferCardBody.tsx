@@ -199,7 +199,7 @@ const OfferCardBody = (props: Props) => {
           <Box>
             {currentFromChain && fromToken ? (
               <ChainTokenBox
-                style={{
+                sx={{
                   paddingLeft: '0',
                   height: 'auto',
                   paddingTop: '8px',
@@ -248,19 +248,7 @@ const OfferCardBody = (props: Props) => {
                     )}
                   </Badge>
                 }
-                title={
-                  fromToken.symbol ? (
-                    <Box
-                      style={{
-                        whiteSpace: 'pre-wrap',
-                        color: offer.isActive ? '#000' : '#aaa',
-                      }}
-                      mb={'3px'}
-                    >
-                      {fromToken.symbol}
-                    </Box>
-                  ) : null
-                }
+                title={fromToken.symbol || ''}
                 subheader={
                   <span style={{ whiteSpace: 'pre-wrap' }}>
                     {offer.amount ? (
