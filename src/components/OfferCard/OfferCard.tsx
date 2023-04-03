@@ -24,8 +24,8 @@ const OfferCard = (props: Props) => {
         boxShadow: '0px 8px 32px rgba(0, 0, 0, 0.08)',
         borderRadius: '18px',
         width: '100%',
-        maxWidth: '392px',
-        margin: '0 auto',
+        maxWidth: '375px',
+        margin: '0',
       }}
     >
       <OfferCardHeader offer={offer} />
