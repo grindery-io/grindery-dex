@@ -1,7 +1,6 @@
 import React from 'react';
 import { Box } from '@mui/system';
 import useShopPage from '../../hooks/useShopPage';
-import { OfferType } from '../../types/OfferType';
 import {
   Button,
   Dialog,
@@ -14,6 +13,7 @@ import Loading from '../../components/Loading/Loading';
 import AlertBox from '../../components/AlertBox/AlertBox';
 import Countdown from 'react-countdown';
 import TransactionID from '../../components/TransactionID/TransactionID';
+import Offer from '../../models/Offer';
 
 type Props = {};
 
@@ -28,7 +28,7 @@ const ShopPageOfferAccept = (props: Props) => {
   } = useShopPage();
   const { chains } = useGrinderyChains();
   const acceptedOffer =
-    accepting && foundOffers.find((o: OfferType) => o.offerId === accepting);
+    accepting && foundOffers.find((o: Offer) => o.offerId === accepting);
 
   const explorerLink = accepted
     ? (
@@ -132,12 +132,15 @@ const ShopPageOfferAccept = (props: Props) => {
         <DialogActions sx={{ justifyContent: 'center' }}>
           <Box
             sx={{
+              paddingLeft: '16px',
+              paddingRight: '16px',
+              flex: 1,
               '& .MuiButton-root': {
                 color: 'black',
                 borderColor: 'black',
                 padding: '6px 12px',
-                minWidth: 'none',
                 fontSize: '14px',
+                width: '100%',
                 '&:hover': {
                   borderColor: 'black',
                   backgroundColor: 'rgba(0,0,0,0.04)',
@@ -149,6 +152,7 @@ const ShopPageOfferAccept = (props: Props) => {
             }}
           >
             <Button
+              fullWidth
               size="small"
               variant="outlined"
               onClick={() => {

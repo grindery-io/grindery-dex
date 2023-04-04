@@ -28,6 +28,7 @@ const NavTabs = (props: Props) => {
     <StyledTabs value={value} onChange={handleChange}>
       {menu.map((item: MenuItem) => (
         <StyledTab
+          key={item.path}
           icon={item.icon}
           iconPosition={item.iconPosition}
           label={item.label}

@@ -3,7 +3,6 @@ import { OrderType } from '../../types/Order';
 import { Skeleton, Typography } from '@mui/material';
 import { Box } from '@mui/system';
 import useOffers from '../../hooks/useOffers';
-import { OfferType } from '../../types/OfferType';
 import useGrinderyChains from '../../hooks/useGrinderyChains';
 import { Chain } from '../../types/Chain';
 import { TokenType } from '../../types/TokenType';
@@ -13,6 +12,8 @@ import { Card } from '../Card/Card';
 import AlertBox from '../AlertBox/AlertBox';
 import TransactionID from '../TransactionID/TransactionID';
 import OfferPublic from '../Offer/OfferPublic';
+import Offer from '../../models/Offer';
+import { log } from 'console';
 
 type Props = {
   order: OrderType;
@@ -24,7 +25,7 @@ type Props = {
 const Order = (props: Props) => {
   const { order, userType, onCompleteClick, error } = props;
   const { getOfferById } = useOffers();
-  const [offer, setOffer] = useState<OfferType | false>(false);
+  const [offer, setOffer] = useState<Offer | false>(false);
   const { chains } = useGrinderyChains();
   const [loading, setLoading] = useState(false);
   const isUserA = userType === 'a';
@@ -36,6 +37,8 @@ const Order = (props: Props) => {
       ).replace('{hash}', order.hash || '')
     : '';
 
+  console.log(order.orderId, offer);
+
   /*const fromChain = chains.find(
     (c: Chain) => c.chainId === order.chainIdTokenDeposit
   );*/
@@ -43,15 +46,6 @@ const Order = (props: Props) => {
   /*const fromToken = fromChain?.tokens?.find(
     (t: TokenType) => t.address === order.addressTokenDeposit
   );*/
-
-  const offerChain = chains.find(
-    (c: Chain) => offer && c.chainId === offer.chainId
-  );
-  const offerToken = chains
-    .find((c: Chain) => offer && c.chainId === offer.chainId)
-    ?.tokens?.find(
-      (t: TokenType) => offer && t.coinmarketcapId === offer.tokenId
-    );
 
   const fromChain = chains.find(
     (c: Chain) => order && c.chainId === order.chainIdTokenDeposit
@@ -134,12 +128,10 @@ const Order = (props: Props) => {
         />
       )}
 
-      {offer && offerChain && offerToken ? (
+      {offer ? (
         <OfferPublic
           key={offer._id}
           offer={offer}
-          chain={offerChain}
-          token={offerToken}
           fromAmount={order.amountTokenDeposit}
           containerStyle={{
             border: 'none',

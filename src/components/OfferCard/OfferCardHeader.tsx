@@ -1,19 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { Box, Skeleton, Stack, Tooltip, Typography } from '@mui/material';
-import { OfferType } from '../../types/OfferType';
-import { Chain } from '../../types/Chain';
-import { DELIGHT_API_URL } from '../../constants';
-import axios from 'axios';
 import { useGrinderyNexus } from 'use-grindery-nexus';
-import { LiquidityWallet } from '../../types/LiquidityWallet';
 import useGrinderyChains from '../../hooks/useGrinderyChains';
 import TransactionID from '../TransactionID/TransactionID';
 import GavelIcon from '@mui/icons-material/Gavel';
 import CurrencyExchangeIcon from '@mui/icons-material/CurrencyExchange';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import Offer from '../../models/Offer';
 
 type Props = {
-  offer: OfferType;
+  offer: Offer;
 };
 
 const OfferCardHeader = (props: Props) => {
@@ -21,34 +17,8 @@ const OfferCardHeader = (props: Props) => {
   const { offer } = props;
   const { chains } = useGrinderyChains();
 
-  const [provider, setProvider] = useState<LiquidityWallet | null>(null);
-
-  const params = {
-    headers: {
-      Authorization: `Bearer ${userToken?.access_token || ''}`,
-    },
-  };
-
-  const providerLink = offer.hash
-    ? (
-        chains.find((c: Chain) => c.chainId === offer.chainId)
-          ?.addressExplorerUrl || ''
-      ).replace('{hash}', provider?.walletAddress || '')
-    : '';
-
-  const getProvider = async () => {
-    const providerRes = await axios.get(
-      `${DELIGHT_API_URL}/liquidity-wallets/single?chainId=${offer.chainId}&userId=${offer.userId}`,
-      params
-    );
-    setProvider(providerRes?.data || null);
-  };
-
-  useEffect(() => {
-    if (!provider) {
-      getProvider();
-    }
-  }, [provider]);
+  const provider = offer.provider;
+  const providerLink = offer.getProviderLink(chains);
 
   return (
     <Box
@@ -69,12 +39,12 @@ const OfferCardHeader = (props: Props) => {
       >
         Provider
       </Typography>
-      {provider?.walletAddress ? (
+      {provider ? (
         <TransactionID
           containerStyle={{ marginTop: '5px' }}
           valueStyle={{ color: '#E3E3E8' }}
           iconStyle={{ color: '#F57F21' }}
-          value={provider?.walletAddress}
+          value={provider}
           showCopyButton
           link={providerLink}
         />

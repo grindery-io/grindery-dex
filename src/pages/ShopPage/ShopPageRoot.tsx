@@ -1,17 +1,15 @@
 import React from 'react';
 import { Box } from '@mui/system';
 import useShopPage from '../../hooks/useShopPage';
-import { OfferType } from '../../types/OfferType';
 import OfferCard from '../../components/OfferCard/OfferCard';
 import { Stack } from '@mui/material';
-import useGrinderyChains from '../../hooks/useGrinderyChains';
 import ShopPageOfferAccept from './ShopPageOfferAccept';
+import Offer from '../../models/Offer';
 
 type Props = {};
 
 const ShopPageRoot = (props: Props) => {
   const { foundOffers } = useShopPage();
-  const { chains } = useGrinderyChains();
 
   return (
     <>
@@ -36,22 +34,9 @@ const ShopPageRoot = (props: Props) => {
             justifyContent: { xs: 'center', lg: 'flex-start' },
           }}
         >
-          {foundOffers.map((offer: OfferType) => {
-            const offerChain = chains.find(
-              (c) => c.value === `eip155:${offer.chainId}`
-            );
-            const offerToken = offerChain?.tokens?.find(
-              (t) => t.coinmarketcapId === offer.tokenId
-            );
-            return (
-              <OfferCard
-                key={offer._id}
-                offer={offer}
-                offerChain={offerChain}
-                offerToken={offerToken}
-              />
-            );
-          })}
+          {foundOffers.map((offer: Offer) => (
+            <OfferCard key={offer._id} offer={offer} />
+          ))}
         </Stack>
       </Box>
     </>

@@ -16,7 +16,6 @@ import {
   SxProps,
   Tooltip,
 } from '@mui/material';
-import { OfferType } from '../../types/OfferType';
 import { Card } from '../Card/Card';
 import { CardTitle } from '../Card/CardTitle';
 import { ChainTokenBox } from '../ChainTokenBox/ChainTokenBox';
@@ -27,15 +26,14 @@ import LayersIcon from '@mui/icons-material/Layers';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import useGrinderyChains from '../../hooks/useGrinderyChains';
 import { Chain } from '../../types/Chain';
-import { LiquidityWallet } from '../../types/LiquidityWallet';
-import axios from 'axios';
-import { DELIGHT_API_URL } from '../../constants';
 import { useGrinderyNexus } from 'use-grindery-nexus';
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
 import DexCardSubmitButton from '../DexCard/DexCardSubmitButton';
 import { TokenType } from '../../types/TokenType';
 import TransactionID from '../TransactionID/TransactionID';
 import SwapHorizontalCircleIcon from '@mui/icons-material/SwapHorizontalCircle';
+import Offer from '../../models/Offer';
+import { ThemeProvider } from 'styled-components';
 
 export type OfferChain = {
   label: string;
@@ -49,17 +47,14 @@ export type OfferToken = {
 };
 
 type Props = {
-  offer: OfferType;
-  chain: Chain;
+  offer: Offer;
   fromChain?: Chain | null;
-  token: TokenType;
   fromToken?: TokenType | '';
-  onClick?: (offer: OfferType) => void;
+  onClick?: (offer: Offer) => void;
   fromAmount?: string;
   label?: string;
   fromLabel?: string;
   compact?: boolean;
-  defaultProvider?: LiquidityWallet;
   userType?: 'a' | 'b';
   isActivating?: string;
   onDeactivateClick?: (offerId: string) => void;
@@ -89,14 +84,11 @@ const ExpandMore = styled((props: ExpandMoreProps) => {
 const OfferPublic = (props: Props) => {
   const {
     offer,
-    chain,
-    token,
     onClick,
     fromAmount,
     label,
     fromLabel,
     compact,
-    defaultProvider,
     userType,
     isActivating,
     onDeactivateClick,
@@ -111,13 +103,10 @@ const OfferPublic = (props: Props) => {
 
   const isUserA = !userType || userType === 'a';
 
-  const params = {
-    headers: {
-      Authorization: `Bearer ${userToken?.access_token || ''}`,
-    },
-  };
-
   const { chains } = useGrinderyChains();
+
+  const chain = offer.getChain(chains);
+  const token = offer.getToken(chains);
 
   const amount =
     isUserA || calculateAmount
@@ -129,31 +118,12 @@ const OfferPublic = (props: Props) => {
         ).toLocaleString()}`;
 
   const [expanded, setExpanded] = useState(false);
-  const [provider, setProvider] = useState<LiquidityWallet | null>(
-    defaultProvider || null
-  );
 
-  const explorerLink = offer.hash
-    ? (
-        chains.find((c: Chain) => c.value === `eip155:5`)
-          ?.transactionExplorerUrl || ''
-      ).replace('{hash}', offer.hash || '')
-    : '';
+  const explorerLink = offer.getOfferLink(chains);
 
-  const providerLink = offer.hash
-    ? (
-        chains.find((c: Chain) => c.chainId === offer.chainId)
-          ?.addressExplorerUrl || ''
-      ).replace('{hash}', provider?.walletAddress || '')
-    : '';
+  const provider = offer.provider;
 
-  const getProvider = async () => {
-    const providerRes = await axios.get(
-      `${DELIGHT_API_URL}/liquidity-wallets/single?chainId=${offer.chainId}&userId=${offer.userId}`,
-      params
-    );
-    setProvider(providerRes?.data || null);
-  };
+  const providerLink = offer.getProviderLink(chains);
 
   const handleExpandClick: React.MouseEventHandler<HTMLButtonElement> = (
     event
@@ -161,22 +131,6 @@ const OfferPublic = (props: Props) => {
     event.stopPropagation();
     setExpanded(!expanded);
   };
-
-  useEffect(() => {
-    if (!defaultProvider) {
-      if (compact) {
-        if (expanded && !provider) {
-          getProvider();
-        }
-      } else {
-        if (!provider) {
-          getProvider();
-        }
-      }
-    } else {
-      setProvider(defaultProvider);
-    }
-  }, [compact, expanded, provider, defaultProvider]);
 
   return (
     <Card
@@ -305,7 +259,7 @@ const OfferPublic = (props: Props) => {
                 horizontal: 'right',
               }}
               badgeContent={
-                chain.label ? (
+                chain && chain.label ? (
                   <Avatar
                     src={chain.icon}
                     alt={chain.label}
@@ -363,7 +317,7 @@ const OfferPublic = (props: Props) => {
           }
           subheader={
             <span style={{ whiteSpace: 'pre-wrap' }}>
-              {amount ? (
+              {amount && token && chain ? (
                 `${token.symbol} on ${chain.label}.${
                   compact
                     ? `\n1 ${
@@ -472,9 +426,9 @@ const OfferPublic = (props: Props) => {
       {compact ? (
         <Collapse in={expanded} timeout="auto" unmountOnExit>
           <Box p="0 16px 16px">
-            {provider?.walletAddress ? (
+            {provider ? (
               <TransactionID
-                value={provider?.walletAddress || ''}
+                value={provider || ''}
                 label="Provider"
                 link={providerLink}
               />
@@ -569,8 +523,8 @@ const OfferPublic = (props: Props) => {
                 >
                   Exchange rate:{' '}
                   <strong>
-                    1 {token.symbol} = {offer.exchangeRate?.toLocaleString()}{' '}
-                    {offer.exchangeToken}
+                    1 {token?.symbol || ''} ={' '}
+                    {offer.exchangeRate?.toLocaleString()} {offer.exchangeToken}
                   </strong>
                 </StepLabel>
               </Step>
@@ -620,9 +574,9 @@ const OfferPublic = (props: Props) => {
             )}
           </Stepper>
           <Box p="16px">
-            {provider?.walletAddress ? (
+            {ThemeProvider ? (
               <TransactionID
-                value={provider?.walletAddress || ''}
+                value={provider || ''}
                 label="Provider"
                 link={providerLink}
                 valueStyle={{ color: '#000' }}

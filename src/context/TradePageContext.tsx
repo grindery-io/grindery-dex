@@ -4,7 +4,6 @@ import { DELIGHT_API_URL, POOL_CONTRACT_ADDRESS } from '../constants';
 import useGrinderyChains from '../hooks/useGrinderyChains';
 import useOffers from '../hooks/useOffers';
 import { Chain } from '../types/Chain';
-import { OfferType } from '../types/OfferType';
 import { TokenType } from '../types/TokenType';
 import isNumeric from '../utils/isNumeric';
 import _ from 'lodash';
@@ -13,6 +12,7 @@ import useAbi from '../hooks/useAbi';
 import { getErrorMessage } from '../utils/error';
 import useOrders from '../hooks/useOrders';
 import axios from 'axios';
+import Offer from '../models/Offer';
 
 // Context props
 type ContextProps = {
@@ -35,7 +35,7 @@ type ContextProps = {
   toChainTokens: TokenType[];
   currentFromChain: Chain | null;
   fromChainTokens: TokenType[];
-  foundOffers: OfferType[];
+  foundOffers: Offer[];
   approved: boolean;
   accepted: string;
   toTokenPrice: number | null;
@@ -52,7 +52,7 @@ type ContextProps = {
   handleFromAmountChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   handleSearchClick: (amount: string, silent?: boolean) => void;
   handleFromAmountMaxClick: () => void;
-  handleAcceptOfferClick: (offer: OfferType) => void;
+  handleAcceptOfferClick: (offer: Offer) => void;
   handleRefreshOffersClick: () => void;
 };
 
@@ -403,7 +403,7 @@ export const TradePageContextProvider = ({
     setFromTokenBalance(_balance);
   };
 
-  const handleAcceptOfferClick = async (offer: OfferType) => {
+  const handleAcceptOfferClick = async (offer: Offer) => {
     if (!fromToken) {
       setErrorMessage({
         type: 'acceptOffer',

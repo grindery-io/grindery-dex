@@ -18,4 +18,5 @@ export type OfferType = {
   image?: string;
   title?: string;
   new?: boolean;
+  provider?: string;
 };

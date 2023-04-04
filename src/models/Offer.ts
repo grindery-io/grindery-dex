@@ -1,6 +1,9 @@
+import axios from 'axios';
 import { Chain } from '../types/Chain';
 import { OfferType } from '../types/OfferType';
 import { TokenType } from '../types/TokenType';
+import { DELIGHT_API_URL } from '../constants';
+import { LiquidityWallet } from '../types/LiquidityWallet';
 
 class Offer {
   public _id: string;
@@ -22,6 +25,7 @@ class Offer {
   public image?: string;
   public title?: string;
   public new?: boolean;
+  public provider?: string;
 
   constructor(offer: OfferType) {
     this._id = offer._id;
@@ -42,6 +46,7 @@ class Offer {
     this.amount = offer.amount;
     this.image = offer.image;
     this.title = offer.title;
+    this.provider = offer.provider;
     this.new = offer.new;
   }
 
@@ -88,23 +93,43 @@ class Offer {
       : '';
   }
 
-  getProviderLink(address: string, chains: Chain[]): string {
+  getProviderLink(chains: Chain[]) {
     return this.hash
       ? (
           chains.find((c: Chain) => c.chainId === this.chainId)
             ?.addressExplorerUrl || ''
-        ).replace('{hash}', address)
+        ).replace('{hash}', this.provider || '')
       : '';
   }
 
-  getAmount(isBuyer: boolean, fromAmount?: string): string | number {
-    return isBuyer
-      ? fromAmount && this.exchangeRate
-        ? parseFloat(fromAmount) / parseFloat(this.exchangeRate)
-        : 0
-      : `${parseFloat(this.min).toLocaleString()} — ${parseFloat(
-          this.max
-        ).toLocaleString()}`;
+  getAmount(formatted: boolean = true): string {
+    return formatted
+      ? parseFloat(parseFloat(this.amount || '0').toFixed(6)).toString()
+      : this.amount || '';
+  }
+
+  getExchangeAmount(formatted: boolean = true) {
+    const exchangeAmount =
+      this.amount && this.exchangeRate
+        ? parseFloat(this.amount) * parseFloat(this.exchangeRate)
+        : 0;
+
+    return formatted
+      ? parseFloat(exchangeAmount.toFixed(6)).toString()
+      : exchangeAmount
+      ? exchangeAmount.toString()
+      : '';
+  }
+
+  getUSDAmount(price: number | null, formatted: boolean = true) {
+    const usdAmount = price
+      ? parseFloat(this.getExchangeAmount(false)) * price
+      : 0;
+    return formatted
+      ? parseFloat(usdAmount.toFixed(4)).toString()
+      : usdAmount
+      ? usdAmount.toString()
+      : '';
   }
 }
 

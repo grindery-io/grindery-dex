@@ -1,28 +1,24 @@
 import React from 'react';
 import { Avatar, Badge, Box, Skeleton, Stack, Typography } from '@mui/material';
-import { OfferType } from '../../types/OfferType';
-import { Chain } from '../../types/Chain';
-import { TokenType } from '../../types/TokenType';
 import { ChainTokenBox } from '../ChainTokenBox/ChainTokenBox';
 import { AvatarDefault } from '../Avatar/AvatarDefault';
 import useShopPage from '../../hooks/useShopPage';
+import Offer from '../../models/Offer';
+import useGrinderyChains from '../../hooks/useGrinderyChains';
 
 type Props = {
-  offer: OfferType;
-  offerChain?: Chain;
-  offerToken?: TokenType;
+  offer: Offer;
 };
 
 const OfferCardBody = (props: Props) => {
-  const { offer, offerChain, offerToken } = props;
+  const { offer } = props;
   const { currentFromChain, fromToken, tokenPrice } = useShopPage();
+  const { chains } = useGrinderyChains();
 
-  const fromAmount =
-    offer.amount && offer.exchangeRate
-      ? parseFloat(offer.amount) * parseFloat(offer.exchangeRate)
-      : 0;
-
-  const price = tokenPrice ? fromAmount * tokenPrice : 0;
+  const chain = offer.getChain(chains);
+  const token = offer.getToken(chains);
+  const fromAmount = offer.getExchangeAmount();
+  const price = offer.getUSDAmount(tokenPrice);
 
   return (
     <Box>
@@ -70,17 +66,17 @@ const OfferCardBody = (props: Props) => {
                   fontSize: '18px',
                   lineHeight: '22px',
                   display: '-webkit-box',
-                  '-webkit-line-clamp': '2',
-                  '-webkit-box-orient': 'vertical',
+                  WebkitLineClamp: '2',
+                  WebkitBoxOrient: 'vertical',
                   overflow: 'hidden',
                   textOverflow: 'ellipsis',
                 }}
-                title={offer.title.length > 25 ? offer.title : undefined}
+                title={offer.title.length > 30 ? offer.title : undefined}
               >
                 {offer.title}
               </Typography>
             )}
-            {offerChain && offerToken ? (
+            {chain && token ? (
               <ChainTokenBox
                 sx={{
                   flex: 1,
@@ -120,10 +116,10 @@ const OfferCardBody = (props: Props) => {
                       horizontal: 'right',
                     }}
                     badgeContent={
-                      offerChain.label ? (
+                      chain.label ? (
                         <Avatar
-                          src={offerChain.icon}
-                          alt={offerChain.label}
+                          src={chain.icon}
+                          alt={chain.label}
                           sx={{
                             width: '16px',
                             height: '16px',
@@ -131,7 +127,7 @@ const OfferCardBody = (props: Props) => {
                             background: '#fff',
                           }}
                         >
-                          {offerChain.label}
+                          {chain.label}
                         </Avatar>
                       ) : (
                         <AvatarDefault
@@ -142,13 +138,13 @@ const OfferCardBody = (props: Props) => {
                       )
                     }
                   >
-                    {offerToken ? (
+                    {token ? (
                       <Avatar
                         sx={{ width: '32px', height: '32px' }}
-                        src={offerToken.icon}
-                        alt={offerToken.symbol || offer.token || ''}
+                        src={token.icon}
+                        alt={token.symbol || offer.token || ''}
                       >
-                        {offerToken.symbol || offer.token || ''}
+                        {token.symbol || offer.token || ''}
                       </Avatar>
                     ) : (
                       <AvatarDefault width={32} height={32} />
@@ -158,14 +154,14 @@ const OfferCardBody = (props: Props) => {
                 title={
                   offer.amount ? (
                     <>
-                      {`${parseFloat(parseFloat(offer.amount).toFixed(6))} `}
-                      <span>{offerToken.symbol}</span>
+                      {offer.getAmount()}
+                      <span> {token.symbol}</span>
                     </>
                   ) : null
                 }
                 subheader={
                   <span style={{ whiteSpace: 'pre-wrap' }}>
-                    {offer.amount ? `on ${offerChain.label}` : <Skeleton />}
+                    {offer.amount ? `on ${chain.label}` : <Skeleton />}
                   </span>
                 }
                 selected={true}
@@ -284,19 +280,9 @@ const OfferCardBody = (props: Props) => {
                   fontWeight: '500',
                 },
               }}
-              title={
-                price ? (
-                  `US$${parseFloat(price.toFixed(4))}`
-                ) : (
-                  <Skeleton width="70px" />
-                )
-              }
+              title={price !== '0' ? `US$${price}` : <Skeleton width="70px" />}
               subheader={
-                fromAmount ? (
-                  `${parseFloat(fromAmount.toFixed(6))} ETH`
-                ) : (
-                  <Skeleton />
-                )
+                fromAmount !== '0' ? `${fromAmount} ETH` : <Skeleton />
               }
               selected={true}
               compact={false}

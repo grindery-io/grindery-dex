@@ -1,27 +1,18 @@
 import React from 'react';
 import { Box, Skeleton } from '@mui/material';
-import { OfferType } from '../../types/OfferType';
-import { Chain } from '../../types/Chain';
 import useGrinderyChains from '../../hooks/useGrinderyChains';
 import TransactionID from '../TransactionID/TransactionID';
-import useShopPage from '../../hooks/useShopPage';
-import AlertBox from '../AlertBox/AlertBox';
+import Offer from '../../models/Offer';
 
 type Props = {
-  offer: OfferType;
+  offer: Offer;
 };
 
 const OfferCardFooter = (props: Props) => {
   const { offer } = props;
   const { chains } = useGrinderyChains();
-  const { errorMessage } = useShopPage();
 
-  const explorerLink = offer.hash
-    ? (
-        chains.find((c: Chain) => c.value === `eip155:5`)
-          ?.transactionExplorerUrl || ''
-      ).replace('{hash}', offer.hash || '')
-    : '';
+  const explorerLink = offer.getOfferLink(chains);
 
   return (
     <Box sx={{ padding: '16px', textAlign: 'center' }}>

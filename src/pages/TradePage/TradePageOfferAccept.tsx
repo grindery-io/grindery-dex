@@ -5,20 +5,19 @@ import DexCardHeader from '../../components/DexCard/DexCardHeader';
 import Loading from '../../components/Loading/Loading';
 import useTradePage from '../../hooks/useTradePage';
 import DexCardBody from '../../components/DexCard/DexCardBody';
-import { OfferType } from '../../types/OfferType';
 import useGrinderyChains from '../../hooks/useGrinderyChains';
 import OfferPublic from '../../components/Offer/OfferPublic';
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
 import Countdown from 'react-countdown';
-import { IconButton, Skeleton, Stack, Tooltip } from '@mui/material';
+import { IconButton, Stack, Tooltip } from '@mui/material';
 import DexCardSubmitButton from '../../components/DexCard/DexCardSubmitButton';
 import { useGrinderyNexus } from 'use-grindery-nexus';
 import AlertBox from '../../components/AlertBox/AlertBox';
-import AmountInput from '../../components/AmountInput/AmountInput';
 import { formatAddress } from '../../utils/address';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
+import Offer from '../../models/Offer';
 
 type Props = {};
 
@@ -44,7 +43,7 @@ const TradePageOfferAccept = (props: Props) => {
   let navigate = useNavigate();
   let { offerId } = useParams();
   const [copied, setCopied] = useState(false);
-  const offer = foundOffers.find((o: OfferType) => o.offerId === offerId);
+  const offer = foundOffers.find((o: Offer) => o.offerId === offerId);
   const offerChain = chains.find((c) => c.value === `eip155:${offer?.chainId}`);
 
   const explorerLink = accepted
@@ -125,8 +124,6 @@ const TradePageOfferAccept = (props: Props) => {
                 <OfferPublic
                   key={offer._id}
                   offer={offer}
-                  chain={offerChain}
-                  token={offerToken}
                   fromAmount={fromAmount}
                   fromChain={fromChain}
                   fromToken={fromToken}

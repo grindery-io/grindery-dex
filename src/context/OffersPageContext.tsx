@@ -9,7 +9,9 @@ import useAbi from '../hooks/useAbi';
 import _ from 'lodash';
 import { getErrorMessage } from '../utils/error';
 import { TokenType } from '../types/TokenType';
-import { OfferType } from '../types/OfferType';
+import Offer from '../models/Offer';
+import useLiquidityWallets from '../hooks/useLiquidityWallets';
+import { LiquidityWallet } from '../types/LiquidityWallet';
 
 function isNumeric(value: string) {
   return /^\d*(\.\d+)?$/.test(value);
@@ -31,7 +33,7 @@ type ContextProps = {
   currentToChain: Chain | null;
   chainTokens: TokenType[];
   toChainTokens: TokenType[];
-  groupedOffers: { [key: string]: OfferType[] };
+  groupedOffers: { [key: string]: Offer[] };
   exchangeRate: string;
   estimatedTime: string;
   title: string;
@@ -124,7 +126,7 @@ export const OffersPageContextProvider = ({
       fullPath: '/sell/offers/select-to-chain',
     },
   };
-
+  const { wallets } = useLiquidityWallets();
   const { user, chain: selectedChain, provider, ethers } = useGrinderyNexus();
   let navigate = useNavigate();
   const { poolAbi } = useAbi();
@@ -386,7 +388,10 @@ export const OffersPageContextProvider = ({
       exchangeToken: toToken.symbol || 'ETH',
       exchangeChainId: toChain.toString().split(':')[1] || '5',
       estimatedTime: estimatedTime || '',
-      provider: user,
+      provider:
+        wallets.find(
+          (w: LiquidityWallet) => w.chainId === chain.toString().split(':')[1]
+        )?.walletAddress || '',
       offerId: offerId,
       isActive: true,
       title,
@@ -396,7 +401,7 @@ export const OffersPageContextProvider = ({
 
     if (newOffer && typeof newOffer !== 'boolean') {
       // update offer state
-      setOffers([{ ...newOffer, new: true }, ...offers]);
+      setOffers([newOffer, ...offers]);
 
       // clear input fields
       setAmountMin('');
@@ -424,9 +429,7 @@ export const OffersPageContextProvider = ({
   const handleDeactivateClick = async (offerId: string) => {
     setIsActivating(offerId);
 
-    const offerChain = offers.find(
-      (o: OfferType) => o._id === offerId
-    )?.chainId;
+    const offerChain = offers.find((o: Offer) => o._id === offerId)?.chainId;
 
     const chainToSelect = chains.find(
       (c: Chain) => c.value === `eip155:${offerChain}`
@@ -466,7 +469,7 @@ export const OffersPageContextProvider = ({
     const poolContract = _poolContract.connect(signer);
 
     const offerToDeactivate = offers.find(
-      (o: OfferType) => o._id === offerId
+      (o: Offer) => o._id === offerId
     )?.offerId;
 
     if (!offerToDeactivate) {
@@ -539,10 +542,13 @@ export const OffersPageContextProvider = ({
       return;
     }
     setOffers([
-      ...offers.map((offer) => ({
-        ...offer,
-        isActive: offerId === offer._id ? false : offer.isActive,
-      })),
+      ...offers.map(
+        (offer) =>
+          new Offer({
+            ...offer,
+            isActive: offerId === offer._id ? false : offer.isActive,
+          })
+      ),
     ]);
     setIsActivating('');
   };
@@ -550,9 +556,7 @@ export const OffersPageContextProvider = ({
   const handleActivateClick = async (offerId: string) => {
     setIsActivating(offerId);
 
-    const offerChain = offers.find(
-      (o: OfferType) => o._id === offerId
-    )?.chainId;
+    const offerChain = offers.find((o: Offer) => o._id === offerId)?.chainId;
 
     const chainToSelect = chains.find(
       (c: Chain) => c.value === `eip155:${offerChain}`
@@ -580,7 +584,7 @@ export const OffersPageContextProvider = ({
     }
 
     const offerToActivate = offers.find(
-      (o: OfferType) => o._id === offerId
+      (o: Offer) => o._id === offerId
     )?.offerId;
 
     if (!offerToActivate) {
@@ -649,10 +653,13 @@ export const OffersPageContextProvider = ({
       return;
     }
     setOffers([
-      ...offers.map((offer) => ({
-        ...offer,
-        isActive: offerId === offer._id ? true : offer.isActive,
-      })),
+      ...offers.map(
+        (offer) =>
+          new Offer({
+            ...offer,
+            isActive: offerId === offer._id ? true : offer.isActive,
+          })
+      ),
     ]);
     setIsActivating('');
   };
