@@ -3,8 +3,6 @@ import { Skeleton, Typography } from '@mui/material';
 import { Box } from '@mui/system';
 import useOffers from '../../hooks/useOffers';
 import useGrinderyChains from '../../hooks/useGrinderyChains';
-import { Chain } from '../../types/Chain';
-import { TokenType } from '../../types/TokenType';
 import moment from 'moment';
 import DexCardSubmitButton from '../DexCard/DexCardSubmitButton';
 import { Card } from '../Card/Card';
