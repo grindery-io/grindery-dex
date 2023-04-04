@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { OrderType } from '../../types/Order';
 import { Skeleton, Typography } from '@mui/material';
 import { Box } from '@mui/system';
 import useOffers from '../../hooks/useOffers';
@@ -13,16 +12,16 @@ import AlertBox from '../AlertBox/AlertBox';
 import TransactionID from '../TransactionID/TransactionID';
 import OfferPublic from '../Offer/OfferPublic';
 import Offer from '../../models/Offer';
-import { log } from 'console';
+import Order from '../../models/Order';
 
 type Props = {
-  order: OrderType;
+  order: Order;
   userType: 'a' | 'b';
-  onCompleteClick?: (order: OrderType) => Promise<boolean>;
+  onCompleteClick?: (order: Order) => Promise<boolean>;
   error?: string;
 };
 
-const Order = (props: Props) => {
+const OrderCard = (props: Props) => {
   const { order, userType, onCompleteClick, error } = props;
   const { getOfferById } = useOffers();
   const [offer, setOffer] = useState<Offer | false>(false);
@@ -30,47 +29,17 @@ const Order = (props: Props) => {
   const [loading, setLoading] = useState(false);
   const isUserA = userType === 'a';
 
-  const explorerLink = order.hash
-    ? (
-        chains.find((c: Chain) => c.value === `eip155:5`)
-          ?.transactionExplorerUrl || ''
-      ).replace('{hash}', order.hash || '')
-    : '';
+  const explorerLink = order.getOrderLink(chains);
 
-  console.log(order.orderId, offer);
-
-  /*const fromChain = chains.find(
-    (c: Chain) => c.chainId === order.chainIdTokenDeposit
-  );*/
-
-  /*const fromToken = fromChain?.tokens?.find(
-    (t: TokenType) => t.address === order.addressTokenDeposit
-  );*/
-
-  const fromChain = chains.find(
-    (c: Chain) => order && c.chainId === order.chainIdTokenDeposit
-  );
-  const fromToken = chains
-    .find((c: Chain) => order && c.chainId === order.chainIdTokenDeposit)
-    ?.tokens?.find(
-      (t: TokenType) => order && t.address === order.addressTokenDeposit
-    );
+  const fromChain = order.getFromChain(chains);
+  const fromToken = order.getFromToken(chains);
 
   const buyer = !isUserA && order && order.destAddr;
-  const buyerLink =
-    !isUserA &&
-    order &&
-    order.destAddr &&
-    (
-      chains.find((c: Chain) => c.value === `eip155:5`)?.addressExplorerUrl ||
-      ''
-    ).replace('{hash}', order.destAddr || '');
+  const buyerLink = !isUserA ? order.getBuyerLink(chains) : '';
 
-  const getOffer = async () => {
-    if (order.offerId) {
-      const offerRes = await getOfferById(order.offerId);
-      setOffer(offerRes);
-    }
+  const getOffer = async (offerId: string) => {
+    const offerRes = await getOfferById(offerId);
+    setOffer(offerRes);
   };
 
   const handleCompleteClick = async () => {
@@ -87,7 +56,10 @@ const Order = (props: Props) => {
   };
 
   useEffect(() => {
-    getOffer();
+    if (order.offerId) {
+      getOffer(order.offerId);
+    }
+    // eslint-disable-next-line
   }, [order.offerId]);
 
   return (
@@ -235,4 +207,4 @@ const Order = (props: Props) => {
   );
 };
 
-export default Order;
+export default OrderCard;

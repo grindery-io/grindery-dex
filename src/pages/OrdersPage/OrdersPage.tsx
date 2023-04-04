@@ -2,8 +2,7 @@ import React, { useState } from 'react';
 import DexCard from '../../components/DexCard/DexCard';
 import DexCardHeader from '../../components/DexCard/DexCardHeader';
 import DexCardBody from '../../components/DexCard/DexCardBody';
-import Order from '../../components/Order/Order';
-import { OrderType } from '../../types/Order';
+import OrderCard from '../../components/OrderCard/OrderCard';
 import { LiquidityWallet } from '../../types/LiquidityWallet';
 import { Box } from '@mui/system';
 import NotFound from '../../components/NotFound/NotFound';
@@ -11,10 +10,9 @@ import { useGrinderyNexus } from 'use-grindery-nexus';
 import useAbi from '../../hooks/useAbi';
 import useLiquidityWallets from '../../hooks/useLiquidityWallets';
 import { getErrorMessage } from '../../utils/error';
-import OrderSkeleton from '../../components/Order/OrderSkeleton';
+import OrderSkeleton from '../../components/OrderCard/OrderSkeleton';
 import useOrders from '../../hooks/useOrders';
-import { chain } from 'lodash';
-import { formatAddress } from '../../utils/address';
+import Order from '../../models/Order';
 
 function OrdersPage() {
   const { chain: selectedChain, provider, ethers } = useGrinderyNexus();
@@ -27,7 +25,7 @@ function OrdersPage() {
     return new Date(b.date).getTime() - new Date(a.date).getTime();
   });
 
-  const handleOrderCompleteClick = async (order: OrderType) => {
+  const handleOrderCompleteClick = async (order: Order) => {
     setError({
       type: '',
       text: '',
@@ -214,8 +212,8 @@ function OrdersPage() {
             <>
               {sortedOrders && sortedOrders.length > 0 ? (
                 <>
-                  {sortedOrders.map((order: OrderType) => (
-                    <Order
+                  {sortedOrders.map((order: Order) => (
+                    <OrderCard
                       key={order._id}
                       order={order}
                       userType="b"

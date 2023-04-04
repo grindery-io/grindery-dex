@@ -9,9 +9,9 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
 import { IconButton } from '@mui/material';
 import useOrders from '../../hooks/useOrders';
-import { OrderType } from '../../types/Order';
-import Order from '../../components/Order/Order';
-import OrderSkeleton from '../../components/Order/OrderSkeleton';
+import OrderCard from '../../components/OrderCard/OrderCard';
+import OrderSkeleton from '../../components/OrderCard/OrderSkeleton';
+import Order from '../../models/Order';
 
 type Props = {};
 
@@ -58,8 +58,8 @@ const TradePageHistory = (props: Props) => {
           <>
             {sortedOrders && sortedOrders.length > 0 ? (
               <>
-                {sortedOrders.map((order: OrderType) => (
-                  <Order key={order._id} order={order} userType="a" />
+                {sortedOrders.map((order: Order) => (
+                  <OrderCard key={order._id} order={order} userType="a" />
                 ))}
                 <Box height="10px" />
               </>

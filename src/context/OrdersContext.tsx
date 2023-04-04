@@ -2,18 +2,19 @@ import axios from 'axios';
 import React, { createContext, useEffect, useState } from 'react';
 import { useGrinderyNexus } from 'use-grindery-nexus';
 import { DELIGHT_API_URL } from '../constants';
-import { OrderType } from '../types/Order';
 import { getErrorMessage } from '../utils/error';
+import Order from '../models/Order';
+import { OrderType } from '../types/OrderType';
 
 // Context props
 type ContextProps = {
   isLoading: boolean;
-  orders: OrderType[];
-  ordersB: OrderType[];
+  orders: Order[];
+  ordersB: Order[];
   error: string;
-  setOrders: React.Dispatch<React.SetStateAction<OrderType[]>>;
-  setOrdersB: React.Dispatch<React.SetStateAction<OrderType[]>>;
-  saveOrder: (body: { [key: string]: any }) => Promise<OrderType | boolean>;
+  setOrders: React.Dispatch<React.SetStateAction<Order[]>>;
+  setOrdersB: React.Dispatch<React.SetStateAction<Order[]>>;
+  saveOrder: (body: { [key: string]: any }) => Promise<Order | boolean>;
   getOrders: () => void;
   completeOrder: (orderId: string) => Promise<boolean>;
 };
@@ -43,8 +44,8 @@ export const OrdersContextProvider = ({
 }: OrdersContextProps) => {
   const { token } = useGrinderyNexus();
   const [isLoading, setIsLoading] = useState(true);
-  const [orders, setOrders] = useState<OrderType[]>([]);
-  const [ordersB, setOrdersB] = useState<OrderType[]>([]);
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [ordersB, setOrdersB] = useState<Order[]>([]);
   const [error, setError] = useState('');
 
   const params = {
@@ -60,7 +61,7 @@ export const OrdersContextProvider = ({
     } catch (error: any) {
       setError(getErrorMessage(error, 'Server error'));
     }
-    return res?.data || false;
+    return res?.data ? new Order(res?.data) : false;
   };
 
   const getOrders = async () => {
@@ -72,7 +73,7 @@ export const OrdersContextProvider = ({
     } catch (error: any) {
       setError(getErrorMessage(error, 'Server error'));
     }
-    setOrders(res?.data || []);
+    setOrders(res?.data?.map((o: OrderType) => new Order(o)) || []);
     setTimeout(() => {
       setIsLoading(false);
     }, 800);
@@ -90,7 +91,7 @@ export const OrdersContextProvider = ({
     } catch (error: any) {
       setError(getErrorMessage(error, 'Server error'));
     }
-    setOrdersB(res?.data || []);
+    setOrdersB(res?.data?.map((o: OrderType) => new Order(o)) || []);
     setTimeout(() => {
       setIsLoading(false);
     }, 800);
@@ -143,7 +144,7 @@ export const OrdersContextProvider = ({
       } catch (error: any) {
         setError(getErrorMessage(error, 'Server error'));
       }
-      setOrdersB(res2?.data || []);
+      setOrdersB(res?.data?.map((o: OrderType) => new Order(o)) || []);
       return true;
     } else {
       return false;
