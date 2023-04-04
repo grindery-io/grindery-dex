@@ -229,7 +229,7 @@ const AppHeader = (props: Props) => {
             navigate('/');
           }}
         >
-          MERCARI
+          MERCATI
         </CompanyNameWrapper>
 
         <NavTabsWrapper>
