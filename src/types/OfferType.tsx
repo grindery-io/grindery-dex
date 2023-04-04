@@ -1,4 +1,4 @@
-export type Offer = {
+export type OfferType = {
   _id: string;
   chainId: string;
   min: string;
@@ -18,4 +18,5 @@ export type Offer = {
   image?: string;
   title?: string;
   new?: boolean;
+  provider?: string;
 };

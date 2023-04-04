@@ -10,6 +10,8 @@ import { Snackbar } from 'grindery-ui';
 import { useNavigate } from 'react-router-dom';
 import Icon from '@mdi/react';
 import { mdiWaterPump } from '@mdi/js';
+import SellOutlinedIcon from '@mui/icons-material/SellOutlined';
+import useAdmin from '../../hooks/useAdmin';
 
 const UserContainer = styled.div`
   position: relative;
@@ -131,6 +133,7 @@ const UserMenu = (props: Props) => {
   const [menuOpened, setMenuOpened] = useState(false);
   const [copied, setCopied] = useState(false);
   let navigate = useNavigate();
+  const { isAdmin } = useAdmin();
 
   return address ? (
     <GrinderyThemeProvider>
@@ -184,6 +187,17 @@ const UserMenu = (props: Props) => {
                 />
                 <span>Faucet</span>
               </button>
+              {isAdmin && (
+                <button
+                  onClick={() => {
+                    navigate('/sell');
+                  }}
+                >
+                  <SellOutlinedIcon sx={{ width: '20px', height: '20px' }} />
+
+                  <span>Sell</span>
+                </button>
+              )}
               <button
                 onClick={() => {
                   disconnect();

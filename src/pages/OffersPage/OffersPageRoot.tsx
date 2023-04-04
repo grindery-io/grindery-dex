@@ -5,8 +5,6 @@ import { AddCircleOutline as AddCircleOutlineIcon } from '@mui/icons-material';
 import DexCardHeader from '../../components/DexCard/DexCardHeader';
 import DexCardSubmitButton from '../../components/DexCard/DexCardSubmitButton';
 import DexCardBody from '../../components/DexCard/DexCardBody';
-import Loading from '../../components/Loading/Loading';
-import { Offer as OfferType } from '../../types/Offer';
 import { Chain } from '../../types/Chain';
 import { useNavigate } from 'react-router-dom';
 import useGrinderyChains from '../../hooks/useGrinderyChains';
@@ -18,6 +16,7 @@ import OfferPublic from '../../components/Offer/OfferPublic';
 import { LiquidityWallet } from '../../types/LiquidityWallet';
 import useLiquidityWallets from '../../hooks/useLiquidityWallets';
 import OfferSkeleton from '../../components/Offer/OfferSkeleton';
+import Offer from '../../models/Offer';
 
 function OffersPageRoot() {
   const { user, connect } = useGrinderyNexus();
@@ -77,31 +76,17 @@ function OffersPageRoot() {
                         groupedOffers[key],
                         ['isActive'],
                         ['desc']
-                      ).map((offer: OfferType) => {
-                        const offerChain = chains.find(
-                          (c) => c.value === `eip155:${offer.chainId}`
-                        );
-                        const offerToken = offerChain?.tokens?.find(
-                          (t) => t.coinmarketcapId === offer.tokenId
-                        );
-                        return offerChain && offerToken ? (
-                          <OfferPublic
-                            key={offer._id}
-                            compact
-                            userType="b"
-                            offer={offer}
-                            chain={offerChain}
-                            isActivating={isActivating}
-                            onDeactivateClick={handleDeactivateClick}
-                            onActivateClick={handleActivateClick}
-                            token={offerToken}
-                            defaultProvider={wallets.find(
-                              (w: LiquidityWallet) =>
-                                w.chainId === offer.chainId
-                            )}
-                          />
-                        ) : null;
-                      })}
+                      ).map((offer: Offer) => (
+                        <OfferPublic
+                          key={offer._id}
+                          compact
+                          userType="b"
+                          offer={offer}
+                          isActivating={isActivating}
+                          onDeactivateClick={handleDeactivateClick}
+                          onActivateClick={handleActivateClick}
+                        />
+                      ))}
                     </React.Fragment>
                   ))}
               </>

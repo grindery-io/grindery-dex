@@ -1,61 +1,45 @@
 import React from 'react';
 import { Box } from '@mui/system';
 import useShopPage from '../../hooks/useShopPage';
-import { Offer } from '../../types/Offer';
 import OfferCard from '../../components/OfferCard/OfferCard';
-import { Grid } from '@mui/material';
-import useGrinderyChains from '../../hooks/useGrinderyChains';
+import { Stack } from '@mui/material';
+import ShopPageOfferAccept from './ShopPageOfferAccept';
+import Offer from '../../models/Offer';
 
 type Props = {};
 
 const ShopPageRoot = (props: Props) => {
   const { foundOffers } = useShopPage();
-  const { chains } = useGrinderyChains();
 
   return (
-    <Box
-      sx={{
-        marginBottom: '20px',
-        marginLeft: { xs: '16px', lg: '264px' },
-        marginRight: { xs: '16px', lg: '24px' },
-      }}
-      flex="1"
-      gap="16px"
-    >
-      <Grid container spacing="24px">
-        {foundOffers.map((offer: Offer) => {
-          const offerChain = chains.find(
-            (c) => c.value === `eip155:${offer.chainId}`
-          );
-          const offerToken = offerChain?.tokens?.find(
-            (t) => t.coinmarketcapId === offer.tokenId
-          );
-          return (
-            <Grid
-              item
-              xs={12}
-              sm={6}
-              md={4}
-              lg={4}
-              xl={3}
-              sx={{
-                '& > .MuiBox-root': {
-                  maxWidth: '100%',
-                  height: '100%',
-                },
-              }}
-            >
-              <OfferCard
-                key={offer._id}
-                offer={offer}
-                offerChain={offerChain}
-                offerToken={offerToken}
-              />
-            </Grid>
-          );
-        })}
-      </Grid>
-    </Box>
+    <>
+      <ShopPageOfferAccept />
+      <Box
+        sx={{
+          marginBottom: '20px',
+          marginLeft: { xs: '16px', lg: '24px' },
+          marginRight: { xs: '16px', lg: '24px' },
+        }}
+        flex="1"
+      >
+        <Stack
+          flexWrap="wrap"
+          alignItems="stretch"
+          direction="row"
+          gap="24px"
+          sx={{
+            width: '100%',
+            maxWidth: '1053px',
+            margin: '0 auto',
+            justifyContent: { xs: 'center', lg: 'flex-start' },
+          }}
+        >
+          {foundOffers.map((offer: Offer) => (
+            <OfferCard key={offer._id} offer={offer} />
+          ))}
+        </Stack>
+      </Box>
+    </>
   );
 };
 

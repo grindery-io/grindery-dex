@@ -1,9 +1,9 @@
 import React from 'react';
-import { Box, Button } from '@mui/material';
-import { Offer } from '../../types/Offer';
+import { Box } from '@mui/material';
 import useShopPage from '../../hooks/useShopPage';
 import LoadingButton from '@mui/lab/LoadingButton';
-import AlertBox from '../AlertBox/AlertBox';
+import Loading from '../Loading/Loading';
+import Offer from '../../models/Offer';
 
 type Props = {
   offer: Offer;
@@ -11,7 +11,8 @@ type Props = {
 
 const OfferCardAction = (props: Props) => {
   const { offer } = props;
-  const { handleAcceptOfferClick, accepting } = useShopPage();
+  const { handleAcceptOfferClick, accepting, handleModalOpened } =
+    useShopPage();
   const loading = Boolean(
     accepting && offer.offerId && accepting === offer.offerId
   );
@@ -19,7 +20,7 @@ const OfferCardAction = (props: Props) => {
   return (
     <Box
       sx={{
-        margin: '16px 24px 0',
+        margin: '8px 16px 0',
         '& > div': {
           margin: '0',
           padding: '0',
@@ -40,11 +41,22 @@ const OfferCardAction = (props: Props) => {
       }}
     >
       <LoadingButton
-        loading={loading}
-        loadingPosition="start"
         fullWidth
+        disabled={Boolean(accepting) && !loading}
+        startIcon={
+          loading ? (
+            <Loading
+              style={{ margin: '0 10px 0 0', color: '#fff' }}
+              size={16}
+            />
+          ) : undefined
+        }
         onClick={() => {
-          handleAcceptOfferClick(offer);
+          if (loading) {
+            handleModalOpened();
+          } else {
+            handleAcceptOfferClick(offer);
+          }
         }}
       >
         {loading ? 'Waiting transaction' : 'Buy now'}

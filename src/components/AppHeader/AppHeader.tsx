@@ -23,20 +23,20 @@ import { sellPages } from '../../pages/SellPage/SellPage';
 import { buyPages } from '../../pages/BuyPage/BuyPage';
 import NavTabs, { MenuItem } from '../NavTabs/NavTabs';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
-import SellIcon from '@mui/icons-material/Sell';
 import Drawer from '../Drawer/Drawer';
+import CurrencyExchangeIcon from '@mui/icons-material/CurrencyExchange';
 
 const menu: MenuItem[] = [
   {
-    path: '/buy',
-    label: 'Buy',
-    icon: <AddShoppingCartIcon />,
+    path: '/buy/trade',
+    label: 'Trade',
+    icon: <CurrencyExchangeIcon />,
     iconPosition: 'start',
   },
   {
-    path: '/sell',
-    label: 'Sell',
-    icon: <SellIcon />,
+    path: '/buy/shop',
+    label: 'Shop',
+    icon: <AddShoppingCartIcon />,
     iconPosition: 'start',
   },
 ];
@@ -236,25 +236,6 @@ const AppHeader = (props: Props) => {
           <NavTabs menu={menu} />
         </NavTabsWrapper>
 
-        {isAdmin && (
-          <LinksWrapper>
-            {menu.map((link: any) => (
-              <a
-                key={link.path}
-                href={link.path}
-                onClick={(event: React.MouseEvent<HTMLElement>) => {
-                  event.preventDefault();
-                  navigate(link.path);
-                }}
-                className={
-                  location.pathname.startsWith(link.path) ? 'active' : 'default'
-                }
-              >
-                {link.label}
-              </a>
-            ))}
-          </LinksWrapper>
-        )}
         {!user && 'ethereum' in window && (
           <ConnectWrapper>
             <button

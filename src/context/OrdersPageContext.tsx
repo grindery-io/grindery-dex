@@ -9,7 +9,7 @@ import useAbi from '../hooks/useAbi';
 import _ from 'lodash';
 import { getErrorMessage } from '../utils/error';
 import { TokenType } from '../types/TokenType';
-import { Offer } from '../types/Offer';
+import Offer from '../models/Offer';
 
 function isNumeric(value: string) {
   return /^\d*(\.\d+)?$/.test(value);
@@ -298,7 +298,7 @@ export const OrdersPageContextProvider = ({
 
     if (newOffer && typeof newOffer !== 'boolean') {
       // update offer state
-      setOffers([{ ...newOffer, new: true }, ...offers]);
+      setOffers([new Offer({ ...newOffer, new: true }), ...offers]);
 
       // clear input fields
       setAmountMin('');
@@ -435,10 +435,13 @@ export const OrdersPageContextProvider = ({
       return;
     }
     setOffers([
-      ...offers.map((offer) => ({
-        ...offer,
-        isActive: offerId === offer._id ? false : offer.isActive,
-      })),
+      ...offers.map(
+        (offer) =>
+          new Offer({
+            ...offer,
+            isActive: offerId === offer._id ? false : offer.isActive,
+          })
+      ),
     ]);
     setIsActivating('');
   };
@@ -543,10 +546,13 @@ export const OrdersPageContextProvider = ({
       return;
     }
     setOffers([
-      ...offers.map((offer) => ({
-        ...offer,
-        isActive: offerId === offer._id ? true : offer.isActive,
-      })),
+      ...offers.map(
+        (offer) =>
+          new Offer({
+            ...offer,
+            isActive: offerId === offer._id ? true : offer.isActive,
+          })
+      ),
     ]);
     setIsActivating('');
   };

@@ -27,7 +27,7 @@ const TradePageOffersFilter = (props: Props) => {
     loading,
     fromChain,
     fromToken,
-    fromTokenPrice,
+    fromTokenBalance,
     handleFromAmountChange,
     handleSearchClick,
     handleFromAmountMaxClick,
@@ -103,7 +103,7 @@ const TradePageOffersFilter = (props: Props) => {
               : ''
           }
           endAdornment={
-            GRT_CONTRACT_ADDRESS[fromChain?.value || ''] ? (
+            GRT_CONTRACT_ADDRESS[fromChain?.value || ''] && fromTokenBalance ? (
               <Box>
                 <Button
                   disableElevation

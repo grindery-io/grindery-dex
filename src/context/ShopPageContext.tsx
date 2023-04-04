@@ -4,7 +4,6 @@ import { DELIGHT_API_URL, POOL_CONTRACT_ADDRESS } from '../constants';
 import useGrinderyChains from '../hooks/useGrinderyChains';
 import useOffers from '../hooks/useOffers';
 import { Chain } from '../types/Chain';
-import { Offer } from '../types/Offer';
 import { TokenType } from '../types/TokenType';
 import isNumeric from '../utils/isNumeric';
 import _ from 'lodash';
@@ -13,6 +12,7 @@ import useAbi from '../hooks/useAbi';
 import { getErrorMessage } from '../utils/error';
 import useOrders from '../hooks/useOrders';
 import axios from 'axios';
+import Offer from '../models/Offer';
 
 // Context props
 type ContextProps = {
@@ -42,6 +42,9 @@ type ContextProps = {
   isPricesLoading: boolean;
   accepting: string | null;
   acceptedOffer: string | null;
+  showModal: boolean;
+  handleModalClosed: () => void;
+  handleModalOpened: () => void;
   setAccepted: React.Dispatch<React.SetStateAction<string>>;
   setApproved: React.Dispatch<React.SetStateAction<boolean>>;
   setSearchToken: React.Dispatch<React.SetStateAction<string>>;
@@ -83,6 +86,9 @@ export const ShopPageContext = createContext<ContextProps>({
   isPricesLoading: false,
   accepting: null,
   acceptedOffer: null,
+  showModal: false,
+  handleModalClosed: () => {},
+  handleModalOpened: () => {},
   setAccepted: () => {},
   setApproved: () => {},
   setSearchToken: () => {},
@@ -131,6 +137,7 @@ export const ShopPageContextProvider = ({ children }: ShopPageContextProps) => {
   const { saveOrder } = useOrders();
   const { searchOffers, offers, isLoading: isOfferLoading } = useOffers();
   const [isPricesLoading, setIsPricesLoading] = useState(false);
+  const [showModal, setShowModal] = useState(false);
   const loading = isOfferLoading || isLoading;
 
   const foundOffers = offers.filter((o: Offer) => o.isActive && o.amount);
@@ -181,6 +188,14 @@ export const ShopPageContextProvider = ({ children }: ShopPageContextProps) => {
   ).filter(
     (t: any) => !searchToken || t.symbol.toLowerCase().includes(searchToken)
   );
+
+  const handleModalClosed = () => {
+    setShowModal(false);
+  };
+
+  const handleModalOpened = () => {
+    setShowModal(true);
+  };
 
   const getToTokenPrice = async (symbol: string) => {
     setIsPricesLoading(true);
@@ -364,6 +379,8 @@ export const ShopPageContextProvider = ({ children }: ShopPageContextProps) => {
       text: '',
       offer: '',
     });
+    setAccepted('');
+    handleModalOpened();
     if (!offer.offerId) {
       setErrorMessage({
         type: 'acceptOffer',
@@ -691,6 +708,9 @@ export const ShopPageContextProvider = ({ children }: ShopPageContextProps) => {
         isPricesLoading,
         accepting,
         acceptedOffer,
+        showModal,
+        handleModalClosed,
+        handleModalOpened,
         setAccepted,
         setApproved,
         setSearchToken,

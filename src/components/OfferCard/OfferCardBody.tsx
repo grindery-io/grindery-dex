@@ -1,32 +1,28 @@
 import React from 'react';
 import { Avatar, Badge, Box, Skeleton, Stack, Typography } from '@mui/material';
-import { Offer } from '../../types/Offer';
-import { Chain } from '../../types/Chain';
-import { TokenType } from '../../types/TokenType';
 import { ChainTokenBox } from '../ChainTokenBox/ChainTokenBox';
 import { AvatarDefault } from '../Avatar/AvatarDefault';
 import useShopPage from '../../hooks/useShopPage';
+import Offer from '../../models/Offer';
+import useGrinderyChains from '../../hooks/useGrinderyChains';
 
 type Props = {
   offer: Offer;
-  offerChain?: Chain;
-  offerToken?: TokenType;
 };
 
 const OfferCardBody = (props: Props) => {
-  const { offer, offerChain, offerToken } = props;
+  const { offer } = props;
   const { currentFromChain, fromToken, tokenPrice } = useShopPage();
+  const { chains } = useGrinderyChains();
 
-  const fromAmount =
-    offer.amount && offer.exchangeRate
-      ? parseFloat(offer.amount) * parseFloat(offer.exchangeRate)
-      : 0;
-
-  const price = tokenPrice ? fromAmount * tokenPrice : 0;
+  const chain = offer.getChain(chains);
+  const token = offer.getToken(chains);
+  const fromAmount = offer.getExchangeAmount();
+  const price = offer.getUSDAmount(tokenPrice);
 
   return (
     <Box>
-      <Box sx={{ padding: '24px 24px 0' }}>
+      <Box sx={{ padding: '16px 16px 0' }}>
         <Stack
           direction="row"
           alignItems="center"
@@ -67,26 +63,27 @@ const OfferCardBody = (props: Props) => {
               <Typography
                 sx={{
                   fontWeight: '700',
-                  fontSize: '22px',
-                  lineHeight: '27px',
+                  fontSize: '18px',
+                  lineHeight: '22px',
                   display: '-webkit-box',
-                  '-webkit-line-clamp': '2',
-                  '-webkit-box-orient': 'vertical',
+                  WebkitLineClamp: '2',
+                  WebkitBoxOrient: 'vertical',
                   overflow: 'hidden',
                   textOverflow: 'ellipsis',
                 }}
-                title={offer.title.length > 25 ? offer.title : undefined}
+                title={offer.title.length > 30 ? offer.title : undefined}
               >
                 {offer.title}
               </Typography>
             )}
-            {offerChain && offerToken ? (
+            {chain && token ? (
               <ChainTokenBox
                 sx={{
                   flex: 1,
                   paddingLeft: '0',
                   height: 'auto',
-                  alignItems: 'flex-start',
+                  alignItems: 'center',
+                  paddingTop: '8px',
                   marginBottom: 0,
                   paddingBottom: 0,
                   '& .MuiCardHeader-avatar': {
@@ -94,9 +91,9 @@ const OfferCardBody = (props: Props) => {
                   },
                   '& .MuiCardHeader-title': {
                     fontWeight: '700',
-                    fontSize: '28px',
+                    fontSize: '18px',
                     lineHeight: '23px',
-                    margin: '0 0 10px',
+                    margin: '0',
                     padding: 0,
                     '& span': {
                       color: '#808898',
@@ -105,8 +102,8 @@ const OfferCardBody = (props: Props) => {
                   },
                   '& .MuiCardHeader-subheader': {
                     fontWeight: '500',
-                    fontSize: '14px',
-                    lineHeight: '12px',
+                    fontSize: '12px',
+                    lineHeight: '17px',
                     margin: '0',
                     padding: 0,
                   },
@@ -119,52 +116,52 @@ const OfferCardBody = (props: Props) => {
                       horizontal: 'right',
                     }}
                     badgeContent={
-                      offerChain.label ? (
+                      chain.label ? (
                         <Avatar
-                          src={offerChain.icon}
-                          alt={offerChain.label}
+                          src={chain.icon}
+                          alt={chain.label}
                           sx={{
-                            width: '11.5px',
-                            height: '11.5px',
+                            width: '16px',
+                            height: '16px',
                             border: '2px solid #fff',
                             background: '#fff',
                           }}
                         >
-                          {offerChain.label}
+                          {chain.label}
                         </Avatar>
                       ) : (
                         <AvatarDefault
-                          width={11.5}
-                          height={11.5}
+                          width={16}
+                          height={16}
                           sx={{ border: '2px solid #fff' }}
                         />
                       )
                     }
                   >
-                    {offerToken ? (
+                    {token ? (
                       <Avatar
-                        sx={{ width: '23px', height: '23px' }}
-                        src={offerToken.icon}
-                        alt={offerToken.symbol || offer.token || ''}
+                        sx={{ width: '32px', height: '32px' }}
+                        src={token.icon}
+                        alt={token.symbol || offer.token || ''}
                       >
-                        {offerToken.symbol || offer.token || ''}
+                        {token.symbol || offer.token || ''}
                       </Avatar>
                     ) : (
-                      <AvatarDefault width={23} height={23} />
+                      <AvatarDefault width={32} height={32} />
                     )}
                   </Badge>
                 }
                 title={
                   offer.amount ? (
                     <>
-                      {`${parseFloat(parseFloat(offer.amount).toFixed(6))} `}
-                      <span>{offerToken.symbol}</span>
+                      {offer.getAmount()}
+                      <span> {token.symbol}</span>
                     </>
                   ) : null
                 }
                 subheader={
                   <span style={{ whiteSpace: 'pre-wrap' }}>
-                    {offer.amount ? `on ${offerChain.label}` : <Skeleton />}
+                    {offer.amount ? `on ${chain.label}` : <Skeleton />}
                   </span>
                 }
                 selected={true}
@@ -180,7 +177,7 @@ const OfferCardBody = (props: Props) => {
           </Box>
         </Stack>
       </Box>
-      <Box sx={{ margin: '16px 24px 0', padding: '12px 16px' }}>
+      <Box sx={{ margin: '8px 16px 0', padding: '12px' }}>
         <Typography
           sx={{
             fontSize: '14px',
@@ -198,7 +195,7 @@ const OfferCardBody = (props: Props) => {
           <Box>
             {currentFromChain && fromToken ? (
               <ChainTokenBox
-                style={{
+                sx={{
                   paddingLeft: '0',
                   height: 'auto',
                   paddingTop: '8px',
@@ -247,19 +244,7 @@ const OfferCardBody = (props: Props) => {
                     )}
                   </Badge>
                 }
-                title={
-                  fromToken.symbol ? (
-                    <Box
-                      style={{
-                        whiteSpace: 'pre-wrap',
-                        color: offer.isActive ? '#000' : '#aaa',
-                      }}
-                      mb={'3px'}
-                    >
-                      {fromToken.symbol}
-                    </Box>
-                  ) : null
-                }
+                title={fromToken.symbol || ''}
                 subheader={
                   <span style={{ whiteSpace: 'pre-wrap' }}>
                     {offer.amount ? (
@@ -295,19 +280,9 @@ const OfferCardBody = (props: Props) => {
                   fontWeight: '500',
                 },
               }}
-              title={
-                price ? (
-                  `US$${parseFloat(price.toFixed(4))}`
-                ) : (
-                  <Skeleton width="70px" />
-                )
-              }
+              title={price !== '0' ? `US$${price}` : <Skeleton width="70px" />}
               subheader={
-                fromAmount ? (
-                  `${parseFloat(fromAmount.toFixed(6))} ETH`
-                ) : (
-                  <Skeleton />
-                )
+                fromAmount !== '0' ? `${fromAmount} ETH` : <Skeleton />
               }
               selected={true}
               compact={false}

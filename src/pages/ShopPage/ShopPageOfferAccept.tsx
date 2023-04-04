@@ -1,60 +1,40 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Box } from '@mui/system';
-import DexCard from '../../components/DexCard/DexCard';
-import DexCardHeader from '../../components/DexCard/DexCardHeader';
-import Loading from '../../components/Loading/Loading';
-import useTradePage from '../../hooks/useTradePage';
-import DexCardBody from '../../components/DexCard/DexCardBody';
-import { Offer } from '../../types/Offer';
-import useGrinderyChains from '../../hooks/useGrinderyChains';
-import OfferPublic from '../../components/Offer/OfferPublic';
-import { Navigate, useNavigate, useParams } from 'react-router-dom';
-import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
-import Countdown from 'react-countdown';
-import { IconButton, Skeleton, Stack, Tooltip } from '@mui/material';
-import DexCardSubmitButton from '../../components/DexCard/DexCardSubmitButton';
-import { useGrinderyNexus } from 'use-grindery-nexus';
-import AlertBox from '../../components/AlertBox/AlertBox';
-import AmountInput from '../../components/AmountInput/AmountInput';
-import { formatAddress } from '../../utils/address';
-import ContentCopyIcon from '@mui/icons-material/ContentCopy';
-import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import useShopPage from '../../hooks/useShopPage';
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+} from '@mui/material';
+import useGrinderyChains from '../../hooks/useGrinderyChains';
+import Loading from '../../components/Loading/Loading';
+import AlertBox from '../../components/AlertBox/AlertBox';
+import Countdown from 'react-countdown';
+import TransactionID from '../../components/TransactionID/TransactionID';
+import Offer from '../../models/Offer';
 
 type Props = {};
 
 const ShopPageOfferAccept = (props: Props) => {
-  const { user, connect } = useGrinderyNexus();
   const {
-    VIEWS,
-    loading,
     foundOffers,
-    accepted,
-    approved,
-    handleAcceptOfferClick,
-    setAccepted,
-    setApproved,
+    showModal,
+    handleModalClosed,
+    accepting,
     errorMessage,
-    fromAmount,
-    fromChain,
-    fromToken,
+    accepted,
   } = useShopPage();
   const { chains } = useGrinderyChains();
-  let navigate = useNavigate();
-  let { offerId } = useParams();
-  const [copied, setCopied] = useState(false);
-  const offer = foundOffers.find((o: Offer) => o.offerId === offerId);
-  const offerChain = chains.find((c) => c.value === `eip155:${offer?.chainId}`);
+  const acceptedOffer =
+    accepting && foundOffers.find((o: Offer) => o.offerId === accepting);
 
   const explorerLink = accepted
     ? (
         chains.find((c) => c.value === `eip155:5`)?.transactionExplorerUrl || ''
       ).replace('{hash}', accepted)
     : '';
-
-  const offerToken = offerChain?.tokens?.find(
-    (t) => t.coinmarketcapId === offer?.tokenId
-  );
 
   const countdownRenderer = ({
     total,
@@ -72,122 +52,56 @@ const ShopPageOfferAccept = (props: Props) => {
     }
   };
 
-  return offer ? (
-    <DexCard>
-      <DexCardHeader
-        title="Review offer"
-        titleSize={18}
-        titleAlign="center"
-        startAdornment={
-          <IconButton
-            size="medium"
-            edge="start"
-            onClick={() => {
-              setAccepted('');
-              setApproved(false);
-              navigate(VIEWS.ROOT.fullPath);
+  return (
+    <Dialog
+      fullWidth
+      sx={{ maxWidth: '375px' }}
+      open={showModal}
+      onClose={handleModalClosed}
+    >
+      <DialogTitle sx={{ textAlign: 'center' }}>
+        {accepting
+          ? 'Waiting transaction'
+          : errorMessage &&
+            errorMessage.type === 'acceptOffer' &&
+            errorMessage.text
+          ? 'Error'
+          : accepted
+          ? 'Success'
+          : 'Transaction result'}
+      </DialogTitle>
+      <DialogContent sx={{ paddingBottom: '0' }}>
+        {accepting && (
+          <Box sx={{ paddingBottom: '16px' }}>
+            <Loading />
+          </Box>
+        )}
+        {errorMessage &&
+          errorMessage.type === 'acceptOffer' &&
+          errorMessage.text && (
+            <AlertBox color="error" wrapperStyle={{ marginTop: '0' }}>
+              <p>{errorMessage.text}</p>
+            </AlertBox>
+          )}
+        {accepted && (
+          <Box
+            sx={{
+              '& .MuiPaper-root': {
+                background: 'rgb(237, 247, 237)',
+              },
             }}
           >
-            <ArrowBackIcon />
-          </IconButton>
-        }
-        endAdornment={<Box width={28} height={40} />}
-      />
-      <DexCardBody maxHeight="540px">
-        {!accepted ? (
-          <>
-            {/*<AmountInput
-              label="You pay"
-              value={parseFloat(fromAmount).toFixed(6).toLocaleString()}
-              onChange={() => {}}
-              name="fromAmount"
-              disabled={true}
-              error={errorMessage}
-              placeholder="0"
-              chain={fromChain}
-              token={fromToken}
-              disableTopMargin
-              helpText={
-                fromToken && typeof fromToken !== 'string' ? (
-                  <span style={{ whiteSpace: 'pre-wrap' }}>{`${
-                    fromToken?.symbol
-                  } on ${fromChain?.label} chain\n1 ${
-                    fromToken?.symbol
-                  } = $${fromTokenPrice?.toLocaleString()}`}</span>
-                ) : (
-                  <Skeleton />
-                )
-              }
-            />*/}
-            <Box mt="0px">
-              {offerChain && offerToken && (
-                <OfferPublic
-                  key={offer._id}
-                  offer={offer}
-                  chain={offerChain}
-                  token={offerToken}
-                  fromAmount={fromAmount}
-                  fromChain={fromChain}
-                  fromToken={fromToken}
-                  label="You receive"
-                  fromLabel="You pay"
-                  userType="a"
-                />
-              )}
-            </Box>
-            {approved && (
-              <AlertBox color="success">
-                <p>
-                  Tokens have been approved.
-                  <br />
-                  You can accept offer now.
-                </p>
-              </AlertBox>
-            )}
-            {loading && <Loading />}
-            {errorMessage &&
-              errorMessage.type === 'acceptOffer' &&
-              errorMessage.text && (
-                <AlertBox color="error">
-                  <p>{errorMessage.text}</p>
-                </AlertBox>
-              )}
-
-            <DexCardSubmitButton
-              label={
-                user
-                  ? approved ||
-                    (typeof fromToken !== 'string' &&
-                      fromToken?.address === '0x0')
-                    ? 'Place Order'
-                    : 'Approve tokens'
-                  : 'Connect wallet'
-              }
-              onClick={
-                user
-                  ? () => {
-                      handleAcceptOfferClick(offer);
-                    }
-                  : () => {
-                      connect();
-                    }
-              }
-              disabled={Boolean(user) && loading}
-            />
-          </>
-        ) : (
-          <>
-            <AlertBox color="success">
+            <AlertBox color="success" wrapperStyle={{ marginTop: '0' }}>
               <p>
-                {offer.estimatedTime ? (
+                {acceptedOffer && acceptedOffer.estimatedTime ? (
                   <>
                     Your order has been placed and is expected to complete
                     within{' '}
                     <Countdown
                       date={
                         Date.now() +
-                        (offer.estimatedTime
-                          ? parseInt(offer.estimatedTime) * 1000
+                        (acceptedOffer.estimatedTime
+                          ? parseInt(acceptedOffer.estimatedTime) * 1000
                           : 0)
                       }
                       renderer={countdownRenderer}
@@ -201,68 +115,56 @@ const ShopPageOfferAccept = (props: Props) => {
                   </>
                 )}
               </p>
-              <Stack
-                direction="row"
-                alignItems="center"
-                justifyContent="flex-start"
-                mt="10px"
-                gap="4px"
-              >
-                <p>Transaction ID: {formatAddress(accepted)}</p>
-                <Stack
-                  direction="row"
-                  alignItems="center"
-                  justifyContent="flex-start"
-                >
-                  <Tooltip
-                    title={copied ? 'Copied' : 'Copy to clipboard'}
-                    onClose={() => {
-                      setTimeout(() => {
-                        setCopied(false);
-                      }, 300);
-                    }}
-                  >
-                    <IconButton
-                      size="small"
-                      sx={{ fontSize: '14px' }}
-                      onClick={() => {
-                        navigator.clipboard.writeText(accepted);
-                        setCopied(true);
-                      }}
-                    >
-                      <ContentCopyIcon fontSize="inherit" />
-                    </IconButton>
-                  </Tooltip>
-                  {explorerLink && (
-                    <Tooltip title="View on blockchain explorer">
-                      <IconButton
-                        size="small"
-                        sx={{ fontSize: '14px' }}
-                        onClick={() => {
-                          window.open(explorerLink, '_blank');
-                        }}
-                      >
-                        <OpenInNewIcon fontSize="inherit" />
-                      </IconButton>
-                    </Tooltip>
-                  )}
-                </Stack>
-              </Stack>
+              <TransactionID
+                containerStyle={{ marginTop: '8px' }}
+                value={accepted}
+                label="ID"
+                link={explorerLink}
+                startLength={6}
+                endLength={6}
+              />
             </AlertBox>
-            <DexCardSubmitButton
-              label="Close"
-              onClick={() => {
-                setAccepted('');
-                setApproved(false);
-                navigate(VIEWS.ROOT.fullPath);
-              }}
-            />
-          </>
+          </Box>
         )}
-      </DexCardBody>
-    </DexCard>
-  ) : (
-    <Navigate to="/buy" />
+      </DialogContent>
+
+      {!accepting && (
+        <DialogActions sx={{ justifyContent: 'center' }}>
+          <Box
+            sx={{
+              paddingLeft: '16px',
+              paddingRight: '16px',
+              flex: 1,
+              '& .MuiButton-root': {
+                color: 'black',
+                borderColor: 'black',
+                padding: '6px 12px',
+                fontSize: '14px',
+                width: '100%',
+                '&:hover': {
+                  borderColor: 'black',
+                  backgroundColor: 'rgba(0,0,0,0.04)',
+                },
+                '& .MuiTouchRipple-root': {
+                  marginRight: '0',
+                },
+              },
+            }}
+          >
+            <Button
+              fullWidth
+              size="small"
+              variant="outlined"
+              onClick={() => {
+                handleModalClosed();
+              }}
+            >
+              Close
+            </Button>
+          </Box>
+        </DialogActions>
+      )}
+    </Dialog>
   );
 };
 

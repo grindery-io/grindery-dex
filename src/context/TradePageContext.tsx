@@ -4,7 +4,6 @@ import { DELIGHT_API_URL, POOL_CONTRACT_ADDRESS } from '../constants';
 import useGrinderyChains from '../hooks/useGrinderyChains';
 import useOffers from '../hooks/useOffers';
 import { Chain } from '../types/Chain';
-import { Offer } from '../types/Offer';
 import { TokenType } from '../types/TokenType';
 import isNumeric from '../utils/isNumeric';
 import _ from 'lodash';
@@ -13,6 +12,7 @@ import useAbi from '../hooks/useAbi';
 import { getErrorMessage } from '../utils/error';
 import useOrders from '../hooks/useOrders';
 import axios from 'axios';
+import Offer from '../models/Offer';
 
 // Context props
 type ContextProps = {
@@ -41,6 +41,7 @@ type ContextProps = {
   toTokenPrice: number | null;
   fromTokenPrice: number | null;
   isPricesLoading: boolean;
+  fromTokenBalance: string;
   setAccepted: React.Dispatch<React.SetStateAction<string>>;
   setApproved: React.Dispatch<React.SetStateAction<boolean>>;
   setSearchToken: React.Dispatch<React.SetStateAction<string>>;
@@ -82,6 +83,7 @@ export const TradePageContext = createContext<ContextProps>({
   toTokenPrice: null,
   fromTokenPrice: null,
   isPricesLoading: false,
+  fromTokenBalance: '',
   setAccepted: () => {},
   setApproved: () => {},
   setSearchToken: () => {},
@@ -696,6 +698,7 @@ export const TradePageContextProvider = ({
         toTokenPrice,
         fromTokenPrice,
         isPricesLoading,
+        fromTokenBalance,
         setAccepted,
         setApproved,
         setSearchToken,

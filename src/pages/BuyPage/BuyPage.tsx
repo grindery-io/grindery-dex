@@ -3,7 +3,6 @@ import { Navigate, Route, Routes } from 'react-router-dom';
 import PageContainer from '../../components/PageContainer/PageContainer';
 import TradePageContextProvider from '../../context/TradePageContext';
 import TradePage from '../TradePage/TradePage';
-import BuyMenu from '../../components/BuyMenu/BuyMenu';
 import ShopPageContextProvider from '../../context/ShopPageContext';
 import ShopPage from '../ShopPage/ShopPage';
 
@@ -36,7 +35,6 @@ const BuyPage = (props: Props) => {
   return (
     <div>
       <PageContainer>
-        <BuyMenu />
         <Routes>
           {buyPages.map((page: any) => (
             <Route

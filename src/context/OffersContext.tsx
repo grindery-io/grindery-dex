@@ -2,8 +2,9 @@ import axios from 'axios';
 import React, { createContext, useEffect, useState } from 'react';
 import { useGrinderyNexus } from 'use-grindery-nexus';
 import { DELIGHT_API_URL } from '../constants';
-import { Offer } from '../types/Offer';
 import { getErrorMessage } from '../utils/error';
+import Offer from '../models/Offer';
+import { OfferType } from '../types/OfferType';
 
 // Context props
 type ContextProps = {
@@ -72,7 +73,7 @@ export const OffersContextProvider = ({
     } catch (error: any) {
       setError(getErrorMessage(error, 'Server error'));
     }
-    return res?.data || false;
+    return res?.data ? new Offer(res?.data) : false;
   };
 
   const getOffers = async () => {
@@ -83,7 +84,7 @@ export const OffersContextProvider = ({
     } catch (error: any) {
       setError(getErrorMessage(error, 'Server error'));
     }
-    setOffers(res?.data || []);
+    setOffers(res?.data?.map((item: OfferType) => new Offer(item)) || []);
     setIsLoading(false);
   };
 
@@ -95,7 +96,7 @@ export const OffersContextProvider = ({
     } catch (error: any) {
       setError(getErrorMessage(error, 'Server error'));
     }
-    setOffers(res?.data || []);
+    setOffers(res?.data?.map((item: OfferType) => new Offer(item)) || []);
     setIsLoading(false);
   };
 
@@ -155,9 +156,8 @@ export const OffersContextProvider = ({
       setOffers([]);
       return;
     }
-    console.log('setOffers', res?.data || []);
 
-    setOffers(res?.data || []);
+    setOffers(res?.data?.map((item: OfferType) => new Offer(item)) || []);
     setIsLoading(false);
   };
 
