@@ -1,9 +1,6 @@
-import axios from 'axios';
 import { Chain } from '../types/Chain';
 import { OfferType } from '../types/OfferType';
 import { TokenType } from '../types/TokenType';
-import { DELIGHT_API_URL } from '../constants';
-import { LiquidityWallet } from '../types/LiquidityWallet';
 
 class Offer {
   public _id: string;
