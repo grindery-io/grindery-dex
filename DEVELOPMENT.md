@@ -74,13 +74,7 @@ Names of services must by in camelCase format, with lower first letter.
 
 ### Store
 
-Contains everything Redux related: actions, reducers, middlewares, etc.
-
-Actions can be broken down to files like `offerActions.ts`, and wrapped in the `/actions` folder
-
-Same with reducers, e.g. `offerReducer.ts`, wrapped in `/reducers` folder. Index file can be added to combine reducers.
-
-`/store/store.ts` file contains the store itself.
+Contains everything Redux related.
 
 ### Types
 
