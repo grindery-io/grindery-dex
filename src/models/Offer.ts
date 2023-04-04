@@ -122,8 +122,9 @@ class Offer {
     const usdAmount = price
       ? parseFloat(this.getExchangeAmount(false)) * price
       : 0;
+
     return formatted
-      ? parseFloat(usdAmount.toFixed(4)).toString()
+      ? parseFloat(usdAmount.toFixed(5)).toString()
       : usdAmount
       ? usdAmount.toString()
       : '';
