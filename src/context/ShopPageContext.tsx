@@ -1,4 +1,4 @@
-import React, { createContext, useCallback, useEffect, useState } from 'react';
+import React, { createContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { DELIGHT_API_URL, POOL_CONTRACT_ADDRESS } from '../constants';
 import useGrinderyChains from '../hooks/useGrinderyChains';
@@ -6,7 +6,6 @@ import useOffers from '../hooks/useOffers';
 import { Chain } from '../types/Chain';
 import { TokenType } from '../types/TokenType';
 import isNumeric from '../utils/isNumeric';
-import _ from 'lodash';
 import { useGrinderyNexus } from 'use-grindery-nexus';
 import useAbi from '../hooks/useAbi';
 import { getErrorMessage } from '../utils/error';
@@ -197,14 +196,14 @@ export const ShopPageContextProvider = ({ children }: ShopPageContextProps) => {
     setShowModal(true);
   };
 
-  const getToTokenPrice = async (symbol: string) => {
+  const getToTokenPrice = async (symbol: string, token: string) => {
     setIsPricesLoading(true);
     try {
       const res = await axios.get(
         `${DELIGHT_API_URL}/coinmarketcap?token=ETH`,
         {
           headers: {
-            Authorization: `Bearer ${token?.access_token || ''}`,
+            Authorization: `Bearer ${token || ''}`,
           },
         }
       );
@@ -343,27 +342,19 @@ export const ShopPageContextProvider = ({ children }: ShopPageContextProps) => {
     );
   };
 
-  /*const debouncedChangeHandler = useCallback(
-    _.debounce((amount: string) => {
-      handleSearchClick(amount);
-    }, 1000),
-    [fromChain, fromToken, toChain, toToken, fromTokenBalance]
-  );*/
-
-  const params = {
-    headers: {
-      Authorization: `Bearer ${token?.access_token || ''}`,
-    },
-  };
-
-  const getFromTokenBalance = async () => {
-    if (!fromToken || typeof fromToken === 'string' || !fromToken.address) {
-      return;
-    }
-
+  const getFromTokenBalance = async (
+    chainId: string,
+    address: string,
+    tokenAddress: string,
+    token: string
+  ) => {
     const res = await axios.get(
-      `${DELIGHT_API_URL}/view-blockchains/balance-token?chainId=${fromChain?.chainId}&address=${address}&tokenAddress=${fromToken.address}`,
-      params
+      `${DELIGHT_API_URL}/view-blockchains/balance-token?chainId=${chainId}&address=${address}&tokenAddress=${tokenAddress}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
     );
 
     // convert wei to string
@@ -656,14 +647,27 @@ export const ShopPageContextProvider = ({ children }: ShopPageContextProps) => {
   }, [isOfferLoading]);
 
   useEffect(() => {
-    if (address && chain) {
-      getFromTokenBalance();
+    if (
+      fromToken &&
+      typeof fromToken !== 'string' &&
+      fromToken.address &&
+      address &&
+      chain &&
+      fromChain &&
+      token?.access_token
+    ) {
+      getFromTokenBalance(
+        fromChain.chainId,
+        address,
+        fromToken.address,
+        token?.access_token
+      );
     }
-  }, [address, chain, fromChain, fromToken]);
+  }, [address, chain, fromChain, fromToken, token?.access_token]);
 
   useEffect(() => {
     if (toToken && token?.access_token) {
-      getToTokenPrice(toToken.symbol);
+      getToTokenPrice(toToken.symbol, token?.access_token);
     }
   }, [toToken, token?.access_token]);
 
