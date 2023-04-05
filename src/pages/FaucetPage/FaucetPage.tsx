@@ -1,69 +1,34 @@
 import React from 'react';
 import DexCard from '../../components/DexCard/DexCard';
-import { Navigate } from 'react-router-dom';
-//import useFaucetPage from '../../hooks/useFaucetPage';
-//import FaucetPageRoot from './FaucetPageRoot';
-//import FaucetPageSelectChain from './FaucetPageSelectChain';
+import { Route, Routes } from 'react-router-dom';
 import FaucetMenu from '../../components/FaucetMenu/FaucetMenu';
-import useAdmin from '../../hooks/useAdmin';
-import Loading from '../../components/Loading/Loading';
-import DexCardBody from '../../components/DexCard/DexCardBody';
-import { Box, Typography } from '@mui/material';
-import DexCardHeader from '../../components/DexCard/DexCardHeader';
-import OpenInNewIcon from '@mui/icons-material/OpenInNew';
-import Icon from '@mdi/react';
-import { mdiWaterPump } from '@mdi/js';
+import { ROUTES } from '../../config/routes';
+import FaucetPageRoot from './FaucetPageRoot';
+import FaucetPageSelectChain from './FaucetPageSelectChain';
+import FaucetPagePlaceholder from './FaucetPagePlaceholder';
+import FaucetController from '../../controllers/FaucetController';
 
 function FaucetPage() {
-  //const { VIEWS } = useFaucetPage();
-  const { isLoading, isAdmin } = useAdmin();
-  if (isLoading) {
-    return <Loading />;
-  }
-
   return (
-    <>
+    <FaucetController>
       <FaucetMenu />
       <DexCard>
-        <DexCardHeader title="Faucet" titleAlign="center" />
-        <DexCardBody>
-          <Box sx={{ textAlign: 'center' }}>
-            <Icon
-              path={mdiWaterPump}
-              style={{ width: '40px', height: '40px', marginBottom: '16px' }}
-            />
-            <Typography>
-              Visit{' '}
-              <a
-                style={{ color: '#3f49e1' }}
-                href="https://goerlifaucet.com/"
-                target="_blank"
-              >
-                <strong>goerlifaucet.com</strong>
-                <OpenInNewIcon
-                  sx={{
-                    display: 'inline-block',
-                    marginBottom: '-4px',
-                    fontSize: '16px',
-                  }}
-                />
-              </a>
-              <br />
-              to get some Goerli-ETH tokens.
-            </Typography>
-          </Box>
-
-          <Box height="36px"></Box>
-        </DexCardBody>
-        {/*<Routes>
-          <Route path={VIEWS.ROOT.path} element={<FaucetPageRoot />} />
+        <Routes>
           <Route
-            path={VIEWS.SELECT_CHAIN.path}
+            path={ROUTES.FAUCET.PLACEHOLDER.RELATIVE_PATH}
+            element={<FaucetPagePlaceholder />}
+          />
+          <Route
+            path={ROUTES.FAUCET.ROOT.RELATIVE_PATH}
+            element={<FaucetPageRoot />}
+          />
+          <Route
+            path={ROUTES.FAUCET.SELECT_CHAIN.RELATIVE_PATH}
             element={<FaucetPageSelectChain />}
           />
-  </Routes>*/}
+        </Routes>
       </DexCard>
-    </>
+    </FaucetController>
   );
 }
 

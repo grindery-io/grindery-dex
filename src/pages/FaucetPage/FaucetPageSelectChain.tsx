@@ -4,17 +4,25 @@ import { Box } from '@mui/system';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
 import DexCardHeader from '../../components/DexCard/DexCardHeader';
 import ChainsList from '../../components/ChainsList/ChainsList';
-import { Chain } from '../../types/Chain';
 import { useNavigate } from 'react-router-dom';
-import useGrinderyChains from '../../hooks/useGrinderyChains';
-import useFaucetPage from '../../hooks/useFaucetPage';
 import DexCardBody from '../../components/DexCard/DexCardBody';
+import { useAppSelector } from '../../store/storeHooks';
+import { selectFaucetInput } from '../../store/slices/faucetSlice';
+import { ROUTES } from '../../config/routes';
+import { useFaucetController } from '../../controllers/FaucetController';
+import {
+  selectChainsItems,
+  selectChainsLoading,
+} from '../../store/slices/chainsSlice';
+import Chain from '../../models/Chain';
 
 function FaucetPageSelectChain() {
-  const { VIEWS, chain, setChain } = useFaucetPage();
+  const input = useAppSelector(selectFaucetInput);
+  const chain = input.chainId;
   let navigate = useNavigate();
-
-  const { chains } = useGrinderyChains();
+  const { handleInputChange } = useFaucetController();
+  const chains = useAppSelector(selectChainsItems);
+  const loading = useAppSelector(selectChainsLoading);
 
   return (
     <>
@@ -27,7 +35,7 @@ function FaucetPageSelectChain() {
             size="medium"
             edge="start"
             onClick={() => {
-              navigate(VIEWS.ROOT.fullPath);
+              navigate(ROUTES.FAUCET.ROOT.FULL_PATH);
             }}
           >
             <ArrowBackIcon />
@@ -40,9 +48,10 @@ function FaucetPageSelectChain() {
           chains={chains}
           chain={chain}
           onClick={(blockchain: Chain) => {
-            setChain(blockchain.caipId);
-            navigate(VIEWS.ROOT.fullPath);
+            handleInputChange('chainId', blockchain.chainId);
+            navigate(ROUTES.FAUCET.ROOT.FULL_PATH);
           }}
+          loading={loading}
         />
         <Box pb="20px"></Box>
       </DexCardBody>

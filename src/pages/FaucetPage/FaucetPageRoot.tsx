@@ -1,5 +1,4 @@
 import React from 'react';
-import { useGrinderyNexus } from 'use-grindery-nexus';
 import DexCardHeader from '../../components/DexCard/DexCardHeader';
 import DexCardBody from '../../components/DexCard/DexCardBody';
 import Loading from '../../components/Loading/Loading';
@@ -7,27 +6,36 @@ import DexCardSubmitButton from '../../components/DexCard/DexCardSubmitButton';
 import SelectChainButton from '../../components/SelectChainButton/SelectChainButton';
 import TextInput from '../../components/TextInput/TextInput';
 import { useNavigate } from 'react-router-dom';
-import useFaucetPage from '../../hooks/useFaucetPage';
 import AlertBox from '../../components/AlertBox/AlertBox';
-import { TX_EXPLORER } from '../../config/constants';
+import { TX_EXPLORER } from '../../constants';
+import { useAppSelector } from '../../store/storeHooks';
+import { selectUserChainId, selectUserId } from '../../store/slices/userSlice';
+import { useUserController } from '../../controllers/UserController';
+import { ROUTES } from '../../config/routes';
+import {
+  selectFaucetError,
+  selectFaucetInput,
+  selectFaucetLoading,
+  selectFaucetTransactionId,
+} from '../../store/slices/faucetSlice';
+import { useFaucetController } from '../../controllers/FaucetController';
+import useAbi from '../../hooks/useAbi';
+import { selectChainsItems } from '../../store/slices/chainsSlice';
+import Chain from '../../models/Chain';
 
 function FaucetPageRoot() {
-  const { user, connect, chain } = useGrinderyNexus();
-  const {
-    VIEWS,
-    userAddress,
-    amountGRT,
-    loading,
-    trxHash,
-    error,
-    errorMessage,
-    currentChain,
-    setUserAddress,
-    setAmountGRT,
-    setErrorMessage,
-    handleGetClick,
-  } = useFaucetPage();
+  const user = useAppSelector(selectUserId);
+  const chain = useAppSelector(selectUserChainId);
+  const { connectUser } = useUserController();
+  const input = useAppSelector(selectFaucetInput);
+  const error = useAppSelector(selectFaucetError);
+  const loading = useAppSelector(selectFaucetLoading);
+  const transactionId = useAppSelector(selectFaucetTransactionId);
   let navigate = useNavigate();
+  const chains = useAppSelector(selectChainsItems);
+  const currentChain = chains.find((c: Chain) => c.chainId === input.chainId);
+  const { handleInputChange, handleGetTokensAction } = useFaucetController();
+  const { tokenAbi } = useAbi();
 
   return (
     <>
@@ -37,57 +45,62 @@ function FaucetPageRoot() {
         <SelectChainButton
           title="Blockchain"
           onClick={() => {
-            navigate(VIEWS.SELECT_CHAIN.fullPath);
+            navigate(ROUTES.FAUCET.SELECT_CHAIN.FULL_PATH);
           }}
           chain={currentChain}
         />
 
         <TextInput
           label="Wallet address"
-          value={userAddress || ''}
+          value={input.address}
           onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-            setErrorMessage({
-              type: '',
-              text: '',
-            });
-            setUserAddress(event.target.value);
+            handleInputChange('address', event.target.value);
           }}
-          name="userAddress"
+          name="address"
           placeholder="0x"
           disabled={false}
-          error={errorMessage}
+          error={error}
         />
 
         <TextInput
           label="Amount"
-          value={amountGRT}
+          value={input.amount}
           onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-            setErrorMessage({
-              type: '',
-              text: '',
-            });
-            setAmountGRT(event.target.value);
+            handleInputChange('amount', event.target.value);
           }}
-          name="amountGRT"
+          name="amount"
           placeholder="Enter amount of tokens"
           disabled={false}
-          error={errorMessage}
+          error={error}
         />
 
         {loading && <Loading />}
 
-        {trxHash && (
-          <AlertBox color={error ? 'error' : 'success'}>
-            <p>Transaction {error ? 'failed' : 'success'}.</p>
+        {error && error.type === 'transaction' && error.text && (
+          <AlertBox color="error">
+            <p>{error.text}.</p>
+          </AlertBox>
+        )}
+
+        {transactionId && (
+          <AlertBox
+            color={error && error.type === 'transaction' ? 'error' : 'success'}
+          >
+            <p>
+              Transaction{' '}
+              {error && error.type === 'transaction' ? 'failed' : 'success'}.
+            </p>
             <p>
               <a
-                href={`${TX_EXPLORER[chain || '']}${trxHash}`}
+                href={`${
+                  TX_EXPLORER[`eip155:${input.chainId}`]
+                }${transactionId}`}
                 target="_blank"
                 rel="noreferrer"
               >
-                {trxHash.substring(0, 6) +
+                {transactionId.substring(0, 6) +
                   '...' +
-                  trxHash.substring(trxHash.length - 4)}
+                  transactionId.substring(transactionId.length - 4)}
               </a>
             </p>
           </AlertBox>
@@ -104,9 +117,11 @@ function FaucetPageRoot() {
           }
           onClick={
             user
-              ? handleGetClick
+              ? () => {
+                  handleGetTokensAction(input, chain, tokenAbi);
+                }
               : () => {
-                  connect();
+                  connectUser();
                 }
           }
         />

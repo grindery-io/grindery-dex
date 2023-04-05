@@ -9,8 +9,34 @@ import { Box } from '@mui/system';
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
-import { FAUCET_MENU } from '../../config/constants';
 import DrawerDesktop from '../Drawer/DrawerDesktop';
+
+export const FAUCET_MENU = [
+  // {
+  //   path: '/',
+  //   fullPath: '/faucet',
+  //   label: 'GRT Tokens',
+  //   external: false,
+  // },
+  {
+    path: 'https://goerlifaucet.com/',
+    fullPath: 'https://goerlifaucet.com/',
+    label: 'Goerli ETH Tokens',
+    external: true,
+  },
+  // {
+  //   path: 'https://testnet.bnbchain.org/faucet-smart',
+  //   fullPath: 'https://testnet.bnbchain.org/faucet-smart',
+  //   label: 'Binance BNB Tokens',
+  //   external: true,
+  // },
+  // {
+  //   path: 'https://cronos.org/faucet',
+  //   fullPath: 'https://cronos.org/faucet',
+  //   label: 'Cronos CRO Tokens',
+  //   external: true,
+  // },
+];
 
 type Props = {};
 
