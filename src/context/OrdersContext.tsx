@@ -127,7 +127,7 @@ export const OrdersContextProvider = ({
     try {
       res = await axios.put(
         `${DELIGHT_API_URL}/orders/complete`,
-        { orderId: orderId, isComplete: true },
+        { orderId: orderId },
         params
       );
     } catch (error: any) {

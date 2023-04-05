@@ -1,8 +1,8 @@
-# Grindery Mercati dApp
+# Grindery Mercari dApp
 
-Frontend for Grindery Mercati. Powered by [Delight API](https://delight-api.grindery.org/).
+Frontend for Grindery Mercari. Powered by [Delight API](https://delight-api.grindery.org/).
 
-App url: https://mercati.grindery.io/
+App url: https://mercari.grindery.io/
 
 ---
 
