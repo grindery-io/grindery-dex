@@ -21,6 +21,7 @@ import {
   selectUserChainId,
 } from '../store/slices/userSlice';
 import { GRT_CONTRACT_ADDRESS } from '../config/constants';
+import { getChainIdHex } from '../utils/helpers/chainHelpers';
 
 type ContextProps = {
   handleGetTokensAction: (
@@ -115,7 +116,7 @@ export const FaucetController = ({ children }: FaucetControllerProps) => {
           method: 'wallet_switchEthereumChain',
           params: [
             {
-              chainId: `0x${parseFloat(input.chainId).toString(16)}`,
+              chainId: getChainIdHex(input.chainId),
             },
           ],
         });
