@@ -1,10 +1,12 @@
 import { configureStore } from '@reduxjs/toolkit';
 import userReducer from './slices/userSlice';
 import faucetReducer from './slices/faucetSlice';
+import chainsReducer from './slices/chainsSlice';
 
 export const store = configureStore({
   reducer: {
     user: userReducer,
+    chains: chainsReducer,
     faucet: faucetReducer,
   },
 });

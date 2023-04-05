@@ -1,5 +1,4 @@
 import React from 'react';
-import { useGrinderyNexus } from 'use-grindery-nexus';
 import DexCardHeader from '../../components/DexCard/DexCardHeader';
 import DexCardBody from '../../components/DexCard/DexCardBody';
 import Loading from '../../components/Loading/Loading';
@@ -7,7 +6,6 @@ import DexCardSubmitButton from '../../components/DexCard/DexCardSubmitButton';
 import SelectChainButton from '../../components/SelectChainButton/SelectChainButton';
 import TextInput from '../../components/TextInput/TextInput';
 import { useNavigate } from 'react-router-dom';
-import useFaucetPage from '../../hooks/useFaucetPage';
 import AlertBox from '../../components/AlertBox/AlertBox';
 import { TX_EXPLORER } from '../../constants';
 import { useAppSelector } from '../../store/storeHooks';
@@ -20,10 +18,10 @@ import {
   selectFaucetLoading,
   selectFaucetTransactionId,
 } from '../../store/slices/faucetSlice';
-import useGrinderyChains from '../../hooks/useGrinderyChains';
 import { Chain } from '../../types/Chain';
 import { useFaucetController } from '../../controllers/FaucetController';
 import useAbi from '../../hooks/useAbi';
+import { selectChainsItems } from '../../store/slices/chainsSlice';
 
 function FaucetPageRoot() {
   const user = useAppSelector(selectUserId);
@@ -34,7 +32,7 @@ function FaucetPageRoot() {
   const loading = useAppSelector(selectFaucetLoading);
   const transactionId = useAppSelector(selectFaucetTransactionId);
   let navigate = useNavigate();
-  const { chains } = useGrinderyChains();
+  const chains = useAppSelector(selectChainsItems);
   const currentChain = chains.find((c: Chain) => c.chainId === input.chainId);
   const { handleInputChange, handleGetTokensAction } = useFaucetController();
   const { tokenAbi } = useAbi();
@@ -77,6 +75,12 @@ function FaucetPageRoot() {
         />
 
         {loading && <Loading />}
+
+        {error && error.type === 'transaction' && error.text && (
+          <AlertBox color="error">
+            <p>{error.text}.</p>
+          </AlertBox>
+        )}
 
         {transactionId && (
           <AlertBox

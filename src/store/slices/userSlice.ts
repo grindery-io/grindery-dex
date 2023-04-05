@@ -41,6 +41,8 @@ export const selectUserId = (state: RootState) => state.user.id;
 export const selectUserAddress = (state: RootState) => state.user.address;
 export const selectUserChain = (state: RootState) => state.user.chain;
 export const selectUserChainId = (state: RootState) => state.user.chainId;
+export const selectUserAccessToken = (state: RootState) =>
+  state.user.accessToken;
 export const { setUserId, setUserAddress, setUserChain, setUserAccessToken } =
   userSlice.actions;
 export default userSlice.reducer;

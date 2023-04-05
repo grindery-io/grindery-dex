@@ -1,4 +1,9 @@
-import React, { createContext, useContext, useEffect } from 'react';
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+} from 'react';
 import { useAppDispatch, useAppSelector } from '../store/storeHooks';
 import {
   FaucetInput,
@@ -42,10 +47,13 @@ export const FaucetController = ({ children }: FaucetControllerProps) => {
   const userAddress = useAppSelector(selectUserAddress);
   const userChain = useAppSelector(selectUserChainId);
 
-  const handleInputChange = (name: FaucetInputFieldName, value: string) => {
-    dispatch(clearFaucetError);
-    dispatch(setFaucetInputValue({ name, value }));
-  };
+  const handleInputChange = useCallback(
+    (name: FaucetInputFieldName, value: string) => {
+      dispatch(clearFaucetError());
+      dispatch(setFaucetInputValue({ name, value }));
+    },
+    [dispatch]
+  );
 
   const validateGetTokensAction = (input: FaucetInput) => {
     if (!input.address) {
@@ -93,7 +101,7 @@ export const FaucetController = ({ children }: FaucetControllerProps) => {
     currentChainId: string,
     tokenContractAbi: any
   ) => {
-    dispatch(clearFaucetError);
+    dispatch(clearFaucetError());
     dispatch(setFaucetTransactionId(''));
 
     if (!validateGetTokensAction(input)) {
@@ -113,7 +121,8 @@ export const FaucetController = ({ children }: FaucetControllerProps) => {
           ],
         });
       } catch (error: any) {
-        // handle change switching error
+        dispatch(setFaucetLoading(false));
+        return;
       }
     }
     const ethers = getEthers();
@@ -127,10 +136,19 @@ export const FaucetController = ({ children }: FaucetControllerProps) => {
 
     const grtContract = _grtContract.connect(signer);
 
-    const tx = await grtContract.mint(
-      input.address,
-      ethers.utils.parseEther(input.amount)
-    );
+    const tx = await grtContract
+      .mint(input.address, ethers.utils.parseEther(input.amount))
+      .catch(() => {
+        dispatch(setFaucetLoading(false));
+        dispatch(
+          setFaucetError({
+            type: 'transaction',
+            text: 'Transaction rejected',
+          })
+        );
+        return;
+      });
+
     try {
       await tx.wait();
     } catch (e) {
@@ -146,18 +164,17 @@ export const FaucetController = ({ children }: FaucetControllerProps) => {
 
     dispatch(setFaucetTransactionId(tx.hash));
     dispatch(setFaucetLoading(false));
-    dispatch(clearFaucetInput);
   };
 
   useEffect(() => {
     handleInputChange('address', userAddress);
-  }, [userAddress]);
+  }, [userAddress, handleInputChange]);
 
   useEffect(() => {
     if (userChain) {
       handleInputChange('chainId', userChain.split(':').pop() || '');
     }
-  }, [userChain]);
+  }, [userChain, handleInputChange]);
 
   return (
     <FaucetContext.Provider

@@ -6,19 +6,23 @@ import DexCardHeader from '../../components/DexCard/DexCardHeader';
 import ChainsList from '../../components/ChainsList/ChainsList';
 import { Chain } from '../../types/Chain';
 import { useNavigate } from 'react-router-dom';
-import useGrinderyChains from '../../hooks/useGrinderyChains';
 import DexCardBody from '../../components/DexCard/DexCardBody';
 import { useAppSelector } from '../../store/storeHooks';
 import { selectFaucetInput } from '../../store/slices/faucetSlice';
 import { ROUTES } from '../../config/routes';
 import { useFaucetController } from '../../controllers/FaucetController';
+import {
+  selectChainsItems,
+  selectChainsLoading,
+} from '../../store/slices/chainsSlice';
 
 function FaucetPageSelectChain() {
   const input = useAppSelector(selectFaucetInput);
   const chain = input.chainId;
   let navigate = useNavigate();
   const { handleInputChange } = useFaucetController();
-  const { chains } = useGrinderyChains();
+  const chains = useAppSelector(selectChainsItems);
+  const loading = useAppSelector(selectChainsLoading);
 
   return (
     <>
@@ -47,6 +51,7 @@ function FaucetPageSelectChain() {
             handleInputChange('chainId', blockchain.chainId);
             navigate(ROUTES.FAUCET.ROOT.FULL_PATH);
           }}
+          loading={loading}
         />
         <Box pb="20px"></Box>
       </DexCardBody>
