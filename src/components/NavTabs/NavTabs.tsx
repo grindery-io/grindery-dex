@@ -25,7 +25,9 @@ const NavTabs = (props: Props) => {
     navigate(menu[newValue].path);
   };
   return (
-    <StyledTabs value={value} onChange={handleChange}>
+    // Ignore Material Tabs error for `false` value.
+    // @ts-ignore
+    <StyledTabs value={value >= 0 ? value : false} onChange={handleChange}>
       {menu.map((item: MenuItem) => (
         <StyledTab
           key={item.path}
