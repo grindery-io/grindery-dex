@@ -1,6 +1,6 @@
 import React, { createContext, useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { DELIGHT_API_URL, POOL_CONTRACT_ADDRESS } from '../constants';
+import { DELIGHT_API_URL, POOL_CONTRACT_ADDRESS } from '../config/constants';
 import useGrinderyChains from '../hooks/useGrinderyChains';
 import useOffers from '../hooks/useOffers';
 import { Chain } from '../types/Chain';

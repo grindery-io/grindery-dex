@@ -4,7 +4,7 @@ import { Chain } from '../types/Chain';
 import { useNavigate } from 'react-router-dom';
 import useGrinderyChains from '../hooks/useGrinderyChains';
 import useOffers from '../hooks/useOffers';
-import { POOL_CONTRACT_ADDRESS } from '../constants';
+import { POOL_CONTRACT_ADDRESS } from '../config/constants';
 import useAbi from '../hooks/useAbi';
 import _ from 'lodash';
 import { getErrorMessage } from '../utils/error';

@@ -3,7 +3,10 @@ import { useGrinderyNexus } from 'use-grindery-nexus';
 import { Chain } from '../types/Chain';
 import { useNavigate } from 'react-router-dom';
 import useGrinderyChains from '../hooks/useGrinderyChains';
-import { GRT_CONTRACT_ADDRESS, POOL_CONTRACT_ADDRESS } from '../constants';
+import {
+  GRT_CONTRACT_ADDRESS,
+  POOL_CONTRACT_ADDRESS,
+} from '../config/constants';
 import useAbi from '../hooks/useAbi';
 import { getErrorMessage } from '../utils/error';
 import useStakes from '../hooks/useStakes';

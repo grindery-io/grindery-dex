@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { RichInput } from 'grindery-ui';
 import styled from 'styled-components';
-import { ICONS } from '../../constants';
+import { ICONS } from '../../config/constants';
 import useAppContext from '../../hooks/useAppContext';
 import Button from '../Button/Button';
 import CheckBox from '../CheckBox/CheckBox';

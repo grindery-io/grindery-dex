@@ -2,7 +2,7 @@ import React, { createContext, useEffect, useState } from 'react';
 import { useGrinderyNexus } from 'use-grindery-nexus';
 import { Chain } from '../types/Chain';
 import useGrinderyChains from '../hooks/useGrinderyChains';
-import { GRT_CONTRACT_ADDRESS } from '../constants';
+import { GRT_CONTRACT_ADDRESS } from '../config/constants';
 import useAbi from '../hooks/useAbi';
 
 function isNumeric(value: string) {

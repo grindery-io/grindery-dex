@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import Foco from 'react-foco';
 import Jdenticon from 'react-jdenticon';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
-import { ICONS } from '../../constants';
+import { ICONS } from '../../config/constants';
 import { useGrinderyNexus } from 'use-grindery-nexus';
 import { Snackbar } from 'grindery-ui';
 import { useNavigate } from 'react-router-dom';
