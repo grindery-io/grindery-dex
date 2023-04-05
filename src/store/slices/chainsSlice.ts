@@ -1,10 +1,10 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../store';
-import Chain from '../../models/Chain';
+import { ChainType } from '../../types/ChainType';
 
 interface ChainsState {
   loading: boolean;
-  items: Chain[];
+  items: ChainType[];
 }
 
 const initialState: ChainsState = {
@@ -16,7 +16,7 @@ const chainsSlice = createSlice({
   name: 'chains',
   initialState,
   reducers: {
-    setChainsItems(state, action: PayloadAction<Chain[]>) {
+    setChainsItems(state, action: PayloadAction<ChainType[]>) {
       state.items = action.payload;
     },
     setChainsLoading(state, action: PayloadAction<boolean>) {

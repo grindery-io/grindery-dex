@@ -14,7 +14,7 @@ import {
   selectChainsItems,
   selectChainsLoading,
 } from '../../store/slices/chainsSlice';
-import Chain from '../../models/Chain';
+import { ChainType } from '../../types/ChainType';
 
 function FaucetPageSelectChain() {
   const input = useAppSelector(selectFaucetInput);
@@ -47,7 +47,7 @@ function FaucetPageSelectChain() {
         <ChainsList
           chains={chains}
           chain={chain}
-          onClick={(blockchain: Chain) => {
+          onClick={(blockchain: ChainType) => {
             handleInputChange('chainId', blockchain.chainId);
             navigate(ROUTES.FAUCET.ROOT.FULL_PATH);
           }}

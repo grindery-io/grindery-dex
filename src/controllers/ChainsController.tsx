@@ -3,8 +3,6 @@ import { useAppDispatch, useAppSelector } from '../store/storeHooks';
 import { selectUserAccessToken } from '../store/slices/userSlice';
 import { getChainsWithTokens } from '../services/chainServices';
 import { setChainsItems, setChainsLoading } from '../store/slices/chainsSlice';
-import { ChainType } from '../types/ChainType';
-import Chain from '../models/Chain';
 
 type ChainsControllerProps = {
   children: React.ReactNode;
@@ -18,11 +16,7 @@ export const ChainsController = ({ children }: ChainsControllerProps) => {
     async (accessToken: string) => {
       dispatch(setChainsLoading(true));
       const chains = await getChainsWithTokens(accessToken);
-      dispatch(
-        setChainsItems(
-          (chains || []).map((chain: ChainType) => new Chain(chain))
-        )
-      );
+      dispatch(setChainsItems(chains || []));
       dispatch(setChainsLoading(false));
     },
     [dispatch]

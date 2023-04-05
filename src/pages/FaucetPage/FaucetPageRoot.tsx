@@ -21,7 +21,7 @@ import {
 import { useFaucetController } from '../../controllers/FaucetController';
 import useAbi from '../../hooks/useAbi';
 import { selectChainsItems } from '../../store/slices/chainsSlice';
-import Chain from '../../models/Chain';
+import { ChainType } from '../../types/ChainType';
 
 function FaucetPageRoot() {
   const user = useAppSelector(selectUserId);
@@ -33,7 +33,9 @@ function FaucetPageRoot() {
   const transactionId = useAppSelector(selectFaucetTransactionId);
   let navigate = useNavigate();
   const chains = useAppSelector(selectChainsItems);
-  const currentChain = chains.find((c: Chain) => c.chainId === input.chainId);
+  const currentChain = chains.find(
+    (c: ChainType) => c.chainId === input.chainId
+  );
   const { handleInputChange, handleGetTokensAction } = useFaucetController();
   const { tokenAbi } = useAbi();
 
