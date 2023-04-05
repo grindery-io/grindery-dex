@@ -1,6 +1,4 @@
 import React from 'react';
-import useAdmin from '../../hooks/useAdmin';
-import Loading from '../../components/Loading/Loading';
 import DexCardBody from '../../components/DexCard/DexCardBody';
 import { Box, Typography } from '@mui/material';
 import DexCardHeader from '../../components/DexCard/DexCardHeader';
@@ -9,11 +7,6 @@ import Icon from '@mdi/react';
 import { mdiWaterPump } from '@mdi/js';
 
 function FaucetPagePlaceholder() {
-  const { isLoading } = useAdmin();
-  if (isLoading) {
-    return <Loading />;
-  }
-
   return (
     <>
       <DexCardHeader title="Faucet" titleAlign="center" />

@@ -7,6 +7,8 @@ interface UserState {
   chain: string;
   chainId: string;
   accessToken: string;
+  isAdmin: boolean;
+  isAdminLoading: boolean;
 }
 
 const initialState: UserState = {
@@ -15,6 +17,8 @@ const initialState: UserState = {
   chain: '',
   chainId: '',
   accessToken: '',
+  isAdmin: false,
+  isAdminLoading: true,
 };
 
 const userSlice = createSlice({
@@ -34,6 +38,12 @@ const userSlice = createSlice({
     setUserAccessToken(state, action: PayloadAction<string>) {
       state.accessToken = action.payload || '';
     },
+    setUserIsAdmin(state, action: PayloadAction<boolean>) {
+      state.isAdmin = action.payload;
+    },
+    setUserIsAdminLoading(state, action: PayloadAction<boolean>) {
+      state.isAdminLoading = action.payload;
+    },
   },
 });
 
@@ -43,6 +53,15 @@ export const selectUserChain = (state: RootState) => state.user.chain;
 export const selectUserChainId = (state: RootState) => state.user.chainId;
 export const selectUserAccessToken = (state: RootState) =>
   state.user.accessToken;
-export const { setUserId, setUserAddress, setUserChain, setUserAccessToken } =
-  userSlice.actions;
+export const selectUserIsAdmin = (state: RootState) => state.user.isAdmin;
+export const selectUserIsAdminLoading = (state: RootState) =>
+  state.user.isAdminLoading;
+export const {
+  setUserId,
+  setUserAddress,
+  setUserChain,
+  setUserAccessToken,
+  setUserIsAdmin,
+  setUserIsAdminLoading,
+} = userSlice.actions;
 export default userSlice.reducer;

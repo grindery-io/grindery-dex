@@ -1,4 +1,9 @@
-import React, { createContext, useEffect, useContext } from 'react';
+import React, {
+  createContext,
+  useEffect,
+  useContext,
+  useCallback,
+} from 'react';
 import { useGrinderyNexus } from 'use-grindery-nexus';
 import { useAppDispatch } from '../store/storeHooks';
 import {
@@ -6,7 +11,10 @@ import {
   setUserAddress,
   setUserChain,
   setUserId,
+  setUserIsAdmin,
+  setUserIsAdminLoading,
 } from '../store/slices/userSlice';
+import { isUserAdmin } from '../services/userServices';
 
 // Context props
 type ContextProps = {
@@ -57,6 +65,16 @@ export const UserController = ({ children }: UserControllerProps) => {
     return provider.getSigner();
   };
 
+  const checkUserIsAdmin = useCallback(
+    async (accessToken: string) => {
+      dispatch(setUserIsAdminLoading(true));
+      const res = await isUserAdmin(accessToken);
+      dispatch(setUserIsAdmin(res));
+      dispatch(setUserIsAdminLoading(false));
+    },
+    [dispatch]
+  );
+
   useEffect(() => {
     dispatch(setUserId(user || ''));
   }, [user]);
@@ -76,6 +94,12 @@ export const UserController = ({ children }: UserControllerProps) => {
   useEffect(() => {
     dispatch(setUserAccessToken(token?.access_token || ''));
   }, [token?.access_token]);
+
+  useEffect(() => {
+    if (token?.access_token) {
+      checkUserIsAdmin(token?.access_token);
+    }
+  }, [token?.access_token, checkUserIsAdmin]);
 
   return (
     <UserContext.Provider
