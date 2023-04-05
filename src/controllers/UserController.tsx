@@ -14,6 +14,7 @@ type ContextProps = {
   disconnectUser: () => void;
   getEthers: () => any;
   getProvider: () => any;
+  getSigner: () => any;
 };
 
 // Context provider props
@@ -27,6 +28,7 @@ export const UserContext = createContext<ContextProps>({
   disconnectUser: () => {},
   getEthers: () => {},
   getProvider: () => {},
+  getSigner: () => {},
 });
 
 export const UserController = ({ children }: UserControllerProps) => {
@@ -48,6 +50,11 @@ export const UserController = ({ children }: UserControllerProps) => {
 
   const getProvider = () => {
     return provider;
+  };
+
+  const getSigner = () => {
+    const provider = getProvider();
+    return provider.getSigner();
   };
 
   useEffect(() => {
@@ -77,6 +84,7 @@ export const UserController = ({ children }: UserControllerProps) => {
         disconnectUser,
         getEthers,
         getProvider,
+        getSigner,
       }}
     >
       {children}

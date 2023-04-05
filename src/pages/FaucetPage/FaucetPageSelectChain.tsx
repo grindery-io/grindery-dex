@@ -7,13 +7,17 @@ import ChainsList from '../../components/ChainsList/ChainsList';
 import { Chain } from '../../types/Chain';
 import { useNavigate } from 'react-router-dom';
 import useGrinderyChains from '../../hooks/useGrinderyChains';
-import useFaucetPage from '../../hooks/useFaucetPage';
 import DexCardBody from '../../components/DexCard/DexCardBody';
+import { useAppSelector } from '../../store/storeHooks';
+import { selectFaucetInput } from '../../store/slices/faucetSlice';
+import { ROUTES } from '../../config/routes';
+import { useFaucetController } from '../../controllers/FaucetController';
 
 function FaucetPageSelectChain() {
-  const { VIEWS, chain, setChain } = useFaucetPage();
+  const input = useAppSelector(selectFaucetInput);
+  const chain = input.chainId;
   let navigate = useNavigate();
-
+  const { handleInputChange } = useFaucetController();
   const { chains } = useGrinderyChains();
 
   return (
@@ -27,7 +31,7 @@ function FaucetPageSelectChain() {
             size="medium"
             edge="start"
             onClick={() => {
-              navigate(VIEWS.ROOT.fullPath);
+              navigate(ROUTES.FAUCET.ROOT.FULL_PATH);
             }}
           >
             <ArrowBackIcon />
@@ -40,8 +44,8 @@ function FaucetPageSelectChain() {
           chains={chains}
           chain={chain}
           onClick={(blockchain: Chain) => {
-            setChain(blockchain.caipId);
-            navigate(VIEWS.ROOT.fullPath);
+            handleInputChange('chainId', blockchain.chainId);
+            navigate(ROUTES.FAUCET.ROOT.FULL_PATH);
           }}
         />
         <Box pb="20px"></Box>

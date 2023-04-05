@@ -68,9 +68,7 @@ export const App = () => {
                             path="/faucet/*"
                             element={
                               <PageContainer>
-                                <FaucetPageContextProvider>
-                                  <FaucetPage />
-                                </FaucetPageContextProvider>
+                                <FaucetPage />
                               </PageContainer>
                             }
                           />
