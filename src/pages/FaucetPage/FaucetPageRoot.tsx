@@ -18,10 +18,10 @@ import {
   selectFaucetLoading,
   selectFaucetTransactionId,
 } from '../../store/slices/faucetSlice';
-import { Chain } from '../../types/Chain';
 import { useFaucetController } from '../../controllers/FaucetController';
 import useAbi from '../../hooks/useAbi';
 import { selectChainsItems } from '../../store/slices/chainsSlice';
+import Chain from '../../models/Chain';
 
 function FaucetPageRoot() {
   const user = useAppSelector(selectUserId);

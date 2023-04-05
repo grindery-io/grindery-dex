@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../store';
-import { Chain } from '../../types/Chain';
+import Chain from '../../models/Chain';
 
 interface ChainsState {
   loading: boolean;

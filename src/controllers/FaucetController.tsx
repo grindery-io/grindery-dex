@@ -13,7 +13,6 @@ import {
   setFaucetError,
   setFaucetInputValue,
   FaucetInputFieldName,
-  clearFaucetInput,
 } from '../store/slices/faucetSlice';
 import isNumeric from '../utils/isNumeric';
 import { useUserController } from './UserController';

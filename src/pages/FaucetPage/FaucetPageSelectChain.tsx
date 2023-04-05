@@ -4,7 +4,6 @@ import { Box } from '@mui/system';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
 import DexCardHeader from '../../components/DexCard/DexCardHeader';
 import ChainsList from '../../components/ChainsList/ChainsList';
-import { Chain } from '../../types/Chain';
 import { useNavigate } from 'react-router-dom';
 import DexCardBody from '../../components/DexCard/DexCardBody';
 import { useAppSelector } from '../../store/storeHooks';
@@ -15,6 +14,7 @@ import {
   selectChainsItems,
   selectChainsLoading,
 } from '../../store/slices/chainsSlice';
+import Chain from '../../models/Chain';
 
 function FaucetPageSelectChain() {
   const input = useAppSelector(selectFaucetInput);
