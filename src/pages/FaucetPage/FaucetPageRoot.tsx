@@ -7,7 +7,6 @@ import SelectChainButton from '../../components/SelectChainButton/SelectChainBut
 import TextInput from '../../components/TextInput/TextInput';
 import { useNavigate } from 'react-router-dom';
 import AlertBox from '../../components/AlertBox/AlertBox';
-import { TX_EXPLORER } from '../../constants';
 import { useAppSelector } from '../../store/storeHooks';
 import { selectUserChainId, selectUserId } from '../../store/slices/userSlice';
 import { useUserController } from '../../controllers/UserController';
@@ -22,6 +21,7 @@ import { useFaucetController } from '../../controllers/FaucetController';
 import useAbi from '../../hooks/useAbi';
 import { selectChainsItems } from '../../store/slices/chainsSlice';
 import { ChainType } from '../../types/ChainType';
+import { TX_EXPLORER } from '../../config/constants';
 
 function FaucetPageRoot() {
   const user = useAppSelector(selectUserId);

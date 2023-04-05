@@ -16,11 +16,11 @@ import {
 } from '../store/slices/faucetSlice';
 import isNumeric from '../utils/isNumeric';
 import { useUserController } from './UserController';
-import { GRT_CONTRACT_ADDRESS } from '../constants';
 import {
   selectUserAddress,
   selectUserChainId,
 } from '../store/slices/userSlice';
+import { GRT_CONTRACT_ADDRESS } from '../config/constants';
 
 type ContextProps = {
   handleGetTokensAction: (
