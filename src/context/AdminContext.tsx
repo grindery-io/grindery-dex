@@ -1,7 +1,7 @@
 import axios from 'axios';
 import React, { createContext, useEffect, useState } from 'react';
 import { useGrinderyNexus } from 'use-grindery-nexus';
-import { DELIGHT_API_URL } from '../constants';
+import { DELIGHT_API_URL } from '../config/constants';
 import { getErrorMessage } from '../utils/error';
 
 // Context props

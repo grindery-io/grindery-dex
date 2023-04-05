@@ -9,7 +9,7 @@ import TextInput from '../../components/TextInput/TextInput';
 import { useNavigate } from 'react-router-dom';
 import useFaucetPage from '../../hooks/useFaucetPage';
 import AlertBox from '../../components/AlertBox/AlertBox';
-import { TX_EXPLORER } from '../../constants';
+import { TX_EXPLORER } from '../../config/constants';
 
 function FaucetPageRoot() {
   const { user, connect, chain } = useGrinderyNexus();

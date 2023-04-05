@@ -11,7 +11,7 @@ import DexCardHeader from '../../components/DexCard/DexCardHeader';
 import DexCardSubmitButton from '../../components/DexCard/DexCardSubmitButton';
 import SelectChainAndTokenButton from '../../components/SelectChainAndTokenButton/SelectChainAndTokenButton';
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
-import { GRT_CONTRACT_ADDRESS } from '../../constants';
+import { GRT_CONTRACT_ADDRESS } from '../../config/constants';
 import useTradePage from '../../hooks/useTradePage';
 
 type Props = {};

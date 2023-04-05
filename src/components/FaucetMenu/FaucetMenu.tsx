@@ -9,7 +9,7 @@ import { Box } from '@mui/system';
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
-import { FAUCET_MENU } from '../../constants';
+import { FAUCET_MENU } from '../../config/constants';
 import DrawerDesktop from '../Drawer/DrawerDesktop';
 
 type Props = {};

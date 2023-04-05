@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import useAppContext from '../../hooks/useAppContext';
 import Logo from '../Logo/Logo';
-import { FAUCET_MENU, SCREEN } from '../../constants';
+import { FAUCET_MENU, SCREEN } from '../../config/constants';
 import UserMenu from '../UserMenu/UserMenu';
 import { useGrinderyNexus } from 'use-grindery-nexus';
 import { useLocation, useNavigate } from 'react-router';
