@@ -1,11 +1,11 @@
-import React from "react";
-import styled, { css } from "styled-components";
-import { Button as Grinderybutton } from "grindery-ui";
-import { SCREEN } from "../../constants";
+import React from 'react';
+import styled, { css } from 'styled-components';
+import { Button as Grinderybutton } from 'grindery-ui';
+import { SCREEN } from '../../config/constants';
 
 interface ButtonWrapperProps {
   readonly hideIconBorder?: boolean;
-  readonly align: "left" | "right" | "center";
+  readonly align: 'left' | 'right' | 'center';
   readonly fullWidth: boolean;
 }
 
@@ -28,7 +28,7 @@ const ButtonWrapper = styled.div<ButtonWrapperProps>`
   }
   @media (min-width: ${SCREEN.TABLET}) {
     ${(props) =>
-      props.align === "left" &&
+      props.align === 'left' &&
       css`
         text-align: left;
         & .MuiButton-root {
@@ -38,7 +38,7 @@ const ButtonWrapper = styled.div<ButtonWrapperProps>`
       `}
 
     ${(props) =>
-      props.align === "right" &&
+      props.align === 'right' &&
       css`
         text-align: right;
         & .MuiButton-root {
@@ -48,7 +48,7 @@ const ButtonWrapper = styled.div<ButtonWrapperProps>`
       `}
 
         ${(props) =>
-      props.align === "center" &&
+      props.align === 'center' &&
       css`
         text-align: center;
         & .MuiButton-root {
@@ -82,7 +82,7 @@ type Props = {
   variant?: string;
   color?: string;
   disabled?: boolean;
-  align?: "left" | "right" | "center";
+  align?: 'left' | 'right' | 'center';
   fullWidth?: boolean;
 };
 
@@ -96,7 +96,7 @@ const Button = (props: Props) => {
     color,
     disabled,
     hideIconBorder = false,
-    align = "center",
+    align = 'center',
     fullWidth = false,
   } = props;
   return (

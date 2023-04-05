@@ -10,7 +10,7 @@ import useLiquidityWallets from '../hooks/useLiquidityWallets';
 import {
   GRTSATELLITE_CONTRACT_ADDRESS,
   GRT_CONTRACT_ADDRESS,
-} from '../constants';
+} from '../config/constants';
 import useAbi from '../hooks/useAbi';
 import { getErrorMessage } from '../utils/error';
 
