@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import { RichInput } from 'grindery-ui';
 import styled from 'styled-components';
 import { ICONS } from '../../config/constants';
-import useAppContext from '../../hooks/useAppContext';
 import Button from '../Button/Button';
 import CheckBox from '../CheckBox/CheckBox';
 import { validateEmail } from '../../helpers/utils';
+import { useUserController } from '../../controllers/UserController';
 
 const Wrapper = styled.div`
   position: fixed;
@@ -160,14 +160,14 @@ type Props = {};
 
 const EarlyAccessModal = (props: Props) => {
   const {
-    user,
-    accessAllowed,
-    verifying,
-    client,
-    setIsOptedIn,
-    isOptedIn,
-    chekingOptIn,
-  } = useAppContext();
+    getUser,
+    getAccessAllowed,
+    getVerifying,
+    getClient,
+    getSetIsOptedIn,
+    getIsOptedIn,
+    getChekingOptIn,
+  } = useUserController();
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState('');
   const [interest, setInterest] = useState(['']);
@@ -205,7 +205,7 @@ const EarlyAccessModal = (props: Props) => {
   const requestEarlyAccess = async () => {
     setLoading(true);
     setError({ type: '', text: '' });
-    const res = await client
+    const res = await getClient()
       ?.requestEngine('or_requestEarlyAccess', {
         email,
         source: 'gateway.grindery.org',
@@ -215,7 +215,7 @@ const EarlyAccessModal = (props: Props) => {
         interest: interest.join(';'),
         skill: skill.join(';'),
       })
-      .catch((err) => {
+      .catch((err: any) => {
         console.error(
           'or_requestEarlyAccess error',
           err.response.data.error.message
@@ -240,7 +240,11 @@ const EarlyAccessModal = (props: Props) => {
     setLoading(false);
   };
 
-  return user && !accessAllowed && !verifying && !chekingOptIn && !isOptedIn ? (
+  return getUser() &&
+    !getAccessAllowed &&
+    !getVerifying &&
+    !getChekingOptIn &&
+    !getIsOptedIn ? (
     <Wrapper>
       <FormWrapper>
         <FormContent>
@@ -261,7 +265,7 @@ const EarlyAccessModal = (props: Props) => {
               <Button
                 value="Continue"
                 onClick={() => {
-                  setIsOptedIn(true);
+                  getSetIsOptedIn(true);
                 }}
                 loading={loading}
                 disabled={loading}
