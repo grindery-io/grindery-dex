@@ -7,16 +7,15 @@ import DexCardSubmitButton from '../../components/DexCard/DexCardSubmitButton';
 import DexCardBody from '../../components/DexCard/DexCardBody';
 import { Chain } from '../../types/Chain';
 import { useNavigate } from 'react-router-dom';
-import useGrinderyChains from '../../hooks/useGrinderyChains';
 import useOffers from '../../hooks/useOffers';
 import ListSubheader from '../../components/ListSubheader/ListSubheader';
 import useOffersPage from '../../hooks/useOffersPage';
 import _ from 'lodash';
 import OfferPublic from '../../components/Offer/OfferPublic';
-import { LiquidityWallet } from '../../types/LiquidityWallet';
-import useLiquidityWallets from '../../hooks/useLiquidityWallets';
 import OfferSkeleton from '../../components/Offer/OfferSkeleton';
 import Offer from '../../models/Offer';
+import { useAppSelector } from '../../store/storeHooks';
+import { selectChainsItems } from '../../store/slices/chainsSlice';
 
 function OffersPageRoot() {
   const { user, connect } = useGrinderyNexus();
@@ -29,9 +28,8 @@ function OffersPageRoot() {
   } = useOffersPage();
   let navigate = useNavigate();
 
-  const { chains } = useGrinderyChains();
+  const chains = useAppSelector(selectChainsItems);
   const { offers, isLoading: offersIsLoading } = useOffers();
-  const { wallets } = useLiquidityWallets();
 
   return (
     <>

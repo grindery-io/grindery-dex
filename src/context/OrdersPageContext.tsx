@@ -2,7 +2,6 @@ import React, { createContext, useEffect, useState } from 'react';
 import { useGrinderyNexus } from 'use-grindery-nexus';
 import { Chain } from '../types/Chain';
 import { useNavigate } from 'react-router-dom';
-import useGrinderyChains from '../hooks/useGrinderyChains';
 import useOffers from '../hooks/useOffers';
 import { POOL_CONTRACT_ADDRESS } from '../config/constants';
 import useAbi from '../hooks/useAbi';
@@ -10,6 +9,8 @@ import _ from 'lodash';
 import { getErrorMessage } from '../utils/error';
 import { TokenType } from '../types/TokenType';
 import Offer from '../models/Offer';
+import { useAppSelector } from '../store/storeHooks';
+import { selectChainsItems } from '../store/slices/chainsSlice';
 
 function isNumeric(value: string) {
   return /^\d*(\.\d+)?$/.test(value);
@@ -97,7 +98,7 @@ export const OrdersPageContextProvider = ({
   const [loading, setLoading] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState({ type: '', text: '' });
   const [chain, setChain] = useState('');
-  const { chains } = useGrinderyChains();
+  const chains = useAppSelector(selectChainsItems);
   const [token, setToken] = useState<TokenType | ''>('');
   const [searchToken, setSearchToken] = useState('');
   const [isActivating, setIsActivating] = useState('');

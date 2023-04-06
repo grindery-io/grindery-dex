@@ -1,9 +1,10 @@
 import React, { createContext, useEffect, useState } from 'react';
 import { useGrinderyNexus } from 'use-grindery-nexus';
 import { Chain } from '../types/Chain';
-import useGrinderyChains from '../hooks/useGrinderyChains';
 import { GRT_CONTRACT_ADDRESS } from '../config/constants';
 import useAbi from '../hooks/useAbi';
+import { useAppSelector } from '../store/storeHooks';
+import { selectChainsItems } from '../store/slices/chainsSlice';
 
 function isNumeric(value: string) {
   return /^\d*(\.\d+)?$/.test(value);
@@ -85,7 +86,7 @@ export const FaucetPageContextProvider = ({
   const [error, setError] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState({ type: '', text: '' });
   const [chain, setChain] = useState(selectedChain || '');
-  const { chains } = useGrinderyChains();
+  const chains = useAppSelector(selectChainsItems);
   const filteredChain = chains.find((c) => c.value === chain);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const currentChain: Chain | null =

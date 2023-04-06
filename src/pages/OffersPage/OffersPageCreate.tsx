@@ -13,11 +13,9 @@ import { useNavigate } from 'react-router-dom';
 import AlertBox from '../../components/AlertBox/AlertBox';
 import useOffersPage from '../../hooks/useOffersPage';
 import { CardTitle } from '../../components/Card/CardTitle';
-import { chain } from 'lodash';
-import useGrinderyChains from '../../hooks/useGrinderyChains';
-import { Chain } from '../../types/Chain';
-import AmountInput from '../../components/AmountInput/AmountInput';
 import UploadButton from '../../components/UploadButton/UploadButton';
+import { useAppSelector } from '../../store/storeHooks';
+import { selectChainsItems } from '../../store/slices/chainsSlice';
 
 function OffersPageCreate() {
   const { user, connect } = useGrinderyNexus();
@@ -38,7 +36,6 @@ function OffersPageCreate() {
     setExchangeRate,
     VIEWS,
     chain,
-    toChain,
     toToken,
     currentToChain,
     title,
@@ -50,9 +47,7 @@ function OffersPageCreate() {
   } = useOffersPage();
   let navigate = useNavigate();
 
-  const { chains } = useGrinderyChains();
-
-  const chainLabel = chains.find((c: Chain) => c.value === chain)?.label;
+  const chains = useAppSelector(selectChainsItems);
 
   return (
     <>

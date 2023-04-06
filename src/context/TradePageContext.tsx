@@ -1,7 +1,6 @@
 import React, { createContext, useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { DELIGHT_API_URL, POOL_CONTRACT_ADDRESS } from '../config/constants';
-import useGrinderyChains from '../hooks/useGrinderyChains';
 import useOffers from '../hooks/useOffers';
 import { Chain } from '../types/Chain';
 import { TokenType } from '../types/TokenType';
@@ -13,6 +12,11 @@ import { getErrorMessage } from '../utils/error';
 import useOrders from '../hooks/useOrders';
 import axios from 'axios';
 import Offer from '../models/Offer';
+import {
+  selectChainsItems,
+  selectChainsLoading,
+} from '../store/slices/chainsSlice';
+import { useAppSelector } from '../store/storeHooks';
 
 // Context props
 type ContextProps = {
@@ -127,7 +131,8 @@ export const TradePageContextProvider = ({
   const [approved, setApproved] = useState<boolean>(false);
   const [accepted, setAccepted] = useState<string>('');
   const [toChain, setToChain] = useState<Chain | null>(null);
-  const { chains, isLoading: chainsIsLoading } = useGrinderyChains();
+  const chains = useAppSelector(selectChainsItems);
+  const chainsIsLoading = useAppSelector(selectChainsLoading);
   const [fromChain, setFromChain] = useState<Chain | null>(null);
   const [fromToken, setFromToken] = useState<TokenType | ''>('');
   const [toToken, setToToken] = useState<TokenType | ''>('');

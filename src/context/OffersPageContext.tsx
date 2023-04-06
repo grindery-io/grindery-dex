@@ -2,7 +2,6 @@ import React, { createContext, useEffect, useState } from 'react';
 import { useGrinderyNexus } from 'use-grindery-nexus';
 import { Chain } from '../types/Chain';
 import { useNavigate } from 'react-router-dom';
-import useGrinderyChains from '../hooks/useGrinderyChains';
 import useOffers from '../hooks/useOffers';
 import { POOL_CONTRACT_ADDRESS } from '../config/constants';
 import useAbi from '../hooks/useAbi';
@@ -12,10 +11,12 @@ import { TokenType } from '../types/TokenType';
 import Offer from '../models/Offer';
 import useLiquidityWallets from '../hooks/useLiquidityWallets';
 import { LiquidityWallet } from '../types/LiquidityWallet';
-
-function isNumeric(value: string) {
-  return /^\d*(\.\d+)?$/.test(value);
-}
+import { useAppSelector } from '../store/storeHooks';
+import {
+  selectChainsItems,
+  selectChainsLoading,
+} from '../store/slices/chainsSlice';
+import isNumeric from '../utils/isNumeric';
 
 // Context props
 type ContextProps = {
@@ -134,7 +135,8 @@ export const OffersPageContextProvider = ({
   const [amountMax, setAmountMax] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState({ type: '', text: '' });
-  const { chains, isLoading: chainsIsLoading } = useGrinderyChains();
+  const chains = useAppSelector(selectChainsItems);
+  const chainsIsLoading = useAppSelector(selectChainsLoading);
   const [chain, setChain] = useState('');
   const [token, setToken] = useState<TokenType | ''>('');
   const [toChain, setToChain] = useState('');

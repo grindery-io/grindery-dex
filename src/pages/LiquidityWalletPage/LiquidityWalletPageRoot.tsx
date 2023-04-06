@@ -9,10 +9,11 @@ import DexCardBody from '../../components/DexCard/DexCardBody';
 import { LiquidityWallet as LiquidityWalletType } from '../../types/LiquidityWallet';
 import LiquidityWallet from '../../components/LiquidityWallet/LiquidityWallet';
 import { useNavigate } from 'react-router-dom';
-import useGrinderyChains from '../../hooks/useGrinderyChains';
 import useLiquidityWalletPage from '../../hooks/useLiquidityWalletPage';
 import useLiquidityWallets from '../../hooks/useLiquidityWallets';
 import Loading from '../../components/Loading/Loading';
+import { useAppSelector } from '../../store/storeHooks';
+import { selectChainsItems } from '../../store/slices/chainsSlice';
 
 function LiquidityWalletPageRoot() {
   const { user, connect } = useGrinderyNexus();
@@ -20,7 +21,7 @@ function LiquidityWalletPageRoot() {
   let navigate = useNavigate();
   const { wallets, isLoading: walletsIsLoading } = useLiquidityWallets();
 
-  const { chains } = useGrinderyChains();
+  const chains = useAppSelector(selectChainsItems);
 
   return (
     <>

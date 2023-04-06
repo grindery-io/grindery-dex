@@ -13,10 +13,11 @@ import useLiquidityWalletPage from '../../hooks/useLiquidityWalletPage';
 import SelectTokenButton from '../../components/SelectTokenButton/SelectTokenButton';
 import { TokenType } from '../../types/TokenType';
 import { LiquidityWallet } from '../../types/LiquidityWallet';
-import useGrinderyChains from '../../hooks/useGrinderyChains';
 import { Chain } from '../../types/Chain';
 import useLiquidityWallets from '../../hooks/useLiquidityWallets';
 import AlertBox from '../../components/AlertBox/AlertBox';
+import { useAppSelector } from '../../store/storeHooks';
+import { selectChainsItems } from '../../store/slices/chainsSlice';
 
 function LiquidityWalletPageAdd() {
   const { user, connect } = useGrinderyNexus();
@@ -34,7 +35,7 @@ function LiquidityWalletPageAdd() {
   let navigate = useNavigate();
   const { wallets, isLoading: walletsIsLoading } = useLiquidityWallets();
 
-  const { chains } = useGrinderyChains();
+  const chains = useAppSelector(selectChainsItems);
   let { walletId } = useParams();
 
   const currentWallet = wallets.find(

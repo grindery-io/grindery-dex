@@ -2,21 +2,16 @@ import React, { createContext, useEffect, useState } from 'react';
 import { useGrinderyNexus } from 'use-grindery-nexus';
 import { Chain } from '../types/Chain';
 import { useNavigate } from 'react-router-dom';
-import useGrinderyChains from '../hooks/useGrinderyChains';
 import _ from 'lodash';
 import { LiquidityWallet } from '../types/LiquidityWallet';
 import { TokenType } from '../types/TokenType';
 import useLiquidityWallets from '../hooks/useLiquidityWallets';
-import {
-  GRTSATELLITE_CONTRACT_ADDRESS,
-  GRT_CONTRACT_ADDRESS,
-} from '../config/constants';
+import { GRTSATELLITE_CONTRACT_ADDRESS } from '../config/constants';
 import useAbi from '../hooks/useAbi';
 import { getErrorMessage } from '../utils/error';
-
-function isNumeric(value: string) {
-  return /^\d*(\.\d+)?$/.test(value);
-}
+import { useAppSelector } from '../store/storeHooks';
+import { selectChainsItems } from '../store/slices/chainsSlice';
+import isNumeric from '../utils/isNumeric';
 
 // Context props
 type ContextProps = {
@@ -118,7 +113,7 @@ export const LiquidityWalletPageContextProvider = ({
   const [loading, setLoading] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState({ type: '', text: '' });
   const [chain, setChain] = useState(selectedChain?.toString() || '');
-  const { chains } = useGrinderyChains();
+  const chains = useAppSelector(selectChainsItems);
   const [searchToken, setSearchToken] = useState('');
   const { satelliteAbi, liquidityWalletAbi, tokenAbi } = useAbi();
   const filteredChain = chains.find((c) => c.value === chain);

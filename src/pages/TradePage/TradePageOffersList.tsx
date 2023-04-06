@@ -5,7 +5,6 @@ import DexCardHeader from '../../components/DexCard/DexCardHeader';
 import useTradePage from '../../hooks/useTradePage';
 import DexCardBody from '../../components/DexCard/DexCardBody';
 import NotFound from '../../components/NotFound/NotFound';
-import useGrinderyChains from '../../hooks/useGrinderyChains';
 import OfferPublic from '../../components/Offer/OfferPublic';
 import OfferSkeleton from '../../components/Offer/OfferSkeleton';
 import { useNavigate } from 'react-router-dom';
@@ -15,7 +14,6 @@ type Props = {};
 
 const TradePageOffersList = (props: Props) => {
   const { VIEWS, loading, foundOffers, fromAmount } = useTradePage();
-  const { chains } = useGrinderyChains();
   let navigate = useNavigate();
 
   return (

@@ -4,15 +4,16 @@ import { Box } from '@mui/system';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
 import DexCardHeader from '../../components/DexCard/DexCardHeader';
 import ChainsList from '../../components/ChainsList/ChainsList';
-import useGrinderyChains from '../../hooks/useGrinderyChains';
 import { useNavigate } from 'react-router-dom';
 import useStakingPage from '../../hooks/useStakingPage';
 import DexCardBody from '../../components/DexCard/DexCardBody';
+import { useAppSelector } from '../../store/storeHooks';
+import { selectChainsItems } from '../../store/slices/chainsSlice';
 
 function StakingPageSelectChain() {
   const { VIEWS, chain, setChain } = useStakingPage();
   let navigate = useNavigate();
-  const { chains } = useGrinderyChains();
+  const chains = useAppSelector(selectChainsItems);
 
   return (
     <>

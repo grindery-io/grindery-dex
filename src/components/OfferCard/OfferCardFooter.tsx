@@ -1,6 +1,5 @@
 import React from 'react';
 import { Box, Skeleton } from '@mui/material';
-import useGrinderyChains from '../../hooks/useGrinderyChains';
 import TransactionID from '../TransactionID/TransactionID';
 import Offer from '../../models/Offer';
 import { selectChainsItems } from '../../store/slices/chainsSlice';

@@ -8,13 +8,18 @@ import useAutomationsPage from '../../hooks/useAutomationsPage';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
 import ChainsList from '../../components/ChainsList/ChainsList';
 import { Chain } from '../../types/Chain';
-import useGrinderyChains from '../../hooks/useGrinderyChains';
+import { useAppSelector } from '../../store/storeHooks';
+import {
+  selectChainsItems,
+  selectChainsLoading,
+} from '../../store/slices/chainsSlice';
 
 type Props = {};
 
 const AutomationsPageSelectChain = (props: Props) => {
   const { chain, handleChainChange, VIEWS } = useAutomationsPage();
-  const { chains, isLoading: chainsIsLoading } = useGrinderyChains();
+  const chains = useAppSelector(selectChainsItems);
+  const chainsIsLoading = useAppSelector(selectChainsLoading);
   const filteredChains = chains.filter((c: Chain) => c.chainId === '97');
   let navigate = useNavigate();
   return (

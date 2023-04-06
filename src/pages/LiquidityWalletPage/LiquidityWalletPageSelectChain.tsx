@@ -7,15 +7,16 @@ import ChainsList from '../../components/ChainsList/ChainsList';
 import { Chain } from '../../types/Chain';
 import { LiquidityWallet } from '../../types/LiquidityWallet';
 import { useNavigate } from 'react-router-dom';
-import useGrinderyChains from '../../hooks/useGrinderyChains';
 import useLiquidityWalletPage from '../../hooks/useLiquidityWalletPage';
 import DexCardBody from '../../components/DexCard/DexCardBody';
+import { useAppSelector } from '../../store/storeHooks';
+import { selectChainsItems } from '../../store/slices/chainsSlice';
 
 function LiquidityWalletPageSelectChain() {
   const { chain, wallets, VIEWS, setChain } = useLiquidityWalletPage();
   let navigate = useNavigate();
 
-  const { chains } = useGrinderyChains();
+  const chains = useAppSelector(selectChainsItems);
 
   return (
     <>

@@ -9,7 +9,6 @@ import DexCardBody from '../../components/DexCard/DexCardBody';
 import { LiquidityWallet } from '../../types/LiquidityWallet';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
 import { useNavigate, useParams } from 'react-router-dom';
-import useGrinderyChains from '../../hooks/useGrinderyChains';
 import useLiquidityWalletPage from '../../hooks/useLiquidityWalletPage';
 import { Chain } from '../../types/Chain';
 import { TokenType } from '../../types/TokenType';
@@ -18,6 +17,8 @@ import LiquidityWalletToken, {
 } from '../../components/LiquidityWalletToken/LiquidityWalletToken';
 import useLiquidityWallets from '../../hooks/useLiquidityWallets';
 import Loading from '../../components/Loading/Loading';
+import { useAppSelector } from '../../store/storeHooks';
+import { selectChainsItems } from '../../store/slices/chainsSlice';
 
 function LiquidityWalletPageTokens() {
   const { user, connect } = useGrinderyNexus();
@@ -25,7 +26,7 @@ function LiquidityWalletPageTokens() {
   let navigate = useNavigate();
   let { walletId } = useParams();
   const { wallets, isLoading: walletsIsLoading } = useLiquidityWallets();
-  const { chains } = useGrinderyChains();
+  const chains = useAppSelector(selectChainsItems);
 
   const currentWallet = wallets.find(
     (w: LiquidityWallet) => w._id === walletId

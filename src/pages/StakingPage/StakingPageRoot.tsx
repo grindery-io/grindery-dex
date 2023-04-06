@@ -9,16 +9,17 @@ import DexCardBody from '../../components/DexCard/DexCardBody';
 import Loading from '../../components/Loading/Loading';
 import { Stake as StakeType } from '../../types/Stake';
 import AlertBox from '../../components/AlertBox/AlertBox';
-import useGrinderyChains from '../../hooks/useGrinderyChains';
 import { useNavigate } from 'react-router-dom';
 import useStakes from '../../hooks/useStakes';
 import useStakingPage from '../../hooks/useStakingPage';
+import { useAppSelector } from '../../store/storeHooks';
+import { selectChainsItems } from '../../store/slices/chainsSlice';
 
 function StakingPageRoot() {
   const { user, connect } = useGrinderyNexus();
   const { VIEWS, errorMessage, setSelectedStake } = useStakingPage();
   let navigate = useNavigate();
-  const { chains } = useGrinderyChains();
+  const chains = useAppSelector(selectChainsItems);
   const { stakes, isLoading: stakesIsLoading } = useStakes();
 
   return (

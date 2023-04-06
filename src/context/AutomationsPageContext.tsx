@@ -3,11 +3,15 @@ import React, { createContext, useEffect, useState } from 'react';
 import { useGrinderyNexus } from 'use-grindery-nexus';
 import { DELIGHT_API_URL } from '../config/constants';
 import useAbi from '../hooks/useAbi';
-import useGrinderyChains from '../hooks/useGrinderyChains';
 import useLiquidityWallets from '../hooks/useLiquidityWallets';
 import { Chain } from '../types/Chain';
 import { LiquidityWallet } from '../types/LiquidityWallet';
 import { getErrorMessage } from '../utils/error';
+import { useAppSelector } from '../store/storeHooks';
+import {
+  selectChainsItems,
+  selectChainsLoading,
+} from '../store/slices/chainsSlice';
 
 // Context props
 type ContextProps = {
@@ -63,7 +67,8 @@ export const AutomationsPageContextProvider = ({
     address,
   } = useGrinderyNexus();
   const [chain, setChain] = useState<Chain | null>(null);
-  const { chains, isLoading: chainsIsLoading } = useGrinderyChains();
+  const chains = useAppSelector(selectChainsItems);
+  const chainsIsLoading = useAppSelector(selectChainsLoading);
   const [loading, setLoading] = useState(false);
   const [bot, setBot] = useState<string>('');
   const [currentBot, setCurrentBot] = useState<string>('');

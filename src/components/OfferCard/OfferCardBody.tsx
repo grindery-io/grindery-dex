@@ -4,7 +4,8 @@ import { ChainTokenBox } from '../ChainTokenBox/ChainTokenBox';
 import { AvatarDefault } from '../Avatar/AvatarDefault';
 import useShopPage from '../../hooks/useShopPage';
 import Offer from '../../models/Offer';
-import useGrinderyChains from '../../hooks/useGrinderyChains';
+import { useAppSelector } from '../../store/storeHooks';
+import { selectChainsItems } from '../../store/slices/chainsSlice';
 
 type Props = {
   offer: Offer;
@@ -13,7 +14,7 @@ type Props = {
 const OfferCardBody = (props: Props) => {
   const { offer } = props;
   const { currentFromChain, fromToken, tokenPrice } = useShopPage();
-  const { chains } = useGrinderyChains();
+  const chains = useAppSelector(selectChainsItems);
 
   const chain = offer.getChain(chains);
   const token = offer.getToken(chains);

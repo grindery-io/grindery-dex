@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { Skeleton, Typography } from '@mui/material';
 import { Box } from '@mui/system';
 import useOffers from '../../hooks/useOffers';
-import useGrinderyChains from '../../hooks/useGrinderyChains';
 import moment from 'moment';
 import DexCardSubmitButton from '../DexCard/DexCardSubmitButton';
 import { Card } from '../Card/Card';

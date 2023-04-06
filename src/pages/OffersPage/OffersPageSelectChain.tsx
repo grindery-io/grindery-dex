@@ -8,10 +8,11 @@ import TokenSearch from '../../components/TokenSearch/TokenSearch';
 import TokensList from '../../components/TokensList/TokensList';
 import NotFound from '../../components/NotFound/NotFound';
 import { useNavigate } from 'react-router-dom';
-import useGrinderyChains from '../../hooks/useGrinderyChains';
 import useOffersPage from '../../hooks/useOffersPage';
 import DexCardBody from '../../components/DexCard/DexCardBody';
 import { Chain } from '../../types/Chain';
+import { useAppSelector } from '../../store/storeHooks';
+import { selectChainsItems } from '../../store/slices/chainsSlice';
 
 function OffersPageSelectChain() {
   const {
@@ -27,7 +28,7 @@ function OffersPageSelectChain() {
   } = useOffersPage();
   let navigate = useNavigate();
 
-  const { chains } = useGrinderyChains();
+  const chains = useAppSelector(selectChainsItems);
 
   const chainLabel = chains.find((c: Chain) => c.caipId === chain)?.label;
 

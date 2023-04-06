@@ -5,7 +5,6 @@ import DexCardHeader from '../../components/DexCard/DexCardHeader';
 import Loading from '../../components/Loading/Loading';
 import useTradePage from '../../hooks/useTradePage';
 import DexCardBody from '../../components/DexCard/DexCardBody';
-import useGrinderyChains from '../../hooks/useGrinderyChains';
 import OfferPublic from '../../components/Offer/OfferPublic';
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
@@ -18,6 +17,8 @@ import { formatAddress } from '../../utils/address';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import Offer from '../../models/Offer';
+import { useAppSelector } from '../../store/storeHooks';
+import { selectChainsItems } from '../../store/slices/chainsSlice';
 
 type Props = {};
 
@@ -36,10 +37,8 @@ const TradePageOfferAccept = (props: Props) => {
     fromAmount,
     fromChain,
     fromToken,
-    toTokenPrice,
-    fromTokenPrice,
   } = useTradePage();
-  const { chains } = useGrinderyChains();
+  const chains = useAppSelector(selectChainsItems);
   let navigate = useNavigate();
   let { offerId } = useParams();
   const [copied, setCopied] = useState(false);

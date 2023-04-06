@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box } from '@mui/system';
-import { Navigate, Route, Routes, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import DexCard from '../../components/DexCard/DexCard';
 import DexCardBody from '../../components/DexCard/DexCardBody';
 import DexCardHeader from '../../components/DexCard/DexCardHeader';
@@ -8,11 +8,15 @@ import { IconButton } from '@mui/material';
 import useTradePage from '../../hooks/useTradePage';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
 import ChainsList from '../../components/ChainsList/ChainsList';
-import useGrinderyChains from '../../hooks/useGrinderyChains';
 import TokenSearch from '../../components/TokenSearch/TokenSearch';
 import TokensList from '../../components/TokensList/TokensList';
 import NotFound from '../../components/NotFound/NotFound';
 import { Chain } from '../../types/Chain';
+import { useAppSelector } from '../../store/storeHooks';
+import {
+  selectChainsItems,
+  selectChainsLoading,
+} from '../../store/slices/chainsSlice';
 
 type Props = {};
 
@@ -27,7 +31,8 @@ const TradePageSelectFromChainAndToken = (props: Props) => {
     currentFromChain,
     handleFromTokenChange,
   } = useTradePage();
-  const { chains, isLoading: chainsIsLoading } = useGrinderyChains();
+  const chains = useAppSelector(selectChainsItems);
+  const chainsIsLoading = useAppSelector(selectChainsLoading);
   let navigate = useNavigate();
   const filteredChains = chains.filter((c: Chain) => c.value === 'eip155:5');
   return (

@@ -8,13 +8,14 @@ import useLiquidityWalletPage from '../../hooks/useLiquidityWalletPage';
 import TokenSearch from '../../components/TokenSearch/TokenSearch';
 import TokensList from '../../components/TokensList/TokensList';
 import NotFound from '../../components/NotFound/NotFound';
-import useGrinderyChains from '../../hooks/useGrinderyChains';
 import { LiquidityWallet } from '../../types/LiquidityWallet';
 import { Chain } from '../../types/Chain';
 import useLiquidityWallets from '../../hooks/useLiquidityWallets';
 import Loading from '../../components/Loading/Loading';
 import { useGrinderyNexus } from 'use-grindery-nexus';
 import DexCardBody from '../../components/DexCard/DexCardBody';
+import { useAppSelector } from '../../store/storeHooks';
+import { selectChainsItems } from '../../store/slices/chainsSlice';
 
 function LiquidityWalletPageSelectToken() {
   const { user } = useGrinderyNexus();
@@ -24,7 +25,7 @@ function LiquidityWalletPageSelectToken() {
   const { wallets, isLoading: walletsIsLoading } = useLiquidityWallets();
   let { walletId } = useParams();
 
-  const { chains } = useGrinderyChains();
+  const chains = useAppSelector(selectChainsItems);
 
   const currentWallet = wallets.find(
     (w: LiquidityWallet) => w._id === walletId

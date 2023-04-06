@@ -1,7 +1,5 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Box, Skeleton, Stack, Tooltip, Typography } from '@mui/material';
-import { useGrinderyNexus } from 'use-grindery-nexus';
-import useGrinderyChains from '../../hooks/useGrinderyChains';
 import TransactionID from '../TransactionID/TransactionID';
 import GavelIcon from '@mui/icons-material/Gavel';
 import CurrencyExchangeIcon from '@mui/icons-material/CurrencyExchange';
