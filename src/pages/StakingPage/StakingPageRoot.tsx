@@ -6,7 +6,7 @@ import Stake from '../../components/Stake/Stake';
 import DexCardSubmitButton from '../../components/DexCard/DexCardSubmitButton';
 import DexCardBody from '../../components/DexCard/DexCardBody';
 import Loading from '../../components/Loading/Loading';
-import { Stake as StakeType } from '../../types/Stake';
+import { StakeType } from '../../types/StakeType';
 import AlertBox from '../../components/AlertBox/AlertBox';
 import { useNavigate } from 'react-router-dom';
 import useStakingPage from '../../hooks/useStakingPage';

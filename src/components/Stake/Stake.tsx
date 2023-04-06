@@ -3,7 +3,7 @@ import { Avatar, IconButton, Tooltip } from '@mui/material';
 import { Box } from '@mui/system';
 import { StakeBadge } from './Stake.style';
 import { Remove as RemoveIcon } from '@mui/icons-material';
-import { Stake as StakeType } from '../../types/Stake';
+import { StakeType } from '../../types/StakeType';
 import { Card } from '../Card/Card';
 import { ChainTokenBox } from '../ChainTokenBox/ChainTokenBox';
 import { AvatarDefault } from '../Avatar/AvatarDefault';

@@ -7,7 +7,6 @@ import {
   POOL_CONTRACT_ADDRESS,
 } from '../config/constants';
 import { getErrorMessage } from '../utils/error';
-import { Stake } from '../types/Stake';
 import isNumeric from '../utils/isNumeric';
 import { useAppDispatch, useAppSelector } from '../store/storeHooks';
 import { selectChainsItems } from '../store/slices/chainsSlice';
@@ -331,7 +330,7 @@ export const StakingPageContextProvider = ({
           amount: (
             parseInt(
               stakes.find(
-                (s: Stake) => s.chainId === chain.toString().split(':')[1]
+                (s: StakeType) => s.chainId === chain.toString().split(':')[1]
               )?.amount || '0'
             ) + parseInt(amountGRT)
           ).toString(),
@@ -339,7 +338,7 @@ export const StakingPageContextProvider = ({
         if (stakeUpdated) {
           // update stakes state
           setStakes(
-            [...stakes].map((stake: Stake) => {
+            [...stakes].map((stake: StakeType) => {
               if (stake.chainId === chain.toString().split(':')[1]) {
                 return {
                   ...stake,
@@ -476,14 +475,14 @@ export const StakingPageContextProvider = ({
       chainId: chain.toString().split(':')[1],
       amount: (
         parseFloat(
-          stakes.find((s: Stake) => s._id === selectedStake)?.amount || '0'
+          stakes.find((s: StakeType) => s._id === selectedStake)?.amount || '0'
         ) - parseFloat(amountAdd)
       ).toString(),
     });
     if (stakeUpdated) {
       // update stakes state
       setStakes([
-        ...stakes.map((s: Stake) => {
+        ...stakes.map((s: StakeType) => {
           if (s._id === selectedStake) {
             return {
               ...s,

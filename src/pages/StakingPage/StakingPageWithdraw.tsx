@@ -9,7 +9,7 @@ import Loading from '../../components/Loading/Loading';
 import TextInput from '../../components/TextInput/TextInput';
 import { useNavigate, useParams } from 'react-router-dom';
 import useStakingPage from '../../hooks/useStakingPage';
-import { Stake } from '../../types/Stake';
+import { StakeType } from '../../types/StakeType';
 import { useAppSelector } from '../../store/storeHooks';
 import {
   selectStakesItems,
@@ -37,7 +37,7 @@ function StakingPageWithdraw() {
   const stakes = useAppSelector(selectStakesItems);
   const stakesIsLoading = useAppSelector(selectStakesLoading);
   let { stakeId } = useParams();
-  const currentStake = stakes.find((s: Stake) => s._id === stakeId);
+  const currentStake = stakes.find((s: StakeType) => s._id === stakeId);
 
   useEffect(() => {
     if (currentStake) {
