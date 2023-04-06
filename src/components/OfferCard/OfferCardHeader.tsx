@@ -13,7 +13,6 @@ type Props = {
 };
 
 const OfferCardHeader = (props: Props) => {
-  const { token: userToken } = useGrinderyNexus();
   const { offer } = props;
   const { chains } = useGrinderyChains();
 
