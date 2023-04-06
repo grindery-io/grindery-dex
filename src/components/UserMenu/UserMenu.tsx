@@ -12,6 +12,8 @@ import { mdiWaterPump } from '@mdi/js';
 import SellOutlinedIcon from '@mui/icons-material/SellOutlined';
 import useAdmin from '../../hooks/useAdmin';
 import { useUserController } from '../../controllers/UserController';
+import { useAppSelector } from '../../store/storeHooks';
+import { selectUserAddress } from '../../store/slices/userSlice';
 
 const UserContainer = styled.div`
   position: relative;
@@ -129,12 +131,12 @@ type Props = {
 
 const UserMenu = (props: Props) => {
   const mode = props.mode || 'light';
-  const { getUserAddress, disconnectUser } = useUserController();
+  const { disconnectUser } = useUserController();
   const [menuOpened, setMenuOpened] = useState(false);
   const [copied, setCopied] = useState(false);
   let navigate = useNavigate();
   const { isAdmin } = useAdmin();
-  const address = getUserAddress();
+  const address = useAppSelector(selectUserAddress);
 
   return address ? (
     <GrinderyThemeProvider>
