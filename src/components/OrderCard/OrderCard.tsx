@@ -11,6 +11,8 @@ import TransactionID from '../TransactionID/TransactionID';
 import OfferPublic from '../Offer/OfferPublic';
 import Offer from '../../models/Offer';
 import Order from '../../models/Order';
+import { useAppSelector } from '../../store/storeHooks';
+import { selectChainsItems } from '../../store/slices/chainsSlice';
 
 type Props = {
   order: Order;
@@ -23,7 +25,7 @@ const OrderCard = (props: Props) => {
   const { order, userType, onCompleteClick, error } = props;
   const { getOfferById } = useOffers();
   const [offer, setOffer] = useState<Offer | false>(false);
-  const { chains } = useGrinderyChains();
+  const chains = useAppSelector(selectChainsItems);
   const [loading, setLoading] = useState(false);
   const isUserA = userType === 'a';
 
