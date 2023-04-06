@@ -43,7 +43,6 @@ export const App = () => {
                       <EarlyAccessModal />
                     </GrinderyThemeProvider>
                     <AppHeader />
-
                     <GrinderyChainsContextProvider>
                       <AbiContextProvider>
                         <StakesContextProvider>
