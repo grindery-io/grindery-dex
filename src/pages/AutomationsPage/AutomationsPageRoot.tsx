@@ -72,73 +72,78 @@ const AutomationsPageRoot = (props: Props) => {
           chain={currentChain}
           error={errorMessage}
         />
-        <TextArea
-          label="Liquidity wallet ABI"
-          name="liquidityWalletABI"
-          value={JSON.stringify(liquidityWalletAbi)}
-          showCopyButton
-          readOnly
-          maxRows={3}
-        />
-        <TextArea
-          label="Pool ABI"
-          name="poolAbi"
-          value={JSON.stringify(poolAbi)}
-          showCopyButton
-          readOnly
-          maxRows={3}
-        />
-        <CardTitle sx={{ padding: '30px 0 0' }}>Power delegation</CardTitle>
-        {user && botAddress && (
-          <AlertBox wrapperStyle={{ marginBottom: '20px' }}>
-            <Box sx={{ textAlign: 'center' }}></Box>
-            <Typography variant="subtitle2" sx={{ marginbottom: '4px' }}>
-              Power has been delegated to the bot
-            </Typography>
-            <TransactionID label="Address" value={botAddress} />
-          </AlertBox>
+        {!currentChain && <Box height="20px" />}
+        {currentChain && (
+          <>
+            <TextArea
+              label="Liquidity wallet ABI"
+              name="liquidityWalletABI"
+              value={JSON.stringify(liquidityWalletAbi)}
+              showCopyButton
+              readOnly
+              maxRows={3}
+            />
+            <TextArea
+              label="Pool ABI"
+              name="poolAbi"
+              value={JSON.stringify(poolAbi)}
+              showCopyButton
+              readOnly
+              maxRows={3}
+            />
+            <CardTitle sx={{ padding: '30px 0 0' }}>Power delegation</CardTitle>
+            {user && botAddress && (
+              <AlertBox wrapperStyle={{ marginBottom: '20px' }}>
+                <Box sx={{ textAlign: 'center' }}></Box>
+                <Typography variant="subtitle2" sx={{ marginbottom: '4px' }}>
+                  Power has been delegated to the bot
+                </Typography>
+                <TransactionID label="Address" value={botAddress} />
+              </AlertBox>
+            )}
+
+            <TextInput
+              label="Bot address"
+              name="bot"
+              value={bot}
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                handleAutomationsInputChange('bot', event.target.value);
+              }}
+              helpText="Change this if you want to delegate power to&nbsp;a&nbsp;different address."
+              error={errorMessage}
+            />
+
+            {errorMessage &&
+              errorMessage.type === 'setBot' &&
+              errorMessage.text && (
+                <AlertBox color="error">
+                  <p>{errorMessage.text}</p>
+                </AlertBox>
+              )}
+            {loading && <Loading />}
+
+            <DexCardSubmitButton
+              loading={loading}
+              label={user ? 'Delegate power' : 'Connect wallet'}
+              onClick={
+                user
+                  ? () => {
+                      handleAutomationsDelegateAction(
+                        accessToken,
+                        input,
+                        userChainId,
+                        wallet?.walletAddress || '',
+                        liquidityWalletAbi
+                      );
+                    }
+                  : () => {
+                      connect();
+                    }
+              }
+              disabled={loading}
+            />
+          </>
         )}
-
-        <TextInput
-          label="Bot address"
-          name="bot"
-          value={bot}
-          onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-            handleAutomationsInputChange('bot', event.target.value);
-          }}
-          helpText="Change this if you want to delegate power to&nbsp;a&nbsp;different address."
-          error={errorMessage}
-        />
-
-        {errorMessage &&
-          errorMessage.type === 'setBot' &&
-          errorMessage.text && (
-            <AlertBox color="error">
-              <p>{errorMessage.text}</p>
-            </AlertBox>
-          )}
-        {loading && <Loading />}
-
-        <DexCardSubmitButton
-          loading={loading}
-          label={user ? 'Delegate power' : 'Connect wallet'}
-          onClick={
-            user
-              ? () => {
-                  handleAutomationsDelegateAction(
-                    accessToken,
-                    input,
-                    userChainId,
-                    wallet?.walletAddress || '',
-                    liquidityWalletAbi
-                  );
-                }
-              : () => {
-                  connect();
-                }
-          }
-          disabled={loading}
-        />
       </DexCardBody>
     </>
   );

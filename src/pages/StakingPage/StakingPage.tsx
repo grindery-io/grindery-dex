@@ -6,10 +6,11 @@ import StakingPageStake from './StakingPageStake';
 import StakingPageWithdraw from './StakingPageWithdraw';
 import StakingPageSelectChain from './StakingPageSelectChain';
 import { ROUTES } from '../../config/routes';
+import StakesController from '../../controllers/StakesController';
 
 function StakingPage() {
   return (
-    <>
+    <StakesController>
       <DexCard>
         <Routes>
           <Route
@@ -30,7 +31,7 @@ function StakingPage() {
           />
         </Routes>
       </DexCard>
-    </>
+    </StakesController>
   );
 }
 
