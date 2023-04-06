@@ -23,16 +23,16 @@ import {
   selectUserIsAdmin,
   selectUserIsAdminLoading,
 } from '../../store/slices/userSlice';
-import StakingPage from '../StakingPage/StakingPage';
-import { ROUTES } from '../../config/routes';
+//import StakingPage from '../StakingPage/StakingPage';
+//import { ROUTES } from '../../config/routes';
 
 export const sellPages = [
-  {
+  /*{
     path: ROUTES.SELL.STAKING.RELATIVE_PATH,
     fullPath: ROUTES.SELL.STAKING.ROOT.FULL_PATH,
     label: 'Staking',
     component: <StakingPage />,
-  },
+  },*/
   {
     path: '/offers/*',
     fullPath: '/sell/offers',
