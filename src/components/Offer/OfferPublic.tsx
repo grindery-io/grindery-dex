@@ -99,8 +99,6 @@ const OfferPublic = (props: Props) => {
     excludeSteps,
     calculateAmount,
   } = props;
-  const { token: userToken } = useGrinderyNexus();
-
   const isUserA = !userType || userType === 'a';
 
   const { chains } = useGrinderyChains();
