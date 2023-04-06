@@ -5,13 +5,13 @@ import Foco from 'react-foco';
 import Jdenticon from 'react-jdenticon';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { ICONS } from '../../config/constants';
-import { useGrinderyNexus } from 'use-grindery-nexus';
 import { Snackbar } from 'grindery-ui';
 import { useNavigate } from 'react-router-dom';
 import Icon from '@mdi/react';
 import { mdiWaterPump } from '@mdi/js';
 import SellOutlinedIcon from '@mui/icons-material/SellOutlined';
 import useAdmin from '../../hooks/useAdmin';
+import { useUserController } from '../../controllers/UserController';
 
 const UserContainer = styled.div`
   position: relative;
@@ -129,11 +129,12 @@ type Props = {
 
 const UserMenu = (props: Props) => {
   const mode = props.mode || 'light';
-  const { address, disconnect } = useGrinderyNexus();
+  const { getUserAddress, disconnectUser } = useUserController();
   const [menuOpened, setMenuOpened] = useState(false);
   const [copied, setCopied] = useState(false);
   let navigate = useNavigate();
   const { isAdmin } = useAdmin();
+  const address = getUserAddress();
 
   return address ? (
     <GrinderyThemeProvider>
@@ -200,7 +201,7 @@ const UserMenu = (props: Props) => {
               )}
               <button
                 onClick={() => {
-                  disconnect();
+                  disconnectUser();
                 }}
               >
                 <img src={ICONS.DISCONNECT} alt="" />

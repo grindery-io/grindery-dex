@@ -24,9 +24,7 @@ import EvStationIcon from '@mui/icons-material/EvStation';
 import AccessTimeFilledIcon from '@mui/icons-material/AccessTimeFilled';
 import LayersIcon from '@mui/icons-material/Layers';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import useGrinderyChains from '../../hooks/useGrinderyChains';
 import { Chain } from '../../types/Chain';
-import { useGrinderyNexus } from 'use-grindery-nexus';
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
 import DexCardSubmitButton from '../DexCard/DexCardSubmitButton';
 import { TokenType } from '../../types/TokenType';
@@ -34,6 +32,8 @@ import TransactionID from '../TransactionID/TransactionID';
 import SwapHorizontalCircleIcon from '@mui/icons-material/SwapHorizontalCircle';
 import Offer from '../../models/Offer';
 import { ThemeProvider } from 'styled-components';
+import { useAppSelector } from '../../store/storeHooks';
+import { selectChainsItems } from '../../store/slices/chainsSlice';
 
 export type OfferChain = {
   label: string;
@@ -99,11 +99,9 @@ const OfferPublic = (props: Props) => {
     excludeSteps,
     calculateAmount,
   } = props;
-  const { token: userToken } = useGrinderyNexus();
-
   const isUserA = !userType || userType === 'a';
 
-  const { chains } = useGrinderyChains();
+  const chains = useAppSelector(selectChainsItems);
 
   const chain = offer.getChain(chains);
   const token = offer.getToken(chains);

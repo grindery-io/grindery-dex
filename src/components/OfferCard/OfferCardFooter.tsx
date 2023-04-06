@@ -3,6 +3,8 @@ import { Box, Skeleton } from '@mui/material';
 import useGrinderyChains from '../../hooks/useGrinderyChains';
 import TransactionID from '../TransactionID/TransactionID';
 import Offer from '../../models/Offer';
+import { selectChainsItems } from '../../store/slices/chainsSlice';
+import { useAppSelector } from '../../store/storeHooks';
 
 type Props = {
   offer: Offer;
@@ -10,7 +12,7 @@ type Props = {
 
 const OfferCardFooter = (props: Props) => {
   const { offer } = props;
-  const { chains } = useGrinderyChains();
+  const chains = useAppSelector(selectChainsItems);
 
   const explorerLink = offer.getOfferLink(chains);
 

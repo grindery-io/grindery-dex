@@ -7,15 +7,16 @@ import GavelIcon from '@mui/icons-material/Gavel';
 import CurrencyExchangeIcon from '@mui/icons-material/CurrencyExchange';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import Offer from '../../models/Offer';
+import { useAppSelector } from '../../store/storeHooks';
+import { selectChainsItems } from '../../store/slices/chainsSlice';
 
 type Props = {
   offer: Offer;
 };
 
 const OfferCardHeader = (props: Props) => {
-  const { token: userToken } = useGrinderyNexus();
   const { offer } = props;
-  const { chains } = useGrinderyChains();
+  const chains = useAppSelector(selectChainsItems);
 
   const provider = offer.provider;
   const providerLink = offer.getProviderLink(chains);
