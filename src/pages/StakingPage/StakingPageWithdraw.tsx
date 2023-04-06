@@ -8,48 +8,42 @@ import DexCardBody from '../../components/DexCard/DexCardBody';
 import Loading from '../../components/Loading/Loading';
 import TextInput from '../../components/TextInput/TextInput';
 import { useNavigate, useParams } from 'react-router-dom';
-import useStakingPage from '../../hooks/useStakingPage';
 import { StakeType } from '../../types/StakeType';
 import { useAppSelector } from '../../store/storeHooks';
 import {
+  selectStakesError,
   selectStakesItems,
   selectStakesLoading,
+  selectStakesWithdrawInput,
 } from '../../store/slices/stakesSlice';
-import { selectUserId } from '../../store/slices/userSlice';
+import { selectUserChainId, selectUserId } from '../../store/slices/userSlice';
 import { useUserController } from '../../controllers/UserController';
+import { ROUTES } from '../../config/routes';
+import { useStakesController } from '../../controllers/StakesController';
+import { selectPoolAbi } from '../../store/slices/abiSlice';
 
 function StakingPageWithdraw() {
   const user = useAppSelector(selectUserId);
+  const userChainId = useAppSelector(selectUserChainId);
   const { connectUser: connect } = useUserController();
-  const {
-    VIEWS,
-    amountAdd,
-    loading,
-    errorMessage,
-    selectedStake,
-    setChain,
-    setAmountAdd,
-    setErrorMessage,
-    setSelectedStake,
-    handleWithdrawClick,
-  } = useStakingPage();
+  const input = useAppSelector(selectStakesWithdrawInput);
+  const { amount } = input;
+  const loading = useAppSelector(selectStakesLoading);
+  const errorMessage = useAppSelector(selectStakesError);
+  const poolAbi = useAppSelector(selectPoolAbi);
   let navigate = useNavigate();
   const stakes = useAppSelector(selectStakesItems);
   const stakesIsLoading = useAppSelector(selectStakesLoading);
+  const { handleWithdrawInputChange, handleStakeWithdrawAction } =
+    useStakesController();
   let { stakeId } = useParams();
   const currentStake = stakes.find((s: StakeType) => s._id === stakeId);
 
   useEffect(() => {
-    if (currentStake) {
-      setChain(`eip155:${currentStake.chainId}`);
-    }
-  }, [currentStake]);
-
-  useEffect(() => {
     if (!currentStake && !stakesIsLoading) {
-      navigate(VIEWS.ROOT.fullPath);
+      navigate(ROUTES.SELL.STAKING.ROOT.FULL_PATH);
     }
-  }, [currentStake, stakesIsLoading]);
+  }, [currentStake, stakesIsLoading, navigate]);
 
   return (
     <>
@@ -62,9 +56,8 @@ function StakingPageWithdraw() {
             size="medium"
             edge="start"
             onClick={() => {
-              setAmountAdd('');
-              setSelectedStake('');
-              navigate(VIEWS.ROOT.fullPath);
+              handleWithdrawInputChange('amount', '');
+              navigate(ROUTES.SELL.STAKING.ROOT.FULL_PATH);
             }}
           >
             <ArrowBackIcon />
@@ -74,20 +67,14 @@ function StakingPageWithdraw() {
       />
 
       <DexCardBody>
-        {user && stakesIsLoading ? (
-          <Loading />
-        ) : (
+        {user && (
           <TextInput
             label="GRT Amount"
-            value={amountAdd}
+            value={amount}
             onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-              setErrorMessage({
-                type: '',
-                text: '',
-              });
-              setAmountAdd(event.target.value);
+              handleWithdrawInputChange('amount', event.target.value);
             }}
-            name="amountAdd"
+            name="amount"
             placeholder="Enter amount of tokens"
             disabled={false}
             endAdornment={
@@ -115,8 +102,10 @@ function StakingPageWithdraw() {
                   size="small"
                   variant="contained"
                   onClick={() => {
-                    setAmountAdd(
-                      stakes.find((s) => s._id === selectedStake)?.amount || '0'
+                    handleWithdrawInputChange(
+                      'amount',
+                      stakes.find((s) => s._id === currentStake?._id)?.amount ||
+                        '0'
                     );
                   }}
                 >
@@ -140,7 +129,16 @@ function StakingPageWithdraw() {
           }
           onClick={
             user
-              ? handleWithdrawClick
+              ? () => {
+                  if (currentStake) {
+                    handleStakeWithdrawAction(
+                      input,
+                      currentStake,
+                      userChainId,
+                      poolAbi
+                    );
+                  }
+                }
               : () => {
                   connect();
                 }

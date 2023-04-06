@@ -5,15 +5,20 @@ import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
 import DexCardHeader from '../../components/DexCard/DexCardHeader';
 import ChainsList from '../../components/ChainsList/ChainsList';
 import { useNavigate } from 'react-router-dom';
-import useStakingPage from '../../hooks/useStakingPage';
 import DexCardBody from '../../components/DexCard/DexCardBody';
 import { useAppSelector } from '../../store/storeHooks';
 import { selectChainsItems } from '../../store/slices/chainsSlice';
+import { ROUTES } from '../../config/routes';
+import { useStakesController } from '../../controllers/StakesController';
+import { ChainType } from '../../types/ChainType';
+import { selectStakesCreateInput } from '../../store/slices/stakesSlice';
 
 function StakingPageSelectChain() {
-  const { VIEWS, chain, setChain } = useStakingPage();
   let navigate = useNavigate();
   const chains = useAppSelector(selectChainsItems);
+  const { handleCreateInputChange } = useStakesController();
+  const { chainId } = useAppSelector(selectStakesCreateInput);
+  const currentChain = chains.find((c: ChainType) => c.chainId === chainId);
 
   return (
     <>
@@ -26,7 +31,7 @@ function StakingPageSelectChain() {
             size="medium"
             edge="start"
             onClick={() => {
-              navigate(VIEWS.STAKE.fullPath);
+              navigate(ROUTES.SELL.STAKING.STAKE.FULL_PATH);
             }}
           >
             <ArrowBackIcon />
@@ -36,11 +41,11 @@ function StakingPageSelectChain() {
       />
       <DexCardBody>
         <ChainsList
-          chain={chain}
+          chain={currentChain?.value || chainId}
           chains={chains}
-          onClick={(blockchain: any) => {
-            setChain(blockchain.value);
-            navigate(VIEWS.STAKE.fullPath);
+          onClick={(blockchain: ChainType) => {
+            handleCreateInputChange('chainId', blockchain.chainId);
+            navigate(ROUTES.SELL.STAKING.STAKE.FULL_PATH);
           }}
         />
         <Box height="20px" />

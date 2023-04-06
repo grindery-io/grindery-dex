@@ -5,16 +5,10 @@ import { ErrorMessageType } from '../../types/ErrorMessageType';
 
 export type StakeCreateInputFieldName = 'amount' | 'chainId';
 
-export type StakeAddInputFieldName = 'amount' | 'stakeId';
-
-export type StakeWithdrawInputFieldName = 'amount' | 'stakeId';
+export type StakeWithdrawInputFieldName = 'amount';
 
 export type StakeCreateInput = {
   [key in StakeCreateInputFieldName]: string;
-};
-
-export type StakeAddInput = {
-  [key in StakeAddInputFieldName]: string;
 };
 
 export type StakeWithdrawInput = {
@@ -27,7 +21,6 @@ interface StakesState {
   items: StakeType[];
   input: {
     create: StakeCreateInput;
-    add: StakeAddInput;
     withdraw: StakeWithdrawInput;
   };
   approved: boolean;
@@ -42,13 +35,8 @@ const initialState: StakesState = {
       amount: '',
       chainId: '',
     },
-    add: {
-      amount: '',
-      stakeId: '',
-    },
     withdraw: {
       amount: '',
-      stakeId: '',
     },
   },
   approved: false,
@@ -85,18 +73,6 @@ const stakesSlice = createSlice({
     ) {
       state.input.create[action.payload.name] = action.payload.value;
     },
-    setStakesAddInput(state, action: PayloadAction<StakeAddInput>) {
-      state.input.add = action.payload;
-    },
-    setStakesAddInputValue(
-      state,
-      action: PayloadAction<{
-        name: StakeAddInputFieldName;
-        value: string;
-      }>
-    ) {
-      state.input.add[action.payload.name] = action.payload.value;
-    },
     setStakesWithdrawInput(state, action: PayloadAction<StakeWithdrawInput>) {
       state.input.withdraw = action.payload;
     },
@@ -116,9 +92,13 @@ const stakesSlice = createSlice({
 });
 
 export const selectStakesItems = (state: RootState) => state.stakes.items;
+export const selectStakesError = (state: RootState) => state.stakes.error;
 export const selectStakesLoading = (state: RootState) => state.stakes.loading;
+export const selectStakesApproved = (state: RootState) => state.stakes.approved;
 export const selectStakesCreateInput = (state: RootState) =>
   state.stakes.input.create;
+export const selectStakesWithdrawInput = (state: RootState) =>
+  state.stakes.input.withdraw;
 
 export const {
   setStakesItems,
@@ -127,8 +107,6 @@ export const {
   clearStakesError,
   setStakesCreateInput,
   setStakesCreateInputValue,
-  setStakesAddInput,
-  setStakesAddInputValue,
   setStakesWithdrawInput,
   setStakesWithdrawInputValue,
   setStakesApproved,

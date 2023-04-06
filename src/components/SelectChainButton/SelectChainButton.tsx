@@ -28,7 +28,7 @@ const SelectChainButton = (props: Props) => {
         avatar={
           chain ? (
             <Avatar src={chain.icon} alt={chain.label}>
-              {chain.nativeToken}
+              {chain.token}
             </Avatar>
           ) : (
             <AvatarDefault width={32} height={32} />

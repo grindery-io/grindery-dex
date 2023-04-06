@@ -1,6 +1,5 @@
 import React from 'react';
 import { IconButton } from '@mui/material';
-import { useGrinderyNexus } from 'use-grindery-nexus';
 import { Box } from '@mui/system';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
 import DexCardHeader from '../../components/DexCard/DexCardHeader';
@@ -11,22 +10,37 @@ import TextInput from '../../components/TextInput/TextInput';
 import SelectChainButton from '../../components/SelectChainButton/SelectChainButton';
 import AlertBox from '../../components/AlertBox/AlertBox';
 import { useNavigate } from 'react-router-dom';
-import useStakingPage from '../../hooks/useStakingPage';
+import { useAppSelector } from '../../store/storeHooks';
+import { selectUserChainId, selectUserId } from '../../store/slices/userSlice';
+import { useUserController } from '../../controllers/UserController';
+import { ROUTES } from '../../config/routes';
+import {
+  selectStakesApproved,
+  selectStakesCreateInput,
+  selectStakesError,
+  selectStakesLoading,
+} from '../../store/slices/stakesSlice';
+import { selectChainsItems } from '../../store/slices/chainsSlice';
+import { ChainType } from '../../types/ChainType';
+import { selectPoolAbi, selectTokenAbi } from '../../store/slices/abiSlice';
+import { useStakesController } from '../../controllers/StakesController';
 
 function StakingPageStake() {
-  const { user, connect } = useGrinderyNexus();
-  const {
-    VIEWS,
-    amountGRT,
-    loading,
-    errorMessage,
-    approved,
-    currentChain,
-    setAmountGRT,
-    setErrorMessage,
-    handleStakeClick,
-  } = useStakingPage();
   let navigate = useNavigate();
+  const user = useAppSelector(selectUserId);
+  const { connectUser: connect } = useUserController();
+  const input = useAppSelector(selectStakesCreateInput);
+  const userChain = useAppSelector(selectUserChainId);
+  const { amount, chainId } = input;
+  const { handleCreateInputChange, handleStakeCreateAction } =
+    useStakesController();
+  const loading = useAppSelector(selectStakesLoading);
+  const errorMessage = useAppSelector(selectStakesError);
+  const approved = useAppSelector(selectStakesApproved);
+  const chains = useAppSelector(selectChainsItems);
+  const currentChain = chains.find((c: ChainType) => c.chainId === chainId);
+  const tokenAbi = useAppSelector(selectTokenAbi);
+  const poolAib = useAppSelector(selectPoolAbi);
 
   return (
     <>
@@ -39,8 +53,8 @@ function StakingPageStake() {
             size="medium"
             edge="start"
             onClick={() => {
-              setAmountGRT('');
-              navigate(VIEWS.ROOT.fullPath);
+              handleCreateInputChange('amount', '');
+              navigate(ROUTES.SELL.STAKING.ROOT.FULL_PATH);
             }}
           >
             <ArrowBackIcon />
@@ -54,21 +68,18 @@ function StakingPageStake() {
           title="Blockchain"
           chain={currentChain}
           onClick={() => {
-            navigate(VIEWS.SELECT_CHAIN.fullPath);
+            navigate(ROUTES.SELL.STAKING.SELECT_CHAIN.FULL_PATH);
           }}
+          error={errorMessage}
         />
 
         <TextInput
           label="GRT Amount"
-          value={amountGRT}
+          value={amount}
           onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-            setErrorMessage({
-              type: '',
-              text: '',
-            });
-            setAmountGRT(event.target.value);
+            handleCreateInputChange('amount', event.target.value);
           }}
-          name="amountGRT"
+          name="amount"
           placeholder="Enter amount of tokens"
           disabled={loading}
           error={errorMessage}
@@ -83,11 +94,13 @@ function StakingPageStake() {
           </AlertBox>
         )}
         {loading && <Loading />}
-        {errorMessage && errorMessage.type === 'tx' && errorMessage.text && (
-          <AlertBox color="error">
-            <p>{errorMessage.text}</p>
-          </AlertBox>
-        )}
+        {errorMessage &&
+          errorMessage.type === 'transaction' &&
+          errorMessage.text && (
+            <AlertBox color="error">
+              <p>{errorMessage.text}</p>
+            </AlertBox>
+          )}
 
         <DexCardSubmitButton
           disabled={loading}
@@ -102,7 +115,15 @@ function StakingPageStake() {
           }
           onClick={
             user
-              ? handleStakeClick
+              ? () => {
+                  handleStakeCreateAction(
+                    input,
+                    userChain,
+                    approved,
+                    tokenAbi,
+                    poolAib
+                  );
+                }
               : () => {
                   connect();
                 }

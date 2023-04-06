@@ -5,7 +5,6 @@ import PageContainer from '../../components/PageContainer/PageContainer';
 import SellMenu from '../../components/SellMenu/SellMenu';
 //import LiquidityWalletPageContextProvider from '../../context/LiquidityWalletPageContext';
 import OffersPageContextProvider from '../../context/OffersPageContext';
-//import StakingPageContextProvider from '../../context/StakingPageContext';
 import OrdersPageContextProvider from '../../context/OrdersPageContext';
 import OrdersContextProvider from '../../context/OrdersContext';
 //import LiquidityWalletPage from '../LiquidityWalletPage/LiquidityWalletPage';
@@ -24,20 +23,18 @@ import {
   selectUserIsAdmin,
   selectUserIsAdminLoading,
 } from '../../store/slices/userSlice';
+import StakingPage from '../StakingPage/StakingPage';
+import { ROUTES } from '../../config/routes';
 
 export const sellPages = [
-  // {
-  //   path: '/staking',
-  //   fullPath: '/sell/staking',
-  //   label: 'Staking',
-  //   component: (
-  //     <StakingPageContextProvider>
-  //       <StakingPage />
-  //     </StakingPageContextProvider>
-  //   ),
-  // },
   {
-    path: '/offers',
+    path: ROUTES.SELL.STAKING.RELATIVE_PATH,
+    fullPath: ROUTES.SELL.STAKING.ROOT.FULL_PATH,
+    label: 'Staking',
+    component: <StakingPage />,
+  },
+  {
+    path: '/offers/*',
     fullPath: '/sell/offers',
     label: 'Offers',
     component: (
@@ -47,7 +44,7 @@ export const sellPages = [
     ),
   },
   {
-    path: '/orders',
+    path: '/orders/*',
     fullPath: '/sell/orders',
     label: 'Orders',
     component: (
@@ -59,7 +56,7 @@ export const sellPages = [
     ),
   },
   {
-    path: '/automations',
+    path: '/automations/*',
     fullPath: '/sell/automations',
     label: 'Trading Automation',
     component: (
@@ -98,13 +95,17 @@ const SellPage = (props: Props) => {
               {sellPages.map((page: any) => (
                 <Route
                   key={page.path}
-                  path={`${page.path}/*`}
+                  path={`${page.path}`}
                   element={page.component}
                 />
               ))}
               <Route
                 path="/"
-                element={<Navigate to={`/sell${sellPages[0].path}`} />}
+                element={
+                  <Navigate
+                    to={`/sell${sellPages[0].path.replace('/*', '')}`}
+                  />
+                }
               />
             </Routes>
           </>

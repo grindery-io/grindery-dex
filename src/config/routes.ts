@@ -1,7 +1,9 @@
 export const ROUTES = {
   SELL: {
+    RELATIVE_PATH: '/sell/*',
+    FULL_PATH: '/sell',
     STAKING: {
-      RELATIVE_PATH: '/*',
+      RELATIVE_PATH: '/staking/*',
       FULL_PATH: '/sell/staking/*',
       ROOT: { RELATIVE_PATH: '/', FULL_PATH: '/sell/staking' },
       STAKE: { RELATIVE_PATH: '/stake', FULL_PATH: '/sell/staking/stake' },
@@ -11,7 +13,7 @@ export const ROUTES = {
       },
       WITHDRAW: {
         RELATIVE_PATH: '/:stakeId/withdraw',
-        fullFULL_PATHPath: '/sell/staking/:stakeId/withdraw',
+        FULL_PATH: '/sell/staking/:stakeId/withdraw',
       },
     },
   },

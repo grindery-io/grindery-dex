@@ -7,10 +7,11 @@ import { StakeType } from '../../types/StakeType';
 import { Card } from '../Card/Card';
 import { ChainTokenBox } from '../ChainTokenBox/ChainTokenBox';
 import { AvatarDefault } from '../Avatar/AvatarDefault';
+import { ChainType } from '../../types/ChainType';
 
 type Props = {
   stake: StakeType;
-  stakeChain: any;
+  stakeChain: ChainType;
   onWithdrawClick: (stake: StakeType) => void;
 };
 
@@ -40,7 +41,7 @@ const Stake = (props: Props) => {
         avatar={
           stakeChain ? (
             <Avatar src={stakeChain.icon} alt={stakeChain.label}>
-              {stakeChain.nativeToken}
+              {stakeChain.token}
             </Avatar>
           ) : (
             <AvatarDefault width={32} height={32} />

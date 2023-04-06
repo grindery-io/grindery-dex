@@ -1,11 +1,12 @@
 import React from 'react';
 import { Avatar, Skeleton, Tooltip } from '@mui/material';
 import { ChainCard, ChainContainer } from './ChainsList.style';
+import { ChainType } from '../../types/ChainType';
 
 type Props = {
   chain: string | number;
   chains: any[];
-  onClick: (chain: any) => void;
+  onClick: (chain: ChainType) => void;
   loading?: boolean;
 };
 
