@@ -7,12 +7,15 @@ import {
   POOL_CONTRACT_ADDRESS,
 } from '../config/constants';
 import { getErrorMessage } from '../utils/error';
-import useStakes from '../hooks/useStakes';
 import { Stake } from '../types/Stake';
 import isNumeric from '../utils/isNumeric';
-import { useAppSelector } from '../store/storeHooks';
+import { useAppDispatch, useAppSelector } from '../store/storeHooks';
 import { selectChainsItems } from '../store/slices/chainsSlice';
 import { selectPoolAbi, selectTokenAbi } from '../store/slices/abiSlice';
+import { selectStakesItems, setStakesItems } from '../store/slices/stakesSlice';
+import { StakeType } from '../types/StakeType';
+import { useStakesController } from '../controllers/StakesController';
+import { selectUserAccessToken } from '../store/slices/userSlice';
 
 // Context props
 type ContextProps = {
@@ -93,7 +96,12 @@ export const StakingPageContextProvider = ({
   const [chain, setChain] = useState(selectedChain || '');
   const chains = useAppSelector(selectChainsItems);
   const [selectedStake, setSelectedStake] = useState('');
-  const { stakes, setStakes, addStake, updateStake } = useStakes();
+  const stakes = useAppSelector(selectStakesItems);
+  const dispatch = useAppDispatch();
+  const setStakes = (items: StakeType[]) => dispatch(setStakesItems(items));
+  const { createStake: addStake, editStake: updateStake } =
+    useStakesController();
+  const accessToken = useAppSelector(selectUserAccessToken);
   const [approved, setApproved] = useState<boolean>(false);
   const filteredChain = chains.find((c) => c.value === chain);
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -300,7 +308,7 @@ export const StakingPageContextProvider = ({
           .map((stake) => stake.chainId)
           .includes(chain.toString().split(':')[1])
       ) {
-        const newStake = await addStake({
+        const newStake = await addStake(accessToken, {
           chainId: chain.toString().split(':')[1],
           amount: amountGRT,
         });
@@ -318,7 +326,7 @@ export const StakingPageContextProvider = ({
         }
       } else {
         // update existing stake if stake for the chain exists
-        const stakeUpdated = await updateStake({
+        const stakeUpdated = await updateStake(accessToken, {
           chainId: chain.toString().split(':')[1],
           amount: (
             parseInt(
@@ -464,7 +472,7 @@ export const StakingPageContextProvider = ({
       return;
     }
 
-    const stakeUpdated = await updateStake({
+    const stakeUpdated = await updateStake(accessToken, {
       chainId: chain.toString().split(':')[1],
       amount: (
         parseFloat(
@@ -474,8 +482,8 @@ export const StakingPageContextProvider = ({
     });
     if (stakeUpdated) {
       // update stakes state
-      setStakes((_stakes) => [
-        ..._stakes.map((s: Stake) => {
+      setStakes([
+        ...stakes.map((s: Stake) => {
           if (s._id === selectedStake) {
             return {
               ...s,

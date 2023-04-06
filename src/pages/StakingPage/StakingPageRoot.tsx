@@ -1,6 +1,5 @@
 import React from 'react';
 import { IconButton, Tooltip } from '@mui/material';
-import { useGrinderyNexus } from 'use-grindery-nexus';
 import { AddCircleOutline as AddCircleOutlineIcon } from '@mui/icons-material';
 import DexCardHeader from '../../components/DexCard/DexCardHeader';
 import Stake from '../../components/Stake/Stake';
@@ -10,17 +9,24 @@ import Loading from '../../components/Loading/Loading';
 import { Stake as StakeType } from '../../types/Stake';
 import AlertBox from '../../components/AlertBox/AlertBox';
 import { useNavigate } from 'react-router-dom';
-import useStakes from '../../hooks/useStakes';
 import useStakingPage from '../../hooks/useStakingPage';
 import { useAppSelector } from '../../store/storeHooks';
 import { selectChainsItems } from '../../store/slices/chainsSlice';
+import {
+  selectStakesItems,
+  selectStakesLoading,
+} from '../../store/slices/stakesSlice';
+import { selectUserId } from '../../store/slices/userSlice';
+import { useUserController } from '../../controllers/UserController';
 
 function StakingPageRoot() {
-  const { user, connect } = useGrinderyNexus();
+  const user = useAppSelector(selectUserId);
+  const { connectUser: connect } = useUserController();
   const { VIEWS, errorMessage, setSelectedStake } = useStakingPage();
   let navigate = useNavigate();
   const chains = useAppSelector(selectChainsItems);
-  const { stakes, isLoading: stakesIsLoading } = useStakes();
+  const stakes = useAppSelector(selectStakesItems);
+  const stakesIsLoading = useAppSelector(selectStakesLoading);
 
   return (
     <>

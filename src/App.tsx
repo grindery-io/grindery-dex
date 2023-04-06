@@ -7,7 +7,6 @@ import SellPage from './pages/SellPage/SellPage';
 import FaucetPage from './pages/FaucetPage/FaucetPage';
 import OffersContextProvider from './context/OffersContext';
 import { OrdersContextProvider } from './context/OrdersContext';
-import StakesContextProvider from './context/StakesContext';
 import LiquidityWalletsContextProvider from './context/LiquidityWalletsContext';
 import BuyPage from './pages/BuyPage/BuyPage';
 import { store } from './store/store';
@@ -15,6 +14,7 @@ import UserController from './controllers/UserController';
 import ChainsController from './controllers/ChainsController';
 import AbiController from './controllers/AbiController';
 import MainNavigation from './pages/MainNavigation/MainNavigation';
+import StakesController from './controllers/StakesController';
 
 declare global {
   interface Window {
@@ -31,7 +31,7 @@ export const App = () => {
             <ChainsController>
               <BrowserRouter>
                 <MainNavigation />
-                <StakesContextProvider>
+                <StakesController>
                   <LiquidityWalletsContextProvider>
                     <Routes>
                       <Route
@@ -57,7 +57,7 @@ export const App = () => {
                       <Route path="*" element={<Navigate to="/buy" />} />
                     </Routes>
                   </LiquidityWalletsContextProvider>
-                </StakesContextProvider>
+                </StakesController>
               </BrowserRouter>
             </ChainsController>
           </AbiController>

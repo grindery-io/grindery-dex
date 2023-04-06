@@ -3,6 +3,7 @@ import userReducer from './slices/userSlice';
 import faucetReducer from './slices/faucetSlice';
 import chainsReducer from './slices/chainsSlice';
 import abiReducer from './slices/abiSlice';
+import stakesReducer from './slices/stakesSlice';
 
 export const store = configureStore({
   reducer: {
@@ -10,6 +11,7 @@ export const store = configureStore({
     chains: chainsReducer,
     abi: abiReducer,
     faucet: faucetReducer,
+    stakes: stakesReducer,
   },
 });
 

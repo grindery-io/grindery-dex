@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
 import { IconButton, Button as MuiButton } from '@mui/material';
-import { useGrinderyNexus } from 'use-grindery-nexus';
 import { Box } from '@mui/system';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
 import DexCardHeader from '../../components/DexCard/DexCardHeader';
@@ -9,12 +8,19 @@ import DexCardBody from '../../components/DexCard/DexCardBody';
 import Loading from '../../components/Loading/Loading';
 import TextInput from '../../components/TextInput/TextInput';
 import { useNavigate, useParams } from 'react-router-dom';
-import useStakes from '../../hooks/useStakes';
 import useStakingPage from '../../hooks/useStakingPage';
 import { Stake } from '../../types/Stake';
+import { useAppSelector } from '../../store/storeHooks';
+import {
+  selectStakesItems,
+  selectStakesLoading,
+} from '../../store/slices/stakesSlice';
+import { selectUserId } from '../../store/slices/userSlice';
+import { useUserController } from '../../controllers/UserController';
 
 function StakingPageWithdraw() {
-  const { user, connect } = useGrinderyNexus();
+  const user = useAppSelector(selectUserId);
+  const { connectUser: connect } = useUserController();
   const {
     VIEWS,
     amountAdd,
@@ -28,7 +34,8 @@ function StakingPageWithdraw() {
     handleWithdrawClick,
   } = useStakingPage();
   let navigate = useNavigate();
-  const { stakes, isLoading: stakesIsLoading } = useStakes();
+  const stakes = useAppSelector(selectStakesItems);
+  const stakesIsLoading = useAppSelector(selectStakesLoading);
   let { stakeId } = useParams();
   const currentStake = stakes.find((s: Stake) => s._id === stakeId);
 
