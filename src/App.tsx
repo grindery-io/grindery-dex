@@ -11,7 +11,6 @@ import OffersContextProvider from './context/OffersContext';
 import { OrdersContextProvider } from './context/OrdersContext';
 import StakesContextProvider from './context/StakesContext';
 import LiquidityWalletsContextProvider from './context/LiquidityWalletsContext';
-import AdminContextProvider from './context/AdminContext';
 import BuyPage from './pages/BuyPage/BuyPage';
 import { store } from './store/store';
 import UserController from './controllers/UserController';
@@ -33,41 +32,39 @@ export const App = () => {
           <AbiController>
             <ChainsController>
               <BrowserRouter>
-                <AdminContextProvider>
-                  <MainNavigation />
+                <MainNavigation />
 
-                  <GrinderyChainsContextProvider>
-                    <AbiContextProvider>
-                      <StakesContextProvider>
-                        <LiquidityWalletsContextProvider>
-                          <Routes>
-                            <Route
-                              path="/buy/*"
-                              element={
-                                <OffersContextProvider userType="a">
-                                  <OrdersContextProvider>
-                                    <BuyPage />
-                                  </OrdersContextProvider>
-                                </OffersContextProvider>
-                              }
-                            />
-                            <Route
-                              path="/sell/*"
-                              element={
-                                <OffersContextProvider userType="b">
-                                  <SellPage />
-                                </OffersContextProvider>
-                              }
-                            />
-                            <Route path="/faucet/*" element={<FaucetPage />} />
+                <GrinderyChainsContextProvider>
+                  <AbiContextProvider>
+                    <StakesContextProvider>
+                      <LiquidityWalletsContextProvider>
+                        <Routes>
+                          <Route
+                            path="/buy/*"
+                            element={
+                              <OffersContextProvider userType="a">
+                                <OrdersContextProvider>
+                                  <BuyPage />
+                                </OrdersContextProvider>
+                              </OffersContextProvider>
+                            }
+                          />
+                          <Route
+                            path="/sell/*"
+                            element={
+                              <OffersContextProvider userType="b">
+                                <SellPage />
+                              </OffersContextProvider>
+                            }
+                          />
+                          <Route path="/faucet/*" element={<FaucetPage />} />
 
-                            <Route path="*" element={<Navigate to="/buy" />} />
-                          </Routes>
-                        </LiquidityWalletsContextProvider>
-                      </StakesContextProvider>
-                    </AbiContextProvider>
-                  </GrinderyChainsContextProvider>
-                </AdminContextProvider>
+                          <Route path="*" element={<Navigate to="/buy" />} />
+                        </Routes>
+                      </LiquidityWalletsContextProvider>
+                    </StakesContextProvider>
+                  </AbiContextProvider>
+                </GrinderyChainsContextProvider>
               </BrowserRouter>
             </ChainsController>
           </AbiController>

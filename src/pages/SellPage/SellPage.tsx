@@ -8,7 +8,6 @@ import OffersPageContextProvider from '../../context/OffersPageContext';
 //import StakingPageContextProvider from '../../context/StakingPageContext';
 import OrdersPageContextProvider from '../../context/OrdersPageContext';
 import OrdersContextProvider from '../../context/OrdersContext';
-import useAdmin from '../../hooks/useAdmin';
 //import LiquidityWalletPage from '../LiquidityWalletPage/LiquidityWalletPage';
 import OffersPage from '../OffersPage/OffersPage';
 //import StakingPage from '../StakingPage/StakingPage';
@@ -20,6 +19,11 @@ import DexCardHeader from '../../components/DexCard/DexCardHeader';
 import DexCardBody from '../../components/DexCard/DexCardBody';
 import { Box, Typography } from '@mui/material';
 import TimerIcon from '@mui/icons-material/Timer';
+import { useAppSelector } from '../../store/storeHooks';
+import {
+  selectUserIsAdmin,
+  selectUserIsAdminLoading,
+} from '../../store/slices/userSlice';
 
 export const sellPages = [
   // {
@@ -79,7 +83,8 @@ export const sellPages = [
 type Props = {};
 
 const SellPage = (props: Props) => {
-  const { isLoading, isAdmin } = useAdmin();
+  const isLoading = useAppSelector(selectUserIsAdminLoading);
+  const isAdmin = useAppSelector(selectUserIsAdmin);
   if (isLoading) {
     return <Loading />;
   }
