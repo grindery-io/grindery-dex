@@ -4,7 +4,7 @@ import { Box } from '@mui/system';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
 import DexCardHeader from '../../components/DexCard/DexCardHeader';
 import ChainsList from '../../components/ChainsList/ChainsList';
-import { Chain } from '../../types/Chain';
+import { ChainType } from '../../types/ChainType';
 import { LiquidityWallet } from '../../types/LiquidityWallet';
 import { useNavigate } from 'react-router-dom';
 import useLiquidityWalletPage from '../../hooks/useLiquidityWalletPage';
@@ -41,7 +41,7 @@ function LiquidityWalletPageSelectChain() {
         <ChainsList
           chain={chain}
           chains={chains.filter(
-            (chain: Chain) =>
+            (chain: ChainType) =>
               !wallets
                 .map((wallet: LiquidityWallet) => wallet.chainId)
                 .includes(chain.chainId)

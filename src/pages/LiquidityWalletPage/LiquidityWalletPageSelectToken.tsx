@@ -9,7 +9,7 @@ import TokenSearch from '../../components/TokenSearch/TokenSearch';
 import TokensList from '../../components/TokensList/TokensList';
 import NotFound from '../../components/NotFound/NotFound';
 import { LiquidityWallet } from '../../types/LiquidityWallet';
-import { Chain } from '../../types/Chain';
+import { ChainType } from '../../types/ChainType';
 import useLiquidityWallets from '../../hooks/useLiquidityWallets';
 import Loading from '../../components/Loading/Loading';
 import { useGrinderyNexus } from 'use-grindery-nexus';
@@ -32,7 +32,7 @@ function LiquidityWalletPageSelectToken() {
   );
 
   const walletChain = chains.find(
-    (c: Chain) => c.chainId === currentWallet?.chainId
+    (c: ChainType) => c.chainId === currentWallet?.chainId
   );
 
   useEffect(() => {

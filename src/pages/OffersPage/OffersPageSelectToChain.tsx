@@ -10,7 +10,7 @@ import NotFound from '../../components/NotFound/NotFound';
 import { useNavigate } from 'react-router-dom';
 import useOffersPage from '../../hooks/useOffersPage';
 import DexCardBody from '../../components/DexCard/DexCardBody';
-import { Chain } from '../../types/Chain';
+import { ChainType } from '../../types/ChainType';
 import { useAppSelector } from '../../store/storeHooks';
 import { selectChainsItems } from '../../store/slices/chainsSlice';
 
@@ -30,7 +30,7 @@ function OffersPageSelectToChain() {
 
   const chains = useAppSelector(selectChainsItems);
 
-  const chainLabel = chains.find((c: Chain) => c.caipId === toChain)?.label;
+  const chainLabel = chains.find((c: ChainType) => c.caipId === toChain)?.label;
 
   return (
     <>
@@ -55,7 +55,7 @@ function OffersPageSelectToChain() {
       <DexCardBody>
         <ChainsList
           chain={toChain}
-          chains={chains.filter((c: Chain) => c.chainId === '5')}
+          chains={chains.filter((c: ChainType) => c.chainId === '5')}
           onClick={(blockchain: any) => {
             setToChain(blockchain.value);
             setToToken('');

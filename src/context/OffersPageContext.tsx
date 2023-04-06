@@ -1,6 +1,6 @@
 import React, { createContext, useEffect, useState } from 'react';
 import { useGrinderyNexus } from 'use-grindery-nexus';
-import { Chain } from '../types/Chain';
+import { ChainType } from '../types/ChainType';
 import { useNavigate } from 'react-router-dom';
 import useOffers from '../hooks/useOffers';
 import { POOL_CONTRACT_ADDRESS } from '../config/constants';
@@ -30,8 +30,8 @@ type ContextProps = {
   toToken: TokenType | '';
   searchToken: string;
   isActivating: string;
-  currentChain: Chain | null;
-  currentToChain: Chain | null;
+  currentChain: ChainType | null;
+  currentToChain: ChainType | null;
   chainTokens: TokenType[];
   toChainTokens: TokenType[];
   groupedOffers: { [key: string]: Offer[] };
@@ -158,7 +158,7 @@ export const OffersPageContextProvider = ({
   const filteredChain = chains.find((c) => c.value === chain);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const currentChain: Chain | null =
+  const currentChain: ChainType | null =
     chain && filteredChain
       ? {
           ...(filteredChain || {}),
@@ -175,7 +175,7 @@ export const OffersPageContextProvider = ({
       : null;
 
   const currentToChain =
-    (toChain && chains.find((c: Chain) => c.caipId === toChain)) || null;
+    (toChain && chains.find((c: ChainType) => c.caipId === toChain)) || null;
 
   const chainTokens = (
     (chain && chains.find((c) => c.value === chain)?.tokens) ||
@@ -434,7 +434,7 @@ export const OffersPageContextProvider = ({
     const offerChain = offers.find((o: Offer) => o._id === offerId)?.chainId;
 
     const chainToSelect = chains.find(
-      (c: Chain) => c.value === `eip155:${offerChain}`
+      (c: ChainType) => c.value === `eip155:${offerChain}`
     );
 
     if (!chainToSelect) {
@@ -561,7 +561,7 @@ export const OffersPageContextProvider = ({
     const offerChain = offers.find((o: Offer) => o._id === offerId)?.chainId;
 
     const chainToSelect = chains.find(
-      (c: Chain) => c.value === `eip155:${offerChain}`
+      (c: ChainType) => c.value === `eip155:${offerChain}`
     );
 
     if (!chainToSelect) {
@@ -668,16 +668,16 @@ export const OffersPageContextProvider = ({
 
   useEffect(() => {
     if (!chainsIsLoading) {
-      setChain(chains.find((c: Chain) => c.chainId === '97')?.value || '');
+      setChain(chains.find((c: ChainType) => c.chainId === '97')?.value || '');
       setToken(
         chains
-          .find((c: Chain) => c.chainId === '97')
+          .find((c: ChainType) => c.chainId === '97')
           ?.tokens?.find((t: TokenType) => t.symbol === 'BNB') || ''
       );
-      setToChain(chains.find((c: Chain) => c.chainId === '5')?.value || '');
+      setToChain(chains.find((c: ChainType) => c.chainId === '5')?.value || '');
       setToToken(
         chains
-          .find((c: Chain) => c.chainId === '5')
+          .find((c: ChainType) => c.chainId === '5')
           ?.tokens?.find((t: TokenType) => t.symbol === 'ETH') || ''
       );
     }

@@ -1,4 +1,4 @@
-import { Chain } from '../types/Chain';
+import { ChainType } from '../types/ChainType';
 import { OfferType } from '../types/OfferType';
 import { TokenType } from '../types/TokenType';
 
@@ -60,40 +60,40 @@ class Offer {
       : this.exchangeRate || '';
   }
 
-  getChain(chains: Chain[]): Chain | undefined {
+  getChain(chains: ChainType[]): ChainType | undefined {
     return chains.find((c) => c.value === `eip155:${this.chainId}`);
   }
 
-  getToken(chains: Chain[]): TokenType | undefined {
+  getToken(chains: ChainType[]): TokenType | undefined {
     return this.getChain(chains)?.tokens?.find(
       (t: TokenType) => t.symbol === this.token
     );
   }
 
-  getExchangeChain(chains: Chain[]): Chain | undefined {
+  getExchangeChain(chains: ChainType[]): ChainType | undefined {
     return chains.find((c) => c.value === `eip155:${this.exchangeChainId}`);
   }
 
-  getExchangeToken(chains: Chain[]): TokenType | undefined {
+  getExchangeToken(chains: ChainType[]): TokenType | undefined {
     return this.getExchangeChain(chains)?.tokens?.find(
       (t: TokenType) => t.symbol === this.exchangeToken
     );
   }
 
-  getOfferLink(chains: Chain[]): string {
+  getOfferLink(chains: ChainType[]): string {
     return this.hash
       ? (
           chains.find(
-            (c: Chain) => c.value === `eip155:${this.exchangeChainId}`
+            (c: ChainType) => c.value === `eip155:${this.exchangeChainId}`
           )?.transactionExplorerUrl || ''
         ).replace('{hash}', this.hash || '')
       : '';
   }
 
-  getProviderLink(chains: Chain[]) {
+  getProviderLink(chains: ChainType[]) {
     return this.hash
       ? (
-          chains.find((c: Chain) => c.chainId === this.chainId)
+          chains.find((c: ChainType) => c.chainId === this.chainId)
             ?.addressExplorerUrl || ''
         ).replace('{hash}', this.provider || '')
       : '';

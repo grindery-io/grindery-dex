@@ -5,7 +5,7 @@ import { AddCircleOutline as AddCircleOutlineIcon } from '@mui/icons-material';
 import DexCardHeader from '../../components/DexCard/DexCardHeader';
 import DexCardSubmitButton from '../../components/DexCard/DexCardSubmitButton';
 import DexCardBody from '../../components/DexCard/DexCardBody';
-import { Chain } from '../../types/Chain';
+import { ChainType } from '../../types/ChainType';
 import { useNavigate } from 'react-router-dom';
 import useOffers from '../../hooks/useOffers';
 import ListSubheader from '../../components/ListSubheader/ListSubheader';
@@ -67,8 +67,9 @@ function OffersPageRoot() {
                   Object.keys(groupedOffers).map((key: any) => (
                     <React.Fragment key={key}>
                       <ListSubheader>
-                        {chains.find((c: Chain) => c.value === `eip155:${key}`)
-                          ?.label || ''}
+                        {chains.find(
+                          (c: ChainType) => c.value === `eip155:${key}`
+                        )?.label || ''}
                       </ListSubheader>
                       {_.orderBy(
                         groupedOffers[key],

@@ -10,7 +10,7 @@ import { LiquidityWallet } from '../../types/LiquidityWallet';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
 import { useNavigate, useParams } from 'react-router-dom';
 import useLiquidityWalletPage from '../../hooks/useLiquidityWalletPage';
-import { Chain } from '../../types/Chain';
+import { ChainType } from '../../types/ChainType';
 import { TokenType } from '../../types/TokenType';
 import LiquidityWalletToken, {
   WalletToken,
@@ -33,7 +33,7 @@ function LiquidityWalletPageTokens() {
   );
 
   const walletChain = chains.find(
-    (c: Chain) => c.chainId === currentWallet?.chainId
+    (c: ChainType) => c.chainId === currentWallet?.chainId
   );
 
   useEffect(() => {

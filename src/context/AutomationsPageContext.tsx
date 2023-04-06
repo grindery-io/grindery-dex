@@ -3,7 +3,7 @@ import React, { createContext, useEffect, useState } from 'react';
 import { useGrinderyNexus } from 'use-grindery-nexus';
 import { DELIGHT_API_URL } from '../config/constants';
 import useLiquidityWallets from '../hooks/useLiquidityWallets';
-import { Chain } from '../types/Chain';
+import { ChainType } from '../types/ChainType';
 import { LiquidityWallet } from '../types/LiquidityWallet';
 import { getErrorMessage } from '../utils/error';
 import { useAppSelector } from '../store/storeHooks';
@@ -21,13 +21,13 @@ type ContextProps = {
       fullPath: string;
     };
   };
-  chain: Chain | null;
+  chain: ChainType | null;
   bot: string;
   currentBot: string;
   loading: boolean;
   errorMessage: { type: string; text: string };
   handleBotChange: (bot: string) => void;
-  handleChainChange: (_chain: Chain) => void;
+  handleChainChange: (_chain: ChainType) => void;
   handleDelegateClick: () => void;
 };
 
@@ -60,7 +60,7 @@ export const AutomationsPageContextProvider = ({
     },
   };
   const { chain: selectedChain, ethers, provider, token } = useGrinderyNexus();
-  const [chain, setChain] = useState<Chain | null>(null);
+  const [chain, setChain] = useState<ChainType | null>(null);
   const chains = useAppSelector(selectChainsItems);
   const chainsIsLoading = useAppSelector(selectChainsLoading);
   const [loading, setLoading] = useState(false);
@@ -79,7 +79,7 @@ export const AutomationsPageContextProvider = ({
     },
   };
 
-  const handleChainChange = (_chain: Chain) => {
+  const handleChainChange = (_chain: ChainType) => {
     setChain(_chain);
   };
 
@@ -231,7 +231,7 @@ export const AutomationsPageContextProvider = ({
 
   useEffect(() => {
     if (!chainsIsLoading) {
-      setChain(chains.find((c: Chain) => c.chainId === '97') || null);
+      setChain(chains.find((c: ChainType) => c.chainId === '97') || null);
     }
   }, [chains, chainsIsLoading]);
 

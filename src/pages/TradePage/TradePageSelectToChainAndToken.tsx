@@ -11,7 +11,7 @@ import ChainsList from '../../components/ChainsList/ChainsList';
 import TokenSearch from '../../components/TokenSearch/TokenSearch';
 import TokensList from '../../components/TokensList/TokensList';
 import NotFound from '../../components/NotFound/NotFound';
-import { Chain } from '../../types/Chain';
+import { ChainType } from '../../types/ChainType';
 import { useAppSelector } from '../../store/storeHooks';
 import {
   selectChainsItems,
@@ -34,7 +34,9 @@ const TradePageSelectChainAndToken = (props: Props) => {
   const chains = useAppSelector(selectChainsItems);
   const chainsIsLoading = useAppSelector(selectChainsLoading);
   let navigate = useNavigate();
-  const filteredChains = chains.filter((c: Chain) => c.value === 'eip155:97');
+  const filteredChains = chains.filter(
+    (c: ChainType) => c.value === 'eip155:97'
+  );
   return (
     <DexCard>
       <DexCardHeader

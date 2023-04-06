@@ -24,7 +24,7 @@ import EvStationIcon from '@mui/icons-material/EvStation';
 import AccessTimeFilledIcon from '@mui/icons-material/AccessTimeFilled';
 import LayersIcon from '@mui/icons-material/Layers';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { Chain } from '../../types/Chain';
+import { ChainType } from '../../types/ChainType';
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
 import DexCardSubmitButton from '../DexCard/DexCardSubmitButton';
 import { TokenType } from '../../types/TokenType';
@@ -48,7 +48,7 @@ export type OfferToken = {
 
 type Props = {
   offer: Offer;
-  fromChain?: Chain | null;
+  fromChain?: ChainType | null;
   fromToken?: TokenType | '';
   onClick?: (offer: Offer) => void;
   fromAmount?: string;

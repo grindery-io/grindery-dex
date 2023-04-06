@@ -1,6 +1,6 @@
 import React, { createContext, useEffect, useState } from 'react';
 import { useGrinderyNexus } from 'use-grindery-nexus';
-import { Chain } from '../types/Chain';
+import { ChainType } from '../types/ChainType';
 import { useNavigate } from 'react-router-dom';
 import {
   GRT_CONTRACT_ADDRESS,
@@ -31,7 +31,7 @@ type ContextProps = {
   chain: string | number;
   selectedStake: string;
   approved: boolean;
-  currentChain: Chain | null;
+  currentChain: ChainType | null;
   setAmountGRT: React.Dispatch<React.SetStateAction<string>>;
   setAmountAdd: React.Dispatch<React.SetStateAction<string>>;
   setErrorMessage: React.Dispatch<
@@ -104,7 +104,7 @@ export const StakingPageContextProvider = ({
   const [approved, setApproved] = useState<boolean>(false);
   const filteredChain = chains.find((c) => c.value === chain);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const currentChain: Chain | null =
+  const currentChain: ChainType | null =
     chain && filteredChain
       ? {
           ...filteredChain,

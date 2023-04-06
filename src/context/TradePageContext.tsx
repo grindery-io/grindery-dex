@@ -2,7 +2,7 @@ import React, { createContext, useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { DELIGHT_API_URL, POOL_CONTRACT_ADDRESS } from '../config/constants';
 import useOffers from '../hooks/useOffers';
-import { Chain } from '../types/Chain';
+import { ChainType } from '../types/ChainType';
 import { TokenType } from '../types/TokenType';
 import isNumeric from '../utils/isNumeric';
 import _ from 'lodash';
@@ -28,16 +28,16 @@ type ContextProps = {
   };
   errorMessage: { type: string; text: string };
   loading: boolean;
-  fromChain: Chain | null;
+  fromChain: ChainType | null;
   fromToken: TokenType | '';
-  toChain: Chain | null;
+  toChain: ChainType | null;
   toToken: TokenType | '';
   fromAmount: string;
   isOffersVisible: boolean;
   searchToken: string;
-  currentToChain: Chain | null;
+  currentToChain: ChainType | null;
   toChainTokens: TokenType[];
-  currentFromChain: Chain | null;
+  currentFromChain: ChainType | null;
   fromChainTokens: TokenType[];
   foundOffers: Offer[];
   approved: boolean;
@@ -49,9 +49,9 @@ type ContextProps = {
   setAccepted: React.Dispatch<React.SetStateAction<string>>;
   setApproved: React.Dispatch<React.SetStateAction<boolean>>;
   setSearchToken: React.Dispatch<React.SetStateAction<string>>;
-  handleFromChainChange: (chain: Chain) => void;
+  handleFromChainChange: (chain: ChainType) => void;
   handleFromTokenChange: (token: TokenType) => void;
-  handleToChainChange: (chain: Chain) => void;
+  handleToChainChange: (chain: ChainType) => void;
   handleToTokenChange: (token: TokenType) => void;
   handleFromAmountChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   handleSearchClick: (amount: string, silent?: boolean) => void;
@@ -131,10 +131,10 @@ export const TradePageContextProvider = ({
   const [errorMessage, setErrorMessage] = useState({ type: '', text: '' });
   const [approved, setApproved] = useState<boolean>(false);
   const [accepted, setAccepted] = useState<string>('');
-  const [toChain, setToChain] = useState<Chain | null>(null);
+  const [toChain, setToChain] = useState<ChainType | null>(null);
   const chains = useAppSelector(selectChainsItems);
   const chainsIsLoading = useAppSelector(selectChainsLoading);
-  const [fromChain, setFromChain] = useState<Chain | null>(null);
+  const [fromChain, setFromChain] = useState<ChainType | null>(null);
   const [fromToken, setFromToken] = useState<TokenType | ''>('');
   const [toToken, setToToken] = useState<TokenType | ''>('');
   const [fromAmount, setFromAmount] = useState<string>('');
@@ -154,7 +154,7 @@ export const TradePageContextProvider = ({
   const filteredToChain = chains.find(
     (c) => toChain && c.value === toChain.value
   );
-  const currentToChain: Chain | null =
+  const currentToChain: ChainType | null =
     toChain && filteredToChain
       ? {
           ...(filteredToChain || {}),
@@ -176,7 +176,7 @@ export const TradePageContextProvider = ({
   const filteredFromChain = chains.find(
     (c) => fromChain && c.value === fromChain.value
   );
-  const currentFromChain: Chain | null =
+  const currentFromChain: ChainType | null =
     fromChain && filteredFromChain
       ? {
           ...(filteredFromChain || {}),
@@ -262,7 +262,7 @@ export const TradePageContextProvider = ({
     setFromAmount(fromTokenBalance || '0');
   };
 
-  const handleFromChainChange = (chain: Chain) => {
+  const handleFromChainChange = (chain: ChainType) => {
     setFromChain(chain);
     setFromToken('');
   };
@@ -277,7 +277,7 @@ export const TradePageContextProvider = ({
     navigate(VIEWS.ROOT.fullPath);
   };
 
-  const handleToChainChange = (chain: Chain) => {
+  const handleToChainChange = (chain: ChainType) => {
     setToChain(chain);
     setToToken('');
   };
@@ -687,16 +687,16 @@ export const TradePageContextProvider = ({
 
   useEffect(() => {
     if (!chainsIsLoading) {
-      setToChain(chains.find((c: Chain) => c.chainId === '97') || null);
+      setToChain(chains.find((c: ChainType) => c.chainId === '97') || null);
       setToToken(
         chains
-          .find((c: Chain) => c.chainId === '97')
+          .find((c: ChainType) => c.chainId === '97')
           ?.tokens?.find((t: TokenType) => t.symbol === 'BNB') || ''
       );
-      setFromChain(chains.find((c: Chain) => c.chainId === '5') || null);
+      setFromChain(chains.find((c: ChainType) => c.chainId === '5') || null);
       setFromToken(
         chains
-          .find((c: Chain) => c.chainId === '5')
+          .find((c: ChainType) => c.chainId === '5')
           ?.tokens?.find((t: TokenType) => t.symbol === 'ETH') || ''
       );
     }

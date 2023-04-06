@@ -1,6 +1,6 @@
 import React from 'react';
 import { Avatar, Badge, FormHelperText } from '@mui/material';
-import { Chain } from '../../types/Chain';
+import { ChainType } from '../../types/ChainType';
 import { TokenType } from '../../types/TokenType';
 import { Card } from '../Card/Card';
 import { CardTitle } from '../Card/CardTitle';
@@ -9,7 +9,7 @@ import { AvatarDefault } from '../Avatar/AvatarDefault';
 type Props = {
   onClick?: () => void;
   title: string;
-  chain?: Chain | null;
+  chain?: ChainType | null;
   token: TokenType | '';
   error: {
     type: string;

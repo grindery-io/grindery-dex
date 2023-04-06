@@ -1,6 +1,6 @@
 import React, { createContext, useEffect, useState } from 'react';
 import { useGrinderyNexus } from 'use-grindery-nexus';
-import { Chain } from '../types/Chain';
+import { ChainType } from '../types/ChainType';
 import { useNavigate } from 'react-router-dom';
 import _ from 'lodash';
 import { LiquidityWallet } from '../types/LiquidityWallet';
@@ -23,7 +23,7 @@ type ContextProps = {
   errorMessage: { type: string; text: string };
   chain: string;
 
-  currentChain: Chain | null;
+  currentChain: ChainType | null;
   wallets: LiquidityWallet[];
   token: string;
   chainTokens: TokenType[];
@@ -116,7 +116,7 @@ export const LiquidityWalletPageContextProvider = ({
   const liquidityWalletAbi = useAppSelector(selectLiquidityWalletAbi);
   const filteredChain = chains.find((c) => c.value === chain);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const currentChain: Chain | null =
+  const currentChain: ChainType | null =
     chain && filteredChain
       ? {
           ...(filteredChain || {}),

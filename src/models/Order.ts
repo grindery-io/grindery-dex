@@ -1,4 +1,4 @@
-import { Chain } from '../types/Chain';
+import { ChainType } from '../types/ChainType';
 import { OrderType } from '../types/OrderType';
 import { TokenType } from '../types/TokenType';
 
@@ -31,32 +31,34 @@ class Order {
     this.hash = order.hash;
   }
 
-  getOrderLink(chains: Chain[]): string {
+  getOrderLink(chains: ChainType[]): string {
     return this.hash
       ? (
           chains.find(
-            (c: Chain) => c.value === `eip155:${this.chainIdTokenDeposit}`
+            (c: ChainType) => c.value === `eip155:${this.chainIdTokenDeposit}`
           )?.transactionExplorerUrl || ''
         ).replace('{hash}', this.hash || '')
       : '';
   }
 
-  getFromChain(chains: Chain[]) {
-    return chains.find((c: Chain) => c.chainId === this.chainIdTokenDeposit);
+  getFromChain(chains: ChainType[]) {
+    return chains.find(
+      (c: ChainType) => c.chainId === this.chainIdTokenDeposit
+    );
   }
 
-  getFromToken(chains: Chain[]) {
+  getFromToken(chains: ChainType[]) {
     return this.getFromChain(chains)?.tokens?.find(
       (t: TokenType) => t.address === this.addressTokenDeposit
     );
   }
 
-  getBuyerLink(chains: Chain[]) {
+  getBuyerLink(chains: ChainType[]) {
     return (
       this.destAddr &&
       (
         chains.find(
-          (c: Chain) => c.value === `eip155:${this.chainIdTokenDeposit}`
+          (c: ChainType) => c.value === `eip155:${this.chainIdTokenDeposit}`
         )?.addressExplorerUrl || ''
       ).replace('{hash}', this.destAddr || '')
     );

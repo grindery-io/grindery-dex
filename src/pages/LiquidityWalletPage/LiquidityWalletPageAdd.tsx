@@ -13,7 +13,7 @@ import useLiquidityWalletPage from '../../hooks/useLiquidityWalletPage';
 import SelectTokenButton from '../../components/SelectTokenButton/SelectTokenButton';
 import { TokenType } from '../../types/TokenType';
 import { LiquidityWallet } from '../../types/LiquidityWallet';
-import { Chain } from '../../types/Chain';
+import { ChainType } from '../../types/ChainType';
 import useLiquidityWallets from '../../hooks/useLiquidityWallets';
 import AlertBox from '../../components/AlertBox/AlertBox';
 import { useAppSelector } from '../../store/storeHooks';
@@ -43,7 +43,7 @@ function LiquidityWalletPageAdd() {
   );
 
   const walletChain = chains.find(
-    (c: Chain) => c.chainId === currentWallet?.chainId
+    (c: ChainType) => c.chainId === currentWallet?.chainId
   );
 
   const selectedToken =

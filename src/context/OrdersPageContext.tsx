@@ -1,6 +1,6 @@
 import React, { createContext, useEffect, useState } from 'react';
 import { useGrinderyNexus } from 'use-grindery-nexus';
-import { Chain } from '../types/Chain';
+import { ChainType } from '../types/ChainType';
 import { useNavigate } from 'react-router-dom';
 import useOffers from '../hooks/useOffers';
 import { POOL_CONTRACT_ADDRESS } from '../config/constants';
@@ -26,7 +26,7 @@ type ContextProps = {
   token: TokenType | '';
   searchToken: string;
   isActivating: string;
-  currentChain: Chain | null;
+  currentChain: ChainType | null;
   chainTokens: TokenType[];
   groupedOffers: { [key: string]: Offer[] };
   setAmountMin: React.Dispatch<React.SetStateAction<string>>;
@@ -111,7 +111,7 @@ export const OrdersPageContextProvider = ({
   } = useOffers();
   const filteredChain = chains.find((c) => c.value === chain);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const currentChain: Chain | null =
+  const currentChain: ChainType | null =
     chain && filteredChain
       ? {
           ...(filteredChain || {}),
@@ -326,7 +326,7 @@ export const OrdersPageContextProvider = ({
     const offerChain = offers.find((o: Offer) => o._id === offerId)?.chainId;
 
     const chainToSelect = chains.find(
-      (c: Chain) => c.value === `eip155:${offerChain}`
+      (c: ChainType) => c.value === `eip155:${offerChain}`
     );
 
     if (!chainToSelect) {
@@ -453,7 +453,7 @@ export const OrdersPageContextProvider = ({
     const offerChain = offers.find((o: Offer) => o._id === offerId)?.chainId;
 
     const chainToSelect = chains.find(
-      (c: Chain) => c.value === `eip155:${offerChain}`
+      (c: ChainType) => c.value === `eip155:${offerChain}`
     );
 
     if (!chainToSelect) {
