@@ -18,10 +18,10 @@ import {
   selectFaucetTransactionId,
 } from '../../store/slices/faucetSlice';
 import { useFaucetController } from '../../controllers/FaucetController';
-import useAbi from '../../hooks/useAbi';
 import { selectChainsItems } from '../../store/slices/chainsSlice';
 import { ChainType } from '../../types/ChainType';
 import { TX_EXPLORER } from '../../config/constants';
+import { selectTokenAbi } from '../../store/slices/abiSlice';
 
 function FaucetPageRoot() {
   const user = useAppSelector(selectUserId);
@@ -37,7 +37,7 @@ function FaucetPageRoot() {
     (c: ChainType) => c.chainId === input.chainId
   );
   const { handleInputChange, handleGetTokensAction } = useFaucetController();
-  const { tokenAbi } = useAbi();
+  const tokenAbi = useAppSelector(selectTokenAbi);
 
   return (
     <>

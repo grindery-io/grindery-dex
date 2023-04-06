@@ -37,7 +37,7 @@ export const getChainsWithTokens = (
                 resolve(chainsWithTokens);
               })
               .catch((err) => {
-                console.log('getChainsWithTokens > axios err=', err);
+                console.error('getChainsWithTokens > axios err=', err);
                 reject('Error in getChainsWithTokens axios');
               });
           } catch (error) {
@@ -49,7 +49,7 @@ export const getChainsWithTokens = (
           }
         })
         .catch((err) => {
-          console.log('getChains > axios err=', err);
+          console.error('getChains > axios err=', err);
           reject('Error in getChains axios');
         });
     } catch (error) {

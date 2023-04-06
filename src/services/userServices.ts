@@ -18,7 +18,7 @@ export const isUserAdmin = (accessToken: string): Promise<boolean> => {
           }
         })
         .catch((err) => {
-          console.log('isUserAdmin > axios err=', err);
+          console.error('isUserAdmin > axios err=', err);
           reject('Error in isUserAdmin axios');
         });
     } catch (error) {

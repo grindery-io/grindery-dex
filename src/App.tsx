@@ -21,6 +21,7 @@ import BuyPage from './pages/BuyPage/BuyPage';
 import { store } from './store/store';
 import UserController from './controllers/UserController';
 import ChainsController from './controllers/ChainsController';
+import AbiController from './controllers/AbiController';
 
 declare global {
   interface Window {
@@ -33,57 +34,62 @@ export const App = () => {
     <GrinderyNexusContextProvider>
       <Provider store={store}>
         <UserController>
-          <ChainsController>
-            <AppContextProvider>
-              <BrowserRouter>
-                <AdminContextProvider>
-                  <GrinderyThemeProvider>
-                    <EarlyAccessModal />
-                  </GrinderyThemeProvider>
-                  <AppHeader />
+          <AbiController>
+            <ChainsController>
+              <AppContextProvider>
+                <BrowserRouter>
+                  <AdminContextProvider>
+                    <GrinderyThemeProvider>
+                      <EarlyAccessModal />
+                    </GrinderyThemeProvider>
+                    <AppHeader />
 
-                  <GrinderyChainsContextProvider>
-                    <AbiContextProvider>
-                      <StakesContextProvider>
-                        <LiquidityWalletsContextProvider>
-                          <Routes>
-                            <Route
-                              path="/buy/*"
-                              element={
-                                <OffersContextProvider userType="a">
-                                  <OrdersContextProvider>
-                                    <BuyPage />
-                                  </OrdersContextProvider>
-                                </OffersContextProvider>
-                              }
-                            />
-                            <Route
-                              path="/sell/*"
-                              element={
-                                <OffersContextProvider userType="b">
-                                  <SellPage />
-                                </OffersContextProvider>
-                              }
-                            />
-                            <Route
-                              path="/faucet/*"
-                              element={
-                                <PageContainer>
-                                  <FaucetPage />
-                                </PageContainer>
-                              }
-                            />
+                    <GrinderyChainsContextProvider>
+                      <AbiContextProvider>
+                        <StakesContextProvider>
+                          <LiquidityWalletsContextProvider>
+                            <Routes>
+                              <Route
+                                path="/buy/*"
+                                element={
+                                  <OffersContextProvider userType="a">
+                                    <OrdersContextProvider>
+                                      <BuyPage />
+                                    </OrdersContextProvider>
+                                  </OffersContextProvider>
+                                }
+                              />
+                              <Route
+                                path="/sell/*"
+                                element={
+                                  <OffersContextProvider userType="b">
+                                    <SellPage />
+                                  </OffersContextProvider>
+                                }
+                              />
+                              <Route
+                                path="/faucet/*"
+                                element={
+                                  <PageContainer>
+                                    <FaucetPage />
+                                  </PageContainer>
+                                }
+                              />
 
-                            <Route path="*" element={<Navigate to="/buy" />} />
-                          </Routes>
-                        </LiquidityWalletsContextProvider>
-                      </StakesContextProvider>
-                    </AbiContextProvider>
-                  </GrinderyChainsContextProvider>
-                </AdminContextProvider>
-              </BrowserRouter>
-            </AppContextProvider>
-          </ChainsController>
+                              <Route
+                                path="*"
+                                element={<Navigate to="/buy" />}
+                              />
+                            </Routes>
+                          </LiquidityWalletsContextProvider>
+                        </StakesContextProvider>
+                      </AbiContextProvider>
+                    </GrinderyChainsContextProvider>
+                  </AdminContextProvider>
+                </BrowserRouter>
+              </AppContextProvider>
+            </ChainsController>
+          </AbiController>
         </UserController>
       </Provider>
     </GrinderyNexusContextProvider>
