@@ -40,20 +40,6 @@ import { ROUTES } from '../config/routes';
 
 // Context props
 type ContextProps = {
-  createStake: (
-    accessToken: string,
-    body: { [key: string]: any }
-  ) => Promise<StakeType | boolean>;
-  editStake: (
-    accessToken: string,
-    {
-      chainId,
-      amount,
-    }: {
-      chainId: string;
-      amount: string;
-    }
-  ) => Promise<boolean>;
   handleStakeCreateAction: (
     input: StakeCreateInput,
     currentChainId: string,
@@ -78,8 +64,6 @@ type ContextProps = {
 };
 
 export const StakesContext = createContext<ContextProps>({
-  createStake: async () => false,
-  editStake: async () => false,
   handleStakeCreateAction: () => {},
   handleCreateInputChange: () => {},
   handleWithdrawInputChange: () => {},
@@ -364,7 +348,7 @@ export const StakesController = ({ children }: StakesControllerProps) => {
         }
       } else {
         // update existing stake if stake for the chain exists
-        const stakeUpdated = await updateStake(accessToken, {
+        const stakeUpdated = await editStake(accessToken, {
           chainId: input.chainId,
           amount: (
             parseInt(
@@ -532,7 +516,7 @@ export const StakesController = ({ children }: StakesControllerProps) => {
       return;
     }
 
-    const stakeUpdated = await updateStake(accessToken, {
+    const stakeUpdated = await editStake(accessToken, {
       chainId: selectedStake.chainId,
       amount: (
         parseFloat(
@@ -574,8 +558,6 @@ export const StakesController = ({ children }: StakesControllerProps) => {
   return (
     <StakesContext.Provider
       value={{
-        createStake,
-        editStake,
         handleStakeCreateAction,
         handleCreateInputChange,
         handleWithdrawInputChange,
