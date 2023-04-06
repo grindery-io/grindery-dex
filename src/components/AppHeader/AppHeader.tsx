@@ -1,10 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
-import useAppContext from '../../hooks/useAppContext';
 import Logo from '../Logo/Logo';
 import { FAUCET_MENU, SCREEN } from '../../config/constants';
 import UserMenu from '../UserMenu/UserMenu';
-import { useGrinderyNexus } from 'use-grindery-nexus';
 import { useLocation, useNavigate } from 'react-router';
 import { Box } from '@mui/system';
 import ExpandLess from '@mui/icons-material/ExpandLess';
@@ -18,13 +16,14 @@ import {
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
-import useAdmin from '../../hooks/useAdmin';
 import { sellPages } from '../../pages/SellPage/SellPage';
 import { buyPages } from '../../pages/BuyPage/BuyPage';
 import NavTabs, { MenuItem } from '../NavTabs/NavTabs';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import Drawer from '../Drawer/Drawer';
 import CurrencyExchangeIcon from '@mui/icons-material/CurrencyExchange';
+import { selectUserIsAdmin } from '../../store/slices/userSlice';
+import { useUserController } from '../../controllers/UserController';
 
 const menu: MenuItem[] = [
   {
@@ -178,9 +177,7 @@ type Props = {};
 
 const AppHeader = (props: Props) => {
   let navigate = useNavigate();
-  const { user } = useAppContext();
-  const { isLoading, isAdmin } = useAdmin();
-  const { connect } = useGrinderyNexus();
+  const { connectUser, getUser } = useUserController();
   const location = useLocation();
   const [open, setOpen] = React.useState(true);
   const [faucetOpen, setFaucetOpen] = React.useState(true);
@@ -236,18 +233,18 @@ const AppHeader = (props: Props) => {
           <NavTabs menu={menu} />
         </NavTabsWrapper>
 
-        {!user && 'ethereum' in window && (
+        {!getUser() && 'ethereum' in window && (
           <ConnectWrapper>
             <button
               onClick={() => {
-                connect();
+                connectUser();
               }}
             >
               Connect wallet
             </button>
           </ConnectWrapper>
         )}
-        {user && (
+        {getUser() && (
           <UserWrapper>
             <UserMenu />
           </UserWrapper>
@@ -276,7 +273,9 @@ const AppHeader = (props: Props) => {
           <Box sx={{ overflow: 'auto' }}>
             <List>
               {menu
-                .filter((link: any) => isAdmin || link.path === '/buy')
+                .filter(
+                  (link: any) => selectUserIsAdmin || link.path === '/buy'
+                )
                 .map((link: any) => (
                   <React.Fragment key={link.path}>
                     <ListItemButton

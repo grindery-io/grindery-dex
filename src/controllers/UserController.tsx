@@ -23,6 +23,7 @@ type ContextProps = {
   getEthers: () => any;
   getProvider: () => any;
   getSigner: () => any;
+  getUser: () => any;
 };
 
 // Context provider props
@@ -37,6 +38,7 @@ export const UserContext = createContext<ContextProps>({
   getEthers: () => {},
   getProvider: () => {},
   getSigner: () => {},
+  getUser: () => {},
 });
 
 export const UserController = ({ children }: UserControllerProps) => {
@@ -63,6 +65,10 @@ export const UserController = ({ children }: UserControllerProps) => {
   const getSigner = () => {
     const provider = getProvider();
     return provider.getSigner();
+  };
+
+  const getUser = () => {
+    return user;
   };
 
   const checkUserIsAdmin = useCallback(
@@ -109,6 +115,7 @@ export const UserController = ({ children }: UserControllerProps) => {
         getEthers,
         getProvider,
         getSigner,
+        getUser,
       }}
     >
       {children}
