@@ -15,11 +15,11 @@ import {
 } from './MainNavigation.style';
 import Logo from '../../components/Logo/Logo';
 import NavTabs, { MenuItem } from '../../components/NavTabs/NavTabs';
-import UserMenu from '../../components/UserMenu/UserMenu';
 import MainNavigationDrawer from './MainNavigationDrawer';
 import { useAppSelector } from '../../store/storeHooks';
 import { selectUserId } from '../../store/slices/userSlice';
 import { useUserController } from '../../controllers/UserController';
+import MainNavigationUserMenu from './MainNavigationUserMenu';
 
 export const MENU: MenuItem[] = [
   {
@@ -94,7 +94,7 @@ const MainNavigation = (props: Props) => {
         )}
         {user && (
           <UserWrapper>
-            <UserMenu />
+            <MainNavigationUserMenu />
           </UserWrapper>
         )}
       </Wrapper>
