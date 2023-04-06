@@ -31,7 +31,6 @@ export const App = () => {
             <ChainsController>
               <BrowserRouter>
                 <MainNavigation />
-
                 <StakesContextProvider>
                   <LiquidityWalletsContextProvider>
                     <Routes>
