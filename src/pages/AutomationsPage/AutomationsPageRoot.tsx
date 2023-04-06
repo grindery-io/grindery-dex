@@ -2,7 +2,6 @@ import React from 'react';
 import { Typography } from '@mui/material';
 import { Box } from '@mui/system';
 import { useNavigate } from 'react-router-dom';
-import { useGrinderyNexus } from 'use-grindery-nexus';
 import AlertBox from '../../components/AlertBox/AlertBox';
 import DexCardBody from '../../components/DexCard/DexCardBody';
 import DexCardHeader from '../../components/DexCard/DexCardHeader';
@@ -10,7 +9,6 @@ import DexCardSubmitButton from '../../components/DexCard/DexCardSubmitButton';
 import SelectChainButton from '../../components/SelectChainButton/SelectChainButton';
 import TextArea from '../../components/TextArea/TextArea';
 import TransactionID from '../../components/TransactionID/TransactionID';
-import useAutomationsPage from '../../hooks/useAutomationsPage';
 import Loading from '../../components/Loading/Loading';
 import TextInput from '../../components/TextInput/TextInput';
 import { CardTitle } from '../../components/Card/CardTitle';
@@ -19,21 +17,45 @@ import {
   selectLiquidityWalletAbi,
   selectPoolAbi,
 } from '../../store/slices/abiSlice';
+import {
+  selectUserAccessToken,
+  selectUserChainId,
+  selectUserId,
+} from '../../store/slices/userSlice';
+import { useUserController } from '../../controllers/UserController';
+import { ROUTES } from '../../config/routes';
+import {
+  selectAutomationsBotAddress,
+  selectAutomationsError,
+  selectAutomationsInput,
+  selectAutomationsLoading,
+} from '../../store/slices/automationsSlice';
+import { selectChainsItems } from '../../store/slices/chainsSlice';
+import { ChainType } from '../../types/ChainType';
+import { useAutomationsController } from '../../controllers/AutomationsController';
+import useLiquidityWallets from '../../hooks/useLiquidityWallets';
+import { LiquidityWalletType } from '../../types/LiquidityWalletType';
 
 type Props = {};
 
 const AutomationsPageRoot = (props: Props) => {
-  const { user, connect } = useGrinderyNexus();
-  const {
-    chain,
-    VIEWS,
-    bot,
-    loading,
-    errorMessage,
-    currentBot,
-    handleDelegateClick,
-    handleBotChange,
-  } = useAutomationsPage();
+  const user = useAppSelector(selectUserId);
+  const accessToken = useAppSelector(selectUserAccessToken);
+  const userChainId = useAppSelector(selectUserChainId);
+  const { connectUser: connect } = useUserController();
+  const input = useAppSelector(selectAutomationsInput);
+  const { bot, chainId } = input;
+  const chains = useAppSelector(selectChainsItems);
+  const currentChain = chains.find((c: ChainType) => c.chainId === chainId);
+  const errorMessage = useAppSelector(selectAutomationsError);
+  const loading = useAppSelector(selectAutomationsLoading);
+  const botAddress = useAppSelector(selectAutomationsBotAddress);
+  const { handleAutomationsInputChange, handleAutomationsDelegateAction } =
+    useAutomationsController();
+  const { wallets } = useLiquidityWallets();
+  const wallet = wallets.find(
+    (w: LiquidityWalletType) => w.chainId === chainId
+  );
   const liquidityWalletAbi = useAppSelector(selectLiquidityWalletAbi);
   const poolAbi = useAppSelector(selectPoolAbi);
   let navigate = useNavigate();
@@ -45,13 +67,10 @@ const AutomationsPageRoot = (props: Props) => {
         <SelectChainButton
           title="Blockchain"
           onClick={() => {
-            navigate(VIEWS.SELECT_CHAIN.fullPath);
+            navigate(ROUTES.SELL.AUTOMATIONS.SELECT_CHAIN.FULL_PATH);
           }}
-          chain={chain}
-          error={{
-            type: '',
-            text: '',
-          }}
+          chain={currentChain}
+          error={errorMessage}
         />
         <TextArea
           label="Liquidity wallet ABI"
@@ -70,13 +89,13 @@ const AutomationsPageRoot = (props: Props) => {
           maxRows={3}
         />
         <CardTitle sx={{ padding: '30px 0 0' }}>Power delegation</CardTitle>
-        {user && currentBot && (
+        {user && botAddress && (
           <AlertBox wrapperStyle={{ marginBottom: '20px' }}>
             <Box sx={{ textAlign: 'center' }}></Box>
             <Typography variant="subtitle2" sx={{ marginbottom: '4px' }}>
               Power has been delegated to the bot
             </Typography>
-            <TransactionID label="Address" value={currentBot} />
+            <TransactionID label="Address" value={botAddress} />
           </AlertBox>
         )}
 
@@ -85,7 +104,7 @@ const AutomationsPageRoot = (props: Props) => {
           name="bot"
           value={bot}
           onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-            handleBotChange(event.target.value);
+            handleAutomationsInputChange('bot', event.target.value);
           }}
           helpText="Change this if you want to delegate power to&nbsp;a&nbsp;different address."
           error={errorMessage}
@@ -106,7 +125,13 @@ const AutomationsPageRoot = (props: Props) => {
           onClick={
             user
               ? () => {
-                  handleDelegateClick();
+                  handleAutomationsDelegateAction(
+                    accessToken,
+                    input,
+                    userChainId,
+                    wallet?.walletAddress || '',
+                    liquidityWalletAbi
+                  );
                 }
               : () => {
                   connect();

@@ -16,6 +16,15 @@ export const ROUTES = {
         FULL_PATH: '/sell/staking/:stakeId/withdraw',
       },
     },
+    AUTOMATIONS: {
+      RELATIVE_PATH: '/automations/*',
+      FULL_PATH: '/sell/automations/*',
+      ROOT: { RELATIVE_PATH: '', FULL_PATH: '/sell/automations' },
+      SELECT_CHAIN: {
+        RELATIVE_PATH: '/select-chain',
+        FULL_PATH: '/sell/automations/select-chain',
+      },
+    },
   },
   FAUCET: {
     RELATIVE_PATH: '/*',

@@ -15,6 +15,7 @@ import ChainsController from './controllers/ChainsController';
 import AbiController from './controllers/AbiController';
 import MainNavigation from './pages/MainNavigation/MainNavigation';
 import StakesController from './controllers/StakesController';
+import AutomationsController from './controllers/AutomationsController';
 
 declare global {
   interface Window {
@@ -33,29 +34,31 @@ export const App = () => {
                 <MainNavigation />
                 <StakesController>
                   <LiquidityWalletsContextProvider>
-                    <Routes>
-                      <Route
-                        path="/buy/*"
-                        element={
-                          <OffersContextProvider userType="a">
-                            <OrdersContextProvider>
-                              <BuyPage />
-                            </OrdersContextProvider>
-                          </OffersContextProvider>
-                        }
-                      />
-                      <Route
-                        path="/sell/*"
-                        element={
-                          <OffersContextProvider userType="b">
-                            <SellPage />
-                          </OffersContextProvider>
-                        }
-                      />
-                      <Route path="/faucet/*" element={<FaucetPage />} />
+                    <AutomationsController>
+                      <Routes>
+                        <Route
+                          path="/buy/*"
+                          element={
+                            <OffersContextProvider userType="a">
+                              <OrdersContextProvider>
+                                <BuyPage />
+                              </OrdersContextProvider>
+                            </OffersContextProvider>
+                          }
+                        />
+                        <Route
+                          path="/sell/*"
+                          element={
+                            <OffersContextProvider userType="b">
+                              <SellPage />
+                            </OffersContextProvider>
+                          }
+                        />
+                        <Route path="/faucet/*" element={<FaucetPage />} />
 
-                      <Route path="*" element={<Navigate to="/buy" />} />
-                    </Routes>
+                        <Route path="*" element={<Navigate to="/buy" />} />
+                      </Routes>
+                    </AutomationsController>
                   </LiquidityWalletsContextProvider>
                 </StakesController>
               </BrowserRouter>

@@ -4,7 +4,6 @@ import { Box } from '@mui/system';
 import { useNavigate } from 'react-router-dom';
 import DexCardBody from '../../components/DexCard/DexCardBody';
 import DexCardHeader from '../../components/DexCard/DexCardHeader';
-import useAutomationsPage from '../../hooks/useAutomationsPage';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
 import ChainsList from '../../components/ChainsList/ChainsList';
 import { ChainType } from '../../types/ChainType';
@@ -13,13 +12,18 @@ import {
   selectChainsItems,
   selectChainsLoading,
 } from '../../store/slices/chainsSlice';
+import { ROUTES } from '../../config/routes';
+import { selectAutomationsInput } from '../../store/slices/automationsSlice';
+import { useAutomationsController } from '../../controllers/AutomationsController';
 
 type Props = {};
 
 const AutomationsPageSelectChain = (props: Props) => {
-  const { chain, handleChainChange, VIEWS } = useAutomationsPage();
   const chains = useAppSelector(selectChainsItems);
+  const { handleAutomationsInputChange } = useAutomationsController();
   const chainsIsLoading = useAppSelector(selectChainsLoading);
+  const input = useAppSelector(selectAutomationsInput);
+  const { chainId } = input;
   const filteredChains = chains.filter((c: ChainType) => c.chainId === '97');
   let navigate = useNavigate();
   return (
@@ -33,7 +37,7 @@ const AutomationsPageSelectChain = (props: Props) => {
             size="medium"
             edge="start"
             onClick={() => {
-              navigate(VIEWS.ROOT.fullPath);
+              navigate(ROUTES.SELL.AUTOMATIONS.ROOT.FULL_PATH);
             }}
           >
             <ArrowBackIcon />
@@ -43,9 +47,12 @@ const AutomationsPageSelectChain = (props: Props) => {
       />
       <DexCardBody>
         <ChainsList
-          chain={chain?.caipId || ''}
+          chain={chainId}
           chains={filteredChains}
-          onClick={handleChainChange}
+          onClick={(chain: ChainType) => {
+            handleAutomationsInputChange('chainId', chain.chainId);
+            navigate(ROUTES.SELL.AUTOMATIONS.ROOT.FULL_PATH);
+          }}
           loading={chainsIsLoading}
         />
         <Box height="20px" />

@@ -12,7 +12,6 @@ import OffersPage from '../OffersPage/OffersPage';
 //import StakingPage from '../StakingPage/StakingPage';
 import OrdersBPage from '../OrdersPage/OrdersPage';
 import AutomationsPage from '../AutomationsPage/AutomationsPage';
-import AutomationsPageContextProvider from '../../context/AutomationsPageContext';
 import DexCard from '../../components/DexCard/DexCard';
 import DexCardHeader from '../../components/DexCard/DexCardHeader';
 import DexCardBody from '../../components/DexCard/DexCardBody';
@@ -24,7 +23,7 @@ import {
   selectUserIsAdminLoading,
 } from '../../store/slices/userSlice';
 //import StakingPage from '../StakingPage/StakingPage';
-//import { ROUTES } from '../../config/routes';
+import { ROUTES } from '../../config/routes';
 
 export const sellPages = [
   // Route temporary disabled
@@ -57,14 +56,10 @@ export const sellPages = [
     ),
   },
   {
-    path: '/automations/*',
-    fullPath: '/sell/automations',
+    path: ROUTES.SELL.AUTOMATIONS.RELATIVE_PATH,
+    fullPath: ROUTES.SELL.AUTOMATIONS.ROOT.FULL_PATH,
     label: 'Trading Automation',
-    component: (
-      <AutomationsPageContextProvider>
-        <AutomationsPage />
-      </AutomationsPageContextProvider>
-    ),
+    component: <AutomationsPage />,
   },
   // {
   //   path: '/wallets',
