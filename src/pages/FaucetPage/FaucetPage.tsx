@@ -14,6 +14,7 @@ import {
   selectUserIsAdminLoading,
 } from '../../store/slices/userSlice';
 import Loading from '../../components/Loading/Loading';
+import PageContainer from '../../components/PageContainer/PageContainer';
 
 function FaucetPage() {
   const isLoading = useAppSelector(selectUserIsAdminLoading);
@@ -30,27 +31,29 @@ function FaucetPage() {
 
   return (
     <FaucetController>
-      <FaucetMenu />
-      <DexCard>
-        <Routes>
-          <Route
-            path={ROUTES.FAUCET.PLACEHOLDER.RELATIVE_PATH}
-            element={<FaucetPagePlaceholder />}
-          />
-          {isAdmin && (
-            <>
-              <Route
-                path={ROUTES.FAUCET.ROOT.RELATIVE_PATH}
-                element={<FaucetPageRoot />}
-              />
-              <Route
-                path={ROUTES.FAUCET.SELECT_CHAIN.RELATIVE_PATH}
-                element={<FaucetPageSelectChain />}
-              />
-            </>
-          )}
-        </Routes>
-      </DexCard>
+      <PageContainer>
+        <FaucetMenu />
+        <DexCard>
+          <Routes>
+            <Route
+              path={ROUTES.FAUCET.PLACEHOLDER.RELATIVE_PATH}
+              element={<FaucetPagePlaceholder />}
+            />
+            {isAdmin && (
+              <>
+                <Route
+                  path={ROUTES.FAUCET.ROOT.RELATIVE_PATH}
+                  element={<FaucetPageRoot />}
+                />
+                <Route
+                  path={ROUTES.FAUCET.SELECT_CHAIN.RELATIVE_PATH}
+                  element={<FaucetPageSelectChain />}
+                />
+              </>
+            )}
+          </Routes>
+        </DexCard>
+      </PageContainer>
     </FaucetController>
   );
 }
