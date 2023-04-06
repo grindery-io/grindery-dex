@@ -27,6 +27,7 @@ import {
 //import { ROUTES } from '../../config/routes';
 
 export const sellPages = [
+  // Route temporary disabled
   /*{
     path: ROUTES.SELL.STAKING.RELATIVE_PATH,
     fullPath: ROUTES.SELL.STAKING.ROOT.FULL_PATH,
