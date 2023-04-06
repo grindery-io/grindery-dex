@@ -6,7 +6,6 @@ import { Chain } from '../types/Chain';
 import { TokenType } from '../types/TokenType';
 import isNumeric from '../utils/isNumeric';
 import { useGrinderyNexus } from 'use-grindery-nexus';
-import useAbi from '../hooks/useAbi';
 import { getErrorMessage } from '../utils/error';
 import useOrders from '../hooks/useOrders';
 import axios from 'axios';
@@ -16,6 +15,7 @@ import {
   selectChainsItems,
   selectChainsLoading,
 } from '../store/slices/chainsSlice';
+import { selectPoolAbi, selectTokenAbi } from '../store/slices/abiSlice';
 
 // Context props
 type ContextProps = {
@@ -116,7 +116,9 @@ export const ShopPageContextProvider = ({ children }: ShopPageContextProps) => {
     },
   };
   let navigate = useNavigate();
-  const { tokenAbi, poolAbi } = useAbi();
+
+  const tokenAbi = useAppSelector(selectTokenAbi);
+  const poolAbi = useAppSelector(selectPoolAbi);
   const [errorMessage, setErrorMessage] = useState<{
     type: string;
     text: string;

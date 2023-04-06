@@ -7,17 +7,18 @@ import { LiquidityWallet } from '../../types/LiquidityWallet';
 import { Box } from '@mui/system';
 import NotFound from '../../components/NotFound/NotFound';
 import { useGrinderyNexus } from 'use-grindery-nexus';
-import useAbi from '../../hooks/useAbi';
 import useLiquidityWallets from '../../hooks/useLiquidityWallets';
 import { getErrorMessage } from '../../utils/error';
 import OrderSkeleton from '../../components/OrderCard/OrderSkeleton';
 import useOrders from '../../hooks/useOrders';
 import Order from '../../models/Order';
+import { useAppSelector } from '../../store/storeHooks';
+import { selectLiquidityWalletAbi } from '../../store/slices/abiSlice';
 
 function OrdersPage() {
   const { chain: selectedChain, provider, ethers } = useGrinderyNexus();
   const { ordersB: orders, isLoading, completeOrder } = useOrders();
-  const { liquidityWalletAbi } = useAbi();
+  const liquidityWalletAbi = useAppSelector(selectLiquidityWalletAbi);
   const { wallets, updateWallet, getWalletBalance } = useLiquidityWallets();
   const [error, setError] = useState({ type: '', text: '' });
 

@@ -2,7 +2,6 @@ import axios from 'axios';
 import React, { createContext, useEffect, useState } from 'react';
 import { useGrinderyNexus } from 'use-grindery-nexus';
 import { DELIGHT_API_URL } from '../config/constants';
-import useAbi from '../hooks/useAbi';
 import useLiquidityWallets from '../hooks/useLiquidityWallets';
 import { Chain } from '../types/Chain';
 import { LiquidityWallet } from '../types/LiquidityWallet';
@@ -12,6 +11,7 @@ import {
   selectChainsItems,
   selectChainsLoading,
 } from '../store/slices/chainsSlice';
+import { selectLiquidityWalletAbi } from '../store/slices/abiSlice';
 
 // Context props
 type ContextProps = {
@@ -59,13 +59,7 @@ export const AutomationsPageContextProvider = ({
       fullPath: '/sell/automations/select-chain',
     },
   };
-  const {
-    chain: selectedChain,
-    ethers,
-    provider,
-    token,
-    address,
-  } = useGrinderyNexus();
+  const { chain: selectedChain, ethers, provider, token } = useGrinderyNexus();
   const [chain, setChain] = useState<Chain | null>(null);
   const chains = useAppSelector(selectChainsItems);
   const chainsIsLoading = useAppSelector(selectChainsLoading);
@@ -74,7 +68,7 @@ export const AutomationsPageContextProvider = ({
   const [currentBot, setCurrentBot] = useState<string>('');
   const [errorMessage, setErrorMessage] = useState({ type: '', text: '' });
   const { wallets } = useLiquidityWallets();
-  const { liquidityWalletAbi } = useAbi();
+  const liquidityWalletAbi = useAppSelector(selectLiquidityWalletAbi);
   const wallet = wallets.find(
     (w: LiquidityWallet) => w.chainId === chain?.chainId
   );

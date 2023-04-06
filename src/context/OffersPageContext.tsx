@@ -4,7 +4,6 @@ import { Chain } from '../types/Chain';
 import { useNavigate } from 'react-router-dom';
 import useOffers from '../hooks/useOffers';
 import { POOL_CONTRACT_ADDRESS } from '../config/constants';
-import useAbi from '../hooks/useAbi';
 import _ from 'lodash';
 import { getErrorMessage } from '../utils/error';
 import { TokenType } from '../types/TokenType';
@@ -17,6 +16,7 @@ import {
   selectChainsLoading,
 } from '../store/slices/chainsSlice';
 import isNumeric from '../utils/isNumeric';
+import { selectPoolAbi } from '../store/slices/abiSlice';
 
 // Context props
 type ContextProps = {
@@ -130,7 +130,7 @@ export const OffersPageContextProvider = ({
   const { wallets } = useLiquidityWallets();
   const { user, chain: selectedChain, provider, ethers } = useGrinderyNexus();
   let navigate = useNavigate();
-  const { poolAbi } = useAbi();
+  const poolAbi = useAppSelector(selectPoolAbi);
   const [amountMin, setAmountMin] = useState<string>('');
   const [amountMax, setAmountMax] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);

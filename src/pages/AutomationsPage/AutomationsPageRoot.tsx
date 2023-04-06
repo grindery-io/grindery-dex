@@ -10,11 +10,15 @@ import DexCardSubmitButton from '../../components/DexCard/DexCardSubmitButton';
 import SelectChainButton from '../../components/SelectChainButton/SelectChainButton';
 import TextArea from '../../components/TextArea/TextArea';
 import TransactionID from '../../components/TransactionID/TransactionID';
-import useAbi from '../../hooks/useAbi';
 import useAutomationsPage from '../../hooks/useAutomationsPage';
 import Loading from '../../components/Loading/Loading';
 import TextInput from '../../components/TextInput/TextInput';
 import { CardTitle } from '../../components/Card/CardTitle';
+import { useAppSelector } from '../../store/storeHooks';
+import {
+  selectLiquidityWalletAbi,
+  selectPoolAbi,
+} from '../../store/slices/abiSlice';
 
 type Props = {};
 
@@ -30,7 +34,8 @@ const AutomationsPageRoot = (props: Props) => {
     handleDelegateClick,
     handleBotChange,
   } = useAutomationsPage();
-  const { liquidityWalletAbi, poolAbi } = useAbi();
+  const liquidityWalletAbi = useAppSelector(selectLiquidityWalletAbi);
+  const poolAbi = useAppSelector(selectPoolAbi);
   let navigate = useNavigate();
 
   return (

@@ -3,7 +3,6 @@ import './index.css';
 import { Provider } from 'react-redux';
 import GrinderyNexusContextProvider from 'use-grindery-nexus';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
-import AbiContextProvider from './context/AbiContext';
 import SellPage from './pages/SellPage/SellPage';
 import FaucetPage from './pages/FaucetPage/FaucetPage';
 import OffersContextProvider from './context/OffersContext';
@@ -33,35 +32,33 @@ export const App = () => {
               <BrowserRouter>
                 <MainNavigation />
 
-                <AbiContextProvider>
-                  <StakesContextProvider>
-                    <LiquidityWalletsContextProvider>
-                      <Routes>
-                        <Route
-                          path="/buy/*"
-                          element={
-                            <OffersContextProvider userType="a">
-                              <OrdersContextProvider>
-                                <BuyPage />
-                              </OrdersContextProvider>
-                            </OffersContextProvider>
-                          }
-                        />
-                        <Route
-                          path="/sell/*"
-                          element={
-                            <OffersContextProvider userType="b">
-                              <SellPage />
-                            </OffersContextProvider>
-                          }
-                        />
-                        <Route path="/faucet/*" element={<FaucetPage />} />
+                <StakesContextProvider>
+                  <LiquidityWalletsContextProvider>
+                    <Routes>
+                      <Route
+                        path="/buy/*"
+                        element={
+                          <OffersContextProvider userType="a">
+                            <OrdersContextProvider>
+                              <BuyPage />
+                            </OrdersContextProvider>
+                          </OffersContextProvider>
+                        }
+                      />
+                      <Route
+                        path="/sell/*"
+                        element={
+                          <OffersContextProvider userType="b">
+                            <SellPage />
+                          </OffersContextProvider>
+                        }
+                      />
+                      <Route path="/faucet/*" element={<FaucetPage />} />
 
-                        <Route path="*" element={<Navigate to="/buy" />} />
-                      </Routes>
-                    </LiquidityWalletsContextProvider>
-                  </StakesContextProvider>
-                </AbiContextProvider>
+                      <Route path="*" element={<Navigate to="/buy" />} />
+                    </Routes>
+                  </LiquidityWalletsContextProvider>
+                </StakesContextProvider>
               </BrowserRouter>
             </ChainsController>
           </AbiController>

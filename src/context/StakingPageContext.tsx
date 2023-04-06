@@ -6,13 +6,13 @@ import {
   GRT_CONTRACT_ADDRESS,
   POOL_CONTRACT_ADDRESS,
 } from '../config/constants';
-import useAbi from '../hooks/useAbi';
 import { getErrorMessage } from '../utils/error';
 import useStakes from '../hooks/useStakes';
 import { Stake } from '../types/Stake';
 import isNumeric from '../utils/isNumeric';
 import { useAppSelector } from '../store/storeHooks';
 import { selectChainsItems } from '../store/slices/chainsSlice';
+import { selectPoolAbi, selectTokenAbi } from '../store/slices/abiSlice';
 
 // Context props
 type ContextProps = {
@@ -84,7 +84,8 @@ export const StakingPageContextProvider = ({
 
   const { chain: selectedChain, provider, ethers } = useGrinderyNexus();
   let navigate = useNavigate();
-  const { poolAbi, tokenAbi } = useAbi();
+  const poolAbi = useAppSelector(selectPoolAbi);
+  const tokenAbi = useAppSelector(selectTokenAbi);
   const [amountGRT, setAmountGRT] = useState<string>('');
   const [amountAdd, setAmountAdd] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);

@@ -2,9 +2,9 @@ import React, { createContext, useEffect, useState } from 'react';
 import { useGrinderyNexus } from 'use-grindery-nexus';
 import { Chain } from '../types/Chain';
 import { GRT_CONTRACT_ADDRESS } from '../config/constants';
-import useAbi from '../hooks/useAbi';
 import { useAppSelector } from '../store/storeHooks';
 import { selectChainsItems } from '../store/slices/chainsSlice';
+import { selectTokenAbi } from '../store/slices/abiSlice';
 
 function isNumeric(value: string) {
   return /^\d*(\.\d+)?$/.test(value);
@@ -78,7 +78,7 @@ export const FaucetPageContextProvider = ({
     ethers,
     chain: selectedChain,
   } = useGrinderyNexus();
-  const { tokenAbi } = useAbi();
+  const tokenAbi = useAppSelector(selectTokenAbi);
   const [userAddress, setUserAddress] = useState<string | null>(address || '');
   const [amountGRT, setAmountGRT] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);

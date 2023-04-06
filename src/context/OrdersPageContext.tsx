@@ -4,13 +4,13 @@ import { Chain } from '../types/Chain';
 import { useNavigate } from 'react-router-dom';
 import useOffers from '../hooks/useOffers';
 import { POOL_CONTRACT_ADDRESS } from '../config/constants';
-import useAbi from '../hooks/useAbi';
 import _ from 'lodash';
 import { getErrorMessage } from '../utils/error';
 import { TokenType } from '../types/TokenType';
 import Offer from '../models/Offer';
 import { useAppSelector } from '../store/storeHooks';
 import { selectChainsItems } from '../store/slices/chainsSlice';
+import { selectPoolAbi } from '../store/slices/abiSlice';
 
 function isNumeric(value: string) {
   return /^\d*(\.\d+)?$/.test(value);
@@ -92,7 +92,7 @@ export const OrdersPageContextProvider = ({
 
   const { chain: selectedChain, provider, ethers } = useGrinderyNexus();
   let navigate = useNavigate();
-  const { poolAbi } = useAbi();
+  const poolAbi = useAppSelector(selectPoolAbi);
   const [amountMin, setAmountMin] = useState<string>('');
   const [amountMax, setAmountMax] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
