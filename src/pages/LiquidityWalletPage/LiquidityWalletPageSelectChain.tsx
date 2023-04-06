@@ -5,7 +5,7 @@ import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
 import DexCardHeader from '../../components/DexCard/DexCardHeader';
 import ChainsList from '../../components/ChainsList/ChainsList';
 import { ChainType } from '../../types/ChainType';
-import { LiquidityWallet } from '../../types/LiquidityWallet';
+import { LiquidityWalletType } from '../../types/LiquidityWalletType';
 import { useNavigate } from 'react-router-dom';
 import useLiquidityWalletPage from '../../hooks/useLiquidityWalletPage';
 import DexCardBody from '../../components/DexCard/DexCardBody';
@@ -43,7 +43,7 @@ function LiquidityWalletPageSelectChain() {
           chains={chains.filter(
             (chain: ChainType) =>
               !wallets
-                .map((wallet: LiquidityWallet) => wallet.chainId)
+                .map((wallet: LiquidityWalletType) => wallet.chainId)
                 .includes(chain.chainId)
           )}
           onClick={(blockchain: any) => {

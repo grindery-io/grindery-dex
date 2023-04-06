@@ -6,7 +6,7 @@ import { AddCircleOutline as AddCircleOutlineIcon } from '@mui/icons-material';
 import DexCardHeader from '../../components/DexCard/DexCardHeader';
 import DexCardSubmitButton from '../../components/DexCard/DexCardSubmitButton';
 import DexCardBody from '../../components/DexCard/DexCardBody';
-import { LiquidityWallet } from '../../types/LiquidityWallet';
+import { LiquidityWalletType } from '../../types/LiquidityWalletType';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
 import { useNavigate, useParams } from 'react-router-dom';
 import useLiquidityWalletPage from '../../hooks/useLiquidityWalletPage';
@@ -29,7 +29,7 @@ function LiquidityWalletPageTokens() {
   const chains = useAppSelector(selectChainsItems);
 
   const currentWallet = wallets.find(
-    (w: LiquidityWallet) => w._id === walletId
+    (w: LiquidityWalletType) => w._id === walletId
   );
 
   const walletChain = chains.find(

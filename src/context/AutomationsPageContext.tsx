@@ -4,7 +4,7 @@ import { useGrinderyNexus } from 'use-grindery-nexus';
 import { DELIGHT_API_URL } from '../config/constants';
 import useLiquidityWallets from '../hooks/useLiquidityWallets';
 import { ChainType } from '../types/ChainType';
-import { LiquidityWallet } from '../types/LiquidityWallet';
+import { LiquidityWalletType } from '../types/LiquidityWalletType';
 import { getErrorMessage } from '../utils/error';
 import { useAppSelector } from '../store/storeHooks';
 import {
@@ -70,7 +70,7 @@ export const AutomationsPageContextProvider = ({
   const { wallets } = useLiquidityWallets();
   const liquidityWalletAbi = useAppSelector(selectLiquidityWalletAbi);
   const wallet = wallets.find(
-    (w: LiquidityWallet) => w.chainId === chain?.chainId
+    (w: LiquidityWalletType) => w.chainId === chain?.chainId
   );
 
   const params = {

@@ -8,7 +8,7 @@ import useLiquidityWalletPage from '../../hooks/useLiquidityWalletPage';
 import TokenSearch from '../../components/TokenSearch/TokenSearch';
 import TokensList from '../../components/TokensList/TokensList';
 import NotFound from '../../components/NotFound/NotFound';
-import { LiquidityWallet } from '../../types/LiquidityWallet';
+import { LiquidityWalletType } from '../../types/LiquidityWalletType';
 import { ChainType } from '../../types/ChainType';
 import useLiquidityWallets from '../../hooks/useLiquidityWallets';
 import Loading from '../../components/Loading/Loading';
@@ -28,7 +28,7 @@ function LiquidityWalletPageSelectToken() {
   const chains = useAppSelector(selectChainsItems);
 
   const currentWallet = wallets.find(
-    (w: LiquidityWallet) => w._id === walletId
+    (w: LiquidityWalletType) => w._id === walletId
   );
 
   const walletChain = chains.find(

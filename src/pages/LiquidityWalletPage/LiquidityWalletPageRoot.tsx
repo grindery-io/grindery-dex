@@ -6,7 +6,7 @@ import { AddCircleOutline as AddCircleOutlineIcon } from '@mui/icons-material';
 import DexCardHeader from '../../components/DexCard/DexCardHeader';
 import DexCardSubmitButton from '../../components/DexCard/DexCardSubmitButton';
 import DexCardBody from '../../components/DexCard/DexCardBody';
-import { LiquidityWallet as LiquidityWalletType } from '../../types/LiquidityWallet';
+import { LiquidityWalletType } from '../../types/LiquidityWalletType';
 import LiquidityWallet from '../../components/LiquidityWallet/LiquidityWallet';
 import { useNavigate } from 'react-router-dom';
 import useLiquidityWalletPage from '../../hooks/useLiquidityWalletPage';

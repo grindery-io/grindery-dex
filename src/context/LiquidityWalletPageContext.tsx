@@ -3,7 +3,7 @@ import { useGrinderyNexus } from 'use-grindery-nexus';
 import { ChainType } from '../types/ChainType';
 import { useNavigate } from 'react-router-dom';
 import _ from 'lodash';
-import { LiquidityWallet } from '../types/LiquidityWallet';
+import { LiquidityWalletType } from '../types/LiquidityWalletType';
 import { TokenType } from '../types/TokenType';
 import useLiquidityWallets from '../hooks/useLiquidityWallets';
 import { GRTSATELLITE_CONTRACT_ADDRESS } from '../config/constants';
@@ -24,7 +24,7 @@ type ContextProps = {
   chain: string;
 
   currentChain: ChainType | null;
-  wallets: LiquidityWallet[];
+  wallets: LiquidityWalletType[];
   token: string;
   chainTokens: TokenType[];
   searchToken: string;
@@ -164,7 +164,7 @@ export const LiquidityWalletPageContextProvider = ({
     if (
       chain &&
       wallets
-        .map((wallet: LiquidityWallet) => wallet.chainId)
+        .map((wallet: LiquidityWalletType) => wallet.chainId)
         .includes(chain.split(':')[1])
     ) {
       setErrorMessage({
@@ -285,15 +285,14 @@ export const LiquidityWalletPageContextProvider = ({
     if (
       parseFloat(amountAdd) >
       parseFloat(
-        wallets.find((wallet: LiquidityWallet) => id === wallet._id)?.tokens?.[
-          token
-        ] || '0'
+        wallets.find((wallet: LiquidityWalletType) => id === wallet._id)
+          ?.tokens?.[token] || '0'
       )
     ) {
       setErrorMessage({
         type: 'amountAdd',
         text: `You can withdraw maximum ${
-          wallets.find((wallet: LiquidityWallet) => id === wallet._id)
+          wallets.find((wallet: LiquidityWalletType) => id === wallet._id)
             ?.tokens?.[token] || '0'
         } tokens`,
       });

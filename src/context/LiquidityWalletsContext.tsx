@@ -2,18 +2,18 @@ import axios from 'axios';
 import React, { createContext, useEffect, useState } from 'react';
 import { useGrinderyNexus } from 'use-grindery-nexus';
 import { DELIGHT_API_URL } from '../config/constants';
-import { LiquidityWallet } from '../types/LiquidityWallet';
+import { LiquidityWalletType } from '../types/LiquidityWalletType';
 import { getErrorMessage } from '../utils/error';
 
 // Context props
 type ContextProps = {
   isLoading: boolean;
-  wallets: LiquidityWallet[];
+  wallets: LiquidityWalletType[];
   error: string;
-  setWallets: React.Dispatch<React.SetStateAction<LiquidityWallet[]>>;
+  setWallets: React.Dispatch<React.SetStateAction<LiquidityWalletType[]>>;
   saveWallet: (body: {
     [key: string]: any;
-  }) => Promise<LiquidityWallet | boolean>;
+  }) => Promise<LiquidityWalletType | boolean>;
   updateWallet: (body: { [key: string]: any }) => Promise<boolean>;
   getWallet: (id: string) => Promise<any>;
   getWalletBalance: (
@@ -45,7 +45,7 @@ export const LiquidityWalletsContextProvider = ({
 }: LiquidityWalletsContextProps) => {
   const { token } = useGrinderyNexus();
   const [isLoading, setIsLoading] = useState(true);
-  const [wallets, setWallets] = useState<LiquidityWallet[]>([]);
+  const [wallets, setWallets] = useState<LiquidityWalletType[]>([]);
   const [error, setError] = useState('');
 
   const params = {

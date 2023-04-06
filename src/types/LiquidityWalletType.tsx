@@ -1,4 +1,4 @@
-export type LiquidityWallet = {
+export type LiquidityWalletType = {
   _id: string;
   chainId: string;
   tokens: { [key: string]: string };

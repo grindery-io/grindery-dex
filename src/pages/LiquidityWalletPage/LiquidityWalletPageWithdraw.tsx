@@ -8,7 +8,7 @@ import DexCardSubmitButton from '../../components/DexCard/DexCardSubmitButton';
 import DexCardBody from '../../components/DexCard/DexCardBody';
 import Loading from '../../components/Loading/Loading';
 import TextInput from '../../components/TextInput/TextInput';
-import { LiquidityWallet } from '../../types/LiquidityWallet';
+import { LiquidityWalletType } from '../../types/LiquidityWalletType';
 import { useNavigate, useParams } from 'react-router-dom';
 import useLiquidityWalletPage from '../../hooks/useLiquidityWalletPage';
 import useLiquidityWallets from '../../hooks/useLiquidityWallets';
@@ -32,7 +32,7 @@ function LiquidityWalletPageWithdraw() {
   let { walletId } = useParams();
 
   const currentWallet = wallets.find(
-    (w: LiquidityWallet) => w._id === walletId
+    (w: LiquidityWalletType) => w._id === walletId
   );
 
   useEffect(() => {
@@ -110,7 +110,8 @@ function LiquidityWalletPageWithdraw() {
                     onClick={() => {
                       setAmountAdd(
                         wallets.find(
-                          (wallet: LiquidityWallet) => wallet._id === walletId
+                          (wallet: LiquidityWalletType) =>
+                            wallet._id === walletId
                         )?.tokens?.[token] || '0'
                       );
                     }}

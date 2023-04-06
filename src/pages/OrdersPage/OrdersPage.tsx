@@ -3,7 +3,7 @@ import DexCard from '../../components/DexCard/DexCard';
 import DexCardHeader from '../../components/DexCard/DexCardHeader';
 import DexCardBody from '../../components/DexCard/DexCardBody';
 import OrderCard from '../../components/OrderCard/OrderCard';
-import { LiquidityWallet } from '../../types/LiquidityWallet';
+import { LiquidityWalletType } from '../../types/LiquidityWalletType';
 import { Box } from '@mui/system';
 import NotFound from '../../components/NotFound/NotFound';
 import { useGrinderyNexus } from 'use-grindery-nexus';
@@ -61,7 +61,7 @@ function OrdersPage() {
     }
 
     // get liquidity wallet by chain
-    const wallet = wallets.find((w: LiquidityWallet) => w.chainId === '97');
+    const wallet = wallets.find((w: LiquidityWalletType) => w.chainId === '97');
 
     if (!wallet || !wallet.walletAddress) {
       console.error(

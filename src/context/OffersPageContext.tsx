@@ -9,7 +9,7 @@ import { getErrorMessage } from '../utils/error';
 import { TokenType } from '../types/TokenType';
 import Offer from '../models/Offer';
 import useLiquidityWallets from '../hooks/useLiquidityWallets';
-import { LiquidityWallet } from '../types/LiquidityWallet';
+import { LiquidityWalletType } from '../types/LiquidityWalletType';
 import { useAppSelector } from '../store/storeHooks';
 import {
   selectChainsItems,
@@ -392,7 +392,8 @@ export const OffersPageContextProvider = ({
       estimatedTime: estimatedTime || '',
       provider:
         wallets.find(
-          (w: LiquidityWallet) => w.chainId === chain.toString().split(':')[1]
+          (w: LiquidityWalletType) =>
+            w.chainId === chain.toString().split(':')[1]
         )?.walletAddress || '',
       offerId: offerId,
       isActive: true,

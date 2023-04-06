@@ -12,7 +12,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import useLiquidityWalletPage from '../../hooks/useLiquidityWalletPage';
 import SelectTokenButton from '../../components/SelectTokenButton/SelectTokenButton';
 import { TokenType } from '../../types/TokenType';
-import { LiquidityWallet } from '../../types/LiquidityWallet';
+import { LiquidityWalletType } from '../../types/LiquidityWalletType';
 import { ChainType } from '../../types/ChainType';
 import useLiquidityWallets from '../../hooks/useLiquidityWallets';
 import AlertBox from '../../components/AlertBox/AlertBox';
@@ -39,7 +39,7 @@ function LiquidityWalletPageAdd() {
   let { walletId } = useParams();
 
   const currentWallet = wallets.find(
-    (w: LiquidityWallet) => w._id === walletId
+    (w: LiquidityWalletType) => w._id === walletId
   );
 
   const walletChain = chains.find(
