@@ -6,10 +6,12 @@ import abiReducer from './slices/abiSlice';
 import stakesReducer from './slices/stakesSlice';
 import automationsReducer from './slices/automationsSlice';
 import offersReducer from './slices/offersSlice';
+import shopReducer from './slices/shopSlice';
 
 export const store = configureStore({
   reducer: {
     user: userReducer,
+    shop: shopReducer,
     faucet: faucetReducer,
     stakes: stakesReducer,
     offers: offersReducer,
