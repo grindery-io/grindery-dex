@@ -11,7 +11,7 @@ class Offer {
   public tokenAddress: string;
   public isActive: boolean;
   public hash?: string;
-  public offerId?: string;
+  public offerId: string;
   public tokenId?: string;
   public exchangeRate?: string;
   public estimatedTime?: string;

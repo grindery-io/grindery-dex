@@ -9,8 +9,8 @@ export type OffersCreateInputInputFieldName =
   | 'toChainId'
   | 'toTokenId'
   | 'exchangeRate'
-  | 'min'
-  | 'max'
+  | 'amountMin'
+  | 'amountMax'
   | 'amount'
   | 'estimatedTime'
   | 'title'
@@ -23,6 +23,7 @@ export type OffersCreateInput = {
 interface OffersState {
   error: ErrorMessageType;
   loading: boolean;
+  activating: string;
   items: OfferType[];
   input: OffersCreateInput;
 }
@@ -30,6 +31,7 @@ interface OffersState {
 const initialState: OffersState = {
   error: { type: '', text: '' },
   loading: true,
+  activating: '',
   items: [],
   input: {
     fromChainId: '',
@@ -37,8 +39,8 @@ const initialState: OffersState = {
     toChainId: '',
     toTokenId: '',
     exchangeRate: '',
-    min: '',
-    max: '',
+    amountMin: '',
+    amountMax: '',
     amount: '',
     estimatedTime: '',
     title: '',
@@ -77,13 +79,30 @@ const offersSlice = createSlice({
     ) {
       state.input[action.payload.name] = action.payload.value;
     },
+    clearOffersCreateInput(state) {
+      state.input = {
+        ...state.input,
+        amountMin: '',
+        amountMax: '',
+        exchangeRate: '',
+        estimatedTime: '',
+        amount: '',
+        image: '',
+        title: '',
+      };
+    },
+    setOffersActivating(state, action: PayloadAction<string>) {
+      state.activating = action.payload;
+    },
   },
 });
 
 export const selectOffersItems = (state: RootState) => state.offers.items;
 export const selectOffersError = (state: RootState) => state.offers.error;
 export const selectOffersLoading = (state: RootState) => state.offers.loading;
-export const selectoffersCreateInput = (state: RootState) => state.offers.input;
+export const selectOffersCreateInput = (state: RootState) => state.offers.input;
+export const selectOffersActivating = (state: RootState) =>
+  state.offers.activating;
 
 export const {
   setOffersItems,
@@ -92,6 +111,8 @@ export const {
   clearOffersError,
   setOfferCreateInput,
   setOfferCreateInputValue,
+  clearOffersCreateInput,
+  setOffersActivating,
 } = offersSlice.actions;
 
 export default offersSlice.reducer;

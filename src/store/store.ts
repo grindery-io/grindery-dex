@@ -10,12 +10,12 @@ import offersReducer from './slices/offersSlice';
 export const store = configureStore({
   reducer: {
     user: userReducer,
-    chains: chainsReducer,
-    abi: abiReducer,
     faucet: faucetReducer,
     stakes: stakesReducer,
-    automations: automationsReducer,
     offers: offersReducer,
+    automations: automationsReducer,
+    chains: chainsReducer,
+    abi: abiReducer,
   },
 });
 

@@ -6,12 +6,13 @@ import OffersPageRoot from './OffersPageRoot';
 import OffersPageCreate from './OffersPageCreate';
 import OffersPageSelectChain from './OffersPageSelectChain';
 import OffersPageSelectToChain from './OffersPageSelectToChain';
+import OffersController from '../../controllers/OffersController';
 
 function OffersPage() {
   const { VIEWS } = useOffersPage();
 
   return (
-    <>
+    <OffersController>
       <DexCard>
         <Routes>
           <Route path={VIEWS.ROOT.path} element={<OffersPageRoot />} />
@@ -26,7 +27,7 @@ function OffersPage() {
           />
         </Routes>
       </DexCard>
-    </>
+    </OffersController>
   );
 }
 
