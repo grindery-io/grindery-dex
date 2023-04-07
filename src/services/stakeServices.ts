@@ -108,7 +108,7 @@ export const updateStake = (
           }
         )
         .then((res) => {
-          resolve(res?.data ? true : false);
+          resolve(res?.data?.modifiedCount ? true : false);
         })
         .catch((err) => {
           console.error('addStake > axios err=', err);
