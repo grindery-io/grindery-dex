@@ -3,10 +3,10 @@ import { Box } from '@mui/material';
 import useShopPage from '../../hooks/useShopPage';
 import LoadingButton from '@mui/lab/LoadingButton';
 import Loading from '../Loading/Loading';
-import Offer from '../../models/Offer';
+import { OfferType } from '../../types/OfferType';
 
 type Props = {
-  offer: Offer;
+  offer: OfferType;
 };
 
 const OfferCardAction = (props: Props) => {

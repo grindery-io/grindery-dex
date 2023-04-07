@@ -9,13 +9,13 @@ import { useGrinderyNexus } from 'use-grindery-nexus';
 import { getErrorMessage } from '../utils/error';
 import useOrders from '../hooks/useOrders';
 import axios from 'axios';
-import Offer from '../models/Offer';
 import { useAppSelector } from '../store/storeHooks';
 import {
   selectChainsItems,
   selectChainsLoading,
 } from '../store/slices/chainsSlice';
 import { selectPoolAbi, selectTokenAbi } from '../store/slices/abiSlice';
+import { OfferType } from '../types/OfferType';
 
 // Context props
 type ContextProps = {
@@ -38,7 +38,7 @@ type ContextProps = {
   toChainTokens: TokenType[];
   currentFromChain: ChainType | null;
   fromChainTokens: TokenType[];
-  foundOffers: Offer[];
+  foundOffers: OfferType[];
   approved: boolean;
   accepted: string;
   tokenPrice: number | null;
@@ -58,7 +58,7 @@ type ContextProps = {
   handleFromAmountChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   handleSearchClick: (amount: string, silent?: boolean) => void;
   handleFromAmountMaxClick: () => void;
-  handleAcceptOfferClick: (offer: Offer) => void;
+  handleAcceptOfferClick: (offer: OfferType) => void;
 };
 
 // Context provider props
@@ -146,7 +146,7 @@ export const ShopPageContextProvider = ({ children }: ShopPageContextProps) => {
   const [showModal, setShowModal] = useState(false);
   const loading = isOfferLoading || isLoading;
 
-  const foundOffers = offers.filter((o: Offer) => o.isActive && o.amount);
+  const foundOffers = offers.filter((o: OfferType) => o.isActive && o.amount);
 
   const filteredToChain = chains.find(
     (c) => toChain && c.value === toChain.value
@@ -371,7 +371,7 @@ export const ShopPageContextProvider = ({ children }: ShopPageContextProps) => {
     setFromTokenBalance(_balance);
   };
 
-  const handleAcceptOfferClick = async (offer: Offer) => {
+  const handleAcceptOfferClick = async (offer: OfferType) => {
     setErrorMessage({
       type: '',
       text: '',

@@ -4,12 +4,13 @@ import TransactionID from '../TransactionID/TransactionID';
 import GavelIcon from '@mui/icons-material/Gavel';
 import CurrencyExchangeIcon from '@mui/icons-material/CurrencyExchange';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
-import Offer from '../../models/Offer';
 import { useAppSelector } from '../../store/storeHooks';
 import { selectChainsItems } from '../../store/slices/chainsSlice';
+import { OfferType } from '../../types/OfferType';
+import { getOfferProviderLink } from '../../utils/helpers/offerHelpers';
 
 type Props = {
-  offer: Offer;
+  offer: OfferType;
 };
 
 const OfferCardHeader = (props: Props) => {
@@ -17,7 +18,7 @@ const OfferCardHeader = (props: Props) => {
   const chains = useAppSelector(selectChainsItems);
 
   const provider = offer.provider;
-  const providerLink = offer.getProviderLink(chains);
+  const providerLink = getOfferProviderLink(offer, chains);
 
   return (
     <Box

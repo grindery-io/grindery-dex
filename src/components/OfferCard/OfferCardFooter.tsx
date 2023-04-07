@@ -1,19 +1,20 @@
 import React from 'react';
 import { Box, Skeleton } from '@mui/material';
 import TransactionID from '../TransactionID/TransactionID';
-import Offer from '../../models/Offer';
 import { selectChainsItems } from '../../store/slices/chainsSlice';
 import { useAppSelector } from '../../store/storeHooks';
+import { OfferType } from '../../types/OfferType';
+import { getOfferLink } from '../../utils/helpers/offerHelpers';
 
 type Props = {
-  offer: Offer;
+  offer: OfferType;
 };
 
 const OfferCardFooter = (props: Props) => {
   const { offer } = props;
   const chains = useAppSelector(selectChainsItems);
 
-  const explorerLink = offer.getOfferLink(chains);
+  const explorerLink = getOfferLink(offer, chains);
 
   return (
     <Box sx={{ padding: '16px', textAlign: 'center' }}>

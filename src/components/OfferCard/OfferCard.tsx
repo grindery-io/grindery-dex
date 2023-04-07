@@ -4,10 +4,10 @@ import OfferCardHeader from './OfferCardHeader';
 import OfferCardBody from './OfferCardBody';
 import OfferCardAction from './OfferCardAction';
 import OfferCardFooter from './OfferCardFooter';
-import Offer from '../../models/Offer';
+import { OfferType } from '../../types/OfferType';
 
 type Props = {
-  offer: Offer;
+  offer: OfferType;
 };
 
 const OfferCard = (props: Props) => {

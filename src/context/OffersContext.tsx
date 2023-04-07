@@ -3,19 +3,18 @@ import React, { createContext, useEffect, useState } from 'react';
 import { useGrinderyNexus } from 'use-grindery-nexus';
 import { DELIGHT_API_URL } from '../config/constants';
 import { getErrorMessage } from '../utils/error';
-import Offer from '../models/Offer';
 import { OfferType } from '../types/OfferType';
 
 // Context props
 type ContextProps = {
   isLoading: boolean;
-  offers: Offer[];
+  offers: OfferType[];
   error: string;
-  setOffers: React.Dispatch<React.SetStateAction<Offer[]>>;
-  saveOffer: (body: { [key: string]: any }) => Promise<Offer | boolean>;
+  setOffers: React.Dispatch<React.SetStateAction<OfferType[]>>;
+  saveOffer: (body: { [key: string]: any }) => Promise<OfferType | boolean>;
   updateOffer: (id: string) => Promise<boolean>;
   searchOffers: (silent: boolean, query?: string) => void;
-  getOfferById: (offerId: string) => Promise<Offer | false>;
+  getOfferById: (offerId: string) => Promise<OfferType | false>;
   getAllOffers: () => void;
 };
 
@@ -44,7 +43,7 @@ export const OffersContextProvider = ({
 }: OffersContextProps) => {
   const { token } = useGrinderyNexus();
   const [isLoading, setIsLoading] = useState(true);
-  const [offers, setOffers] = useState<Offer[]>([]);
+  const [offers, setOffers] = useState<OfferType[]>([]);
   const [error, setError] = useState('');
 
   const params = {
@@ -63,7 +62,7 @@ export const OffersContextProvider = ({
     return res?.data || false;
   };
 
-  const getOfferById = async (offerId: string): Promise<Offer | false> => {
+  const getOfferById = async (offerId: string): Promise<OfferType | false> => {
     let res;
     try {
       res = await axios.get(
@@ -73,7 +72,7 @@ export const OffersContextProvider = ({
     } catch (error: any) {
       setError(getErrorMessage(error, 'Server error'));
     }
-    return res?.data ? new Offer(res?.data) : false;
+    return res?.data ? res?.data : false;
   };
 
   const getOffers = async () => {
@@ -84,7 +83,7 @@ export const OffersContextProvider = ({
     } catch (error: any) {
       setError(getErrorMessage(error, 'Server error'));
     }
-    setOffers(res?.data?.map((item: OfferType) => new Offer(item)) || []);
+    setOffers(res?.data?.map((item: OfferType) => item) || []);
     setIsLoading(false);
   };
 
@@ -96,7 +95,7 @@ export const OffersContextProvider = ({
     } catch (error: any) {
       setError(getErrorMessage(error, 'Server error'));
     }
-    setOffers(res?.data?.map((item: OfferType) => new Offer(item)) || []);
+    setOffers(res?.data?.map((item: OfferType) => item) || []);
     setIsLoading(false);
   };
 
@@ -121,7 +120,7 @@ export const OffersContextProvider = ({
   };
 
   const updateOffer = async (id: string) => {
-    const offer = offers.find((o: Offer) => o.offerId === id);
+    const offer = offers.find((o: OfferType) => o.offerId === id);
     setError('');
     let res;
     try {
@@ -157,7 +156,7 @@ export const OffersContextProvider = ({
       return;
     }
 
-    setOffers(res?.data?.map((item: OfferType) => new Offer(item)) || []);
+    setOffers(res?.data?.map((item: OfferType) => item) || []);
     setIsLoading(false);
   };
 

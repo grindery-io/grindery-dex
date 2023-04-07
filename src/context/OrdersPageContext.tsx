@@ -7,10 +7,10 @@ import { POOL_CONTRACT_ADDRESS } from '../config/constants';
 import _ from 'lodash';
 import { getErrorMessage } from '../utils/error';
 import { TokenType } from '../types/TokenType';
-import Offer from '../models/Offer';
 import { useAppSelector } from '../store/storeHooks';
 import { selectChainsItems } from '../store/slices/chainsSlice';
 import { selectPoolAbi } from '../store/slices/abiSlice';
+import { OfferType } from '../types/OfferType';
 
 function isNumeric(value: string) {
   return /^\d*(\.\d+)?$/.test(value);
@@ -28,7 +28,7 @@ type ContextProps = {
   isActivating: string;
   currentChain: ChainType | null;
   chainTokens: TokenType[];
-  groupedOffers: { [key: string]: Offer[] };
+  groupedOffers: { [key: string]: OfferType[] };
   setAmountMin: React.Dispatch<React.SetStateAction<string>>;
   setAmountMax: React.Dispatch<React.SetStateAction<string>>;
   setErrorMessage: React.Dispatch<
@@ -299,7 +299,7 @@ export const OrdersPageContextProvider = ({
 
     if (newOffer && typeof newOffer !== 'boolean') {
       // update offer state
-      setOffers([new Offer({ ...newOffer, new: true }), ...offers]);
+      setOffers([{ ...newOffer, new: true }, ...offers]);
 
       // clear input fields
       setAmountMin('');
@@ -323,7 +323,9 @@ export const OrdersPageContextProvider = ({
   const handleDeactivateClick = async (offerId: string) => {
     setIsActivating(offerId);
 
-    const offerChain = offers.find((o: Offer) => o._id === offerId)?.chainId;
+    const offerChain = offers.find(
+      (o: OfferType) => o._id === offerId
+    )?.chainId;
 
     const chainToSelect = chains.find(
       (c: ChainType) => c.value === `eip155:${offerChain}`
@@ -363,7 +365,7 @@ export const OrdersPageContextProvider = ({
     const poolContract = _poolContract.connect(signer);
 
     const offerToDeactivate = offers.find(
-      (o: Offer) => o._id === offerId
+      (o: OfferType) => o._id === offerId
     )?.offerId;
 
     if (!offerToDeactivate) {
@@ -436,13 +438,10 @@ export const OrdersPageContextProvider = ({
       return;
     }
     setOffers([
-      ...offers.map(
-        (offer) =>
-          new Offer({
-            ...offer,
-            isActive: offerId === offer._id ? false : offer.isActive,
-          })
-      ),
+      ...offers.map((offer) => ({
+        ...offer,
+        isActive: offerId === offer._id ? false : offer.isActive,
+      })),
     ]);
     setIsActivating('');
   };
@@ -450,7 +449,9 @@ export const OrdersPageContextProvider = ({
   const handleActivateClick = async (offerId: string) => {
     setIsActivating(offerId);
 
-    const offerChain = offers.find((o: Offer) => o._id === offerId)?.chainId;
+    const offerChain = offers.find(
+      (o: OfferType) => o._id === offerId
+    )?.chainId;
 
     const chainToSelect = chains.find(
       (c: ChainType) => c.value === `eip155:${offerChain}`
@@ -478,7 +479,7 @@ export const OrdersPageContextProvider = ({
     }
 
     const offerToActivate = offers.find(
-      (o: Offer) => o._id === offerId
+      (o: OfferType) => o._id === offerId
     )?.offerId;
 
     if (!offerToActivate) {
@@ -547,13 +548,10 @@ export const OrdersPageContextProvider = ({
       return;
     }
     setOffers([
-      ...offers.map(
-        (offer) =>
-          new Offer({
-            ...offer,
-            isActive: offerId === offer._id ? true : offer.isActive,
-          })
-      ),
+      ...offers.map((offer) => ({
+        ...offer,
+        isActive: offerId === offer._id ? true : offer.isActive,
+      })),
     ]);
     setIsActivating('');
   };

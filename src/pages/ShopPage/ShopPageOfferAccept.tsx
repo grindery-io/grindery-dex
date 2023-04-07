@@ -12,9 +12,9 @@ import Loading from '../../components/Loading/Loading';
 import AlertBox from '../../components/AlertBox/AlertBox';
 import Countdown from 'react-countdown';
 import TransactionID from '../../components/TransactionID/TransactionID';
-import Offer from '../../models/Offer';
 import { useAppSelector } from '../../store/storeHooks';
 import { selectChainsItems } from '../../store/slices/chainsSlice';
+import { OfferType } from '../../types/OfferType';
 
 type Props = {};
 
@@ -29,7 +29,7 @@ const ShopPageOfferAccept = (props: Props) => {
   } = useShopPage();
   const chains = useAppSelector(selectChainsItems);
   const acceptedOffer =
-    accepting && foundOffers.find((o: Offer) => o.offerId === accepting);
+    accepting && foundOffers.find((o: OfferType) => o.offerId === accepting);
 
   const explorerLink = accepted
     ? (

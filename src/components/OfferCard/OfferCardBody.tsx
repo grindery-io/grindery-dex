@@ -3,12 +3,19 @@ import { Avatar, Badge, Box, Skeleton, Stack, Typography } from '@mui/material';
 import { ChainTokenBox } from '../ChainTokenBox/ChainTokenBox';
 import { AvatarDefault } from '../Avatar/AvatarDefault';
 import useShopPage from '../../hooks/useShopPage';
-import Offer from '../../models/Offer';
 import { useAppSelector } from '../../store/storeHooks';
 import { selectChainsItems } from '../../store/slices/chainsSlice';
+import { OfferType } from '../../types/OfferType';
+import {
+  getOfferAmount,
+  getOfferExchangeAmount,
+  getOfferFromChain,
+  getOfferFromToken,
+  getOfferUSDAmount,
+} from '../../utils/helpers/offerHelpers';
 
 type Props = {
-  offer: Offer;
+  offer: OfferType;
 };
 
 const OfferCardBody = (props: Props) => {
@@ -16,10 +23,10 @@ const OfferCardBody = (props: Props) => {
   const { currentFromChain, fromToken, tokenPrice } = useShopPage();
   const chains = useAppSelector(selectChainsItems);
 
-  const chain = offer.getChain(chains);
-  const token = offer.getToken(chains);
-  const fromAmount = offer.getExchangeAmount();
-  const price = offer.getUSDAmount(tokenPrice);
+  const chain = getOfferFromChain(offer, chains);
+  const token = getOfferFromToken(offer, chains);
+  const fromAmount = getOfferExchangeAmount(offer);
+  const price = getOfferUSDAmount(offer, tokenPrice);
 
   return (
     <Box>
@@ -155,7 +162,7 @@ const OfferCardBody = (props: Props) => {
                 title={
                   offer.amount ? (
                     <>
-                      {offer.getAmount()}
+                      {getOfferAmount(offer)}
                       <span> {token.symbol}</span>
                     </>
                   ) : null

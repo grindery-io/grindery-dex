@@ -30,10 +30,16 @@ import DexCardSubmitButton from '../DexCard/DexCardSubmitButton';
 import { TokenType } from '../../types/TokenType';
 import TransactionID from '../TransactionID/TransactionID';
 import SwapHorizontalCircleIcon from '@mui/icons-material/SwapHorizontalCircle';
-import Offer from '../../models/Offer';
 import { ThemeProvider } from 'styled-components';
 import { useAppSelector } from '../../store/storeHooks';
 import { selectChainsItems } from '../../store/slices/chainsSlice';
+import { OfferType } from '../../types/OfferType';
+import {
+  getOfferFromChain,
+  getOfferFromToken,
+  getOfferLink,
+  getOfferProviderLink,
+} from '../../utils/helpers/offerHelpers';
 
 export type OfferChain = {
   label: string;
@@ -47,10 +53,10 @@ export type OfferToken = {
 };
 
 type Props = {
-  offer: Offer;
+  offer: OfferType;
   fromChain?: ChainType | null;
   fromToken?: TokenType | '';
-  onClick?: (offer: Offer) => void;
+  onClick?: (offer: OfferType) => void;
   fromAmount?: string;
   label?: string;
   fromLabel?: string;
@@ -103,8 +109,8 @@ const OfferPublic = (props: Props) => {
 
   const chains = useAppSelector(selectChainsItems);
 
-  const chain = offer.getChain(chains);
-  const token = offer.getToken(chains);
+  const chain = getOfferFromChain(offer, chains);
+  const token = getOfferFromToken(offer, chains);
 
   const amount =
     isUserA || calculateAmount
@@ -117,11 +123,11 @@ const OfferPublic = (props: Props) => {
 
   const [expanded, setExpanded] = useState(false);
 
-  const explorerLink = offer.getOfferLink(chains);
+  const explorerLink = getOfferLink(offer, chains);
 
   const provider = offer.provider;
 
-  const providerLink = offer.getProviderLink(chains);
+  const providerLink = getOfferProviderLink(offer, chains);
 
   const handleExpandClick: React.MouseEventHandler<HTMLButtonElement> = (
     event

@@ -16,9 +16,9 @@ import AlertBox from '../../components/AlertBox/AlertBox';
 import { formatAddress } from '../../utils/address';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
-import Offer from '../../models/Offer';
 import { useAppSelector } from '../../store/storeHooks';
 import { selectChainsItems } from '../../store/slices/chainsSlice';
+import { OfferType } from '../../types/OfferType';
 
 type Props = {};
 
@@ -42,7 +42,7 @@ const TradePageOfferAccept = (props: Props) => {
   let navigate = useNavigate();
   let { offerId } = useParams();
   const [copied, setCopied] = useState(false);
-  const offer = foundOffers.find((o: Offer) => o.offerId === offerId);
+  const offer = foundOffers.find((o: OfferType) => o.offerId === offerId);
   const offerChain = chains.find((c) => c.value === `eip155:${offer?.chainId}`);
 
   const explorerLink = accepted

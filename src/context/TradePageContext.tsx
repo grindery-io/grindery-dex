@@ -10,13 +10,13 @@ import { useGrinderyNexus } from 'use-grindery-nexus';
 import { getErrorMessage } from '../utils/error';
 import useOrders from '../hooks/useOrders';
 import axios from 'axios';
-import Offer from '../models/Offer';
 import {
   selectChainsItems,
   selectChainsLoading,
 } from '../store/slices/chainsSlice';
 import { useAppSelector } from '../store/storeHooks';
 import { selectPoolAbi, selectTokenAbi } from '../store/slices/abiSlice';
+import { OfferType } from '../types/OfferType';
 
 // Context props
 type ContextProps = {
@@ -39,7 +39,7 @@ type ContextProps = {
   toChainTokens: TokenType[];
   currentFromChain: ChainType | null;
   fromChainTokens: TokenType[];
-  foundOffers: Offer[];
+  foundOffers: OfferType[];
   approved: boolean;
   accepted: string;
   toTokenPrice: number | null;
@@ -56,7 +56,7 @@ type ContextProps = {
   handleFromAmountChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   handleSearchClick: (amount: string, silent?: boolean) => void;
   handleFromAmountMaxClick: () => void;
-  handleAcceptOfferClick: (offer: Offer) => void;
+  handleAcceptOfferClick: (offer: OfferType) => void;
   handleRefreshOffersClick: () => void;
 };
 
@@ -409,7 +409,7 @@ export const TradePageContextProvider = ({
     setFromTokenBalance(_balance);
   };
 
-  const handleAcceptOfferClick = async (offer: Offer) => {
+  const handleAcceptOfferClick = async (offer: OfferType) => {
     if (!fromToken) {
       setErrorMessage({
         type: 'acceptOffer',

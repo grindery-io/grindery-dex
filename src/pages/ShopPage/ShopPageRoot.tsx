@@ -4,7 +4,7 @@ import useShopPage from '../../hooks/useShopPage';
 import OfferCard from '../../components/OfferCard/OfferCard';
 import { Stack } from '@mui/material';
 import ShopPageOfferAccept from './ShopPageOfferAccept';
-import Offer from '../../models/Offer';
+import { OfferType } from '../../types/OfferType';
 
 type Props = {};
 
@@ -34,7 +34,7 @@ const ShopPageRoot = (props: Props) => {
             justifyContent: { xs: 'center', lg: 'flex-start' },
           }}
         >
-          {foundOffers.map((offer: Offer) => (
+          {foundOffers.map((offer: OfferType) => (
             <OfferCard key={offer._id} offer={offer} />
           ))}
         </Stack>

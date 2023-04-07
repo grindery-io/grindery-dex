@@ -12,3 +12,7 @@ export const getTokenById = (
       ?.tokens?.find((t: TokenType) => t.coinmarketcapId === tokenId) || null
   );
 };
+
+export const getTokensByChain = (chain?: ChainType): TokenType[] => {
+  return chain ? chain.tokens || [] : [];
+};

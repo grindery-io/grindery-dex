@@ -8,7 +8,7 @@ import NotFound from '../../components/NotFound/NotFound';
 import OfferPublic from '../../components/Offer/OfferPublic';
 import OfferSkeleton from '../../components/Offer/OfferSkeleton';
 import { useNavigate } from 'react-router-dom';
-import Offer from '../../models/Offer';
+import { OfferType } from '../../types/OfferType';
 
 type Props = {};
 
@@ -33,13 +33,13 @@ const TradePageOffersList = (props: Props) => {
         )}
         {!loading &&
           foundOffers.length > 0 &&
-          foundOffers.map((offer: Offer) => (
+          foundOffers.map((offer: OfferType) => (
             <OfferPublic
               key={offer._id}
               compact
               offer={offer}
               fromAmount={fromAmount}
-              onClick={(o: Offer) => {
+              onClick={(o: OfferType) => {
                 navigate(
                   VIEWS.ACCEPT_OFFER.fullPath.replace(
                     ':offerId',

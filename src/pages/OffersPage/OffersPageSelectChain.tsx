@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { IconButton } from '@mui/material';
 import { Box } from '@mui/system';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
@@ -8,29 +8,30 @@ import TokenSearch from '../../components/TokenSearch/TokenSearch';
 import TokensList from '../../components/TokensList/TokensList';
 import NotFound from '../../components/NotFound/NotFound';
 import { useNavigate } from 'react-router-dom';
-import useOffersPage from '../../hooks/useOffersPage';
 import DexCardBody from '../../components/DexCard/DexCardBody';
 import { ChainType } from '../../types/ChainType';
 import { useAppSelector } from '../../store/storeHooks';
 import { selectChainsItems } from '../../store/slices/chainsSlice';
+import { selectOffersCreateInput } from '../../store/slices/offersSlice';
+import { getChainById } from '../../utils/helpers/chainHelpers';
+import { useOffersController } from '../../controllers/OffersController';
+import { ROUTES } from '../../config/routes';
+import { getTokensByChain } from '../../utils/helpers/tokenHelpers';
+import { TokenType } from '../../types/TokenType';
 
 function OffersPageSelectChain() {
-  const {
-    chain,
-    searchToken,
-    currentChain,
-    chainTokens,
-    setErrorMessage,
-    setChain,
-    setToken,
-    setSearchToken,
-    VIEWS,
-  } = useOffersPage();
   let navigate = useNavigate();
-
   const chains = useAppSelector(selectChainsItems);
-
-  const chainLabel = chains.find((c: ChainType) => c.caipId === chain)?.label;
+  const input = useAppSelector(selectOffersCreateInput);
+  const { fromChainId } = input;
+  const { handleOfferCreateInputChange } = useOffersController();
+  const [searchToken, setSearchToken] = useState('');
+  const fromChain = getChainById(fromChainId, chains);
+  const chainLabel = fromChain?.label;
+  const chainTokens = getTokensByChain(fromChain).filter(
+    (t: TokenType) =>
+      !searchToken || t.symbol.toLowerCase().includes(searchToken)
+  );
 
   return (
     <>
@@ -44,7 +45,7 @@ function OffersPageSelectChain() {
             edge="start"
             onClick={() => {
               setSearchToken('');
-              navigate(VIEWS.CREATE.fullPath);
+              navigate(ROUTES.SELL.OFFERS.CREATE.FULL_PATH);
             }}
           >
             <ArrowBackIcon />
@@ -54,11 +55,11 @@ function OffersPageSelectChain() {
       />
       <DexCardBody>
         <ChainsList
-          chain={chain}
+          chain={fromChainId}
           chains={chains.filter((c: ChainType) => c.chainId === '97')}
-          onClick={(blockchain: any) => {
-            setChain(blockchain.value);
-            setToken('');
+          onClick={(blockchain: ChainType) => {
+            handleOfferCreateInputChange('fromChainId', blockchain.chainId);
+            handleOfferCreateInputChange('fromTokenId', '');
           }}
         />
         <TokenSearch
@@ -68,30 +69,29 @@ function OffersPageSelectChain() {
           }}
         />
 
-        {chain && chainTokens && chainTokens.length > 0 ? (
+        {fromChainId && chainTokens && chainTokens.length > 0 ? (
           <TokensList
             tokens={chainTokens}
             onClick={(chainToken: any) => {
-              setToken(chainToken);
+              handleOfferCreateInputChange(
+                'fromTokenId',
+                chainToken.coinmarketcapId
+              );
               setSearchToken('');
-              setErrorMessage({
-                type: '',
-                text: '',
-              });
-              navigate(VIEWS.CREATE.fullPath);
+              navigate(ROUTES.SELL.OFFERS.CREATE.FULL_PATH);
             }}
             chainLabel={chainLabel}
           />
         ) : (
           <NotFound
             text={
-              !currentChain ? (
+              !fromChain ? (
                 <>Please, select a chain to see a list of tokens.</>
               ) : (
                 <>
                   We couldn't find tokens{' '}
-                  {currentChain ? `on ${currentChain?.label} chain` : ''}.
-                  Please try search again or switch the chain.
+                  {fromChain ? `on ${fromChain?.label} chain` : ''}. Please try
+                  search again or switch the chain.
                 </>
               )
             }

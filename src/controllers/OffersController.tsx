@@ -537,7 +537,7 @@ export const OffersController = ({ children }: OffersControllerProps) => {
       return;
     }
 
-    const updated = await updateOffer(accessToken, { offerId, isActive }).catch(
+    const updated = await editOffer(accessToken, { offerId, isActive }).catch(
       (error: any) => {
         // handle error
       }
@@ -563,6 +563,13 @@ export const OffersController = ({ children }: OffersControllerProps) => {
       fetchOffers(accessToken);
     }
   }, [accessToken, fetchOffers]);
+
+  useEffect(() => {
+    handleOfferCreateInputChange('fromChainId', '97');
+    handleOfferCreateInputChange('toChainId', '5');
+    handleOfferCreateInputChange('fromTokenId', '1839');
+    handleOfferCreateInputChange('toTokenId', '1027');
+  }, []);
 
   return (
     <OffersContext.Provider

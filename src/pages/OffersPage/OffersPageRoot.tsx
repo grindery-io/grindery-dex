@@ -1,35 +1,50 @@
 import React from 'react';
 import { IconButton, Tooltip } from '@mui/material';
-import { useGrinderyNexus } from 'use-grindery-nexus';
 import { AddCircleOutline as AddCircleOutlineIcon } from '@mui/icons-material';
 import DexCardHeader from '../../components/DexCard/DexCardHeader';
 import DexCardSubmitButton from '../../components/DexCard/DexCardSubmitButton';
 import DexCardBody from '../../components/DexCard/DexCardBody';
-import { ChainType } from '../../types/ChainType';
 import { useNavigate } from 'react-router-dom';
-import useOffers from '../../hooks/useOffers';
 import ListSubheader from '../../components/ListSubheader/ListSubheader';
-import useOffersPage from '../../hooks/useOffersPage';
 import _ from 'lodash';
 import OfferPublic from '../../components/Offer/OfferPublic';
 import OfferSkeleton from '../../components/Offer/OfferSkeleton';
-import Offer from '../../models/Offer';
 import { useAppSelector } from '../../store/storeHooks';
 import { selectChainsItems } from '../../store/slices/chainsSlice';
+import {
+  selectOffersActivating,
+  selectOffersItems,
+  selectOffersLoading,
+} from '../../store/slices/offersSlice';
+import {
+  selectUserAccessToken,
+  selectUserChainId,
+  selectUserId,
+} from '../../store/slices/userSlice';
+import { useUserController } from '../../controllers/UserController';
+import { ROUTES } from '../../config/routes';
+import { useOffersController } from '../../controllers/OffersController';
+import { selectPoolAbi } from '../../store/slices/abiSlice';
+import { OfferType } from '../../types/OfferType';
+import {
+  groupOffersByChainId,
+  orderOffersByActiveState,
+} from '../../utils/helpers/offerHelpers';
+import { getChainById } from '../../utils/helpers/chainHelpers';
 
 function OffersPageRoot() {
-  const { user, connect } = useGrinderyNexus();
-  const {
-    isActivating,
-    groupedOffers,
-    handleDeactivateClick,
-    handleActivateClick,
-    VIEWS,
-  } = useOffersPage();
+  const user = useAppSelector(selectUserId);
+  const { connectUser: connect } = useUserController();
+  const accessToken = useAppSelector(selectUserAccessToken);
+  const userChain = useAppSelector(selectUserChainId);
+  const isActivating = useAppSelector(selectOffersActivating);
+  const { handleActivationAction } = useOffersController();
   let navigate = useNavigate();
-
   const chains = useAppSelector(selectChainsItems);
-  const { offers, isLoading: offersIsLoading } = useOffers();
+  const offers = useAppSelector(selectOffersItems);
+  const offersIsLoading = useAppSelector(selectOffersLoading);
+  const poolAbi = useAppSelector(selectPoolAbi);
+  const groupedOffers = groupOffersByChainId(offers);
 
   return (
     <>
@@ -42,7 +57,7 @@ function OffersPageRoot() {
                 size="medium"
                 edge="end"
                 onClick={() => {
-                  navigate(VIEWS.CREATE.fullPath);
+                  navigate(ROUTES.SELL.OFFERS.CREATE.FULL_PATH);
                 }}
               >
                 <AddCircleOutlineIcon sx={{ color: 'black' }} />
@@ -55,7 +70,7 @@ function OffersPageRoot() {
       <DexCardBody maxHeight="540px">
         {user && (
           <>
-            {offersIsLoading ? (
+            {offers.length < 1 && offersIsLoading ? (
               <>
                 {[0, 1].map((i: number) => (
                   <OfferSkeleton key={i} />
@@ -67,25 +82,39 @@ function OffersPageRoot() {
                   Object.keys(groupedOffers).map((key: any) => (
                     <React.Fragment key={key}>
                       <ListSubheader>
-                        {chains.find(
-                          (c: ChainType) => c.value === `eip155:${key}`
-                        )?.label || ''}
+                        {getChainById(key, chains)?.label || ''}
                       </ListSubheader>
-                      {_.orderBy(
-                        groupedOffers[key],
-                        ['isActive'],
-                        ['desc']
-                      ).map((offer: Offer) => (
-                        <OfferPublic
-                          key={offer._id}
-                          compact
-                          userType="b"
-                          offer={offer}
-                          isActivating={isActivating}
-                          onDeactivateClick={handleDeactivateClick}
-                          onActivateClick={handleActivateClick}
-                        />
-                      ))}
+                      {orderOffersByActiveState(groupedOffers[key]).map(
+                        (offer: OfferType) => (
+                          <OfferPublic
+                            key={offer._id}
+                            compact
+                            userType="b"
+                            offer={offer}
+                            isActivating={isActivating}
+                            onDeactivateClick={() => {
+                              handleActivationAction(
+                                accessToken,
+                                offer,
+                                false,
+                                userChain,
+                                chains,
+                                poolAbi
+                              );
+                            }}
+                            onActivateClick={() => {
+                              handleActivationAction(
+                                accessToken,
+                                offer,
+                                true,
+                                userChain,
+                                chains,
+                                poolAbi
+                              );
+                            }}
+                          />
+                        )
+                      )}
                     </React.Fragment>
                   ))}
               </>
@@ -98,7 +127,7 @@ function OffersPageRoot() {
           onClick={
             user
               ? () => {
-                  navigate(VIEWS.CREATE.fullPath);
+                  navigate(ROUTES.SELL.OFFERS.CREATE.FULL_PATH);
                 }
               : () => {
                   connect();

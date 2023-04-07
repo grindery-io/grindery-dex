@@ -4,7 +4,6 @@ import Loading from '../../components/Loading/Loading';
 import PageContainer from '../../components/PageContainer/PageContainer';
 import SellMenu from '../../components/SellMenu/SellMenu';
 //import LiquidityWalletPageContextProvider from '../../context/LiquidityWalletPageContext';
-import OffersPageContextProvider from '../../context/OffersPageContext';
 import OrdersPageContextProvider from '../../context/OrdersPageContext';
 import OrdersContextProvider from '../../context/OrdersContext';
 //import LiquidityWalletPage from '../LiquidityWalletPage/LiquidityWalletPage';
@@ -37,11 +36,7 @@ export const sellPages = [
     path: '/offers/*',
     fullPath: '/sell/offers',
     label: 'Offers',
-    component: (
-      <OffersPageContextProvider>
-        <OffersPage />
-      </OffersPageContextProvider>
-    ),
+    component: <OffersPage />,
   },
   {
     path: '/orders/*',
