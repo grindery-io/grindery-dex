@@ -2,6 +2,27 @@ export const ROUTES = {
   BUY: {
     RELATIVE_PATH: '/buy/*',
     FULL_PATH: '/buy',
+    TRADE: {
+      RELATIVE_PATH: '/trade/*',
+      FULL_PATH: '/buy/trade',
+      ROOT: { RELATIVE_PATH: '', FULL_PATH: '/buy/trade' },
+      SELECT_FROM: {
+        RELATIVE_PATH: '/select-from',
+        FULL_PATH: '/buy/trade/select-from',
+      },
+      SELECT_TO: {
+        RELATIVE_PATH: '/select-to',
+        FULL_PATH: '/buy/trade/select-to',
+      },
+      ACCEPT_OFFER: {
+        RELATIVE_PATH: '/accept/:offerId',
+        FULL_PATH: '/buy/trade/accept/:offerId',
+      },
+      HISTORY: {
+        RELATIVE_PATH: '/history',
+        FULL_PATH: '/buy/trade/history',
+      },
+    },
     SHOP: {
       RELATIVE_PATH: '/shop/*',
       FULL_PATH: '/buy/shop',

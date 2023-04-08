@@ -29,7 +29,7 @@ import {
 import { getTokenPriceById } from '../services/tokenServices';
 import { TokenType } from '../types/TokenType';
 import { getOrderIdFromReceipt } from '../utils/helpers/orderHelpers';
-import { addOrder } from '../services/orderServices';
+import { addOrderRequest } from '../services/orderServices';
 
 // Context props
 type ContextProps = {
@@ -311,7 +311,7 @@ export const ShopController = ({ children }: ShopControllerProps) => {
       const orderId = getOrderIdFromReceipt(receipt);
 
       // save order to DB
-      const order = await addOrder(accessToken, {
+      const order = await addOrderRequest(accessToken, {
         amountTokenDeposit: amountToPay,
         addressTokenDeposit: exchangeToken.address,
         chainIdTokenDeposit: offer.exchangeChainId,

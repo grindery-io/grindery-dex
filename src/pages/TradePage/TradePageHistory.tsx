@@ -2,7 +2,6 @@ import React, { useEffect } from 'react';
 import { Box } from '@mui/system';
 import DexCard from '../../components/DexCard/DexCard';
 import DexCardHeader from '../../components/DexCard/DexCardHeader';
-import useTradePage from '../../hooks/useTradePage';
 import DexCardBody from '../../components/DexCard/DexCardBody';
 import NotFound from '../../components/NotFound/NotFound';
 import { useNavigate } from 'react-router-dom';
@@ -12,18 +11,16 @@ import useOrders from '../../hooks/useOrders';
 import OrderCard from '../../components/OrderCard/OrderCard';
 import OrderSkeleton from '../../components/OrderCard/OrderSkeleton';
 import Order from '../../models/Order';
+import { ROUTES } from '../../config/routes';
 
 type Props = {};
 
 const TradePageHistory = (props: Props) => {
-  const { VIEWS } = useTradePage();
+  let navigate = useNavigate();
   const { orders, getOrders, isLoading } = useOrders();
-
   const sortedOrders = orders?.sort((a: any, b: any) => {
     return new Date(b.date).getTime() - new Date(a.date).getTime();
   });
-
-  let navigate = useNavigate();
 
   useEffect(() => {
     getOrders();
@@ -40,7 +37,7 @@ const TradePageHistory = (props: Props) => {
             size="medium"
             edge="start"
             onClick={() => {
-              navigate(VIEWS.ROOT.fullPath);
+              navigate(ROUTES.BUY.TRADE.ROOT.FULL_PATH);
             }}
           >
             <ArrowBackIcon />

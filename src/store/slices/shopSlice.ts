@@ -47,7 +47,7 @@ const initialState: ShopState = {
 };
 
 const shopSlice = createSlice({
-  name: 'offers',
+  name: 'shop',
   initialState,
   reducers: {
     setShopOffers(state, action: PayloadAction<OfferType[]>) {

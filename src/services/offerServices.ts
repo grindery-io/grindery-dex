@@ -108,7 +108,7 @@ export const getAllOffers = (accessToken: string): Promise<OfferType[]> => {
   });
 };
 
-export const searchOffers = (
+export const searchOffersRequest = (
   accessToken: string,
   query: string
 ): Promise<OfferType[]> => {
@@ -123,12 +123,12 @@ export const searchOffers = (
         .then((res) => {
           resolve(res?.data || []);
         })
-        .catch((err) => {
-          console.error('searchOffers > axios err=', err);
-          reject('Error in searchOffers axios');
+        .catch((err: any) => {
+          console.error('searchOffersRequest > axios err=', err);
+          reject(err?.message || 'Error in searchOffersRequest axios');
         });
     } catch (error) {
-      console.error('in offerServices > searchOffers, Err===', error);
+      console.error('in offerServices > searchOffersRequest, Err===', error);
       reject('System error. Please try again later!');
     }
   });

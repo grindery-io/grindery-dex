@@ -7,10 +7,12 @@ import stakesReducer from './slices/stakesSlice';
 import automationsReducer from './slices/automationsSlice';
 import offersReducer from './slices/offersSlice';
 import shopReducer from './slices/shopSlice';
+import tradeReducer from './slices/tradeSlice';
 
 export const store = configureStore({
   reducer: {
     user: userReducer,
+    trade: tradeReducer,
     shop: shopReducer,
     faucet: faucetReducer,
     stakes: stakesReducer,

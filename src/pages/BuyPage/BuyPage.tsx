@@ -1,7 +1,6 @@
 import React from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import PageContainer from '../../components/PageContainer/PageContainer';
-import TradePageContextProvider from '../../context/TradePageContext';
 import TradePage from '../TradePage/TradePage';
 import ShopPage from '../ShopPage/ShopPage';
 
@@ -10,11 +9,7 @@ export const buyPages = [
     path: '/trade',
     fullPath: '/buy/trade',
     label: 'Trade',
-    component: (
-      <TradePageContextProvider>
-        <TradePage />
-      </TradePageContextProvider>
-    ),
+    component: <TradePage />,
   },
   {
     path: '/shop',

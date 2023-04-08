@@ -1,7 +1,8 @@
 import axios from 'axios';
 import { DELIGHT_API_URL } from '../config/constants';
+import { OrderType } from '../types/OrderType';
 
-export const addOrder = (
+export const addOrderRequest = (
   accessToken: string,
   body: { [key: string]: any }
 ): Promise<string> => {
@@ -26,6 +27,114 @@ export const addOrder = (
         });
     } catch (error) {
       console.error('in orderServices > addOrder, Err===', error);
+      reject('System error. Please try again later!');
+    }
+  });
+};
+
+export const getOrderRequest = (
+  accessToken: string,
+  id: string
+): Promise<OrderType> => {
+  return new Promise((resolve, reject) => {
+    try {
+      axios
+        .get(`${DELIGHT_API_URL}/orders/id?id=${id}`, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        })
+        .then((res) => {
+          if (res?.data) {
+            resolve(res.data);
+          } else {
+            reject('Order not found');
+          }
+        })
+        .catch((err) => {
+          console.error('getOrderRequest > axios err=', err);
+          reject('Error in getOrderRequest axios');
+        });
+    } catch (error) {
+      console.error('in orderServices > getOrderRequest, Err===', error);
+      reject('System error. Please try again later!');
+    }
+  });
+};
+
+export const getBuyerOrdersRequest = (
+  accessToken: string
+): Promise<OrderType[]> => {
+  return new Promise((resolve, reject) => {
+    try {
+      axios
+        .get(`${DELIGHT_API_URL}/orders/user`, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        })
+        .then((res) => {
+          resolve(res?.data || []);
+        })
+        .catch((err) => {
+          console.error('getBuyerOrdersRequest > axios err=', err);
+          reject('Error in getBuyerOrdersRequest axios');
+        });
+    } catch (error) {
+      console.error('in orderServices > getBuyerOrdersRequest, Err===', error);
+      reject('System error. Please try again later!');
+    }
+  });
+};
+
+export const getSellerOrdersRequest = (
+  accessToken: string
+): Promise<OrderType[]> => {
+  return new Promise((resolve, reject) => {
+    try {
+      axios
+        .get(`${DELIGHT_API_URL}/orders/liquidity-provider`, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        })
+        .then((res) => {
+          resolve(res?.data || []);
+        })
+        .catch((err) => {
+          console.error('getSellerOrdersRequest > axios err=', err);
+          reject('Error in getSellerOrdersRequest axios');
+        });
+    } catch (error) {
+      console.error('in orderServices > getSellerOrdersRequest, Err===', error);
+      reject('System error. Please try again later!');
+    }
+  });
+};
+
+export const completeSellerOrderRequest = (
+  accessToken: string
+): Promise<boolean> => {
+  return new Promise((resolve, reject) => {
+    try {
+      axios
+        .put(`${DELIGHT_API_URL}/orders/complete`, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        })
+        .then((res) => {
+          resolve(res?.data?.modifiedCount ? true : false);
+        })
+        .catch((err) => {
+          console.error('completeSellerOrderRequest > axios err=', err);
+          reject('Error in completeSellerOrderRequest axios');
+        });
+    } catch (error) {
+      console.error(
+        'in orderServices > completeSellerOrderRequest, Err===',
+        error
+      );
       reject('System error. Please try again later!');
     }
   });

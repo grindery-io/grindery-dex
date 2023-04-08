@@ -1,11 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Box } from '@mui/system';
 import { useNavigate } from 'react-router-dom';
 import DexCard from '../../components/DexCard/DexCard';
 import DexCardBody from '../../components/DexCard/DexCardBody';
 import DexCardHeader from '../../components/DexCard/DexCardHeader';
 import { IconButton } from '@mui/material';
-import useTradePage from '../../hooks/useTradePage';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
 import ChainsList from '../../components/ChainsList/ChainsList';
 import TokenSearch from '../../components/TokenSearch/TokenSearch';
@@ -17,26 +16,33 @@ import {
   selectChainsItems,
   selectChainsLoading,
 } from '../../store/slices/chainsSlice';
+import { selectTradeFilter } from '../../store/slices/tradeSlice';
+import { getChainById } from '../../utils/helpers/chainHelpers';
+import { useTradeController } from '../../controllers/TradeController';
+import { getTokensByChain } from '../../utils/helpers/tokenHelpers';
+import { TokenType } from '../../types/TokenType';
+import { ROUTES } from '../../config/routes';
 
 type Props = {};
 
 const TradePageSelectChainAndToken = (props: Props) => {
-  const {
-    VIEWS,
-    searchToken,
-    setSearchToken,
-    toChain,
-    handleToChainChange,
-    toChainTokens,
-    currentToChain,
-    handleToTokenChange,
-  } = useTradePage();
+  let navigate = useNavigate();
   const chains = useAppSelector(selectChainsItems);
   const chainsIsLoading = useAppSelector(selectChainsLoading);
-  let navigate = useNavigate();
   const filteredChains = chains.filter(
     (c: ChainType) => c.value === 'eip155:97'
   );
+  const filter = useAppSelector(selectTradeFilter);
+  const { toChainId } = filter;
+  const toChain = getChainById(toChainId, chains);
+  const chainTokens = getTokensByChain(toChain);
+  const { handleTradeFilterChange } = useTradeController();
+  const [searchToken, setSearchToken] = useState('');
+  const toChainTokens = chainTokens.filter(
+    (t: TokenType) =>
+      !searchToken || t.symbol.toLowerCase().includes(searchToken.toLowerCase())
+  );
+
   return (
     <DexCard>
       <DexCardHeader
@@ -48,8 +54,7 @@ const TradePageSelectChainAndToken = (props: Props) => {
             size="medium"
             edge="start"
             onClick={() => {
-              setSearchToken('');
-              navigate(VIEWS.ROOT.fullPath);
+              navigate(ROUTES.BUY.TRADE.ROOT.FULL_PATH);
             }}
           >
             <ArrowBackIcon />
@@ -61,7 +66,10 @@ const TradePageSelectChainAndToken = (props: Props) => {
         <ChainsList
           chain={toChain?.value || ''}
           chains={filteredChains}
-          onClick={handleToChainChange}
+          onClick={(chain: ChainType) => {
+            handleTradeFilterChange('toChainId', chain.chainId);
+            handleTradeFilterChange('toTokenId', '');
+          }}
           loading={chainsIsLoading}
         />
         <TokenSearch
@@ -73,31 +81,35 @@ const TradePageSelectChainAndToken = (props: Props) => {
         {chainsIsLoading ? (
           <TokensList
             tokens={toChainTokens}
-            onClick={handleToTokenChange}
+            onClick={() => {}}
             loading={chainsIsLoading}
             chainLabel={toChain?.label}
           />
         ) : (
           <>
-            {currentToChain && toChainTokens && toChainTokens.length > 0 ? (
+            {toChain && toChainTokens && toChainTokens.length > 0 ? (
               <TokensList
                 tokens={toChainTokens}
-                onClick={handleToTokenChange}
+                onClick={(token: TokenType) => {
+                  handleTradeFilterChange(
+                    'toTokenId',
+                    token.coinmarketcapId || ''
+                  );
+                  navigate(ROUTES.BUY.TRADE.ROOT.FULL_PATH);
+                }}
                 loading={chainsIsLoading}
                 chainLabel={toChain?.label}
               />
             ) : (
               <NotFound
                 text={
-                  !currentToChain ? (
+                  !toChain ? (
                     <>Please, select a chain to see a list of tokens.</>
                   ) : (
                     <>
                       We couldn't find tokens{' '}
-                      {currentToChain
-                        ? `on ${currentToChain?.label} chain`
-                        : ''}
-                      . Please try search again or switch the chain.
+                      {toChain ? `on ${toChain?.label} chain` : ''}. Please try
+                      search again or switch the chain.
                     </>
                   )
                 }
