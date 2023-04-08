@@ -8,15 +8,21 @@ import { Card } from '../Card/Card';
 import AlertBox from '../AlertBox/AlertBox';
 import TransactionID from '../TransactionID/TransactionID';
 import OfferPublic from '../Offer/OfferPublic';
-import Order from '../../models/Order';
 import { useAppSelector } from '../../store/storeHooks';
 import { selectChainsItems } from '../../store/slices/chainsSlice';
 import { OfferType } from '../../types/OfferType';
+import { OrderType } from '../../types/OrderType';
+import {
+  getOrderBuyerLink,
+  getOrderFromChain,
+  getOrderFromToken,
+  getOrderLink,
+} from '../../utils/helpers/orderHelpers';
 
 type Props = {
-  order: Order;
+  order: OrderType;
   userType: 'a' | 'b';
-  onCompleteClick?: (order: Order) => Promise<boolean>;
+  onCompleteClick?: (order: OrderType) => Promise<boolean>;
   error?: string;
 };
 
@@ -28,13 +34,13 @@ const OrderCard = (props: Props) => {
   const [loading, setLoading] = useState(false);
   const isUserA = userType === 'a';
 
-  const explorerLink = order.getOrderLink(chains);
+  const explorerLink = getOrderLink(order, chains);
 
-  const fromChain = order.getFromChain(chains);
-  const fromToken = order.getFromToken(chains);
+  const fromChain = getOrderFromChain(order, chains);
+  const fromToken = getOrderFromToken(order, chains);
 
   const buyer = !isUserA && order && order.destAddr;
-  const buyerLink = !isUserA ? order.getBuyerLink(chains) : '';
+  const buyerLink = !isUserA ? getOrderBuyerLink(order, chains) : '';
 
   const getOffer = async (offerId: string) => {
     const offerRes = await getOfferById(offerId);
@@ -111,7 +117,7 @@ const OrderCard = (props: Props) => {
           }}
           userType={userType}
           fromChain={fromChain}
-          fromToken={fromToken}
+          fromToken={fromToken || ''}
           label={isUserA ? 'You receive' : 'You sell'}
           fromLabel={isUserA ? 'You pay' : 'You receive'}
           excludeSteps={

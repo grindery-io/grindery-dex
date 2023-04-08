@@ -10,8 +10,8 @@ import { IconButton } from '@mui/material';
 import useOrders from '../../hooks/useOrders';
 import OrderCard from '../../components/OrderCard/OrderCard';
 import OrderSkeleton from '../../components/OrderCard/OrderSkeleton';
-import Order from '../../models/Order';
 import { ROUTES } from '../../config/routes';
+import { OrderType } from '../../types/OrderType';
 
 type Props = {};
 
@@ -55,7 +55,7 @@ const TradePageHistory = (props: Props) => {
           <>
             {sortedOrders && sortedOrders.length > 0 ? (
               <>
-                {sortedOrders.map((order: Order) => (
+                {sortedOrders.map((order: OrderType) => (
                   <OrderCard key={order._id} order={order} userType="a" />
                 ))}
                 <Box height="10px" />

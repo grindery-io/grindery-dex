@@ -11,9 +11,9 @@ import useLiquidityWallets from '../../hooks/useLiquidityWallets';
 import { getErrorMessage } from '../../utils/error';
 import OrderSkeleton from '../../components/OrderCard/OrderSkeleton';
 import useOrders from '../../hooks/useOrders';
-import Order from '../../models/Order';
 import { useAppSelector } from '../../store/storeHooks';
 import { selectLiquidityWalletAbi } from '../../store/slices/abiSlice';
+import { OrderType } from '../../types/OrderType';
 
 function OrdersPage() {
   const { chain: selectedChain, provider, ethers } = useGrinderyNexus();
@@ -26,7 +26,7 @@ function OrdersPage() {
     return new Date(b.date).getTime() - new Date(a.date).getTime();
   });
 
-  const handleOrderCompleteClick = async (order: Order) => {
+  const handleOrderCompleteClick = async (order: OrderType) => {
     setError({
       type: '',
       text: '',
@@ -213,7 +213,7 @@ function OrdersPage() {
             <>
               {sortedOrders && sortedOrders.length > 0 ? (
                 <>
-                  {sortedOrders.map((order: Order) => (
+                  {sortedOrders.map((order: OrderType) => (
                     <OrderCard
                       key={order._id}
                       order={order}
