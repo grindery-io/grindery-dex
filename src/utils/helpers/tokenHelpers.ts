@@ -16,3 +16,15 @@ export const getTokenById = (
 export const getTokensByChain = (chain?: ChainType): TokenType[] => {
   return chain ? chain.tokens || [] : [];
 };
+
+export const getTokenBySymbol = (
+  tokenSymbol: string,
+  chainId: string,
+  chains: ChainType[]
+): TokenType | null => {
+  return (
+    chains
+      .find((c: ChainType) => c.chainId === chainId)
+      ?.tokens?.find((t: TokenType) => t.symbol === tokenSymbol) || null
+  );
+};

@@ -1,4 +1,13 @@
 export const ROUTES = {
+  BUY: {
+    RELATIVE_PATH: '/buy/*',
+    FULL_PATH: '/buy',
+    SHOP: {
+      RELATIVE_PATH: '/shop/*',
+      FULL_PATH: '/buy/shop',
+      ROOT: { RELATIVE_PATH: '', FULL_PATH: '/buy/shop' },
+    },
+  },
   SELL: {
     RELATIVE_PATH: '/sell/*',
     FULL_PATH: '/sell',

@@ -3,7 +3,6 @@ import { Navigate, Route, Routes } from 'react-router-dom';
 import PageContainer from '../../components/PageContainer/PageContainer';
 import TradePageContextProvider from '../../context/TradePageContext';
 import TradePage from '../TradePage/TradePage';
-import ShopPageContextProvider from '../../context/ShopPageContext';
 import ShopPage from '../ShopPage/ShopPage';
 
 export const buyPages = [
@@ -21,11 +20,7 @@ export const buyPages = [
     path: '/shop',
     fullPath: '/buy/shop',
     label: 'Shop',
-    component: (
-      <ShopPageContextProvider>
-        <ShopPage />
-      </ShopPageContextProvider>
-    ),
+    component: <ShopPage />,
   },
 ];
 

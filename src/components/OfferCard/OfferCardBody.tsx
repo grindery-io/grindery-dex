@@ -2,10 +2,6 @@ import React from 'react';
 import { Avatar, Badge, Box, Skeleton, Stack, Typography } from '@mui/material';
 import { ChainTokenBox } from '../ChainTokenBox/ChainTokenBox';
 import { AvatarDefault } from '../Avatar/AvatarDefault';
-import useShopPage from '../../hooks/useShopPage';
-import { useAppSelector } from '../../store/storeHooks';
-import { selectChainsItems } from '../../store/slices/chainsSlice';
-import { OfferType } from '../../types/OfferType';
 import {
   getOfferAmount,
   getOfferExchangeAmount,
@@ -13,16 +9,10 @@ import {
   getOfferFromToken,
   getOfferUSDAmount,
 } from '../../utils/helpers/offerHelpers';
+import { OfferCardProps } from './OfferCard';
 
-type Props = {
-  offer: OfferType;
-};
-
-const OfferCardBody = (props: Props) => {
-  const { offer } = props;
-  const { currentFromChain, fromToken, tokenPrice } = useShopPage();
-  const chains = useAppSelector(selectChainsItems);
-
+const OfferCardBody = (props: OfferCardProps) => {
+  const { offer, fromToken, fromChain, tokenPrice, chains } = props;
   const chain = getOfferFromChain(offer, chains);
   const token = getOfferFromToken(offer, chains);
   const fromAmount = getOfferExchangeAmount(offer);
@@ -201,7 +191,7 @@ const OfferCardBody = (props: Props) => {
           justifyContent="space-between"
         >
           <Box>
-            {currentFromChain && fromToken ? (
+            {fromChain && fromToken ? (
               <ChainTokenBox
                 sx={{
                   paddingLeft: '0',
@@ -217,10 +207,10 @@ const OfferCardBody = (props: Props) => {
                       horizontal: 'right',
                     }}
                     badgeContent={
-                      currentFromChain.label ? (
+                      fromChain.label ? (
                         <Avatar
-                          src={currentFromChain.icon}
-                          alt={currentFromChain.label}
+                          src={fromChain.icon}
+                          alt={fromChain.label}
                           sx={{
                             width: '16px',
                             height: '16px',
@@ -228,7 +218,7 @@ const OfferCardBody = (props: Props) => {
                             background: '#fff',
                           }}
                         >
-                          {currentFromChain.label}
+                          {fromChain.label}
                         </Avatar>
                       ) : (
                         <AvatarDefault
@@ -255,11 +245,7 @@ const OfferCardBody = (props: Props) => {
                 title={fromToken.symbol || ''}
                 subheader={
                   <span style={{ whiteSpace: 'pre-wrap' }}>
-                    {offer.amount ? (
-                      `on ${currentFromChain.label}`
-                    ) : (
-                      <Skeleton />
-                    )}
+                    {offer.amount ? `on ${fromChain.label}` : <Skeleton />}
                   </span>
                 }
                 selected={true}

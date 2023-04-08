@@ -6,14 +6,10 @@ import CurrencyExchangeIcon from '@mui/icons-material/CurrencyExchange';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import { useAppSelector } from '../../store/storeHooks';
 import { selectChainsItems } from '../../store/slices/chainsSlice';
-import { OfferType } from '../../types/OfferType';
 import { getOfferProviderLink } from '../../utils/helpers/offerHelpers';
+import { OfferCardProps } from './OfferCard';
 
-type Props = {
-  offer: OfferType;
-};
-
-const OfferCardHeader = (props: Props) => {
+const OfferCardHeader = (props: OfferCardProps) => {
   const { offer } = props;
   const chains = useAppSelector(selectChainsItems);
 

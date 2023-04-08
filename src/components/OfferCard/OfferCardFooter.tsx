@@ -3,14 +3,10 @@ import { Box, Skeleton } from '@mui/material';
 import TransactionID from '../TransactionID/TransactionID';
 import { selectChainsItems } from '../../store/slices/chainsSlice';
 import { useAppSelector } from '../../store/storeHooks';
-import { OfferType } from '../../types/OfferType';
 import { getOfferLink } from '../../utils/helpers/offerHelpers';
+import { OfferCardProps } from './OfferCard';
 
-type Props = {
-  offer: OfferType;
-};
-
-const OfferCardFooter = (props: Props) => {
+const OfferCardFooter = (props: OfferCardProps) => {
   const { offer } = props;
   const chains = useAppSelector(selectChainsItems);
 

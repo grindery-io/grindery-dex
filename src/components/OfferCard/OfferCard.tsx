@@ -5,14 +5,20 @@ import OfferCardBody from './OfferCardBody';
 import OfferCardAction from './OfferCardAction';
 import OfferCardFooter from './OfferCardFooter';
 import { OfferType } from '../../types/OfferType';
+import { ChainType } from '../../types/ChainType';
+import { TokenType } from '../../types/TokenType';
 
-type Props = {
+export type OfferCardProps = {
   offer: OfferType;
+  fromChain: ChainType;
+  fromToken: TokenType;
+  tokenPrice: number | null;
+  chains: ChainType[];
+  accepting: string;
+  onAcceptOfferClick: (offer: OfferType) => void;
 };
 
-const OfferCard = (props: Props) => {
-  const { offer } = props;
-
+const OfferCard = (props: OfferCardProps) => {
   return (
     <Box
       sx={{
@@ -24,11 +30,11 @@ const OfferCard = (props: Props) => {
         margin: '0',
       }}
     >
-      <OfferCardHeader offer={offer} />
-      <OfferCardBody offer={offer} />
+      <OfferCardHeader {...props} />
+      <OfferCardBody {...props} />
 
-      <OfferCardAction offer={offer} />
-      <OfferCardFooter offer={offer} />
+      <OfferCardAction {...props} />
+      <OfferCardFooter {...props} />
     </Box>
   );
 };

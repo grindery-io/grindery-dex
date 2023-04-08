@@ -22,9 +22,7 @@ export const getChainsWithTokens = (
                 },
               })
               .then((res2) => {
-                console.log('getChainsWithTokens > axios res=', res2);
-
-                // TODO: remove data formatting outside of services
+                // TODO: remove data formatting away from services
                 const chainsWithTokens = (res?.data || []).map(
                   (chain: any) => ({
                     ...chain,
