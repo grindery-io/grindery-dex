@@ -22,6 +22,7 @@ import {
 } from '../services/orderServices';
 import { selectUserAccessToken } from '../store/slices/userSlice';
 import { getOfferById } from '../services/offerServices';
+import { OfferType } from '../types/OfferType';
 
 // Context props
 type ContextProps = {
@@ -68,9 +69,13 @@ export const OrdersController = ({ children }: OrdersControllerProps) => {
           return offer || null;
         });
         const offers = await Promise.all(promises);
-        const enrichedOrders = orders.map((order: OrderType, i: number) => ({
+        const enrichedOrders = orders.map((order: OrderType) => ({
           ...order,
-          offer: offers[i] || undefined,
+          offer:
+            offers.find(
+              (offer: OfferType | null) =>
+                offer && offer.offerId === order.offerId
+            ) || undefined,
         }));
         dispatch(setOrdersItems(enrichedOrders));
       }

@@ -21,6 +21,7 @@ import {
 import { selectLiquidityWalletAbi } from '../../store/slices/abiSlice';
 import useLiquidityWallets from '../../hooks/useLiquidityWallets';
 import { LiquidityWalletType } from '../../types/LiquidityWalletType';
+import { selectChainsItems } from '../../store/slices/chainsSlice';
 
 function OrdersPageRoot() {
   const accessToken = useAppSelector(selectUserAccessToken);
@@ -32,6 +33,7 @@ function OrdersPageRoot() {
   const sortedOrders = sortOrdersByDate(orders);
   const { handleOrderCompleteAction } = useOrdersController();
   const { wallets } = useLiquidityWallets();
+  const chains = useAppSelector(selectChainsItems);
 
   return (
     <>
@@ -51,6 +53,7 @@ function OrdersPageRoot() {
                     key={order._id}
                     order={order}
                     userType="b"
+                    chains={chains}
                     onCompleteClick={async (order: OrderType) => {
                       const wallet = wallets.find(
                         (w: LiquidityWalletType) =>

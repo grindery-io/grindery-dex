@@ -3,7 +3,6 @@ import { Navigate, Route, Routes } from 'react-router-dom';
 import Loading from '../../components/Loading/Loading';
 import PageContainer from '../../components/PageContainer/PageContainer';
 import SellMenu from '../../components/SellMenu/SellMenu';
-import OrdersContextProvider from '../../context/OrdersContext';
 import OffersPage from '../OffersPage/OffersPage';
 import OrdersPage from '../OrdersPage/OrdersPage';
 import AutomationsPage from '../AutomationsPage/AutomationsPage';
@@ -37,11 +36,7 @@ export const sellPages = [
     path: ROUTES.SELL.ORDERS.RELATIVE_PATH,
     fullPath: ROUTES.SELL.ORDERS.ROOT.FULL_PATH,
     label: 'Orders',
-    component: (
-      <OrdersContextProvider userType="b">
-        <OrdersPage />
-      </OrdersContextProvider>
-    ),
+    component: <OrdersPage />,
   },
   {
     path: ROUTES.SELL.AUTOMATIONS.RELATIVE_PATH,

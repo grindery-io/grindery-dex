@@ -1,16 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Skeleton, Typography } from '@mui/material';
 import { Box } from '@mui/system';
-import useOffers from '../../hooks/useOffers';
 import moment from 'moment';
 import DexCardSubmitButton from '../DexCard/DexCardSubmitButton';
 import { Card } from '../Card/Card';
 import AlertBox from '../AlertBox/AlertBox';
 import TransactionID from '../TransactionID/TransactionID';
 import OfferPublic from '../Offer/OfferPublic';
-import { useAppSelector } from '../../store/storeHooks';
-import { selectChainsItems } from '../../store/slices/chainsSlice';
-import { OfferType } from '../../types/OfferType';
 import { OrderType } from '../../types/OrderType';
 import {
   getOrderBuyerLink,
@@ -18,34 +14,26 @@ import {
   getOrderFromToken,
   getOrderLink,
 } from '../../utils/helpers/orderHelpers';
+import { ChainType } from '../../types/ChainType';
 
 type Props = {
   order: OrderType;
   userType: 'a' | 'b';
   onCompleteClick?: (order: OrderType) => Promise<boolean>;
   error?: string;
+  chains: ChainType[];
 };
 
 const OrderCard = (props: Props) => {
-  const { order, userType, onCompleteClick, error } = props;
-  const { getOfferById } = useOffers();
-  const [offer, setOffer] = useState<OfferType | false>(false);
-  const chains = useAppSelector(selectChainsItems);
+  const { order, userType, onCompleteClick, error, chains } = props;
+  const offer = order.offer;
   const [loading, setLoading] = useState(false);
   const isUserA = userType === 'a';
-
   const explorerLink = getOrderLink(order, chains);
-
   const fromChain = getOrderFromChain(order, chains);
   const fromToken = getOrderFromToken(order, chains);
-
   const buyer = !isUserA && order && order.destAddr;
   const buyerLink = !isUserA ? getOrderBuyerLink(order, chains) : '';
-
-  const getOffer = async (offerId: string) => {
-    const offerRes = await getOfferById(offerId);
-    setOffer(offerRes);
-  };
 
   const handleCompleteClick = async () => {
     if (order.orderId && onCompleteClick) {
@@ -59,13 +47,6 @@ const OrderCard = (props: Props) => {
       setLoading(false);
     }
   };
-
-  useEffect(() => {
-    if (order.offerId) {
-      getOffer(order.offerId);
-    }
-    // eslint-disable-next-line
-  }, [order.offerId]);
 
   return (
     <Card

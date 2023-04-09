@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Box } from '@mui/system';
 import DexCard from '../../components/DexCard/DexCard';
 import DexCardHeader from '../../components/DexCard/DexCardHeader';
@@ -7,24 +7,26 @@ import NotFound from '../../components/NotFound/NotFound';
 import { useNavigate } from 'react-router-dom';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
 import { IconButton } from '@mui/material';
-import useOrders from '../../hooks/useOrders';
 import OrderCard from '../../components/OrderCard/OrderCard';
 import OrderSkeleton from '../../components/OrderCard/OrderSkeleton';
 import { ROUTES } from '../../config/routes';
 import { OrderType } from '../../types/OrderType';
+import { useAppSelector } from '../../store/storeHooks';
+import {
+  selectOrdersHistoryItems,
+  selectOrdersHistoryLoading,
+} from '../../store/slices/ordersHistorySlice';
+import { sortOrdersByDate } from '../../utils/helpers/orderHelpers';
+import { selectChainsItems } from '../../store/slices/chainsSlice';
 
 type Props = {};
 
 const TradePageHistory = (props: Props) => {
   let navigate = useNavigate();
-  const { orders, getOrders, isLoading } = useOrders();
-  const sortedOrders = orders?.sort((a: any, b: any) => {
-    return new Date(b.date).getTime() - new Date(a.date).getTime();
-  });
-
-  useEffect(() => {
-    getOrders();
-  }, []);
+  const orders = useAppSelector(selectOrdersHistoryItems);
+  const isLoading = useAppSelector(selectOrdersHistoryLoading);
+  const sortedOrders = sortOrdersByDate(orders);
+  const chains = useAppSelector(selectChainsItems);
 
   return (
     <DexCard>
@@ -46,7 +48,7 @@ const TradePageHistory = (props: Props) => {
         endAdornment={<Box width={28} height={40} />}
       />
       <DexCardBody maxHeight="540px">
-        {isLoading ? (
+        {orders.length < 1 && isLoading ? (
           <>
             <OrderSkeleton />
             <OrderSkeleton />
@@ -56,7 +58,12 @@ const TradePageHistory = (props: Props) => {
             {sortedOrders && sortedOrders.length > 0 ? (
               <>
                 {sortedOrders.map((order: OrderType) => (
-                  <OrderCard key={order._id} order={order} userType="a" />
+                  <OrderCard
+                    key={order._id}
+                    chains={chains}
+                    order={order}
+                    userType="a"
+                  />
                 ))}
                 <Box height="10px" />
               </>

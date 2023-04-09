@@ -9,12 +9,14 @@ import offersReducer from './slices/offersSlice';
 import shopReducer from './slices/shopSlice';
 import tradeReducer from './slices/tradeSlice';
 import ordersReducer from './slices/ordersSlice';
+import ordersHistoryReducer from './slices/ordersHistorySlice';
 
 export const store = configureStore({
   reducer: {
     user: userReducer,
     trade: tradeReducer,
     shop: shopReducer,
+    ordersHistory: ordersHistoryReducer,
     faucet: faucetReducer,
     stakes: stakesReducer,
     offers: offersReducer,
