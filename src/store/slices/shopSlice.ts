@@ -14,36 +14,36 @@ export type Shopfilter = {
 };
 
 interface ShopState {
-  error: ErrorMessageType;
-  loading: boolean;
   acceptedOffer: string;
   acceptedOfferTx: string;
   accepting: string;
   approved: boolean;
-  modal: boolean;
-  fromTokenPrice: number | null;
-  pricesLoading: boolean;
-  offers: OfferType[];
+  error: ErrorMessageType;
   filter: Shopfilter;
+  fromTokenPrice: number | null;
+  loading: boolean;
+  modal: boolean;
+  offers: OfferType[];
+  pricesLoading: boolean;
 }
 
 const initialState: ShopState = {
-  error: { type: '', text: '' },
-  loading: true,
   acceptedOffer: '',
   acceptedOfferTx: '',
   accepting: '',
   approved: false,
-  modal: false,
-  fromTokenPrice: null,
-  pricesLoading: false,
-  offers: [],
+  error: { type: '', text: '' },
   filter: {
     fromChainId: '5',
     fromTokenId: '1027',
     toChainId: '97',
     toTokenId: '1839',
   },
+  fromTokenPrice: null,
+  loading: true,
+  modal: false,
+  offers: [],
+  pricesLoading: false,
 };
 
 const shopSlice = createSlice({

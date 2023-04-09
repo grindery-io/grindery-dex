@@ -5,14 +5,14 @@ import { LiquidityWalletType } from '../../types/LiquidityWalletType';
 
 interface WalletsState {
   error: ErrorMessageType;
-  loading: boolean;
   items: LiquidityWalletType[];
+  loading: boolean;
 }
 
 const initialState: WalletsState = {
   error: { type: '', text: '' },
-  loading: true,
   items: [],
+  loading: true,
 };
 
 const walletsSlice = createSlice({

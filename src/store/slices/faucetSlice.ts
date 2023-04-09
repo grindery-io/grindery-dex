@@ -10,20 +10,20 @@ export type FaucetInput = {
 
 interface FaucetState {
   error: ErrorMessageType;
+  input: FaucetInput;
   loading: boolean;
   transactionId: string;
-  input: FaucetInput;
 }
 
 const initialState: FaucetState = {
   error: { type: '', text: '' },
-  loading: false,
-  transactionId: '',
   input: {
     address: '',
     amount: '',
     chainId: '',
   },
+  loading: false,
+  transactionId: '',
 };
 
 const faucetSlice = createSlice({

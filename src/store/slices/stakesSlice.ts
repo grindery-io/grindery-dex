@@ -16,20 +16,19 @@ export type StakeWithdrawInput = {
 };
 
 interface StakesState {
+  approved: boolean;
   error: ErrorMessageType;
-  loading: boolean;
-  items: StakeType[];
   input: {
     create: StakeCreateInput;
     withdraw: StakeWithdrawInput;
   };
-  approved: boolean;
+  items: StakeType[];
+  loading: boolean;
 }
 
 const initialState: StakesState = {
+  approved: false,
   error: { type: '', text: '' },
-  loading: true,
-  items: [],
   input: {
     create: {
       amount: '',
@@ -39,7 +38,8 @@ const initialState: StakesState = {
       amount: '',
     },
   },
-  approved: false,
+  items: [],
+  loading: true,
 };
 
 const stakesSlice = createSlice({

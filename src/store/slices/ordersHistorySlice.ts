@@ -5,14 +5,14 @@ import { OrderType } from '../../types/OrderType';
 
 interface OrdersHistoryState {
   error: ErrorMessageType;
-  loading: boolean;
   items: OrderType[];
+  loading: boolean;
 }
 
 const initialState: OrdersHistoryState = {
   error: { type: '', text: '' },
-  loading: true,
   items: [],
+  loading: true,
 };
 
 const ordersHistorySlice = createSlice({

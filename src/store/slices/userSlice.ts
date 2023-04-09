@@ -2,21 +2,21 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../store';
 
 interface UserState {
-  id: string;
+  accessToken: string;
   address: string;
   chain: string;
   chainId: string;
-  accessToken: string;
+  id: string;
   isAdmin: boolean;
   isAdminLoading: boolean;
 }
 
 const initialState: UserState = {
-  id: '',
+  accessToken: '',
   address: '',
   chain: '',
   chainId: '',
-  accessToken: '',
+  id: '',
   isAdmin: false,
   isAdminLoading: true,
 };

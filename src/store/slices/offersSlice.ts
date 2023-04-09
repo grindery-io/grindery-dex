@@ -21,18 +21,16 @@ export type OffersCreateInput = {
 };
 
 interface OffersState {
-  error: ErrorMessageType;
-  loading: boolean;
   activating: string;
-  items: OfferType[];
+  error: ErrorMessageType;
   input: OffersCreateInput;
+  items: OfferType[];
+  loading: boolean;
 }
 
 const initialState: OffersState = {
-  error: { type: '', text: '' },
-  loading: true,
   activating: '',
-  items: [],
+  error: { type: '', text: '' },
   input: {
     fromChainId: '',
     fromTokenId: '',
@@ -46,6 +44,8 @@ const initialState: OffersState = {
     title: '',
     image: '',
   },
+  items: [],
+  loading: true,
 };
 
 const offersSlice = createSlice({

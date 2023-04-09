@@ -9,20 +9,20 @@ export type AutomationsInput = {
 };
 
 interface AutomationsState {
-  error: ErrorMessageType;
-  loading: boolean;
   botAddress: string;
+  error: ErrorMessageType;
   input: AutomationsInput;
+  loading: boolean;
 }
 
 const initialState: AutomationsState = {
-  error: { type: '', text: '' },
-  loading: false,
   botAddress: '',
+  error: { type: '', text: '' },
   input: {
     bot: '',
     chainId: '',
   },
+  loading: false,
 };
 
 const automationsSlice = createSlice({

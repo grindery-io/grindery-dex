@@ -2,19 +2,19 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../store';
 
 interface ABIState {
+  liquidityWalletAbi: any;
   loading: boolean;
   poolAbi: any;
-  tokenAbi: any;
   satelliteAbi: any;
-  liquidityWalletAbi: any;
+  tokenAbi: any;
 }
 
 const initialState: ABIState = {
+  liquidityWalletAbi: null,
   loading: true,
   poolAbi: null,
-  tokenAbi: null,
   satelliteAbi: null,
-  liquidityWalletAbi: null,
+  tokenAbi: null,
 };
 
 const abiSlice = createSlice({

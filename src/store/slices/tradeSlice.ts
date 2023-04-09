@@ -15,30 +15,23 @@ export type Tradefilter = {
 };
 
 interface TradeState {
-  error: ErrorMessageType;
-  loading: boolean;
   acceptedOfferTx: string;
   approved: boolean;
-  fromTokenPrice: number | null;
-  fromTokenBalance: string;
-  toTokenPrice: number | null;
-  pricesLoading: boolean;
-  isOffersVisible: boolean;
-  offers: OfferType[];
+  error: ErrorMessageType;
   filter: Tradefilter;
+  fromTokenBalance: string;
+  fromTokenPrice: number | null;
+  isOffersVisible: boolean;
+  loading: boolean;
+  offers: OfferType[];
+  pricesLoading: boolean;
+  toTokenPrice: number | null;
 }
 
 const initialState: TradeState = {
-  error: { type: '', text: '' },
-  loading: false,
   acceptedOfferTx: '',
   approved: false,
-  fromTokenPrice: null,
-  fromTokenBalance: '',
-  toTokenPrice: null,
-  pricesLoading: false,
-  isOffersVisible: false,
-  offers: [],
+  error: { type: '', text: '' },
   filter: {
     fromChainId: '5',
     fromTokenId: '1027',
@@ -46,6 +39,13 @@ const initialState: TradeState = {
     toTokenId: '1839',
     amount: '',
   },
+  fromTokenBalance: '',
+  fromTokenPrice: null,
+  isOffersVisible: false,
+  loading: false,
+  offers: [],
+  pricesLoading: false,
+  toTokenPrice: null,
 };
 
 const tradeSlice = createSlice({

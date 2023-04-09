@@ -3,13 +3,13 @@ import { RootState } from '../store';
 import { ChainType } from '../../types/ChainType';
 
 interface ChainsState {
-  loading: boolean;
   items: ChainType[];
+  loading: boolean;
 }
 
 const initialState: ChainsState = {
-  loading: true,
   items: [],
+  loading: true,
 };
 
 const chainsSlice = createSlice({
