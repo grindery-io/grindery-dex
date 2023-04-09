@@ -51,3 +51,9 @@ export const getOrderBuyerLink = (
     ''
   );
 };
+
+export const sortOrdersByDate = (orders: OrderType[]): OrderType[] => {
+  return orders.slice().sort((a: any, b: any) => {
+    return new Date(b.date).getTime() - new Date(a.date).getTime();
+  });
+};

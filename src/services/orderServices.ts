@@ -113,16 +113,21 @@ export const getSellerOrdersRequest = (
 };
 
 export const completeSellerOrderRequest = (
-  accessToken: string
+  accessToken: string,
+  orderId: string
 ): Promise<boolean> => {
   return new Promise((resolve, reject) => {
     try {
       axios
-        .put(`${DELIGHT_API_URL}/orders/complete`, {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        })
+        .put(
+          `${DELIGHT_API_URL}/orders/complete`,
+          { orderId },
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        )
         .then((res) => {
           resolve(res?.data?.modifiedCount ? true : false);
         })

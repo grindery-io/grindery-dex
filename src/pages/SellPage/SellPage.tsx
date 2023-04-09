@@ -4,12 +4,11 @@ import Loading from '../../components/Loading/Loading';
 import PageContainer from '../../components/PageContainer/PageContainer';
 import SellMenu from '../../components/SellMenu/SellMenu';
 //import LiquidityWalletPageContextProvider from '../../context/LiquidityWalletPageContext';
-import OrdersPageContextProvider from '../../context/OrdersPageContext';
 import OrdersContextProvider from '../../context/OrdersContext';
 //import LiquidityWalletPage from '../LiquidityWalletPage/LiquidityWalletPage';
 import OffersPage from '../OffersPage/OffersPage';
 //import StakingPage from '../StakingPage/StakingPage';
-import OrdersBPage from '../OrdersPage/OrdersPage';
+import OrdersPage from '../OrdersPage/OrdersPage';
 import AutomationsPage from '../AutomationsPage/AutomationsPage';
 import DexCard from '../../components/DexCard/DexCard';
 import DexCardHeader from '../../components/DexCard/DexCardHeader';
@@ -23,6 +22,7 @@ import {
 } from '../../store/slices/userSlice';
 //import StakingPage from '../StakingPage/StakingPage';
 import { ROUTES } from '../../config/routes';
+import OrdersController from '../../controllers/OrdersController';
 
 export const sellPages = [
   // Route temporary disabled
@@ -44,9 +44,7 @@ export const sellPages = [
     label: 'Orders',
     component: (
       <OrdersContextProvider userType="b">
-        <OrdersPageContextProvider>
-          <OrdersBPage />
-        </OrdersPageContextProvider>
+        <OrdersPage />
       </OrdersContextProvider>
     ),
   },
@@ -56,6 +54,7 @@ export const sellPages = [
     label: 'Trading Automation',
     component: <AutomationsPage />,
   },
+  // Route temporary disabled
   // {
   //   path: '/wallets',
   //   fullPath: '/sell/wallets',
