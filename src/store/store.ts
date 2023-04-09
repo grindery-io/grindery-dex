@@ -8,6 +8,7 @@ import automationsReducer from './slices/automationsSlice';
 import offersReducer from './slices/offersSlice';
 import shopReducer from './slices/shopSlice';
 import tradeReducer from './slices/tradeSlice';
+import ordersReducer from './slices/ordersSlice';
 
 export const store = configureStore({
   reducer: {
@@ -17,6 +18,7 @@ export const store = configureStore({
     faucet: faucetReducer,
     stakes: stakesReducer,
     offers: offersReducer,
+    orders: ordersReducer,
     automations: automationsReducer,
     chains: chainsReducer,
     abi: abiReducer,
