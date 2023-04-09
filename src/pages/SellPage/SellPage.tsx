@@ -3,11 +3,8 @@ import { Navigate, Route, Routes } from 'react-router-dom';
 import Loading from '../../components/Loading/Loading';
 import PageContainer from '../../components/PageContainer/PageContainer';
 import SellMenu from '../../components/SellMenu/SellMenu';
-//import LiquidityWalletPageContextProvider from '../../context/LiquidityWalletPageContext';
 import OrdersContextProvider from '../../context/OrdersContext';
-//import LiquidityWalletPage from '../LiquidityWalletPage/LiquidityWalletPage';
 import OffersPage from '../OffersPage/OffersPage';
-//import StakingPage from '../StakingPage/StakingPage';
 import OrdersPage from '../OrdersPage/OrdersPage';
 import AutomationsPage from '../AutomationsPage/AutomationsPage';
 import DexCard from '../../components/DexCard/DexCard';
@@ -20,9 +17,7 @@ import {
   selectUserIsAdmin,
   selectUserIsAdminLoading,
 } from '../../store/slices/userSlice';
-//import StakingPage from '../StakingPage/StakingPage';
 import { ROUTES } from '../../config/routes';
-import OrdersController from '../../controllers/OrdersController';
 
 export const sellPages = [
   // Route temporary disabled
@@ -33,14 +28,14 @@ export const sellPages = [
     component: <StakingPage />,
   },*/
   {
-    path: '/offers/*',
-    fullPath: '/sell/offers',
+    path: ROUTES.SELL.OFFERS.RELATIVE_PATH,
+    fullPath: ROUTES.SELL.OFFERS.ROOT.FULL_PATH,
     label: 'Offers',
     component: <OffersPage />,
   },
   {
-    path: '/orders/*',
-    fullPath: '/sell/orders',
+    path: ROUTES.SELL.ORDERS.RELATIVE_PATH,
+    fullPath: ROUTES.SELL.ORDERS.ROOT.FULL_PATH,
     label: 'Orders',
     component: (
       <OrdersContextProvider userType="b">

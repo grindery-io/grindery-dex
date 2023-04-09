@@ -60,6 +60,11 @@ export const ROUTES = {
         FULL_PATH: '/sell/offers/select-to-chain',
       },
     },
+    ORDERS: {
+      RELATIVE_PATH: '/orders/*',
+      FULL_PATH: '/sell/orders/*',
+      ROOT: { RELATIVE_PATH: '', FULL_PATH: '/sell/orders' },
+    },
     AUTOMATIONS: {
       RELATIVE_PATH: '/automations/*',
       FULL_PATH: '/sell/automations/*',

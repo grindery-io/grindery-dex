@@ -37,7 +37,7 @@ function OrdersPageRoot() {
     <>
       <DexCardHeader title="Orders" />
       <DexCardBody maxHeight="540px">
-        {isLoading ? (
+        {orders.length < 1 && isLoading ? (
           <>
             <OrderSkeleton />
             <OrderSkeleton />
