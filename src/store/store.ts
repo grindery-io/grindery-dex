@@ -10,20 +10,22 @@ import shopReducer from './slices/shopSlice';
 import tradeReducer from './slices/tradeSlice';
 import ordersReducer from './slices/ordersSlice';
 import ordersHistoryReducer from './slices/ordersHistorySlice';
+import walletsReducer from './slices/walletsSlice';
 
 export const store = configureStore({
   reducer: {
-    user: userReducer,
-    trade: tradeReducer,
-    shop: shopReducer,
-    ordersHistory: ordersHistoryReducer,
-    faucet: faucetReducer,
-    stakes: stakesReducer,
-    offers: offersReducer,
-    orders: ordersReducer,
+    abi: abiReducer,
     automations: automationsReducer,
     chains: chainsReducer,
-    abi: abiReducer,
+    faucet: faucetReducer,
+    offers: offersReducer,
+    orders: ordersReducer,
+    ordersHistory: ordersHistoryReducer,
+    shop: shopReducer,
+    stakes: stakesReducer,
+    trade: tradeReducer,
+    user: userReducer,
+    wallets: walletsReducer,
   },
 });
 
