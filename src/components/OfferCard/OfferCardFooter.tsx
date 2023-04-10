@@ -3,7 +3,7 @@ import { Box, Skeleton } from '@mui/material';
 import TransactionID from '../TransactionID/TransactionID';
 import { selectChainsItems } from '../../store/slices/chainsSlice';
 import { useAppSelector } from '../../store/storeHooks';
-import { getOfferLink } from '../../utils/helpers/offerHelpers';
+import { getOfferLink } from '../../utils';
 import { OfferCardProps } from './OfferCard';
 
 const OfferCardFooter = (props: OfferCardProps) => {

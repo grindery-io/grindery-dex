@@ -8,7 +8,7 @@ import {
   getOfferFromChain,
   getOfferFromToken,
   getOfferUSDAmount,
-} from '../../utils/helpers/offerHelpers';
+} from '../../utils';
 import { OfferCardProps } from './OfferCard';
 
 const OfferCardBody = (props: OfferCardProps) => {
