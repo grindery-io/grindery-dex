@@ -4,11 +4,11 @@ import React, {
   useContext,
   useEffect,
 } from 'react';
-import { useAppDispatch, useAppSelector } from '../store/storeHooks';
-import { selectUserAccessToken } from '../store/slices/userSlice';
-import { getChainIdHex } from '../utils/helpers/chainHelpers';
-import { useUserController } from './UserController';
+import { useNavigate } from 'react-router-dom';
 import {
+  useAppDispatch,
+  useAppSelector,
+  selectUserAccessToken,
   OffersCreateInput,
   OffersCreateInputInputFieldName,
   clearOffersCreateInput,
@@ -19,20 +19,19 @@ import {
   setOffersError,
   setOffersItems,
   setOffersLoading,
-} from '../store/slices/offersSlice';
-import { addOffer, getOffer, getUserOffers, updateOffer } from '../services';
-import { OfferType } from '../types/OfferType';
-import { isNumeric } from '../utils';
-import { POOL_CONTRACT_ADDRESS } from '../config/constants';
-import { ChainType } from '../types/ChainType';
-import { getTokenById } from '../utils/helpers/tokenHelpers';
-import { getErrorMessage } from '../utils/error';
+} from '../store';
 import {
+  getChainIdHex,
+  isNumeric,
+  getTokenById,
+  getErrorMessage,
   getOfferIdFromReceipt,
   getOfferToChain,
-} from '../utils/helpers/offerHelpers';
-import { useNavigate } from 'react-router-dom';
-import { ROUTES } from '../config/routes';
+} from '../utils';
+import { useUserController } from './UserController';
+import { addOffer, getOffer, getUserOffers, updateOffer } from '../services';
+import { OfferType, ChainType } from '../types';
+import { ROUTES, POOL_CONTRACT_ADDRESS } from '../config';
 
 // Context props
 type ContextProps = {

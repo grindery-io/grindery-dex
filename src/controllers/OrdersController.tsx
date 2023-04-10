@@ -4,17 +4,18 @@ import React, {
   useContext,
   useEffect,
 } from 'react';
-import { OrderType } from '../types/OrderType';
-import { useAppDispatch, useAppSelector } from '../store/storeHooks';
+import { OrderType, OfferType } from '../types';
 import {
+  useAppDispatch,
+  useAppSelector,
   clearOrdersError,
   setOrdersError,
   setOrdersItems,
   setOrdersLoading,
-} from '../store/slices/ordersSlice';
-import { getChainIdHex } from '../utils/helpers/chainHelpers';
+  selectUserAccessToken,
+} from '../store';
+import { getChainIdHex, getErrorMessage } from '../utils';
 import { useUserController } from './UserController';
-import { getErrorMessage } from '../utils/error';
 import {
   completeSellerOrderRequest,
   getSellerOrdersRequest,
@@ -22,8 +23,6 @@ import {
   getWalletBalanceRequest,
   updateWalletRequest,
 } from '../services';
-import { selectUserAccessToken } from '../store/slices/userSlice';
-import { OfferType } from '../types/OfferType';
 
 // Context props
 type ContextProps = {

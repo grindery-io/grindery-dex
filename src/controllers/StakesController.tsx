@@ -4,9 +4,10 @@ import React, {
   useContext,
   useEffect,
 } from 'react';
-import { useAppDispatch, useAppSelector } from '../store/storeHooks';
-import { selectUserAccessToken } from '../store/slices/userSlice';
 import {
+  useAppDispatch,
+  useAppSelector,
+  selectUserAccessToken,
   StakeCreateInput,
   StakeCreateInputFieldName,
   StakeWithdrawInput,
@@ -19,7 +20,7 @@ import {
   setStakesItems,
   setStakesLoading,
   setStakesWithdrawInputValue,
-} from '../store/slices/stakesSlice';
+} from '../store';
 import { addStake, getStake, getUserStakes, updateStake } from '../services';
 import { StakeType } from '../types';
 import { getErrorMessage, isNumeric, getChainIdHex } from '../utils';

@@ -4,15 +4,11 @@ import React, {
   useContext,
   useEffect,
 } from 'react';
-import { useAppDispatch, useAppSelector } from '../store/storeHooks';
 import {
+  useAppDispatch,
+  useAppSelector,
   selectUserAccessToken,
   selectUserChainId,
-} from '../store/slices/userSlice';
-import { getChainIdHex } from '../utils/helpers/chainHelpers';
-import { useUserController } from './UserController';
-import { getErrorMessage } from '../utils/error';
-import {
   AutomationsInput,
   AutomationsInputFieldName,
   clearAutomationsError,
@@ -21,11 +17,13 @@ import {
   setAutomationsError,
   setAutomationsInputValue,
   setAutomationsLoading,
-} from '../store/slices/automationsSlice';
+  selectLiquidityWalletAbi,
+  selectWalletsItems,
+} from '../store';
+import { getChainIdHex, getErrorMessage } from '../utils';
+import { useUserController } from './UserController';
 import { getBotAddress } from '../services';
-import { selectLiquidityWalletAbi } from '../store/slices/abiSlice';
-import { LiquidityWalletType } from '../types/LiquidityWalletType';
-import { selectWalletsItems } from '../store/slices/walletsSlice';
+import { LiquidityWalletType } from '../types';
 
 // Context props
 type ContextProps = {

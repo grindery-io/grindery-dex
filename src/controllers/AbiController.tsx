@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect } from 'react';
-import { useAppDispatch } from '../store/storeHooks';
-import { setAbiLoading, setAbis } from '../store/slices/abiSlice';
+import { useAppDispatch, setAbiLoading, setAbis } from '../store';
 import { getAbis } from '../services';
 
 type AbiControllerProps = {

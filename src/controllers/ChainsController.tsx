@@ -1,8 +1,12 @@
 import React, { useCallback, useEffect } from 'react';
-import { useAppDispatch, useAppSelector } from '../store/storeHooks';
-import { selectUserAccessToken } from '../store/slices/userSlice';
+import {
+  useAppDispatch,
+  useAppSelector,
+  selectUserAccessToken,
+  setChainsItems,
+  setChainsLoading,
+} from '../store';
 import { getChainsWithTokens } from '../services';
-import { setChainsItems, setChainsLoading } from '../store/slices/chainsSlice';
 
 type ChainsControllerProps = {
   children: React.ReactNode;

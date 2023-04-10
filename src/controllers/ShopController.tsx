@@ -4,12 +4,10 @@ import React, {
   useContext,
   useEffect,
 } from 'react';
-import { useAppDispatch, useAppSelector } from '../store/storeHooks';
-import { selectUserAccessToken } from '../store/slices/userSlice';
-import { useUserController } from './UserController';
-import { getAllOffers, getTokenPriceById, addOrderRequest } from '../services';
-import { POOL_CONTRACT_ADDRESS } from '../config';
 import {
+  useAppDispatch,
+  useAppSelector,
+  selectUserAccessToken,
   clearShopError,
   selectShopFilter,
   setShopAcceptedOffer,
@@ -22,7 +20,10 @@ import {
   setShopModal,
   setShopOffers,
   setShopPricesLoading,
-} from '../store/slices/shopSlice';
+} from '../store';
+import { useUserController } from './UserController';
+import { getAllOffers, getTokenPriceById, addOrderRequest } from '../services';
+import { POOL_CONTRACT_ADDRESS } from '../config';
 import { TokenType, OfferType } from '../types';
 import {
   getErrorMessage,

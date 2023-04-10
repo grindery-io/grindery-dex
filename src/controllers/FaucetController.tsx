@@ -4,8 +4,9 @@ import React, {
   useContext,
   useEffect,
 } from 'react';
-import { useAppDispatch, useAppSelector } from '../store/storeHooks';
 import {
+  useAppDispatch,
+  useAppSelector,
   FaucetInput,
   clearFaucetError,
   setFaucetTransactionId,
@@ -13,15 +14,12 @@ import {
   setFaucetError,
   setFaucetInputValue,
   FaucetInputFieldName,
-} from '../store/slices/faucetSlice';
-import { isNumeric } from '../utils';
-import { useUserController } from './UserController';
-import {
   selectUserAddress,
   selectUserChainId,
-} from '../store/slices/userSlice';
-import { GRT_CONTRACT_ADDRESS } from '../config/constants';
-import { getChainIdHex } from '../utils/helpers/chainHelpers';
+} from '../store';
+import { isNumeric, getChainIdHex } from '../utils';
+import { useUserController } from './UserController';
+import { GRT_CONTRACT_ADDRESS } from '../config';
 
 type ContextProps = {
   handleGetTokensAction: (
