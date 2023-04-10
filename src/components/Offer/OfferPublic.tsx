@@ -29,7 +29,6 @@ import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
 import { TokenType } from '../../types/TokenType';
 import TransactionID from '../TransactionID/TransactionID';
 import SwapHorizontalCircleIcon from '@mui/icons-material/SwapHorizontalCircle';
-import { ThemeProvider } from 'styled-components';
 import { useAppSelector } from '../../store/storeHooks';
 import { selectChainsItems } from '../../store/slices/chainsSlice';
 import { OfferType } from '../../types/OfferType';
@@ -578,7 +577,7 @@ const OfferPublic = (props: Props) => {
             )}
           </Stepper>
           <Box p="16px">
-            {ThemeProvider ? (
+            {provider ? (
               <TransactionID
                 value={provider || ''}
                 label="Provider"

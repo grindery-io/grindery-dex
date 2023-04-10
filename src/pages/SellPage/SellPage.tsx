@@ -20,7 +20,6 @@ import {
 } from '../../store';
 import { ROUTES } from '../../config';
 import { WalletsController } from '../../controllers';
-import StakingPage from '../StakingPage/StakingPage';
 
 export const sellPages = [
   // Route temporary disabled

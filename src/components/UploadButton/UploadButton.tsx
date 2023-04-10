@@ -1,6 +1,6 @@
-import { Box, Button, FormHelperText, Stack, SxProps } from '@mui/material';
-import FileBase64 from 'react-file-base64';
 import React, { useEffect, useState } from 'react';
+import { Box, FormHelperText, Stack, SxProps } from '@mui/material';
+import FileBase64 from 'react-file-base64';
 import { Card } from '../Card/Card';
 import { CardTitle } from '../Card/CardTitle';
 import { FormControl } from './UploadButton.style';
