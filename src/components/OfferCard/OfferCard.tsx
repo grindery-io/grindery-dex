@@ -4,9 +4,7 @@ import OfferCardHeader from './OfferCardHeader';
 import OfferCardBody from './OfferCardBody';
 import OfferCardAction from './OfferCardAction';
 import OfferCardFooter from './OfferCardFooter';
-import { OfferType } from '../../types/OfferType';
-import { ChainType } from '../../types/ChainType';
-import { TokenType } from '../../types/TokenType';
+import { ChainType, OfferType, TokenType } from '../../types';
 
 export type OfferCardProps = {
   offer: OfferType;
