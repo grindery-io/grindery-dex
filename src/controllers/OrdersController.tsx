@@ -13,7 +13,6 @@ import {
   setOrdersLoading,
 } from '../store/slices/ordersSlice';
 import { getChainIdHex } from '../utils/helpers/chainHelpers';
-import useLiquidityWallets from '../hooks/useLiquidityWallets';
 import { useUserController } from './UserController';
 import { getErrorMessage } from '../utils/error';
 import {
@@ -23,6 +22,10 @@ import {
 import { selectUserAccessToken } from '../store/slices/userSlice';
 import { getOfferById } from '../services/offerServices';
 import { OfferType } from '../types/OfferType';
+import {
+  getWalletBalanceRequest,
+  updateWalletRequest,
+} from '../services/walletServices';
 
 // Context props
 type ContextProps = {
@@ -48,7 +51,6 @@ export const OrdersController = ({ children }: OrdersControllerProps) => {
   const dispatch = useAppDispatch();
   const accessToken = useAppSelector(selectUserAccessToken);
   const { getSigner, getEthers } = useUserController();
-  const { updateWallet, getWalletBalance } = useLiquidityWallets();
 
   const fetchOrders = useCallback(
     async (accessToken: string) => {
@@ -150,10 +152,11 @@ export const OrdersController = ({ children }: OrdersControllerProps) => {
       }
     }
 
-    let balance = await getWalletBalance(
+    let balance = await getWalletBalanceRequest(
+      accessToken,
+      offerChainId,
       '0x0',
-      userWalletAddress,
-      offerChainId
+      userWalletAddress
     );
 
     if (parseFloat(balance) < parseFloat(order.amountTokenOffer)) {
@@ -227,10 +230,15 @@ export const OrdersController = ({ children }: OrdersControllerProps) => {
     }
 
     // get liquidity wallet balance
-    balance = await getWalletBalance('0x0', userWalletAddress, offerChainId);
+    balance = await getWalletBalanceRequest(
+      accessToken,
+      offerChainId,
+      '0x0',
+      userWalletAddress
+    );
 
     // update wallet balance
-    const isUpdated = await updateWallet({
+    const isUpdated = await updateWalletRequest(accessToken, {
       walletAddress: userWalletAddress,
       chainId: offerChainId,
       tokenId: offerTokenSymbol,

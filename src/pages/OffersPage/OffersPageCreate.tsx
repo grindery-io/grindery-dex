@@ -31,8 +31,8 @@ import { selectChainsItems } from '../../store/slices/chainsSlice';
 import { getTokenById } from '../../utils/helpers/tokenHelpers';
 import { useOffersController } from '../../controllers/OffersController';
 import { selectPoolAbi } from '../../store/slices/abiSlice';
-import useLiquidityWallets from '../../hooks/useLiquidityWallets';
 import { LiquidityWalletType } from '../../types/LiquidityWalletType';
+import { selectWalletsItems } from '../../store/slices/walletsSlice';
 
 function OffersPageCreate() {
   let navigate = useNavigate();
@@ -60,7 +60,7 @@ function OffersPageCreate() {
     toChainId,
     toTokenId,
   } = input;
-  const { wallets } = useLiquidityWallets();
+  const wallets = useAppSelector(selectWalletsItems);
   const wallet = wallets.find(
     (w: LiquidityWalletType) => w.chainId === fromChainId
   );

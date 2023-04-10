@@ -19,9 +19,9 @@ import {
   selectUserChainId,
 } from '../../store/slices/userSlice';
 import { selectLiquidityWalletAbi } from '../../store/slices/abiSlice';
-import useLiquidityWallets from '../../hooks/useLiquidityWallets';
 import { LiquidityWalletType } from '../../types/LiquidityWalletType';
 import { selectChainsItems } from '../../store/slices/chainsSlice';
+import { selectWalletsItems } from '../../store/slices/walletsSlice';
 
 function OrdersPageRoot() {
   const accessToken = useAppSelector(selectUserAccessToken);
@@ -32,7 +32,7 @@ function OrdersPageRoot() {
   const error = useAppSelector(selectOrdersError);
   const sortedOrders = sortOrdersByDate(orders);
   const { handleOrderCompleteAction } = useOrdersController();
-  const { wallets } = useLiquidityWallets();
+  const wallets = useAppSelector(selectWalletsItems);
   const chains = useAppSelector(selectChainsItems);
 
   return (

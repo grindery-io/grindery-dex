@@ -74,6 +74,32 @@ export const ROUTES = {
         FULL_PATH: '/sell/automations/select-chain',
       },
     },
+    WALLETS: {
+      RELATIVE_PATH: '/wallets/*',
+      FULL_PATH: '/sell/wallets/*',
+      ROOT: { RELATIVE_PATH: '/', FULL_PATH: '/sell/wallets' },
+      CREATE: { RELATIVE_PATH: '/create', FULL_PATH: '/sell/wallets/create' },
+      SELECT_CHAIN: {
+        RELATIVE_PATH: '/select-chain',
+        FULL_PATH: '/sell/wallets/select-chain',
+      },
+      ADD: {
+        RELATIVE_PATH: '/:walletId/tokens/add/:tokenSymbol',
+        FULL_PATH: '/sell/wallets/:walletId/tokens/add/:tokenSymbol',
+      },
+      WITHDRAW: {
+        RELATIVE_PATH: '/:walletId/tokens/withdraw/:tokenSymbol',
+        FULL_PATH: '/sell/wallets/:walletId/tokens/withdraw/:tokenSymbol',
+      },
+      TOKENS: {
+        RELATIVE_PATH: '/:walletId/tokens',
+        FULL_PATH: '/sell/wallets/:walletId/tokens',
+      },
+      SELECT_TOKEN: {
+        RELATIVE_PATH: '/:walletId/tokens/select-token',
+        FULL_PATH: '/sell/wallets/:walletId/tokens/select-token',
+      },
+    },
   },
   FAUCET: {
     RELATIVE_PATH: '/*',

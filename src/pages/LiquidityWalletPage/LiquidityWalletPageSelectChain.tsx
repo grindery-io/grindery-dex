@@ -7,16 +7,23 @@ import ChainsList from '../../components/ChainsList/ChainsList';
 import { ChainType } from '../../types/ChainType';
 import { LiquidityWalletType } from '../../types/LiquidityWalletType';
 import { useNavigate } from 'react-router-dom';
-import useLiquidityWalletPage from '../../hooks/useLiquidityWalletPage';
 import DexCardBody from '../../components/DexCard/DexCardBody';
 import { useAppSelector } from '../../store/storeHooks';
 import { selectChainsItems } from '../../store/slices/chainsSlice';
+import {
+  selectWalletsCreateInput,
+  selectWalletsItems,
+} from '../../store/slices/walletsSlice';
+import { ROUTES } from '../../config/routes';
+import { useWalletsController } from '../../controllers/WalletsController';
 
 function LiquidityWalletPageSelectChain() {
-  const { chain, wallets, VIEWS, setChain } = useLiquidityWalletPage();
   let navigate = useNavigate();
-
   const chains = useAppSelector(selectChainsItems);
+  const wallets = useAppSelector(selectWalletsItems);
+  const input = useAppSelector(selectWalletsCreateInput);
+  const { chainId } = input;
+  const { handleWalletsCreateInputChange } = useWalletsController();
 
   return (
     <>
@@ -29,7 +36,7 @@ function LiquidityWalletPageSelectChain() {
             size="medium"
             edge="start"
             onClick={() => {
-              navigate(VIEWS.CREATE.fullPath);
+              navigate(ROUTES.SELL.WALLETS.CREATE.FULL_PATH);
             }}
           >
             <ArrowBackIcon />
@@ -39,16 +46,16 @@ function LiquidityWalletPageSelectChain() {
       />
       <DexCardBody>
         <ChainsList
-          chain={chain}
+          chain={chainId}
           chains={chains.filter(
             (chain: ChainType) =>
               !wallets
                 .map((wallet: LiquidityWalletType) => wallet.chainId)
                 .includes(chain.chainId)
           )}
-          onClick={(blockchain: any) => {
-            setChain(blockchain.value);
-            navigate(VIEWS.CREATE.fullPath);
+          onClick={(chain: ChainType) => {
+            handleWalletsCreateInputChange('chainId', chain.chainId);
+            navigate(ROUTES.SELL.WALLETS.CREATE.FULL_PATH);
           }}
         />
         <Box height="20px" />

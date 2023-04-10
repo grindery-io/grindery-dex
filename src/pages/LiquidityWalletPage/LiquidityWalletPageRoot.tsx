@@ -1,6 +1,5 @@
 import React from 'react';
 import { IconButton, Tooltip } from '@mui/material';
-import { useGrinderyNexus } from 'use-grindery-nexus';
 import { Box } from '@mui/system';
 import { AddCircleOutline as AddCircleOutlineIcon } from '@mui/icons-material';
 import DexCardHeader from '../../components/DexCard/DexCardHeader';
@@ -9,18 +8,23 @@ import DexCardBody from '../../components/DexCard/DexCardBody';
 import { LiquidityWalletType } from '../../types/LiquidityWalletType';
 import LiquidityWallet from '../../components/LiquidityWallet/LiquidityWallet';
 import { useNavigate } from 'react-router-dom';
-import useLiquidityWalletPage from '../../hooks/useLiquidityWalletPage';
-import useLiquidityWallets from '../../hooks/useLiquidityWallets';
 import Loading from '../../components/Loading/Loading';
 import { useAppSelector } from '../../store/storeHooks';
 import { selectChainsItems } from '../../store/slices/chainsSlice';
+import { ROUTES } from '../../config/routes';
+import { selectUserId } from '../../store/slices/userSlice';
+import { useUserController } from '../../controllers/UserController';
+import {
+  selectWalletsItems,
+  selectWalletsLoading,
+} from '../../store/slices/walletsSlice';
 
 function LiquidityWalletPageRoot() {
-  const { user, connect } = useGrinderyNexus();
-  const { VIEWS } = useLiquidityWalletPage();
   let navigate = useNavigate();
-  const { wallets, isLoading: walletsIsLoading } = useLiquidityWallets();
-
+  const user = useAppSelector(selectUserId);
+  const { connectUser } = useUserController();
+  const wallets = useAppSelector(selectWalletsItems);
+  const walletsIsLoading = useAppSelector(selectWalletsLoading);
   const chains = useAppSelector(selectChainsItems);
 
   return (
@@ -34,7 +38,7 @@ function LiquidityWalletPageRoot() {
                 size="medium"
                 edge="end"
                 onClick={() => {
-                  navigate(VIEWS.CREATE.fullPath);
+                  navigate(ROUTES.SELL.WALLETS.CREATE.FULL_PATH);
                 }}
               >
                 <AddCircleOutlineIcon sx={{ color: 'black' }} />
@@ -59,7 +63,12 @@ function LiquidityWalletPageRoot() {
                   wallet={wallet}
                   walletChain={walletChain}
                   onClick={(w: LiquidityWalletType) => {
-                    navigate(VIEWS.TOKENS.fullPath.replace(':walletId', w._id));
+                    navigate(
+                      ROUTES.SELL.WALLETS.TOKENS.FULL_PATH.replace(
+                        ':walletId',
+                        w._id
+                      )
+                    );
                   }}
                 />
               );
@@ -71,10 +80,10 @@ function LiquidityWalletPageRoot() {
               onClick={
                 user
                   ? () => {
-                      navigate(VIEWS.CREATE.fullPath);
+                      navigate(ROUTES.SELL.WALLETS.CREATE.FULL_PATH);
                     }
                   : () => {
-                      connect();
+                      connectUser();
                     }
               }
             />

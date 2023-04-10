@@ -17,6 +17,8 @@ import {
   selectUserIsAdminLoading,
 } from '../../store/slices/userSlice';
 import { ROUTES } from '../../config/routes';
+import WalletsController from '../../controllers/WalletsController';
+import LiquidityWalletPage from '../LiquidityWalletPage/LiquidityWalletPage';
 
 export const sellPages = [
   // Route temporary disabled
@@ -45,16 +47,12 @@ export const sellPages = [
     component: <AutomationsPage />,
   },
   // Route temporary disabled
-  // {
-  //   path: '/wallets',
-  //   fullPath: '/sell/wallets',
-  //   label: 'Wallets',
-  //   component: (
-  //     <LiquidityWalletPageContextProvider>
-  //       <LiquidityWalletPage />
-  //     </LiquidityWalletPageContextProvider>
-  //   ),
-  // },
+  {
+    path: ROUTES.SELL.WALLETS.RELATIVE_PATH,
+    fullPath: ROUTES.SELL.WALLETS.ROOT.FULL_PATH,
+    label: 'Wallets',
+    component: <LiquidityWalletPage />,
+  },
 ];
 
 type Props = {};
@@ -66,7 +64,7 @@ const SellPage = (props: Props) => {
     return <Loading />;
   }
   return (
-    <div>
+    <WalletsController>
       <PageContainer>
         {isAdmin ? (
           <>
@@ -104,7 +102,7 @@ const SellPage = (props: Props) => {
           </>
         )}
       </PageContainer>
-    </div>
+    </WalletsController>
   );
 };
 

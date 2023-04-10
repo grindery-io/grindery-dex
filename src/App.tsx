@@ -5,7 +5,6 @@ import { default as AuthenticationProvider } from 'use-grindery-nexus';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import SellPage from './pages/SellPage/SellPage';
 import FaucetPage from './pages/FaucetPage/FaucetPage';
-import LiquidityWalletsContextProvider from './context/LiquidityWalletsContext';
 import BuyPage from './pages/BuyPage/BuyPage';
 import { store } from './store/store';
 import UserController from './controllers/UserController';
@@ -26,18 +25,14 @@ export const App = () => {
         <UserController>
           <AbiController>
             <ChainsController>
+              <MainNavigation />
               <BrowserRouter>
-                <MainNavigation />
-
-                <LiquidityWalletsContextProvider>
-                  <Routes>
-                    <Route path="/buy/*" element={<BuyPage />} />
-                    <Route path="/sell/*" element={<SellPage />} />
-                    <Route path="/faucet/*" element={<FaucetPage />} />
-
-                    <Route path="*" element={<Navigate to="/buy" />} />
-                  </Routes>
-                </LiquidityWalletsContextProvider>
+                <Routes>
+                  <Route path="/buy/*" element={<BuyPage />} />
+                  <Route path="/sell/*" element={<SellPage />} />
+                  <Route path="/faucet/*" element={<FaucetPage />} />
+                  <Route path="*" element={<Navigate to="/buy" />} />
+                </Routes>
               </BrowserRouter>
             </ChainsController>
           </AbiController>

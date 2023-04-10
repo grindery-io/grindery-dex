@@ -33,8 +33,8 @@ import {
 import { selectChainsItems } from '../../store/slices/chainsSlice';
 import { ChainType } from '../../types/ChainType';
 import { useAutomationsController } from '../../controllers/AutomationsController';
-import useLiquidityWallets from '../../hooks/useLiquidityWallets';
 import { LiquidityWalletType } from '../../types/LiquidityWalletType';
+import { selectWalletsItems } from '../../store/slices/walletsSlice';
 
 type Props = {};
 
@@ -52,7 +52,7 @@ const AutomationsPageRoot = (props: Props) => {
   const botAddress = useAppSelector(selectAutomationsBotAddress);
   const { handleAutomationsInputChange, handleAutomationsDelegateAction } =
     useAutomationsController();
-  const { wallets } = useLiquidityWallets();
+  const wallets = useAppSelector(selectWalletsItems);
   const wallet = wallets.find(
     (w: LiquidityWalletType) => w.chainId === chainId
   );

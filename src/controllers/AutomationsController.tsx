@@ -23,9 +23,9 @@ import {
   setAutomationsLoading,
 } from '../store/slices/automationsSlice';
 import { getBotAddress } from '../services/automationServices';
-import useLiquidityWallets from '../hooks/useLiquidityWallets';
 import { selectLiquidityWalletAbi } from '../store/slices/abiSlice';
 import { LiquidityWalletType } from '../types/LiquidityWalletType';
+import { selectWalletsItems } from '../store/slices/walletsSlice';
 
 // Context props
 type ContextProps = {
@@ -59,7 +59,7 @@ export const AutomationsController = ({
   const dispatch = useAppDispatch();
   const input = useAppSelector(selectAutomationsInput);
   const { chainId } = input;
-  const { wallets } = useLiquidityWallets();
+  const wallets = useAppSelector(selectWalletsItems);
   const liquidityWalletAbi = useAppSelector(selectLiquidityWalletAbi);
   const wallet = wallets.find(
     (w: LiquidityWalletType) => w.chainId === chainId

@@ -1,7 +1,6 @@
 import React from 'react';
 import DexCard from '../../components/DexCard/DexCard';
 import { Route, Routes } from 'react-router-dom';
-import useLiquidityWalletPage from '../../hooks/useLiquidityWalletPage';
 import LiquidityWalletPageRoot from './LiquidityWalletPageRoot';
 import LiquidityWalletPageCreate from './LiquidityWalletPageCreate';
 import LiquidityWalletPageWithdraw from './LiquidityWalletPageWithdraw';
@@ -9,34 +8,39 @@ import LiquidityWalletPageAdd from './LiquidityWalletPageAdd';
 import LiquidityWalletPageSelectChain from './LiquidityWalletPageSelectChain';
 import LiquidityWalletPageTokens from './LiquidityWalletPageTokens';
 import LiquidityWalletPageSelectToken from './LiquidityWalletPageSelectToken';
+import { ROUTES } from '../../config/routes';
 
 function LiquidityWalletPage() {
-  const { VIEWS } = useLiquidityWalletPage();
-
   return (
     <>
       <DexCard>
         <Routes>
-          <Route path={VIEWS.ROOT.path} element={<LiquidityWalletPageRoot />} />
           <Route
-            path={VIEWS.TOKENS.path}
+            path={ROUTES.SELL.WALLETS.ROOT.RELATIVE_PATH}
+            element={<LiquidityWalletPageRoot />}
+          />
+          <Route
+            path={ROUTES.SELL.WALLETS.TOKENS.RELATIVE_PATH}
             element={<LiquidityWalletPageTokens />}
           />
           <Route
-            path={VIEWS.CREATE.path}
+            path={ROUTES.SELL.WALLETS.CREATE.RELATIVE_PATH}
             element={<LiquidityWalletPageCreate />}
           />
           <Route
-            path={VIEWS.WITHDRAW.path}
+            path={ROUTES.SELL.WALLETS.WITHDRAW.RELATIVE_PATH}
             element={<LiquidityWalletPageWithdraw />}
           />
-          <Route path={VIEWS.ADD.path} element={<LiquidityWalletPageAdd />} />
           <Route
-            path={VIEWS.SELECT_CHAIN.path}
+            path={ROUTES.SELL.WALLETS.ADD.RELATIVE_PATH}
+            element={<LiquidityWalletPageAdd />}
+          />
+          <Route
+            path={ROUTES.SELL.WALLETS.SELECT_CHAIN.RELATIVE_PATH}
             element={<LiquidityWalletPageSelectChain />}
           />
           <Route
-            path={VIEWS.SELECT_TOKEN.path}
+            path={ROUTES.SELL.WALLETS.SELECT_TOKEN.RELATIVE_PATH}
             element={<LiquidityWalletPageSelectToken />}
           />
         </Routes>
