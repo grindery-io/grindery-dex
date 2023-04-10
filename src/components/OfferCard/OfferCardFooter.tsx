@@ -1,14 +1,11 @@
 import React from 'react';
 import { Box, Skeleton } from '@mui/material';
 import TransactionID from '../TransactionID/TransactionID';
-import { selectChainsItems } from '../../store/slices/chainsSlice';
-import { useAppSelector } from '../../store/storeHooks';
 import { getOfferLink } from '../../utils';
 import { OfferCardProps } from './OfferCard';
 
 const OfferCardFooter = (props: OfferCardProps) => {
-  const { offer } = props;
-  const chains = useAppSelector(selectChainsItems);
+  const { offer, chains } = props;
 
   const explorerLink = getOfferLink(offer, chains);
 

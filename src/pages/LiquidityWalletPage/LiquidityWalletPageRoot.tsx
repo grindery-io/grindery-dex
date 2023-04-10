@@ -11,13 +11,15 @@ import {
   PageCardHeader,
   PageCardSubmitButton,
 } from '../../components';
-import { useAppSelector, selectChainsItems, selectUserId } from '../../store';
-import { ROUTES } from '../../config';
-import { useUserController } from '../../controllers';
 import {
+  useAppSelector,
+  selectChainsItems,
+  selectUserId,
   selectWalletsItems,
   selectWalletsLoading,
-} from '../../store/slices/walletsSlice';
+} from '../../store';
+import { ROUTES } from '../../config';
+import { useUserController } from '../../controllers';
 
 function LiquidityWalletPageRoot() {
   let navigate = useNavigate();
