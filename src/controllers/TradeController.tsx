@@ -545,7 +545,13 @@ export const TradeController = ({ children }: TradeControllerProps) => {
         fromToken?.address
       );
     }
-  }, [accessToken, fromChainId, userAddress, fromToken?.address]);
+  }, [
+    accessToken,
+    fromChainId,
+    userAddress,
+    fromToken?.address,
+    fetchFromTokenBalance,
+  ]);
 
   return (
     <TradeContext.Provider

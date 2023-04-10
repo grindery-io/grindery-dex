@@ -563,7 +563,7 @@ export const OffersController = ({ children }: OffersControllerProps) => {
     handleOfferCreateInputChange('toChainId', '5');
     handleOfferCreateInputChange('fromTokenId', '1839');
     handleOfferCreateInputChange('toTokenId', '1027');
-  }, []);
+  }, [handleOfferCreateInputChange]);
 
   return (
     <OffersContext.Provider
