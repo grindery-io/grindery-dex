@@ -1,5 +1,5 @@
 import React from 'react';
-import { FAUCET_MENU } from '../../config/constants';
+import { FAUCET_MENU } from '../../config';
 import { useLocation, useNavigate } from 'react-router';
 import { Box } from '@mui/system';
 import ExpandLess from '@mui/icons-material/ExpandLess';

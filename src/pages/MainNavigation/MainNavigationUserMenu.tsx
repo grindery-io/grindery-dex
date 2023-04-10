@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Foco from 'react-foco';
 import Jdenticon from 'react-jdenticon';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
-import { ICONS } from '../../config/constants';
+import { ICONS } from '../../config';
 import { Alert, Snackbar } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import Icon from '@mdi/react';

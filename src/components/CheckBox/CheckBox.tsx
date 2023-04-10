@@ -1,5 +1,5 @@
 import React from 'react';
-import { ICONS } from '../../config/constants';
+import { ICONS } from '../../config';
 
 type Props = {
   checked: boolean;
