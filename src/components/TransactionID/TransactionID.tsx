@@ -20,7 +20,7 @@ type Props = {
   iconStyle?: SxProps | React.CSSProperties;
 };
 
-const TransactionID: React.FC<Props> = (props) => {
+const TransactionID = (props: Props) => {
   const {
     value,
     label,
