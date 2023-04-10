@@ -19,19 +19,31 @@ import MainNavigationUserMenu from './MainNavigationUserMenu';
 import { useAppSelector, selectUserId } from '../../store';
 import { useUserController } from '../../controllers';
 import { NavTabsItemType } from '../../components/NavTabs/NavTabs.type';
+import { ROUTES } from '../../config';
 
-export const MENU: NavTabsItemType[] = [
+export const TABS_NAV: NavTabsItemType[] = [
   {
-    path: '/buy/trade',
+    path: ROUTES.BUY.TRADE.FULL_PATH,
     label: 'Trade',
     icon: <CurrencyExchangeIcon />,
     iconPosition: 'start',
   },
   {
-    path: '/buy/shop',
+    path: ROUTES.BUY.SHOP.FULL_PATH,
     label: 'Shop',
     icon: <AddShoppingCartIcon />,
     iconPosition: 'start',
+  },
+];
+
+const DRAWER_NAV = [
+  {
+    path: ROUTES.BUY.FULL_PATH,
+    label: 'Buy',
+  },
+  {
+    path: ROUTES.SELL.FULL_PATH,
+    label: 'Sell',
   },
 ];
 
@@ -77,7 +89,7 @@ const MainNavigation = (props: Props) => {
         </CompanyNameWrapper>
 
         <NavTabsWrapper>
-          <NavTabs menu={MENU} />
+          <NavTabs menu={TABS_NAV} />
         </NavTabsWrapper>
 
         {!user && 'ethereum' in window && (
@@ -97,7 +109,13 @@ const MainNavigation = (props: Props) => {
           </UserWrapper>
         )}
       </Wrapper>
-      <MainNavigationDrawer />
+      <MainNavigationDrawer
+        nav={DRAWER_NAV}
+        opened={drawerOpen}
+        onClose={() => {
+          setDrawerOpen(false);
+        }}
+      />
     </>
   );
 };

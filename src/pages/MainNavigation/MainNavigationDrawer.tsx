@@ -10,20 +10,23 @@ import { sellPages } from '../SellPage/SellPage';
 import { buyPages } from '../BuyPage/BuyPage';
 import Drawer from '../../components/Drawer/Drawer';
 import { useAppSelector, selectUserIsAdmin } from '../../store';
-import { MENU } from './MainNavigation';
 
 const drawerWidth = 240;
 
-type Props = {};
+type Props = {
+  opened: boolean;
+  onClose: () => void;
+  nav: object[];
+};
 
 const MainNavigationDrawer = (props: Props) => {
   let navigate = useNavigate();
+  const { opened, onClose, nav } = props;
   const isAdmin = useAppSelector(selectUserIsAdmin);
   const location = useLocation();
   const [open, setOpen] = React.useState(true);
   const [faucetOpen, setFaucetOpen] = React.useState(true);
   const [buyOpen, setBuyOpen] = React.useState(true);
-  const [drawerOpen, setDrawerOpen] = React.useState(false);
 
   const handleClick = () => {
     setOpen(!open);
@@ -41,9 +44,9 @@ const MainNavigationDrawer = (props: Props) => {
     <Box sx={{ display: { xs: 'block', lg: 'none' } }}>
       <Drawer
         anchor="left"
-        open={drawerOpen}
+        open={opened}
         onClose={() => {
-          setDrawerOpen(false);
+          onClose();
         }}
         sx={{
           zIndex: '1301',
@@ -58,8 +61,9 @@ const MainNavigationDrawer = (props: Props) => {
         <Box sx={{ height: '12px' }} />
         <Box sx={{ overflow: 'auto' }}>
           <List>
-            {MENU.filter((link: any) => isAdmin || link.path === '/buy').map(
-              (link: any) => (
+            {nav
+              .filter((link: any) => isAdmin || link.path === '/buy')
+              .map((link: any) => (
                 <React.Fragment key={link.path}>
                   <ListItemButton
                     key={link.path}
@@ -72,7 +76,7 @@ const MainNavigationDrawer = (props: Props) => {
                       } else if (link.path === '/buy') {
                         handleBuyClick();
                       } else {
-                        setDrawerOpen(false);
+                        onClose();
                         navigate(link.path);
                       }
                     }}
@@ -100,7 +104,7 @@ const MainNavigationDrawer = (props: Props) => {
                             key={page.path}
                             onClick={(event: React.MouseEvent<HTMLElement>) => {
                               event.preventDefault();
-                              setDrawerOpen(false);
+                              onClose();
                               navigate(page.fullPath);
                             }}
                             selected={location.pathname.startsWith(
@@ -122,7 +126,7 @@ const MainNavigationDrawer = (props: Props) => {
                             key={page.path}
                             onClick={(event: React.MouseEvent<HTMLElement>) => {
                               event.preventDefault();
-                              setDrawerOpen(false);
+                              onClose();
                               navigate(page.fullPath);
                             }}
                             selected={location.pathname.startsWith(
@@ -144,7 +148,7 @@ const MainNavigationDrawer = (props: Props) => {
                             key={page.path}
                             onClick={(event: React.MouseEvent<HTMLElement>) => {
                               event.preventDefault();
-                              setDrawerOpen(false);
+                              onClose();
                               if (page.external) {
                                 window.open(page.fullPath, '_blank');
                               } else {
@@ -165,8 +169,7 @@ const MainNavigationDrawer = (props: Props) => {
                     </Collapse>
                   )}
                 </React.Fragment>
-              )
-            )}
+              ))}
           </List>
         </Box>
       </Drawer>
