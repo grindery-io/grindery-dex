@@ -10,9 +10,7 @@ This a description of all patterns, methods and architecture decisions, that sho
 
   - `/components` - Reusable/shared components. All components in this folder must be global state (store) agnostic. Components might only operate with data and callbacks received as properties.
 
-  - `/controllers` - Page- or component-specific controllers. Only controllers can directly access the global state (store) and/or dispatch actions.
-
-  - `/models` - Model classes for data objects, e.g. Orders, Offers, etc. All data received from the DB must be inserted in a global store as Objects.
+  - `/controllers` - Page- or component-specific controllers.
 
   - `/pages` - This folder contains pages components, also sometimes known as "views". Page is responsible for rendering the UI, all the heavy lifting processes, such as effects, must be done in controllers.
 
@@ -43,16 +41,6 @@ Each component in the folder must be wrapped in its own folder, called the same 
 Each of such small, child component must be in the same dfolder as a parent component.
 
 Child components can be used only withing the parent component.
-
-### Models
-
-Must contain an index file exporting all available models.
-
-Names of models must by in CamelCase format.
-
-Models are classes, named as simply as possible, e.g. `Order`, `Offer`, etc.
-
-Model can contain methods specific to a data type, such as getting properties in a specific format, or checking if object meets some conditions.
 
 ### Pages
 
