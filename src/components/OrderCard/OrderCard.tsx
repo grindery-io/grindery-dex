@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Skeleton, Typography } from '@mui/material';
 import { Box } from '@mui/system';
 import moment from 'moment';
-import DexCardSubmitButton from '../DexCard/DexCardSubmitButton';
 import { Card } from '../Card/Card';
 import AlertBox from '../AlertBox/AlertBox';
 import TransactionID from '../TransactionID/TransactionID';
@@ -15,6 +14,7 @@ import {
   getOrderLink,
 } from '../../utils/helpers/orderHelpers';
 import { ChainType } from '../../types/ChainType';
+import PageCardSubmitButton from '../PageCardSubmitButton/PageCardSubmitButton';
 
 type Props = {
   order: OrderType;
@@ -168,7 +168,7 @@ const OrderCard = (props: Props) => {
           },
         }}
       >
-        <DexCardSubmitButton
+        <PageCardSubmitButton
           label={
             order.isComplete
               ? 'Completed'

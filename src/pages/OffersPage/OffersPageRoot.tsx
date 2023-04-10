@@ -2,10 +2,14 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { IconButton, Tooltip } from '@mui/material';
 import { AddCircleOutline as AddCircleOutlineIcon } from '@mui/icons-material';
-import DexCardHeader from '../../components/DexCard/DexCardHeader';
-import DexCardSubmitButton from '../../components/DexCard/DexCardSubmitButton';
-import DexCardBody from '../../components/DexCard/DexCardBody';
-import { ListSubheader, OfferPublic, OfferSkeleton } from '../../components';
+import {
+  ListSubheader,
+  OfferPublic,
+  OfferSkeleton,
+  PageCardBody,
+  PageCardHeader,
+  PageCardSubmitButton,
+} from '../../components';
 import {
   useAppSelector,
   selectChainsItems,
@@ -42,7 +46,7 @@ function OffersPageRoot() {
 
   return (
     <>
-      <DexCardHeader
+      <PageCardHeader
         title="Offers"
         endAdornment={
           user && offers.length > 4 ? (
@@ -61,7 +65,7 @@ function OffersPageRoot() {
         }
       />
 
-      <DexCardBody maxHeight="540px">
+      <PageCardBody maxHeight="540px">
         {user && (
           <>
             {offers.length < 1 && offersIsLoading ? (
@@ -116,7 +120,7 @@ function OffersPageRoot() {
           </>
         )}
 
-        <DexCardSubmitButton
+        <PageCardSubmitButton
           label={user ? 'Create offer' : 'Connect wallet'}
           onClick={
             user
@@ -128,7 +132,7 @@ function OffersPageRoot() {
                 }
           }
         />
-      </DexCardBody>
+      </PageCardBody>
     </>
   );
 }

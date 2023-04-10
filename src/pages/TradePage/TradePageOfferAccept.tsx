@@ -4,15 +4,15 @@ import { Box } from '@mui/system';
 import { IconButton } from '@mui/material';
 import Countdown from 'react-countdown';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
-import DexCard from '../../components/DexCard/DexCard';
-import DexCardHeader from '../../components/DexCard/DexCardHeader';
-import DexCardBody from '../../components/DexCard/DexCardBody';
-import DexCardSubmitButton from '../../components/DexCard/DexCardSubmitButton';
 import {
   TransactionID,
   AlertBox,
   OfferPublic,
   Loading,
+  PageCard,
+  PageCardHeader,
+  PageCardBody,
+  PageCardSubmitButton,
 } from '../../components';
 import {
   useAppDispatch,
@@ -96,8 +96,8 @@ const TradePageOfferAccept = (props: Props) => {
   };
 
   return offer ? (
-    <DexCard>
-      <DexCardHeader
+    <PageCard>
+      <PageCardHeader
         title="Review offer"
         titleSize={18}
         titleAlign="center"
@@ -116,7 +116,7 @@ const TradePageOfferAccept = (props: Props) => {
         }
         endAdornment={<Box width={28} height={40} />}
       />
-      <DexCardBody maxHeight="540px">
+      <PageCardBody maxHeight="540px">
         {!accepted ? (
           <>
             <Box mt="0px">
@@ -151,7 +151,7 @@ const TradePageOfferAccept = (props: Props) => {
                 </AlertBox>
               )}
             {exchangeToken && (
-              <DexCardSubmitButton
+              <PageCardSubmitButton
                 label={
                   user
                     ? approved ||
@@ -217,7 +217,7 @@ const TradePageOfferAccept = (props: Props) => {
                 link={explorerLink}
               />
             </AlertBox>
-            <DexCardSubmitButton
+            <PageCardSubmitButton
               label="Close"
               onClick={() => {
                 dispatch(setTradeAcceptedOfferTx(''));
@@ -227,8 +227,8 @@ const TradePageOfferAccept = (props: Props) => {
             />
           </>
         )}
-      </DexCardBody>
-    </DexCard>
+      </PageCardBody>
+    </PageCard>
   ) : (
     <Navigate to="/buy" />
   );

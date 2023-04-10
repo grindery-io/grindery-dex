@@ -1,10 +1,14 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Box } from '@mui/system';
-import DexCard from '../../components/DexCard/DexCard';
-import DexCardHeader from '../../components/DexCard/DexCardHeader';
-import DexCardBody from '../../components/DexCard/DexCardBody';
-import { OfferSkeleton, OfferPublic, NotFound } from '../../components';
+import {
+  OfferSkeleton,
+  OfferPublic,
+  NotFound,
+  PageCard,
+  PageCardHeader,
+  PageCardBody,
+} from '../../components';
 import { OfferType } from '../../types';
 import { ROUTES } from '../../config';
 import {
@@ -23,9 +27,9 @@ const TradePageOffersList = (props: Props) => {
   const { amount } = useAppSelector(selectTradeFilter);
 
   return (
-    <DexCard>
-      <DexCardHeader title="Offers" />
-      <DexCardBody maxHeight="540px">
+    <PageCard>
+      <PageCardHeader title="Offers" />
+      <PageCardBody maxHeight="540px">
         {loading && [1, 2, 3].map((i: number) => <OfferSkeleton key={i} />)}
         {!loading && foundOffers.length < 1 && (
           <NotFound
@@ -57,8 +61,8 @@ const TradePageOffersList = (props: Props) => {
           ))}
 
         <Box height="10px" />
-      </DexCardBody>
-    </DexCard>
+      </PageCardBody>
+    </PageCard>
   );
 };
 

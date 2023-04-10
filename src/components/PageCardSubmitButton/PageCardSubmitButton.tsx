@@ -27,7 +27,7 @@ type Props = {
   loading?: boolean;
 };
 
-const DexCardSubmitButton = (props: Props) => {
+const PageCardSubmitButton = (props: Props) => {
   const { label, onClick, disabled, loading } = props;
   return (
     <ButtonWrapper>
@@ -42,4 +42,4 @@ const DexCardSubmitButton = (props: Props) => {
   );
 };
 
-export default DexCardSubmitButton;
+export default PageCardSubmitButton;

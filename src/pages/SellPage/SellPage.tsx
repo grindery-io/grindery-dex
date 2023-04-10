@@ -3,9 +3,14 @@ import { Navigate, Route, Routes } from 'react-router-dom';
 import OffersPage from '../OffersPage/OffersPage';
 import OrdersPage from '../OrdersPage/OrdersPage';
 import AutomationsPage from '../AutomationsPage/AutomationsPage';
-import { DexCard, SellMenu, PageContainer, Loading } from '../../components';
-import DexCardHeader from '../../components/DexCard/DexCardHeader';
-import DexCardBody from '../../components/DexCard/DexCardBody';
+import {
+  SellMenu,
+  PageContainer,
+  Loading,
+  PageCard,
+  PageCardHeader,
+  PageCardBody,
+} from '../../components';
 import { Box, Typography } from '@mui/material';
 import TimerIcon from '@mui/icons-material/Timer';
 import {
@@ -86,16 +91,16 @@ const SellPage = (props: Props) => {
           </>
         ) : (
           <>
-            <DexCard>
-              <DexCardHeader title="Coming soon" titleAlign="center" />
-              <DexCardBody>
+            <PageCard>
+              <PageCardHeader title="Coming soon" titleAlign="center" />
+              <PageCardBody>
                 <Box height="24px" />
                 <Typography fontSize="42px" textAlign="center">
                   <TimerIcon sx={{ fontSize: 'inherit' }} />
                 </Typography>
                 <Box height="40px" />
-              </DexCardBody>
-            </DexCard>
+              </PageCardBody>
+            </PageCard>
           </>
         )}
       </PageContainer>

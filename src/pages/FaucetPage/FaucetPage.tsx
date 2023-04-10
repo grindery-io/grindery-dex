@@ -1,7 +1,6 @@
 import React from 'react';
-import DexCard from '../../components/DexCard/DexCard';
 import { Route, Routes } from 'react-router-dom';
-import { FaucetMenu, Loading, PageContainer } from '../../components';
+import { FaucetMenu, Loading, PageCard, PageContainer } from '../../components';
 import { ROUTES } from '../../config';
 import FaucetPageRoot from './FaucetPageRoot';
 import FaucetPageSelectChain from './FaucetPageSelectChain';
@@ -31,7 +30,7 @@ function FaucetPage() {
     <FaucetController>
       <PageContainer>
         <FaucetMenu />
-        <DexCard>
+        <PageCard>
           <Routes>
             <Route
               path={ROUTES.FAUCET.PLACEHOLDER.RELATIVE_PATH}
@@ -50,7 +49,7 @@ function FaucetPage() {
               </>
             )}
           </Routes>
-        </DexCard>
+        </PageCard>
       </PageContainer>
     </FaucetController>
   );

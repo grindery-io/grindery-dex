@@ -3,15 +3,17 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { IconButton, Skeleton, Tooltip } from '@mui/material';
 import { Box } from '@mui/system';
 import { AddCircleOutline as AddCircleOutlineIcon } from '@mui/icons-material';
-import DexCardHeader from '../../components/DexCard/DexCardHeader';
-import DexCardSubmitButton from '../../components/DexCard/DexCardSubmitButton';
-import DexCardBody from '../../components/DexCard/DexCardBody';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
 import { TokenType } from '../../types';
 import LiquidityWalletToken, {
   WalletToken,
 } from '../../components/LiquidityWalletToken/LiquidityWalletToken';
-import { Loading } from '../../components';
+import {
+  Loading,
+  PageCardBody,
+  PageCardHeader,
+  PageCardSubmitButton,
+} from '../../components';
 import {
   useAppSelector,
   selectChainsItems,
@@ -44,7 +46,7 @@ function LiquidityWalletPageTokens() {
 
   return (
     <>
-      <DexCardHeader
+      <PageCardHeader
         title={
           walletChain?.label ? (
             `${walletChain?.label || ''} chain wallet`
@@ -88,7 +90,7 @@ function LiquidityWalletPageTokens() {
           )
         }
       />
-      <DexCardBody>
+      <PageCardBody>
         <>
           {user && walletsIsLoading && <Loading />}
           {user &&
@@ -125,7 +127,7 @@ function LiquidityWalletPageTokens() {
               );
             })}
 
-          <DexCardSubmitButton
+          <PageCardSubmitButton
             label={user ? 'Add tokens' : 'Connect wallet'}
             onClick={
               user
@@ -143,7 +145,7 @@ function LiquidityWalletPageTokens() {
             }
           />
         </>
-      </DexCardBody>
+      </PageCardBody>
     </>
   );
 }

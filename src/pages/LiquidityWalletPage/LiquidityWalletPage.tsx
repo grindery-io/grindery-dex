@@ -1,6 +1,6 @@
 import React from 'react';
 import { Route, Routes } from 'react-router-dom';
-import { DexCard } from '../../components';
+import { PageCard } from '../../components';
 import LiquidityWalletPageRoot from './LiquidityWalletPageRoot';
 import LiquidityWalletPageCreate from './LiquidityWalletPageCreate';
 import LiquidityWalletPageWithdraw from './LiquidityWalletPageWithdraw';
@@ -13,7 +13,7 @@ import { ROUTES } from '../../config';
 function LiquidityWalletPage() {
   return (
     <>
-      <DexCard>
+      <PageCard>
         <Routes>
           <Route
             path={ROUTES.SELL.WALLETS.ROOT.RELATIVE_PATH}
@@ -44,7 +44,7 @@ function LiquidityWalletPage() {
             element={<LiquidityWalletPageSelectToken />}
           />
         </Routes>
-      </DexCard>
+      </PageCard>
     </>
   );
 }

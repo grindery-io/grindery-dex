@@ -3,10 +3,14 @@ import { Box } from '@mui/system';
 import { useNavigate } from 'react-router-dom';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
 import { IconButton } from '@mui/material';
-import DexCard from '../../components/DexCard/DexCard';
-import DexCardHeader from '../../components/DexCard/DexCardHeader';
-import DexCardBody from '../../components/DexCard/DexCardBody';
-import { OrderSkeleton, OrderCard, NotFound } from '../../components';
+import {
+  OrderSkeleton,
+  OrderCard,
+  NotFound,
+  PageCard,
+  PageCardHeader,
+  PageCardBody,
+} from '../../components';
 import { ROUTES } from '../../config';
 import { OrderType } from '../../types';
 import {
@@ -27,8 +31,8 @@ const TradePageHistory = (props: Props) => {
   const chains = useAppSelector(selectChainsItems);
 
   return (
-    <DexCard>
-      <DexCardHeader
+    <PageCard>
+      <PageCardHeader
         title="Orders history"
         titleSize={18}
         titleAlign="center"
@@ -45,7 +49,7 @@ const TradePageHistory = (props: Props) => {
         }
         endAdornment={<Box width={28} height={40} />}
       />
-      <DexCardBody maxHeight="540px">
+      <PageCardBody maxHeight="540px">
         {orders.length < 1 && isLoading ? (
           <>
             <OrderSkeleton />
@@ -70,8 +74,8 @@ const TradePageHistory = (props: Props) => {
             )}
           </>
         )}
-      </DexCardBody>
-    </DexCard>
+      </PageCardBody>
+    </PageCard>
   );
 };
 

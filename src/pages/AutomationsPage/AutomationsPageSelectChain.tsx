@@ -2,8 +2,6 @@ import React from 'react';
 import { IconButton } from '@mui/material';
 import { Box } from '@mui/system';
 import { useNavigate } from 'react-router-dom';
-import DexCardBody from '../../components/DexCard/DexCardBody';
-import DexCardHeader from '../../components/DexCard/DexCardHeader';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
 import ChainsList from '../../components/ChainsList/ChainsList';
 import { ChainType } from '../../types';
@@ -15,6 +13,8 @@ import {
 } from '../../store';
 import { ROUTES } from '../../config';
 import { useAutomationsController } from '../../controllers';
+import PageCardHeader from '../../components/PageCardHeader/PageCardHeader';
+import PageCardBody from '../../components/PageCardBody/PageCardBody';
 
 type Props = {};
 
@@ -28,7 +28,7 @@ const AutomationsPageSelectChain = (props: Props) => {
   let navigate = useNavigate();
   return (
     <>
-      <DexCardHeader
+      <PageCardHeader
         title="Select chain"
         titleSize={18}
         titleAlign="center"
@@ -45,7 +45,7 @@ const AutomationsPageSelectChain = (props: Props) => {
         }
         endAdornment={<Box width={28} height={40} />}
       />
-      <DexCardBody>
+      <PageCardBody>
         <ChainsList
           chain={chainId}
           chains={filteredChains}
@@ -56,7 +56,7 @@ const AutomationsPageSelectChain = (props: Props) => {
           loading={chainsIsLoading}
         />
         <Box height="20px" />
-      </DexCardBody>
+      </PageCardBody>
     </>
   );
 };

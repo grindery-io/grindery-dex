@@ -3,14 +3,14 @@ import { IconButton } from '@mui/material';
 import { Box } from '@mui/system';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
-import DexCardHeader from '../../components/DexCard/DexCardHeader';
-import DexCardSubmitButton from '../../components/DexCard/DexCardSubmitButton';
-import DexCardBody from '../../components/DexCard/DexCardBody';
 import {
   AlertBox,
   Loading,
   TextInput,
   SelectTokenButton,
+  PageCardHeader,
+  PageCardBody,
+  PageCardSubmitButton,
 } from '../../components';
 import {
   useAppDispatch,
@@ -78,7 +78,7 @@ function LiquidityWalletPageAdd() {
 
   return (
     <>
-      <DexCardHeader
+      <PageCardHeader
         title="Add funds"
         titleSize={18}
         titleAlign="center"
@@ -102,7 +102,7 @@ function LiquidityWalletPageAdd() {
         endAdornment={<Box width={28} height={40} />}
       />
 
-      <DexCardBody>
+      <PageCardBody>
         {user && walletsIsLoading ? (
           <Loading />
         ) : (
@@ -139,7 +139,7 @@ function LiquidityWalletPageAdd() {
                 </AlertBox>
               )}
             {loading && <Loading />}
-            <DexCardSubmitButton
+            <PageCardSubmitButton
               disabled={loading}
               label={
                 loading
@@ -166,7 +166,7 @@ function LiquidityWalletPageAdd() {
             />
           </>
         )}
-      </DexCardBody>
+      </PageCardBody>
     </>
   );
 }

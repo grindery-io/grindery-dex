@@ -5,7 +5,7 @@ type Props = {
   children: ReactNode;
 };
 
-const DexCard = (props: Props) => {
+const PageCard = (props: Props) => {
   const { children } = props;
   return (
     <Box style={{ margin: '0 auto auto', maxWidth: '392px' }}>
@@ -24,4 +24,4 @@ const DexCard = (props: Props) => {
   );
 };
 
-export default DexCard;
+export default PageCard;

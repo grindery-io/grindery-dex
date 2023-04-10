@@ -3,9 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { IconButton, Stack } from '@mui/material';
 import { Box } from '@mui/system';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
-import DexCardHeader from '../../components/DexCard/DexCardHeader';
-import DexCardSubmitButton from '../../components/DexCard/DexCardSubmitButton';
-import DexCardBody from '../../components/DexCard/DexCardBody';
 import { CardTitle } from '../../components/Card/CardTitle';
 import {
   AlertBox,
@@ -13,6 +10,9 @@ import {
   TextInput,
   Loading,
   UploadButton,
+  PageCardHeader,
+  PageCardBody,
+  PageCardSubmitButton,
 } from '../../components';
 import {
   useAppDispatch,
@@ -71,7 +71,7 @@ function OffersPageCreate() {
 
   return (
     <>
-      <DexCardHeader
+      <PageCardHeader
         title="Create offer"
         titleSize={18}
         titleAlign="center"
@@ -90,7 +90,7 @@ function OffersPageCreate() {
         endAdornment={<Box width={28} height={40} />}
       />
 
-      <DexCardBody maxHeight="540px">
+      <PageCardBody maxHeight="540px">
         <Stack
           direction="row"
           alignItems="stretch"
@@ -257,7 +257,7 @@ function OffersPageCreate() {
                 </AlertBox>
               )}
             {loading && <Loading />}
-            <DexCardSubmitButton
+            <PageCardSubmitButton
               label={
                 loading
                   ? 'Waiting transaction'
@@ -287,7 +287,7 @@ function OffersPageCreate() {
         ) : (
           <Box height="20px" />
         )}
-      </DexCardBody>
+      </PageCardBody>
     </>
   );
 }

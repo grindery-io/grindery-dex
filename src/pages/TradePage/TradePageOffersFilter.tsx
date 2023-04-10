@@ -3,14 +3,14 @@ import { useNavigate } from 'react-router-dom';
 import { Button, IconButton, Stack, Tooltip } from '@mui/material';
 import { Box } from '@mui/system';
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
-import DexCard from '../../components/DexCard/DexCard';
-import DexCardBody from '../../components/DexCard/DexCardBody';
-import DexCardHeader from '../../components/DexCard/DexCardHeader';
-import DexCardSubmitButton from '../../components/DexCard/DexCardSubmitButton';
 import {
   SelectChainAndTokenButton,
   AmountInput,
   AlertBox,
+  PageCard,
+  PageCardHeader,
+  PageCardBody,
+  PageCardSubmitButton,
 } from '../../components';
 import { ROUTES, GRT_CONTRACT_ADDRESS } from '../../config';
 import {
@@ -50,8 +50,8 @@ const TradePageOffersFilter = (props: Props) => {
   } = useTradeController();
 
   return (
-    <DexCard>
-      <DexCardHeader
+    <PageCard>
+      <PageCardHeader
         title="Trade"
         endAdornment={
           user ? (
@@ -68,7 +68,7 @@ const TradePageOffersFilter = (props: Props) => {
           ) : undefined
         }
       />
-      <DexCardBody>
+      <PageCardBody>
         <Stack
           direction="row"
           alignItems="stretch"
@@ -160,7 +160,7 @@ const TradePageOffersFilter = (props: Props) => {
             </AlertBox>
           )}
 
-        <DexCardSubmitButton
+        <PageCardSubmitButton
           label={user ? 'Search offers' : 'Connect wallet'}
           onClick={
             user
@@ -178,8 +178,8 @@ const TradePageOffersFilter = (props: Props) => {
           }
           disabled={Boolean(user) && loading}
         />
-      </DexCardBody>
-    </DexCard>
+      </PageCardBody>
+    </PageCard>
   );
 };
 

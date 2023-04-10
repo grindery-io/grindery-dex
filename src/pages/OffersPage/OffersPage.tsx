@@ -1,5 +1,5 @@
 import React from 'react';
-import { DexCard } from '../../components';
+import { PageCard } from '../../components';
 import { Route, Routes } from 'react-router-dom';
 import OffersPageRoot from './OffersPageRoot';
 import OffersPageCreate from './OffersPageCreate';
@@ -11,7 +11,7 @@ import { ROUTES } from '../../config';
 function OffersPage() {
   return (
     <OffersController>
-      <DexCard>
+      <PageCard>
         <Routes>
           <Route
             path={ROUTES.SELL.OFFERS.ROOT.RELATIVE_PATH}
@@ -30,7 +30,7 @@ function OffersPage() {
             element={<OffersPageSelectToChain />}
           />
         </Routes>
-      </DexCard>
+      </PageCard>
     </OffersController>
   );
 }

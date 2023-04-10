@@ -1,16 +1,15 @@
 import React from 'react';
-import DexCardBody from '../../components/DexCard/DexCardBody';
 import { Box, Typography } from '@mui/material';
-import DexCardHeader from '../../components/DexCard/DexCardHeader';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import Icon from '@mdi/react';
 import { mdiWaterPump } from '@mdi/js';
+import { PageCardBody, PageCardHeader } from '../../components';
 
 function FaucetPagePlaceholder() {
   return (
     <>
-      <DexCardHeader title="Faucet" titleAlign="center" />
-      <DexCardBody>
+      <PageCardHeader title="Faucet" titleAlign="center" />
+      <PageCardBody>
         <Box sx={{ textAlign: 'center' }}>
           <Icon
             path={mdiWaterPump}
@@ -22,6 +21,7 @@ function FaucetPagePlaceholder() {
               style={{ color: '#3f49e1' }}
               href="https://goerlifaucet.com/"
               target="_blank"
+              rel="noreferrer"
             >
               <strong>goerlifaucet.com</strong>
               <OpenInNewIcon
@@ -38,7 +38,7 @@ function FaucetPagePlaceholder() {
         </Box>
 
         <Box height="36px"></Box>
-      </DexCardBody>
+      </PageCardBody>
     </>
   );
 }

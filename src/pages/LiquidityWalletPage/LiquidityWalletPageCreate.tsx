@@ -3,10 +3,14 @@ import { useNavigate } from 'react-router-dom';
 import { IconButton } from '@mui/material';
 import { Box } from '@mui/system';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
-import DexCardHeader from '../../components/DexCard/DexCardHeader';
-import DexCardSubmitButton from '../../components/DexCard/DexCardSubmitButton';
-import DexCardBody from '../../components/DexCard/DexCardBody';
-import { Loading, SelectChainButton, AlertBox } from '../../components';
+import {
+  Loading,
+  SelectChainButton,
+  AlertBox,
+  PageCardHeader,
+  PageCardBody,
+  PageCardSubmitButton,
+} from '../../components';
 import { ROUTES } from '../../config';
 import {
   useAppSelector,
@@ -41,7 +45,7 @@ function LiquidityWalletPageCreate() {
 
   return (
     <>
-      <DexCardHeader
+      <PageCardHeader
         title="Create wallet"
         titleSize={18}
         titleAlign="center"
@@ -59,7 +63,7 @@ function LiquidityWalletPageCreate() {
         endAdornment={<Box width={28} height={40} />}
       />
 
-      <DexCardBody>
+      <PageCardBody>
         <SelectChainButton
           title="Blockchain"
           chain={currentChain}
@@ -79,7 +83,7 @@ function LiquidityWalletPageCreate() {
             </AlertBox>
           )}
 
-        <DexCardSubmitButton
+        <PageCardSubmitButton
           disabled={loading}
           label={
             loading
@@ -104,7 +108,7 @@ function LiquidityWalletPageCreate() {
                 }
           }
         />
-      </DexCardBody>
+      </PageCardBody>
     </>
   );
 }

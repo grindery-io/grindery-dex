@@ -1,9 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Box } from '@mui/system';
-import DexCard from '../../components/DexCard/DexCard';
-import DexCardBody from '../../components/DexCard/DexCardBody';
-import DexCardHeader from '../../components/DexCard/DexCardHeader';
 import { IconButton } from '@mui/material';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
 import {
@@ -11,6 +8,9 @@ import {
   TokensList,
   TokenSearch,
   ChainsList,
+  PageCard,
+  PageCardHeader,
+  PageCardBody,
 } from '../../components';
 import { ChainType, TokenType } from '../../types';
 import {
@@ -43,8 +43,8 @@ const TradePageSelectFromChainAndToken = (props: Props) => {
       !searchToken || t.symbol.toLowerCase().includes(searchToken.toLowerCase())
   );
   return (
-    <DexCard>
-      <DexCardHeader
+    <PageCard>
+      <PageCardHeader
         title="Select chain and token"
         titleSize={18}
         titleAlign="center"
@@ -61,7 +61,7 @@ const TradePageSelectFromChainAndToken = (props: Props) => {
         }
         endAdornment={<Box width={28} height={40} />}
       />
-      <DexCardBody>
+      <PageCardBody>
         <ChainsList
           chain={fromChain?.value || ''}
           chains={filteredChains}
@@ -118,8 +118,8 @@ const TradePageSelectFromChainAndToken = (props: Props) => {
         )}
 
         <Box height="20px" />
-      </DexCardBody>
-    </DexCard>
+      </PageCardBody>
+    </PageCard>
   );
 };
 

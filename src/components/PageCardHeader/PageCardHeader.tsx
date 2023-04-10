@@ -1,6 +1,6 @@
 import React, { ReactNode } from 'react';
-import { Box, Typography } from '@mui/material';
-import { DexCardHeaderAppBar } from './DexCardHeaderAppBar';
+import { Typography } from '@mui/material';
+import { PageCardHeaderAppBar } from './PageCardHeaderAppBar';
 
 type Props = {
   title?: string | React.ReactNode;
@@ -10,11 +10,11 @@ type Props = {
   endAdornment?: ReactNode;
 };
 
-const DexCardHeader = (props: Props) => {
+const PageCardHeader = (props: Props) => {
   const { title, endAdornment, startAdornment, titleAlign, titleSize } = props;
   return (
     <>
-      <DexCardHeaderAppBar
+      <PageCardHeaderAppBar
         elevation={0}
         style={{
           paddingLeft: '24px',
@@ -42,9 +42,9 @@ const DexCardHeader = (props: Props) => {
           {title || ''}
         </Typography>
         {endAdornment || null}
-      </DexCardHeaderAppBar>
+      </PageCardHeaderAppBar>
     </>
   );
 };
 
-export default DexCardHeader;
+export default PageCardHeader;

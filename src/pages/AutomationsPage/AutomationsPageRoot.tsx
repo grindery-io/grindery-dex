@@ -3,9 +3,6 @@ import { Typography } from '@mui/material';
 import { Box } from '@mui/system';
 import { useNavigate } from 'react-router-dom';
 import AlertBox from '../../components/AlertBox/AlertBox';
-import DexCardBody from '../../components/DexCard/DexCardBody';
-import DexCardHeader from '../../components/DexCard/DexCardHeader';
-import DexCardSubmitButton from '../../components/DexCard/DexCardSubmitButton';
 import SelectChainButton from '../../components/SelectChainButton/SelectChainButton';
 import TextArea from '../../components/TextArea/TextArea';
 import TransactionID from '../../components/TransactionID/TransactionID';
@@ -29,6 +26,9 @@ import {
 import { useUserController, useAutomationsController } from '../../controllers';
 import { ROUTES } from '../../config';
 import { ChainType, LiquidityWalletType } from '../../types';
+import PageCardBody from '../../components/PageCardBody/PageCardBody';
+import PageCardHeader from '../../components/PageCardHeader/PageCardHeader';
+import PageCardSubmitButton from '../../components/PageCardSubmitButton/PageCardSubmitButton';
 
 type Props = {};
 
@@ -56,8 +56,8 @@ const AutomationsPageRoot = (props: Props) => {
 
   return (
     <>
-      <DexCardHeader title="Trading Automation" />
-      <DexCardBody maxHeight="540px">
+      <PageCardHeader title="Trading Automation" />
+      <PageCardBody maxHeight="540px">
         <SelectChainButton
           title="Blockchain"
           onClick={() => {
@@ -116,7 +116,7 @@ const AutomationsPageRoot = (props: Props) => {
               )}
             {loading && <Loading />}
 
-            <DexCardSubmitButton
+            <PageCardSubmitButton
               loading={loading}
               label={user ? 'Delegate power' : 'Connect wallet'}
               onClick={
@@ -138,7 +138,7 @@ const AutomationsPageRoot = (props: Props) => {
             />
           </>
         )}
-      </DexCardBody>
+      </PageCardBody>
     </>
   );
 };

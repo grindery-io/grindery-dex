@@ -6,7 +6,7 @@ type Props = {
   maxHeight?: string;
 };
 
-const DexCardBody = (props: Props) => {
+const PageCardBody = (props: Props) => {
   const { children, maxHeight } = props;
   return (
     <Box
@@ -25,4 +25,4 @@ const DexCardBody = (props: Props) => {
   );
 };
 
-export default DexCardBody;
+export default PageCardBody;

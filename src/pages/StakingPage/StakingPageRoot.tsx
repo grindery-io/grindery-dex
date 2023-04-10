@@ -2,10 +2,14 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { IconButton, Tooltip } from '@mui/material';
 import { AddCircleOutline as AddCircleOutlineIcon } from '@mui/icons-material';
-import DexCardHeader from '../../components/DexCard/DexCardHeader';
-import DexCardSubmitButton from '../../components/DexCard/DexCardSubmitButton';
-import DexCardBody from '../../components/DexCard/DexCardBody';
-import { AlertBox, Stake, Loading } from '../../components';
+import {
+  AlertBox,
+  Stake,
+  Loading,
+  PageCardHeader,
+  PageCardBody,
+  PageCardSubmitButton,
+} from '../../components';
 import { StakeType } from '../../types';
 import {
   useAppSelector,
@@ -30,7 +34,7 @@ function StakingPageRoot() {
 
   return (
     <>
-      <DexCardHeader
+      <PageCardHeader
         title="Staking"
         endAdornment={
           user && stakes.length > 4 ? (
@@ -48,7 +52,7 @@ function StakingPageRoot() {
           ) : null
         }
       />
-      <DexCardBody>
+      <PageCardBody>
         {user &&
           stakes.map((stake: StakeType) => {
             const stakeChain = getStakeChain(stake, chains);
@@ -76,7 +80,7 @@ function StakingPageRoot() {
               <p>{errorMessage.text}</p>
             </AlertBox>
           )}
-        <DexCardSubmitButton
+        <PageCardSubmitButton
           label={user ? 'Stake' : 'Connect wallet'}
           onClick={
             user
@@ -88,7 +92,7 @@ function StakingPageRoot() {
                 }
           }
         />
-      </DexCardBody>
+      </PageCardBody>
     </>
   );
 }

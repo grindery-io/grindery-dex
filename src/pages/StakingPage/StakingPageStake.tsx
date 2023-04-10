@@ -3,14 +3,14 @@ import { useNavigate } from 'react-router-dom';
 import { IconButton } from '@mui/material';
 import { Box } from '@mui/system';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
-import DexCardHeader from '../../components/DexCard/DexCardHeader';
-import DexCardSubmitButton from '../../components/DexCard/DexCardSubmitButton';
-import DexCardBody from '../../components/DexCard/DexCardBody';
 import {
   AlertBox,
   SelectChainButton,
   TextInput,
   Loading,
+  PageCardHeader,
+  PageCardBody,
+  PageCardSubmitButton,
 } from '../../components';
 import {
   useAppSelector,
@@ -47,7 +47,7 @@ function StakingPageStake() {
 
   return (
     <>
-      <DexCardHeader
+      <PageCardHeader
         title="Stake"
         titleSize={18}
         titleAlign="center"
@@ -66,7 +66,7 @@ function StakingPageStake() {
         endAdornment={<Box width={28} height={40} />}
       />
 
-      <DexCardBody>
+      <PageCardBody>
         <SelectChainButton
           title="Blockchain"
           chain={currentChain}
@@ -105,7 +105,7 @@ function StakingPageStake() {
             </AlertBox>
           )}
 
-        <DexCardSubmitButton
+        <PageCardSubmitButton
           disabled={loading}
           label={
             loading
@@ -132,7 +132,7 @@ function StakingPageStake() {
                 }
           }
         />
-      </DexCardBody>
+      </PageCardBody>
     </>
   );
 }

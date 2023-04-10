@@ -1,13 +1,13 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import DexCardHeader from '../../components/DexCard/DexCardHeader';
-import DexCardBody from '../../components/DexCard/DexCardBody';
-import DexCardSubmitButton from '../../components/DexCard/DexCardSubmitButton';
 import {
   Loading,
   SelectChainButton,
   TextInput,
   AlertBox,
+  PageCardHeader,
+  PageCardBody,
+  PageCardSubmitButton,
 } from '../../components';
 import {
   useAppSelector,
@@ -42,9 +42,9 @@ function FaucetPageRoot() {
 
   return (
     <>
-      <DexCardHeader title="Get GRT Tokens" />
+      <PageCardHeader title="Get GRT Tokens" />
 
-      <DexCardBody>
+      <PageCardBody>
         <SelectChainButton
           title="Blockchain"
           onClick={() => {
@@ -109,7 +109,7 @@ function FaucetPageRoot() {
           </AlertBox>
         )}
 
-        <DexCardSubmitButton
+        <PageCardSubmitButton
           disabled={loading}
           label={
             loading
@@ -128,7 +128,7 @@ function FaucetPageRoot() {
                 }
           }
         />
-      </DexCardBody>
+      </PageCardBody>
     </>
   );
 }

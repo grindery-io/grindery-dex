@@ -3,9 +3,14 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { IconButton } from '@mui/material';
 import { Box } from '@mui/system';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
-import DexCardHeader from '../../components/DexCard/DexCardHeader';
-import DexCardBody from '../../components/DexCard/DexCardBody';
-import { TokenSearch, TokensList, NotFound, Loading } from '../../components';
+import {
+  TokenSearch,
+  TokensList,
+  NotFound,
+  Loading,
+  PageCardHeader,
+  PageCardBody,
+} from '../../components';
 import {
   useAppSelector,
   selectChainsItems,
@@ -44,7 +49,7 @@ function LiquidityWalletPageSelectToken() {
 
   return (
     <>
-      <DexCardHeader
+      <PageCardHeader
         title="Select token"
         titleSize={18}
         titleAlign="center"
@@ -66,7 +71,7 @@ function LiquidityWalletPageSelectToken() {
         }
         endAdornment={<Box width={28} height={40} />}
       />
-      <DexCardBody>
+      <PageCardBody>
         {userId && walletsIsLoading ? (
           <>
             <Loading />
@@ -114,7 +119,7 @@ function LiquidityWalletPageSelectToken() {
             )}
           </>
         )}
-      </DexCardBody>
+      </PageCardBody>
     </>
   );
 }

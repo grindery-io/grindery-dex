@@ -3,10 +3,14 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { IconButton, Button as MuiButton } from '@mui/material';
 import { Box } from '@mui/system';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
-import DexCardHeader from '../../components/DexCard/DexCardHeader';
-import DexCardSubmitButton from '../../components/DexCard/DexCardSubmitButton';
-import DexCardBody from '../../components/DexCard/DexCardBody';
-import { AlertBox, Loading, TextInput } from '../../components';
+import {
+  AlertBox,
+  Loading,
+  PageCardBody,
+  PageCardHeader,
+  PageCardSubmitButton,
+  TextInput,
+} from '../../components';
 import { LiquidityWalletType } from '../../types';
 import {
   useAppDispatch,
@@ -61,7 +65,7 @@ function LiquidityWalletPageWithdraw() {
 
   return (
     <>
-      <DexCardHeader
+      <PageCardHeader
         title="Withdraw"
         titleSize={18}
         titleAlign="center"
@@ -85,7 +89,7 @@ function LiquidityWalletPageWithdraw() {
         endAdornment={<Box width={28} height={40} />}
       />
 
-      <DexCardBody>
+      <PageCardBody>
         {user && walletsIsLoading ? (
           <Loading />
         ) : (
@@ -150,7 +154,7 @@ function LiquidityWalletPageWithdraw() {
                 </AlertBox>
               )}
             {loading && <Loading />}
-            <DexCardSubmitButton
+            <PageCardSubmitButton
               disabled={loading}
               label={
                 loading
@@ -178,7 +182,7 @@ function LiquidityWalletPageWithdraw() {
             />
           </>
         )}
-      </DexCardBody>
+      </PageCardBody>
     </>
   );
 }

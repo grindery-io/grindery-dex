@@ -1,8 +1,12 @@
 import React from 'react';
 import { Box } from '@mui/system';
-import DexCardHeader from '../../components/DexCard/DexCardHeader';
-import DexCardBody from '../../components/DexCard/DexCardBody';
-import { OrderCard, NotFound, OrderSkeleton } from '../../components';
+import {
+  OrderCard,
+  NotFound,
+  OrderSkeleton,
+  PageCardHeader,
+  PageCardBody,
+} from '../../components';
 import { OrderType, LiquidityWalletType } from '../../types';
 import {
   useAppSelector,
@@ -32,8 +36,8 @@ function OrdersPageRoot() {
 
   return (
     <>
-      <DexCardHeader title="Orders" />
-      <DexCardBody maxHeight="540px">
+      <PageCardHeader title="Orders" />
+      <PageCardBody maxHeight="540px">
         {orders.length < 1 && isLoading ? (
           <>
             <OrderSkeleton />
@@ -77,7 +81,7 @@ function OrdersPageRoot() {
             )}
           </>
         )}
-      </DexCardBody>
+      </PageCardBody>
     </>
   );
 }

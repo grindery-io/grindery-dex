@@ -3,9 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { IconButton } from '@mui/material';
 import { Box } from '@mui/system';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
-import DexCardHeader from '../../components/DexCard/DexCardHeader';
-import DexCardBody from '../../components/DexCard/DexCardBody';
-import { ChainsList } from '../../components';
+import { ChainsList, PageCardBody, PageCardHeader } from '../../components';
 import {
   useAppSelector,
   selectChainsItems,
@@ -24,7 +22,7 @@ function StakingPageSelectChain() {
 
   return (
     <>
-      <DexCardHeader
+      <PageCardHeader
         title="Select blockchain"
         titleSize={18}
         titleAlign="center"
@@ -41,7 +39,7 @@ function StakingPageSelectChain() {
         }
         endAdornment={<Box width={28} height={40} />}
       />
-      <DexCardBody>
+      <PageCardBody>
         <ChainsList
           chain={currentChain?.value || chainId}
           chains={chains}
@@ -51,7 +49,7 @@ function StakingPageSelectChain() {
           }}
         />
         <Box height="20px" />
-      </DexCardBody>
+      </PageCardBody>
     </>
   );
 }

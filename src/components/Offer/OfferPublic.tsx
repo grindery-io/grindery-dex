@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
   Avatar,
   Badge,
@@ -26,7 +26,6 @@ import LayersIcon from '@mui/icons-material/Layers';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { ChainType } from '../../types/ChainType';
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
-import DexCardSubmitButton from '../DexCard/DexCardSubmitButton';
 import { TokenType } from '../../types/TokenType';
 import TransactionID from '../TransactionID/TransactionID';
 import SwapHorizontalCircleIcon from '@mui/icons-material/SwapHorizontalCircle';
@@ -40,6 +39,7 @@ import {
   getOfferLink,
   getOfferProviderLink,
 } from '../../utils/helpers/offerHelpers';
+import PageCardSubmitButton from '../PageCardSubmitButton/PageCardSubmitButton';
 
 export type OfferChain = {
   label: string;
@@ -482,7 +482,7 @@ const OfferPublic = (props: Props) => {
                     },
                   }}
                 >
-                  <DexCardSubmitButton
+                  <PageCardSubmitButton
                     loading={isActivating === offer._id}
                     disabled={Boolean(isActivating)}
                     label={offer.isActive ? 'Deactivate' : 'Activate'}

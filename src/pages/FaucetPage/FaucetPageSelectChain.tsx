@@ -3,9 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { IconButton } from '@mui/material';
 import { Box } from '@mui/system';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
-import DexCardHeader from '../../components/DexCard/DexCardHeader';
-import DexCardBody from '../../components/DexCard/DexCardBody';
-import { ChainsList } from '../../components';
+import { ChainsList, PageCardBody, PageCardHeader } from '../../components';
 import { useAppSelector, selectFaucetInput } from '../../store';
 import { ROUTES } from '../../config';
 import { useFaucetController } from '../../controllers';
@@ -25,7 +23,7 @@ function FaucetPageSelectChain() {
 
   return (
     <>
-      <DexCardHeader
+      <PageCardHeader
         title="Select blockchain"
         titleSize={18}
         titleAlign="center"
@@ -42,7 +40,7 @@ function FaucetPageSelectChain() {
         }
         endAdornment={<Box width={28} height={40} />}
       />
-      <DexCardBody>
+      <PageCardBody>
         <ChainsList
           chains={chains}
           chain={chain}
@@ -53,7 +51,7 @@ function FaucetPageSelectChain() {
           loading={loading}
         />
         <Box pb="20px"></Box>
-      </DexCardBody>
+      </PageCardBody>
     </>
   );
 }

@@ -3,10 +3,13 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { IconButton, Button as MuiButton } from '@mui/material';
 import { Box } from '@mui/system';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
-import DexCardHeader from '../../components/DexCard/DexCardHeader';
-import DexCardSubmitButton from '../../components/DexCard/DexCardSubmitButton';
-import DexCardBody from '../../components/DexCard/DexCardBody';
-import { TextInput, Loading } from '../../components';
+import {
+  TextInput,
+  Loading,
+  PageCardHeader,
+  PageCardBody,
+  PageCardSubmitButton,
+} from '../../components';
 import { StakeType } from '../../types';
 import {
   useAppSelector,
@@ -46,7 +49,7 @@ function StakingPageWithdraw() {
 
   return (
     <>
-      <DexCardHeader
+      <PageCardHeader
         title="Withdraw"
         titleSize={18}
         titleAlign="center"
@@ -65,7 +68,7 @@ function StakingPageWithdraw() {
         endAdornment={<Box width={28} height={40} />}
       />
 
-      <DexCardBody>
+      <PageCardBody>
         {user && (
           <TextInput
             label="GRT Amount"
@@ -117,7 +120,7 @@ function StakingPageWithdraw() {
         )}
 
         {loading && <Loading />}
-        <DexCardSubmitButton
+        <PageCardSubmitButton
           disabled={loading}
           label={
             loading
@@ -143,7 +146,7 @@ function StakingPageWithdraw() {
                 }
           }
         />
-      </DexCardBody>
+      </PageCardBody>
     </>
   );
 }

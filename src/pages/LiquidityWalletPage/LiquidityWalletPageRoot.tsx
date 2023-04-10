@@ -3,11 +3,14 @@ import { useNavigate } from 'react-router-dom';
 import { IconButton, Tooltip } from '@mui/material';
 import { Box } from '@mui/system';
 import { AddCircleOutline as AddCircleOutlineIcon } from '@mui/icons-material';
-import DexCardHeader from '../../components/DexCard/DexCardHeader';
-import DexCardSubmitButton from '../../components/DexCard/DexCardSubmitButton';
-import DexCardBody from '../../components/DexCard/DexCardBody';
 import { LiquidityWalletType } from '../../types';
-import { LiquidityWallet, Loading } from '../../components';
+import {
+  LiquidityWallet,
+  Loading,
+  PageCardBody,
+  PageCardHeader,
+  PageCardSubmitButton,
+} from '../../components';
 import { useAppSelector, selectChainsItems, selectUserId } from '../../store';
 import { ROUTES } from '../../config';
 import { useUserController } from '../../controllers';
@@ -26,7 +29,7 @@ function LiquidityWalletPageRoot() {
 
   return (
     <>
-      <DexCardHeader
+      <PageCardHeader
         title="Liquidity wallets"
         endAdornment={
           user && wallets.length > 4 && wallets.length < chains.length ? (
@@ -44,7 +47,7 @@ function LiquidityWalletPageRoot() {
           ) : null
         }
       />
-      <DexCardBody>
+      <PageCardBody>
         <>
           {user &&
             wallets.map((wallet: LiquidityWalletType) => {
@@ -72,7 +75,7 @@ function LiquidityWalletPageRoot() {
             })}
           {user && walletsIsLoading && <Loading />}
           {wallets.length < chains.length ? (
-            <DexCardSubmitButton
+            <PageCardSubmitButton
               label={user ? 'Create wallet' : 'Connect wallet'}
               onClick={
                 user
@@ -88,7 +91,7 @@ function LiquidityWalletPageRoot() {
             <Box pb="20px"></Box>
           )}
         </>
-      </DexCardBody>
+      </PageCardBody>
     </>
   );
 }

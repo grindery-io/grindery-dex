@@ -3,13 +3,13 @@ import { useNavigate } from 'react-router-dom';
 import { IconButton } from '@mui/material';
 import { Box } from '@mui/system';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
-import DexCardHeader from '../../components/DexCard/DexCardHeader';
-import DexCardBody from '../../components/DexCard/DexCardBody';
 import {
   NotFound,
   ChainsList,
   TokenSearch,
   TokensList,
+  PageCardHeader,
+  PageCardBody,
 } from '../../components';
 import { ChainType, TokenType } from '../../types';
 import {
@@ -38,7 +38,7 @@ function OffersPageSelectChain() {
 
   return (
     <>
-      <DexCardHeader
+      <PageCardHeader
         title="Select chain and token"
         titleSize={18}
         titleAlign="center"
@@ -56,7 +56,7 @@ function OffersPageSelectChain() {
         }
         endAdornment={<Box width={28} height={40} />}
       />
-      <DexCardBody>
+      <PageCardBody>
         <ChainsList
           chain={fromChainId}
           chains={chains.filter((c: ChainType) => c.chainId === '97')}
@@ -100,7 +100,7 @@ function OffersPageSelectChain() {
             }
           />
         )}
-      </DexCardBody>
+      </PageCardBody>
     </>
   );
 }

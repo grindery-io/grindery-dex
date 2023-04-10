@@ -1,14 +1,14 @@
 import React from 'react';
-import { DexCard } from '../../components';
+import { PageCard } from '../../components';
 import { OrdersController } from '../../controllers';
 import OrdersPageRoot from './OrdersPageRoot';
 
 function OrdersPage() {
   return (
     <OrdersController>
-      <DexCard>
+      <PageCard>
         <OrdersPageRoot />
-      </DexCard>
+      </PageCard>
     </OrdersController>
   );
 }

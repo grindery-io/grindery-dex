@@ -1,7 +1,7 @@
 import { AppBar } from '@mui/material';
 import { styled } from '@mui/material/styles';
 
-export const DexCardHeaderAppBar = styled(AppBar)(({ theme }) => ({
+export const PageCardHeaderAppBar = styled(AppBar)(({ theme }) => ({
   backgroundColor: 'transparent',
   color: theme.palette.text.primary,
   flexDirection: 'row',

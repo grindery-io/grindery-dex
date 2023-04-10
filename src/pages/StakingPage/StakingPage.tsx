@@ -1,6 +1,6 @@
 import React from 'react';
 import { Route, Routes } from 'react-router-dom';
-import { DexCard } from '../../components';
+import { PageCard } from '../../components';
 import StakingPageRoot from './StakingPageRoot';
 import StakingPageStake from './StakingPageStake';
 import StakingPageWithdraw from './StakingPageWithdraw';
@@ -11,7 +11,7 @@ import { StakesController } from '../../controllers';
 function StakingPage() {
   return (
     <StakesController>
-      <DexCard>
+      <PageCard>
         <Routes>
           <Route
             path={ROUTES.SELL.STAKING.ROOT.RELATIVE_PATH}
@@ -30,7 +30,7 @@ function StakingPage() {
             element={<StakingPageSelectChain />}
           />
         </Routes>
-      </DexCard>
+      </PageCard>
     </StakesController>
   );
 }
