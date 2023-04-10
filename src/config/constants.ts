@@ -1,28 +1,3 @@
-export const GRTSATELLITE_CONTRACT_ADDRESS: { [key: string]: any } = {
-  'eip155:5': process.env.REACT_APP_GRTSATELLITE_CONTRACT_ADDRESS_EIP155_5,
-  'eip155:97': process.env.REACT_APP_GRTSATELLITE_CONTRACT_ADDRESS_EIP155_97,
-  'eip155:338': process.env.REACT_APP_GRTSATELLITE_CONTRACT_ADDRESS_EIP155_338,
-};
-
-export const GRT_CONTRACT_ADDRESS: { [key: string]: any } = {
-  'eip155:5': process.env.REACT_APP_GRT_CONTRACT_ADDRESS_EIP155_5,
-  'eip155:97': process.env.REACT_APP_GRT_CONTRACT_ADDRESS_EIP155_97,
-  'eip155:338': process.env.REACT_APP_GRT_CONTRACT_ADDRESS_EIP155_338,
-};
-
-export const POOL_CONTRACT_ADDRESS: { [key: string]: any } = {
-  'eip155:97': process.env.REACT_APP_POOL_CONTRACT_ADDRESS_EIP155_97,
-  'eip155:5': process.env.REACT_APP_POOL_CONTRACT_ADDRESS_EIP155_5,
-};
-
-export const DELIGHT_API_URL = process.env.REACT_APP_DELIGHT_API_URL;
-
-export const TX_EXPLORER: { [key: string]: any } = {
-  'eip155:5': process.env.REACT_APP_TX_EXPLORER_EIP155_5,
-  'eip155:97': process.env.REACT_APP_TX_EXPLORER_EIP155_97,
-  'eip155:338': process.env.REACT_APP_TX_EXPLORER_EIP155_338,
-};
-
 export const FAUCET_MENU = [
   {
     path: 'https://goerlifaucet.com/',
@@ -31,6 +6,17 @@ export const FAUCET_MENU = [
     external: true,
   },
 ];
+
+// TODO: remove when components using this constants will be refactored
+export const ICONS: { [key: string]: string } = {
+  DISCONNECT: '/images/icons/disconnect.svg',
+  CHECKBOX_CHECKED: '/images/icons/checkbox-checked.svg',
+  CHECKBOX_EMPTY: '/images/icons/checkbox-empty.svg',
+  COPY: '/images/icons/copy.svg',
+  SOCIAL_DISCORD: '/images/icons/social-discord.png',
+  SOCIAL_TG: '/images/icons/social-tg.png',
+  SOCIAL_TWITTER: '/images/icons/social-twitter.png',
+};
 
 // Temporary disabled faucet menu
 /*export const FAUCET_MENU = [
@@ -59,22 +45,3 @@ export const FAUCET_MENU = [
     external: true,
   },
 ];*/
-
-// TODO: remove when components using this constants will be refactored
-export const SCREEN = {
-  TABLET: '768px',
-  TABLET_XL: '1024px',
-  DESKTOP: '1280px',
-  DESKTOP_XL: '1600px',
-};
-
-// TODO: remove when components using this constants will be refactored
-export const ICONS: { [key: string]: string } = {
-  DISCONNECT: '/images/icons/disconnect.svg',
-  CHECKBOX_CHECKED: '/images/icons/checkbox-checked.svg',
-  CHECKBOX_EMPTY: '/images/icons/checkbox-empty.svg',
-  COPY: '/images/icons/copy.svg',
-  SOCIAL_DISCORD: '/images/icons/social-discord.png',
-  SOCIAL_TG: '/images/icons/social-tg.png',
-  SOCIAL_TWITTER: '/images/icons/social-twitter.png',
-};
