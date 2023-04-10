@@ -122,13 +122,13 @@ export const WalletsController = ({ children }: WalletsControllerProps) => {
     dispatch(setWalletsCreateInputValue({ name, value }));
   };
 
-  const handleWalletsAddtokensInputChange = (
-    name: WalletsAddTokensInputFieldName,
-    value: string
-  ) => {
-    dispatch(clearWalletsError());
-    dispatch(setWalletsAddTokensInputValue({ name, value }));
-  };
+  const handleWalletsAddtokensInputChange = useCallback(
+    (name: WalletsAddTokensInputFieldName, value: string) => {
+      dispatch(clearWalletsError());
+      dispatch(setWalletsAddTokensInputValue({ name, value }));
+    },
+    [dispatch]
+  );
 
   const handleWalletsWithdrawtokensInputChange = (
     name: WalletsWithdrawTokensInputFieldName,

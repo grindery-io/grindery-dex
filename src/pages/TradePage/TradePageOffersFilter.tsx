@@ -1,33 +1,30 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button, IconButton, Stack, Tooltip } from '@mui/material';
 import { Box } from '@mui/system';
-import { useNavigate } from 'react-router-dom';
-import AlertBox from '../../components/AlertBox/AlertBox';
-import AmountInput from '../../components/AmountInput/AmountInput';
+import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 import DexCard from '../../components/DexCard/DexCard';
 import DexCardBody from '../../components/DexCard/DexCardBody';
 import DexCardHeader from '../../components/DexCard/DexCardHeader';
 import DexCardSubmitButton from '../../components/DexCard/DexCardSubmitButton';
-import SelectChainAndTokenButton from '../../components/SelectChainAndTokenButton/SelectChainAndTokenButton';
-import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
-import { GRT_CONTRACT_ADDRESS } from '../../config/constants';
-import { ROUTES } from '../../config/routes';
-import { useAppSelector } from '../../store/storeHooks';
 import {
+  SelectChainAndTokenButton,
+  AmountInput,
+  AlertBox,
+} from '../../components';
+import { ROUTES, GRT_CONTRACT_ADDRESS } from '../../config';
+import {
+  useAppSelector,
   selectUserAccessToken,
   selectUserId,
-} from '../../store/slices/userSlice';
-import { useUserController } from '../../controllers/UserController';
-import {
   selectTradeError,
   selectTradeFilter,
   selectTradeFromTokenBalance,
   selectTradeLoading,
-} from '../../store/slices/tradeSlice';
-import { getChainById } from '../../utils/helpers/chainHelpers';
-import { selectChainsItems } from '../../store/slices/chainsSlice';
-import { getTokenById } from '../../utils/helpers/tokenHelpers';
-import { useTradeController } from '../../controllers/TradeController';
+  selectChainsItems,
+} from '../../store';
+import { useUserController, useTradeController } from '../../controllers';
+import { getChainById, getTokenById } from '../../utils';
 
 type Props = {};
 

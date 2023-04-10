@@ -1,27 +1,28 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import DexCardHeader from '../../components/DexCard/DexCardHeader';
 import DexCardBody from '../../components/DexCard/DexCardBody';
-import Loading from '../../components/Loading/Loading';
 import DexCardSubmitButton from '../../components/DexCard/DexCardSubmitButton';
-import SelectChainButton from '../../components/SelectChainButton/SelectChainButton';
-import TextInput from '../../components/TextInput/TextInput';
-import { useNavigate } from 'react-router-dom';
-import AlertBox from '../../components/AlertBox/AlertBox';
-import { useAppSelector } from '../../store/storeHooks';
-import { selectUserChainId, selectUserId } from '../../store/slices/userSlice';
-import { useUserController } from '../../controllers/UserController';
-import { ROUTES } from '../../config/routes';
 import {
+  Loading,
+  SelectChainButton,
+  TextInput,
+  AlertBox,
+} from '../../components';
+import {
+  useAppSelector,
+  selectUserChainId,
+  selectUserId,
   selectFaucetError,
   selectFaucetInput,
   selectFaucetLoading,
   selectFaucetTransactionId,
-} from '../../store/slices/faucetSlice';
-import { useFaucetController } from '../../controllers/FaucetController';
-import { selectChainsItems } from '../../store/slices/chainsSlice';
-import { ChainType } from '../../types/ChainType';
-import { TX_EXPLORER } from '../../config/constants';
-import { selectTokenAbi } from '../../store/slices/abiSlice';
+  selectChainsItems,
+  selectTokenAbi,
+} from '../../store';
+import { useUserController, useFaucetController } from '../../controllers';
+import { ROUTES, TX_EXPLORER } from '../../config';
+import { ChainType } from '../../types';
 
 function FaucetPageRoot() {
   const user = useAppSelector(selectUserId);

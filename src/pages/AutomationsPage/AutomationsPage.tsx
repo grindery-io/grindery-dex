@@ -3,8 +3,8 @@ import { Route, Routes } from 'react-router-dom';
 import DexCard from '../../components/DexCard/DexCard';
 import AutomationsPageRoot from './AutomationsPageRoot';
 import AutomationsPageSelectChain from './AutomationsPageSelectChain';
-import { ROUTES } from '../../config/routes';
-import AutomationsController from '../../controllers/AutomationsController';
+import { ROUTES } from '../../config';
+import { AutomationsController } from '../../controllers';
 
 type Props = {};
 

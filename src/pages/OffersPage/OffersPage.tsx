@@ -1,12 +1,12 @@
 import React from 'react';
-import DexCard from '../../components/DexCard/DexCard';
+import { DexCard } from '../../components';
 import { Route, Routes } from 'react-router-dom';
 import OffersPageRoot from './OffersPageRoot';
 import OffersPageCreate from './OffersPageCreate';
 import OffersPageSelectChain from './OffersPageSelectChain';
 import OffersPageSelectToChain from './OffersPageSelectToChain';
-import OffersController from '../../controllers/OffersController';
-import { ROUTES } from '../../config/routes';
+import { OffersController } from '../../controllers';
+import { ROUTES } from '../../config';
 
 function OffersPage() {
   return (

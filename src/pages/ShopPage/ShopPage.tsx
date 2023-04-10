@@ -2,8 +2,8 @@ import React from 'react';
 import { Box } from '@mui/system';
 import { Route, Routes } from 'react-router-dom';
 import ShopPageRoot from './ShopPageRoot';
-import ShopController from '../../controllers/ShopController';
-import { ROUTES } from '../../config/routes';
+import { ShopController } from '../../controllers';
+import { ROUTES } from '../../config';
 
 type Props = {};
 

@@ -1,21 +1,20 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { IconButton } from '@mui/material';
 import { Box } from '@mui/system';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
 import DexCardHeader from '../../components/DexCard/DexCardHeader';
-import ChainsList from '../../components/ChainsList/ChainsList';
-import { ChainType } from '../../types/ChainType';
-import { LiquidityWalletType } from '../../types/LiquidityWalletType';
-import { useNavigate } from 'react-router-dom';
 import DexCardBody from '../../components/DexCard/DexCardBody';
-import { useAppSelector } from '../../store/storeHooks';
-import { selectChainsItems } from '../../store/slices/chainsSlice';
+import { ChainsList } from '../../components';
+import { ChainType, LiquidityWalletType } from '../../types';
 import {
+  useAppSelector,
+  selectChainsItems,
   selectWalletsCreateInput,
   selectWalletsItems,
-} from '../../store/slices/walletsSlice';
-import { ROUTES } from '../../config/routes';
-import { useWalletsController } from '../../controllers/WalletsController';
+} from '../../store';
+import { ROUTES } from '../../config';
+import { useWalletsController } from '../../controllers';
 
 function LiquidityWalletPageSelectChain() {
   let navigate = useNavigate();

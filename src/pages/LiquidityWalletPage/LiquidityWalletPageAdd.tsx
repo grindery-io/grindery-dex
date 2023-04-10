@@ -1,40 +1,38 @@
 import React, { useEffect } from 'react';
 import { IconButton } from '@mui/material';
 import { Box } from '@mui/system';
+import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
 import DexCardHeader from '../../components/DexCard/DexCardHeader';
 import DexCardSubmitButton from '../../components/DexCard/DexCardSubmitButton';
 import DexCardBody from '../../components/DexCard/DexCardBody';
-import Loading from '../../components/Loading/Loading';
-import TextInput from '../../components/TextInput/TextInput';
-import { useNavigate, useParams } from 'react-router-dom';
-import SelectTokenButton from '../../components/SelectTokenButton/SelectTokenButton';
-import AlertBox from '../../components/AlertBox/AlertBox';
-import { useAppDispatch, useAppSelector } from '../../store/storeHooks';
-import { selectChainsItems } from '../../store/slices/chainsSlice';
 import {
+  AlertBox,
+  Loading,
+  TextInput,
+  SelectTokenButton,
+} from '../../components';
+import {
+  useAppDispatch,
+  useAppSelector,
+  selectChainsItems,
   selectUserAccessToken,
   selectUserChainId,
   selectUserId,
-} from '../../store/slices/userSlice';
-import { useUserController } from '../../controllers/UserController';
-import {
   clearWalletsAddTokensInput,
   selectWalletsAddTokensInput,
   selectWalletsError,
   selectWalletsItems,
   selectWalletsLoading,
-} from '../../store/slices/walletsSlice';
-import { ROUTES } from '../../config/routes';
+} from '../../store';
+import { useUserController, useWalletsController } from '../../controllers';
+import { ROUTES } from '../../config';
 import {
   getWalletById,
   getWalletChain,
-} from '../../utils/helpers/walletHelpers';
-import { useWalletsController } from '../../controllers/WalletsController';
-import {
   getTokenById,
   getTokenBySymbol,
-} from '../../utils/helpers/tokenHelpers';
+} from '../../utils';
 
 function LiquidityWalletPageAdd() {
   let navigate = useNavigate();
@@ -67,7 +65,7 @@ function LiquidityWalletPageAdd() {
     if (!currentWallet && !walletsIsLoading) {
       navigate(ROUTES.SELL.WALLETS.ROOT.FULL_PATH);
     }
-  }, [currentWallet, walletsIsLoading]);
+  }, [currentWallet, walletsIsLoading, navigate]);
 
   useEffect(() => {
     if (preselectedToken) {
@@ -76,7 +74,7 @@ function LiquidityWalletPageAdd() {
         preselectedToken.coinmarketcapId || ''
       );
     }
-  }, [preselectedToken]);
+  }, [preselectedToken, handleWalletsAddtokensInputChange]);
 
   return (
     <>

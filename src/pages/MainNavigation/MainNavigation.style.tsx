@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { SCREEN } from '../../config/constants';
+import { SCREEN } from '../../config';
 
 export const Wrapper = styled.div`
   padding: 16px;

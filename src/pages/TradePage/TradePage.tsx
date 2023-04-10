@@ -7,11 +7,9 @@ import TradePageOffersFilter from './TradePageOffersFilter';
 import TradePageOfferAccept from './TradePageOfferAccept';
 import TradePageHistory from './TradePageHistory';
 import TradePageSelectFromChainAndToken from './TradePageSelectFromChainAndToken';
-import TradeController from '../../controllers/TradeController';
-import { ROUTES } from '../../config/routes';
-import { useAppSelector } from '../../store/storeHooks';
-import { selectTradeOffersVisible } from '../../store/slices/tradeSlice';
-import OrdersHistoryController from '../../controllers/OrdersHistoryController';
+import { TradeController, OrdersHistoryController } from '../../controllers';
+import { ROUTES } from '../../config';
+import { useAppSelector, selectTradeOffersVisible } from '../../store';
 
 type Props = {};
 

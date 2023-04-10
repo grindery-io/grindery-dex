@@ -9,8 +9,7 @@ import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import { sellPages } from '../SellPage/SellPage';
 import { buyPages } from '../BuyPage/BuyPage';
 import Drawer from '../../components/Drawer/Drawer';
-import { useAppSelector } from '../../store/storeHooks';
-import { selectUserIsAdmin } from '../../store/slices/userSlice';
+import { useAppSelector, selectUserIsAdmin } from '../../store';
 import { MENU } from './MainNavigation';
 
 const drawerWidth = 240;
@@ -78,7 +77,7 @@ const MainNavigationDrawer = (props: Props) => {
                       }
                     }}
                     selected={
-                      location.pathname == link.path && link.path !== '/faucet'
+                      location.pathname === link.path && link.path !== '/faucet'
                     }
                   >
                     <ListItemText primary={link.label} />

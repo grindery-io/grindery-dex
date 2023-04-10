@@ -1,36 +1,30 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { IconButton, Tooltip } from '@mui/material';
 import { AddCircleOutline as AddCircleOutlineIcon } from '@mui/icons-material';
 import DexCardHeader from '../../components/DexCard/DexCardHeader';
 import DexCardSubmitButton from '../../components/DexCard/DexCardSubmitButton';
 import DexCardBody from '../../components/DexCard/DexCardBody';
-import { useNavigate } from 'react-router-dom';
-import ListSubheader from '../../components/ListSubheader/ListSubheader';
-import _ from 'lodash';
-import OfferPublic from '../../components/Offer/OfferPublic';
-import OfferSkeleton from '../../components/Offer/OfferSkeleton';
-import { useAppSelector } from '../../store/storeHooks';
-import { selectChainsItems } from '../../store/slices/chainsSlice';
+import { ListSubheader, OfferPublic, OfferSkeleton } from '../../components';
 import {
+  useAppSelector,
+  selectChainsItems,
   selectOffersActivating,
   selectOffersItems,
   selectOffersLoading,
-} from '../../store/slices/offersSlice';
-import {
   selectUserAccessToken,
   selectUserChainId,
   selectUserId,
-} from '../../store/slices/userSlice';
-import { useUserController } from '../../controllers/UserController';
-import { ROUTES } from '../../config/routes';
-import { useOffersController } from '../../controllers/OffersController';
-import { selectPoolAbi } from '../../store/slices/abiSlice';
-import { OfferType } from '../../types/OfferType';
+  selectPoolAbi,
+} from '../../store';
+import { useUserController, useOffersController } from '../../controllers';
+import { ROUTES } from '../../config';
+import { OfferType } from '../../types';
 import {
   groupOffersByChainId,
   orderOffersByActiveState,
-} from '../../utils/helpers/offerHelpers';
-import { getChainById } from '../../utils/helpers/chainHelpers';
+  getChainById,
+} from '../../utils';
 
 function OffersPageRoot() {
   const user = useAppSelector(selectUserId);

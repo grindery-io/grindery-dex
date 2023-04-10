@@ -1,28 +1,27 @@
 import React from 'react';
+import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import { Box } from '@mui/system';
+import { IconButton } from '@mui/material';
+import Countdown from 'react-countdown';
+import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
 import DexCard from '../../components/DexCard/DexCard';
 import DexCardHeader from '../../components/DexCard/DexCardHeader';
-import Loading from '../../components/Loading/Loading';
 import DexCardBody from '../../components/DexCard/DexCardBody';
-import OfferPublic from '../../components/Offer/OfferPublic';
-import { Navigate, useNavigate, useParams } from 'react-router-dom';
-import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
-import Countdown from 'react-countdown';
-import { IconButton } from '@mui/material';
 import DexCardSubmitButton from '../../components/DexCard/DexCardSubmitButton';
-import AlertBox from '../../components/AlertBox/AlertBox';
-import { useAppDispatch, useAppSelector } from '../../store/storeHooks';
-import { selectChainsItems } from '../../store/slices/chainsSlice';
-import { OfferType } from '../../types/OfferType';
-import { ROUTES } from '../../config/routes';
 import {
+  TransactionID,
+  AlertBox,
+  OfferPublic,
+  Loading,
+} from '../../components';
+import {
+  useAppDispatch,
+  useAppSelector,
+  selectChainsItems,
   selectUserAccessToken,
   selectUserAddress,
   selectUserChainId,
   selectUserId,
-} from '../../store/slices/userSlice';
-import { useUserController } from '../../controllers/UserController';
-import {
   selectTradeAcceptedOfferTx,
   selectTradeApproved,
   selectTradeError,
@@ -31,15 +30,13 @@ import {
   selectTradeOffers,
   setTradeAcceptedOfferTx,
   setTradeApproved,
-} from '../../store/slices/tradeSlice';
-import { getChainById } from '../../utils/helpers/chainHelpers';
-import {
-  getTokenById,
-  getTokenBySymbol,
-} from '../../utils/helpers/tokenHelpers';
-import TransactionID from '../../components/TransactionID/TransactionID';
-import { useTradeController } from '../../controllers/TradeController';
-import { selectPoolAbi, selectTokenAbi } from '../../store/slices/abiSlice';
+  selectPoolAbi,
+  selectTokenAbi,
+} from '../../store';
+import { OfferType } from '../../types';
+import { ROUTES } from '../../config';
+import { useUserController, useTradeController } from '../../controllers';
+import { getChainById, getTokenById, getTokenBySymbol } from '../../utils';
 
 type Props = {};
 

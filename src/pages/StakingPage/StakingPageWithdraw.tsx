@@ -1,26 +1,25 @@
 import React, { useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { IconButton, Button as MuiButton } from '@mui/material';
 import { Box } from '@mui/system';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
 import DexCardHeader from '../../components/DexCard/DexCardHeader';
 import DexCardSubmitButton from '../../components/DexCard/DexCardSubmitButton';
 import DexCardBody from '../../components/DexCard/DexCardBody';
-import Loading from '../../components/Loading/Loading';
-import TextInput from '../../components/TextInput/TextInput';
-import { useNavigate, useParams } from 'react-router-dom';
-import { StakeType } from '../../types/StakeType';
-import { useAppSelector } from '../../store/storeHooks';
+import { TextInput, Loading } from '../../components';
+import { StakeType } from '../../types';
 import {
+  useAppSelector,
   selectStakesError,
   selectStakesItems,
   selectStakesLoading,
   selectStakesWithdrawInput,
-} from '../../store/slices/stakesSlice';
-import { selectUserChainId, selectUserId } from '../../store/slices/userSlice';
-import { useUserController } from '../../controllers/UserController';
-import { ROUTES } from '../../config/routes';
-import { useStakesController } from '../../controllers/StakesController';
-import { selectPoolAbi } from '../../store/slices/abiSlice';
+  selectUserChainId,
+  selectUserId,
+  selectPoolAbi,
+} from '../../store';
+import { useUserController, useStakesController } from '../../controllers';
+import { ROUTES } from '../../config';
 
 function StakingPageWithdraw() {
   const user = useAppSelector(selectUserId);

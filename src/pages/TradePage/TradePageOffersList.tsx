@@ -1,20 +1,18 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Box } from '@mui/system';
 import DexCard from '../../components/DexCard/DexCard';
 import DexCardHeader from '../../components/DexCard/DexCardHeader';
 import DexCardBody from '../../components/DexCard/DexCardBody';
-import NotFound from '../../components/NotFound/NotFound';
-import OfferPublic from '../../components/Offer/OfferPublic';
-import OfferSkeleton from '../../components/Offer/OfferSkeleton';
-import { useNavigate } from 'react-router-dom';
-import { OfferType } from '../../types/OfferType';
-import { ROUTES } from '../../config/routes';
-import { useAppSelector } from '../../store/storeHooks';
+import { OfferSkeleton, OfferPublic, NotFound } from '../../components';
+import { OfferType } from '../../types';
+import { ROUTES } from '../../config';
 import {
+  useAppSelector,
   selectTradeFilter,
   selectTradeLoading,
   selectTradeOffers,
-} from '../../store/slices/tradeSlice';
+} from '../../store';
 
 type Props = {};
 

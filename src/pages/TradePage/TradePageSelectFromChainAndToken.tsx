@@ -1,27 +1,27 @@
 import React, { useState } from 'react';
-import { Box } from '@mui/system';
 import { useNavigate } from 'react-router-dom';
+import { Box } from '@mui/system';
 import DexCard from '../../components/DexCard/DexCard';
 import DexCardBody from '../../components/DexCard/DexCardBody';
 import DexCardHeader from '../../components/DexCard/DexCardHeader';
 import { IconButton } from '@mui/material';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
-import ChainsList from '../../components/ChainsList/ChainsList';
-import TokenSearch from '../../components/TokenSearch/TokenSearch';
-import TokensList from '../../components/TokensList/TokensList';
-import NotFound from '../../components/NotFound/NotFound';
-import { ChainType } from '../../types/ChainType';
-import { useAppSelector } from '../../store/storeHooks';
 import {
+  NotFound,
+  TokensList,
+  TokenSearch,
+  ChainsList,
+} from '../../components';
+import { ChainType, TokenType } from '../../types';
+import {
+  useAppSelector,
   selectChainsItems,
   selectChainsLoading,
-} from '../../store/slices/chainsSlice';
-import { ROUTES } from '../../config/routes';
-import { selectTradeFilter } from '../../store/slices/tradeSlice';
-import { getChainById } from '../../utils/helpers/chainHelpers';
-import { getTokensByChain } from '../../utils/helpers/tokenHelpers';
-import { useTradeController } from '../../controllers/TradeController';
-import { TokenType } from '../../types/TokenType';
+  selectTradeFilter,
+} from '../../store';
+import { ROUTES } from '../../config';
+import { getChainById, getTokensByChain } from '../../utils';
+import { useTradeController } from '../../controllers';
 
 type Props = {};
 

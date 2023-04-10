@@ -1,5 +1,5 @@
-import { Box } from '@mui/system';
 import React, { ReactNode } from 'react';
+import { Box } from '@mui/system';
 
 type Props = {
   children: ReactNode;

@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { SCREEN } from '../../config/constants';
+import { SCREEN } from '../../config';
 
 export const ButtonWrapper = styled.div`
   margin: 10px 0px 0px;

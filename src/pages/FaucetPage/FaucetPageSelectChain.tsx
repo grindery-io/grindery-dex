@@ -1,15 +1,14 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { IconButton } from '@mui/material';
 import { Box } from '@mui/system';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
 import DexCardHeader from '../../components/DexCard/DexCardHeader';
-import ChainsList from '../../components/ChainsList/ChainsList';
-import { useNavigate } from 'react-router-dom';
 import DexCardBody from '../../components/DexCard/DexCardBody';
-import { useAppSelector } from '../../store/storeHooks';
-import { selectFaucetInput } from '../../store/slices/faucetSlice';
-import { ROUTES } from '../../config/routes';
-import { useFaucetController } from '../../controllers/FaucetController';
+import { ChainsList } from '../../components';
+import { useAppSelector, selectFaucetInput } from '../../store';
+import { ROUTES } from '../../config';
+import { useFaucetController } from '../../controllers';
 import {
   selectChainsItems,
   selectChainsLoading,

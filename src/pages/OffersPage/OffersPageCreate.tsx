@@ -1,38 +1,37 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { IconButton, Stack } from '@mui/material';
 import { Box } from '@mui/system';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
 import DexCardHeader from '../../components/DexCard/DexCardHeader';
 import DexCardSubmitButton from '../../components/DexCard/DexCardSubmitButton';
 import DexCardBody from '../../components/DexCard/DexCardBody';
-import SelectChainAndTokenButton from '../../components/SelectChainAndTokenButton/SelectChainAndTokenButton';
-import TextInput from '../../components/TextInput/TextInput';
-import Loading from '../../components/Loading/Loading';
-import { useNavigate } from 'react-router-dom';
-import AlertBox from '../../components/AlertBox/AlertBox';
 import { CardTitle } from '../../components/Card/CardTitle';
-import UploadButton from '../../components/UploadButton/UploadButton';
-import { useAppDispatch, useAppSelector } from '../../store/storeHooks';
-import { ROUTES } from '../../config/routes';
 import {
+  AlertBox,
+  SelectChainAndTokenButton,
+  TextInput,
+  Loading,
+  UploadButton,
+} from '../../components';
+import {
+  useAppDispatch,
+  useAppSelector,
   selectUserAccessToken,
   selectUserChainId,
   selectUserId,
-} from '../../store/slices/userSlice';
-import { useUserController } from '../../controllers/UserController';
-import {
   clearOffersCreateInput,
   selectOffersCreateInput,
   selectOffersError,
   selectOffersLoading,
-} from '../../store/slices/offersSlice';
-import { getChainById } from '../../utils/helpers/chainHelpers';
-import { selectChainsItems } from '../../store/slices/chainsSlice';
-import { getTokenById } from '../../utils/helpers/tokenHelpers';
-import { useOffersController } from '../../controllers/OffersController';
-import { selectPoolAbi } from '../../store/slices/abiSlice';
-import { LiquidityWalletType } from '../../types/LiquidityWalletType';
-import { selectWalletsItems } from '../../store/slices/walletsSlice';
+  selectChainsItems,
+  selectPoolAbi,
+  selectWalletsItems,
+} from '../../store';
+import { ROUTES } from '../../config';
+import { useUserController, useOffersController } from '../../controllers';
+import { getChainById, getTokenById } from '../../utils';
+import { LiquidityWalletType } from '../../types';
 
 function OffersPageCreate() {
   let navigate = useNavigate();

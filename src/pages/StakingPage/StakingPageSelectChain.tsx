@@ -1,17 +1,19 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { IconButton } from '@mui/material';
 import { Box } from '@mui/system';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
 import DexCardHeader from '../../components/DexCard/DexCardHeader';
-import ChainsList from '../../components/ChainsList/ChainsList';
-import { useNavigate } from 'react-router-dom';
 import DexCardBody from '../../components/DexCard/DexCardBody';
-import { useAppSelector } from '../../store/storeHooks';
-import { selectChainsItems } from '../../store/slices/chainsSlice';
-import { ROUTES } from '../../config/routes';
-import { useStakesController } from '../../controllers/StakesController';
-import { ChainType } from '../../types/ChainType';
-import { selectStakesCreateInput } from '../../store/slices/stakesSlice';
+import { ChainsList } from '../../components';
+import {
+  useAppSelector,
+  selectChainsItems,
+  selectStakesCreateInput,
+} from '../../store';
+import { ROUTES } from '../../config';
+import { useStakesController } from '../../controllers';
+import { ChainType } from '../../types';
 
 function StakingPageSelectChain() {
   let navigate = useNavigate();

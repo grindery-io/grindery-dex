@@ -1,32 +1,27 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { IconButton } from '@mui/material';
 import { Box } from '@mui/system';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
 import DexCardHeader from '../../components/DexCard/DexCardHeader';
 import DexCardSubmitButton from '../../components/DexCard/DexCardSubmitButton';
 import DexCardBody from '../../components/DexCard/DexCardBody';
-import Loading from '../../components/Loading/Loading';
-import SelectChainButton from '../../components/SelectChainButton/SelectChainButton';
-import { useNavigate } from 'react-router-dom';
-import AlertBox from '../../components/AlertBox/AlertBox';
-import { ROUTES } from '../../config/routes';
+import { Loading, SelectChainButton, AlertBox } from '../../components';
+import { ROUTES } from '../../config';
 import {
+  useAppSelector,
   selectUserAccessToken,
   selectUserChainId,
   selectUserId,
-} from '../../store/slices/userSlice';
-import { useUserController } from '../../controllers/UserController';
-import { useAppSelector } from '../../store/storeHooks';
-import {
   selectWalletsCreateInput,
   selectWalletsError,
   selectWalletsItems,
   selectWalletsLoading,
-} from '../../store/slices/walletsSlice';
-import { getChainById } from '../../utils/helpers/chainHelpers';
-import { selectChainsItems } from '../../store/slices/chainsSlice';
-import { useWalletsController } from '../../controllers/WalletsController';
-import { selectSatelliteAbi } from '../../store/slices/abiSlice';
+  selectChainsItems,
+  selectSatelliteAbi,
+} from '../../store';
+import { useUserController, useWalletsController } from '../../controllers';
+import { getChainById } from '../../utils';
 
 function LiquidityWalletPageCreate() {
   let navigate = useNavigate();

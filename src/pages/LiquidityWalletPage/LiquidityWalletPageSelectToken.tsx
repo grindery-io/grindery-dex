@@ -1,28 +1,22 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { IconButton } from '@mui/material';
 import { Box } from '@mui/system';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
 import DexCardHeader from '../../components/DexCard/DexCardHeader';
-import { useNavigate, useParams } from 'react-router-dom';
-import TokenSearch from '../../components/TokenSearch/TokenSearch';
-import TokensList from '../../components/TokensList/TokensList';
-import NotFound from '../../components/NotFound/NotFound';
-import Loading from '../../components/Loading/Loading';
 import DexCardBody from '../../components/DexCard/DexCardBody';
-import { useAppSelector } from '../../store/storeHooks';
-import { selectChainsItems } from '../../store/slices/chainsSlice';
-import { selectUserId } from '../../store/slices/userSlice';
-import { ROUTES } from '../../config/routes';
+import { TokenSearch, TokensList, NotFound, Loading } from '../../components';
 import {
+  useAppSelector,
+  selectChainsItems,
+  selectUserId,
   selectWalletsItems,
   selectWalletsLoading,
-} from '../../store/slices/walletsSlice';
-import {
-  getWalletById,
-  getWalletChain,
-} from '../../utils/helpers/walletHelpers';
-import { useWalletsController } from '../../controllers/WalletsController';
-import { TokenType } from '../../types/TokenType';
+} from '../../store';
+import { ROUTES } from '../../config';
+import { getWalletById, getWalletChain } from '../../utils';
+import { useWalletsController } from '../../controllers';
+import { TokenType } from '../../types';
 
 function LiquidityWalletPageSelectToken() {
   let navigate = useNavigate();
@@ -46,7 +40,7 @@ function LiquidityWalletPageSelectToken() {
     if (!currentWallet && !walletsIsLoading) {
       navigate(ROUTES.SELL.WALLETS.ROOT.FULL_PATH);
     }
-  }, [currentWallet, walletsIsLoading]);
+  }, [currentWallet, walletsIsLoading, navigate]);
 
   return (
     <>
@@ -63,7 +57,7 @@ function LiquidityWalletPageSelectToken() {
                 ROUTES.SELL.WALLETS.ADD.FULL_PATH.replace(
                   ':walletId',
                   walletId || ''
-                )
+                ).replace(':tokenSymbol', 'any')
               );
             }}
           >
@@ -99,7 +93,7 @@ function LiquidityWalletPageSelectToken() {
                     ROUTES.SELL.WALLETS.ADD.FULL_PATH.replace(
                       ':walletId',
                       walletId || ''
-                    )
+                    ).replace(':tokenSymbol', 'any')
                   );
                 }}
                 chainLabel={walletChain?.label || ''}

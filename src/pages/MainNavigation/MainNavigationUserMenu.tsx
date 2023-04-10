@@ -9,12 +9,12 @@ import { useNavigate } from 'react-router-dom';
 import Icon from '@mdi/react';
 import { mdiWaterPump } from '@mdi/js';
 import SellOutlinedIcon from '@mui/icons-material/SellOutlined';
-import { useUserController } from '../../controllers/UserController';
-import { useAppSelector } from '../../store/storeHooks';
+import { useUserController } from '../../controllers';
 import {
+  useAppSelector,
   selectUserAddress,
   selectUserIsAdmin,
-} from '../../store/slices/userSlice';
+} from '../../store';
 import {
   UserContainer,
   UserDropdown,

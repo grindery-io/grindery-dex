@@ -1,5 +1,6 @@
 import React from 'react';
 import { Box } from '@mui/system';
+import Countdown from 'react-countdown';
 import {
   Button,
   Dialog,
@@ -7,14 +8,11 @@ import {
   DialogContent,
   DialogTitle,
 } from '@mui/material';
-import Loading from '../../components/Loading/Loading';
-import AlertBox from '../../components/AlertBox/AlertBox';
-import Countdown from 'react-countdown';
-import TransactionID from '../../components/TransactionID/TransactionID';
-import { useAppDispatch, useAppSelector } from '../../store/storeHooks';
-import { selectChainsItems } from '../../store/slices/chainsSlice';
-import { OfferType } from '../../types/OfferType';
+import { TransactionID, AlertBox, Loading } from '../../components';
 import {
+  useAppDispatch,
+  useAppSelector,
+  selectChainsItems,
   selectShopAcceptedOffer,
   selectShopAcceptedOfferTx,
   selectShopAccepting,
@@ -25,7 +23,8 @@ import {
   setShopAcceptedOffer,
   setShopAcceptedOfferTx,
   setShopModal,
-} from '../../store/slices/shopSlice';
+} from '../../store';
+import { OfferType } from '../../types';
 
 type Props = {};
 

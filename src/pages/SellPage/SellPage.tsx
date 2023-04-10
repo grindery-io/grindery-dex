@@ -1,33 +1,30 @@
 import React from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
-import Loading from '../../components/Loading/Loading';
-import PageContainer from '../../components/PageContainer/PageContainer';
-import SellMenu from '../../components/SellMenu/SellMenu';
 import OffersPage from '../OffersPage/OffersPage';
 import OrdersPage from '../OrdersPage/OrdersPage';
 import AutomationsPage from '../AutomationsPage/AutomationsPage';
-import DexCard from '../../components/DexCard/DexCard';
+import { DexCard, SellMenu, PageContainer, Loading } from '../../components';
 import DexCardHeader from '../../components/DexCard/DexCardHeader';
 import DexCardBody from '../../components/DexCard/DexCardBody';
 import { Box, Typography } from '@mui/material';
 import TimerIcon from '@mui/icons-material/Timer';
-import { useAppSelector } from '../../store/storeHooks';
 import {
+  useAppSelector,
   selectUserIsAdmin,
   selectUserIsAdminLoading,
-} from '../../store/slices/userSlice';
-import { ROUTES } from '../../config/routes';
-import WalletsController from '../../controllers/WalletsController';
-import LiquidityWalletPage from '../LiquidityWalletPage/LiquidityWalletPage';
+} from '../../store';
+import { ROUTES } from '../../config';
+import { WalletsController } from '../../controllers';
+import StakingPage from '../StakingPage/StakingPage';
 
 export const sellPages = [
   // Route temporary disabled
-  /*{
+  {
     path: ROUTES.SELL.STAKING.RELATIVE_PATH,
     fullPath: ROUTES.SELL.STAKING.ROOT.FULL_PATH,
     label: 'Staking',
     component: <StakingPage />,
-  },*/
+  },
   {
     path: ROUTES.SELL.OFFERS.RELATIVE_PATH,
     fullPath: ROUTES.SELL.OFFERS.ROOT.FULL_PATH,

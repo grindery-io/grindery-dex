@@ -1,23 +1,21 @@
 import React from 'react';
 import { Box } from '@mui/system';
-import DexCard from '../../components/DexCard/DexCard';
-import DexCardHeader from '../../components/DexCard/DexCardHeader';
-import DexCardBody from '../../components/DexCard/DexCardBody';
-import NotFound from '../../components/NotFound/NotFound';
 import { useNavigate } from 'react-router-dom';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
 import { IconButton } from '@mui/material';
-import OrderCard from '../../components/OrderCard/OrderCard';
-import OrderSkeleton from '../../components/OrderCard/OrderSkeleton';
-import { ROUTES } from '../../config/routes';
-import { OrderType } from '../../types/OrderType';
-import { useAppSelector } from '../../store/storeHooks';
+import DexCard from '../../components/DexCard/DexCard';
+import DexCardHeader from '../../components/DexCard/DexCardHeader';
+import DexCardBody from '../../components/DexCard/DexCardBody';
+import { OrderSkeleton, OrderCard, NotFound } from '../../components';
+import { ROUTES } from '../../config';
+import { OrderType } from '../../types';
 import {
+  useAppSelector,
   selectOrdersHistoryItems,
   selectOrdersHistoryLoading,
-} from '../../store/slices/ordersHistorySlice';
-import { sortOrdersByDate } from '../../utils/helpers/orderHelpers';
-import { selectChainsItems } from '../../store/slices/chainsSlice';
+  selectChainsItems,
+} from '../../store';
+import { sortOrdersByDate } from '../../utils';
 
 type Props = {};
 

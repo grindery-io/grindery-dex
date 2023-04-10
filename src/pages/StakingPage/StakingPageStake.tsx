@@ -1,29 +1,32 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { IconButton } from '@mui/material';
 import { Box } from '@mui/system';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
 import DexCardHeader from '../../components/DexCard/DexCardHeader';
 import DexCardSubmitButton from '../../components/DexCard/DexCardSubmitButton';
 import DexCardBody from '../../components/DexCard/DexCardBody';
-import Loading from '../../components/Loading/Loading';
-import TextInput from '../../components/TextInput/TextInput';
-import SelectChainButton from '../../components/SelectChainButton/SelectChainButton';
-import AlertBox from '../../components/AlertBox/AlertBox';
-import { useNavigate } from 'react-router-dom';
-import { useAppSelector } from '../../store/storeHooks';
-import { selectUserChainId, selectUserId } from '../../store/slices/userSlice';
-import { useUserController } from '../../controllers/UserController';
-import { ROUTES } from '../../config/routes';
 import {
+  AlertBox,
+  SelectChainButton,
+  TextInput,
+  Loading,
+} from '../../components';
+import {
+  useAppSelector,
+  selectUserChainId,
+  selectUserId,
   selectStakesApproved,
   selectStakesCreateInput,
   selectStakesError,
   selectStakesLoading,
-} from '../../store/slices/stakesSlice';
-import { selectChainsItems } from '../../store/slices/chainsSlice';
-import { ChainType } from '../../types/ChainType';
-import { selectPoolAbi, selectTokenAbi } from '../../store/slices/abiSlice';
-import { useStakesController } from '../../controllers/StakesController';
+  selectChainsItems,
+  selectPoolAbi,
+  selectTokenAbi,
+} from '../../store';
+import { useUserController, useStakesController } from '../../controllers';
+import { ROUTES } from '../../config';
+import { ChainType } from '../../types';
 
 function StakingPageStake() {
   let navigate = useNavigate();

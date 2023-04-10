@@ -13,15 +13,14 @@ import {
   UserWrapper,
   Wrapper,
 } from './MainNavigation.style';
-import Logo from '../../components/Logo/Logo';
-import NavTabs, { MenuItem } from '../../components/NavTabs/NavTabs';
+import { Logo, NavTabs } from '../../components';
 import MainNavigationDrawer from './MainNavigationDrawer';
-import { useAppSelector } from '../../store/storeHooks';
-import { selectUserId } from '../../store/slices/userSlice';
-import { useUserController } from '../../controllers/UserController';
 import MainNavigationUserMenu from './MainNavigationUserMenu';
+import { useAppSelector, selectUserId } from '../../store';
+import { useUserController } from '../../controllers';
+import { NavTabsItemType } from '../../components/NavTabs/NavTabs.type';
 
-export const MENU: MenuItem[] = [
+export const MENU: NavTabsItemType[] = [
   {
     path: '/buy/trade',
     label: 'Trade',

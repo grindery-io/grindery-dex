@@ -1,20 +1,18 @@
 import React from 'react';
 import DexCard from '../../components/DexCard/DexCard';
 import { Route, Routes } from 'react-router-dom';
-import FaucetMenu from '../../components/FaucetMenu/FaucetMenu';
-import { ROUTES } from '../../config/routes';
+import { FaucetMenu, Loading, PageContainer } from '../../components';
+import { ROUTES } from '../../config';
 import FaucetPageRoot from './FaucetPageRoot';
 import FaucetPageSelectChain from './FaucetPageSelectChain';
 import FaucetPagePlaceholder from './FaucetPagePlaceholder';
-import FaucetController from '../../controllers/FaucetController';
-import { useAppSelector } from '../../store/storeHooks';
+import { FaucetController } from '../../controllers';
 import {
+  useAppSelector,
   selectUserId,
   selectUserIsAdmin,
   selectUserIsAdminLoading,
-} from '../../store/slices/userSlice';
-import Loading from '../../components/Loading/Loading';
-import PageContainer from '../../components/PageContainer/PageContainer';
+} from '../../store';
 
 function FaucetPage() {
   const isLoading = useAppSelector(selectUserIsAdminLoading);

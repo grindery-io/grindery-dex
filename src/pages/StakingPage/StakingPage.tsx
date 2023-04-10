@@ -1,12 +1,12 @@
 import React from 'react';
 import { Route, Routes } from 'react-router-dom';
-import DexCard from '../../components/DexCard/DexCard';
+import { DexCard } from '../../components';
 import StakingPageRoot from './StakingPageRoot';
 import StakingPageStake from './StakingPageStake';
 import StakingPageWithdraw from './StakingPageWithdraw';
 import StakingPageSelectChain from './StakingPageSelectChain';
-import { ROUTES } from '../../config/routes';
-import StakesController from '../../controllers/StakesController';
+import { ROUTES } from '../../config';
+import { StakesController } from '../../controllers';
 
 function StakingPage() {
   return (

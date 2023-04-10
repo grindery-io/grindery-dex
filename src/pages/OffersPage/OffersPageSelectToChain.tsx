@@ -1,23 +1,25 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { IconButton } from '@mui/material';
 import { Box } from '@mui/system';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
 import DexCardHeader from '../../components/DexCard/DexCardHeader';
-import ChainsList from '../../components/ChainsList/ChainsList';
-import TokenSearch from '../../components/TokenSearch/TokenSearch';
-import TokensList from '../../components/TokensList/TokensList';
-import NotFound from '../../components/NotFound/NotFound';
-import { useNavigate } from 'react-router-dom';
+import {
+  NotFound,
+  TokensList,
+  TokenSearch,
+  ChainsList,
+} from '../../components';
 import DexCardBody from '../../components/DexCard/DexCardBody';
-import { ChainType } from '../../types/ChainType';
-import { useAppSelector } from '../../store/storeHooks';
-import { selectChainsItems } from '../../store/slices/chainsSlice';
-import { selectOffersCreateInput } from '../../store/slices/offersSlice';
-import { useOffersController } from '../../controllers/OffersController';
-import { getChainById } from '../../utils/helpers/chainHelpers';
-import { getTokensByChain } from '../../utils/helpers/tokenHelpers';
-import { TokenType } from '../../types/TokenType';
-import { ROUTES } from '../../config/routes';
+import { ChainType, TokenType } from '../../types';
+import {
+  useAppSelector,
+  selectChainsItems,
+  selectOffersCreateInput,
+} from '../../store';
+import { useOffersController } from '../../controllers';
+import { getChainById, getTokensByChain } from '../../utils';
+import { ROUTES } from '../../config';
 
 function OffersPageSelectToChain() {
   let navigate = useNavigate();

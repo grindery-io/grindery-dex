@@ -6,15 +6,15 @@ import DexCardBody from '../../components/DexCard/DexCardBody';
 import DexCardHeader from '../../components/DexCard/DexCardHeader';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
 import ChainsList from '../../components/ChainsList/ChainsList';
-import { ChainType } from '../../types/ChainType';
-import { useAppSelector } from '../../store/storeHooks';
+import { ChainType } from '../../types';
 import {
+  useAppSelector,
   selectChainsItems,
   selectChainsLoading,
-} from '../../store/slices/chainsSlice';
-import { ROUTES } from '../../config/routes';
-import { selectAutomationsInput } from '../../store/slices/automationsSlice';
-import { useAutomationsController } from '../../controllers/AutomationsController';
+  selectAutomationsInput,
+} from '../../store';
+import { ROUTES } from '../../config';
+import { useAutomationsController } from '../../controllers';
 
 type Props = {};
 

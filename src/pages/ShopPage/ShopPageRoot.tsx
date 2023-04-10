@@ -1,32 +1,26 @@
 import React from 'react';
 import { Box } from '@mui/system';
-import OfferCard from '../../components/OfferCard/OfferCard';
 import { Stack } from '@mui/material';
 import ShopPageOfferAccept from './ShopPageOfferAccept';
-import { OfferType } from '../../types/OfferType';
-import { useAppSelector } from '../../store/storeHooks';
+import { OfferCard, Loading } from '../../components';
+import { OfferType } from '../../types';
 import {
+  useAppSelector,
   selectShopAccepting,
   selectShopApproved,
   selectShopFilter,
   selectShopFromTokenPrice,
   selectShopLoading,
   selectShopOffers,
-} from '../../store/slices/shopSlice';
-import Loading from '../../components/Loading/Loading';
-import { selectChainsItems } from '../../store/slices/chainsSlice';
-import { getChainById } from '../../utils/helpers/chainHelpers';
-import {
-  getTokenById,
-  getTokenBySymbol,
-} from '../../utils/helpers/tokenHelpers';
-import { useShopController } from '../../controllers/ShopController';
-import {
+  selectChainsItems,
   selectUserAccessToken,
   selectUserAddress,
   selectUserChainId,
-} from '../../store/slices/userSlice';
-import { selectPoolAbi, selectTokenAbi } from '../../store/slices/abiSlice';
+  selectPoolAbi,
+  selectTokenAbi,
+} from '../../store';
+import { getChainById, getTokenById } from '../../utils';
+import { useShopController } from '../../controllers';
 
 type Props = {};
 

@@ -1,27 +1,22 @@
 import React from 'react';
+import { Box } from '@mui/system';
 import DexCardHeader from '../../components/DexCard/DexCardHeader';
 import DexCardBody from '../../components/DexCard/DexCardBody';
-import OrderCard from '../../components/OrderCard/OrderCard';
-import { Box } from '@mui/system';
-import NotFound from '../../components/NotFound/NotFound';
-import OrderSkeleton from '../../components/OrderCard/OrderSkeleton';
-import { OrderType } from '../../types/OrderType';
-import { useAppSelector } from '../../store/storeHooks';
+import { OrderCard, NotFound, OrderSkeleton } from '../../components';
+import { OrderType, LiquidityWalletType } from '../../types';
 import {
+  useAppSelector,
   selectOrdersError,
   selectOrdersItems,
   selectOrdersLoading,
-} from '../../store/slices/ordersSlice';
-import { sortOrdersByDate } from '../../utils/helpers/orderHelpers';
-import { useOrdersController } from '../../controllers/OrdersController';
-import {
   selectUserAccessToken,
   selectUserChainId,
-} from '../../store/slices/userSlice';
-import { selectLiquidityWalletAbi } from '../../store/slices/abiSlice';
-import { LiquidityWalletType } from '../../types/LiquidityWalletType';
-import { selectChainsItems } from '../../store/slices/chainsSlice';
-import { selectWalletsItems } from '../../store/slices/walletsSlice';
+  selectLiquidityWalletAbi,
+  selectChainsItems,
+  selectWalletsItems,
+} from '../../store';
+import { sortOrdersByDate } from '../../utils';
+import { useOrdersController } from '../../controllers';
 
 function OrdersPageRoot() {
   const accessToken = useAppSelector(selectUserAccessToken);

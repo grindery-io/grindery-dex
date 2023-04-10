@@ -1,19 +1,16 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { IconButton, Tooltip } from '@mui/material';
 import { Box } from '@mui/system';
 import { AddCircleOutline as AddCircleOutlineIcon } from '@mui/icons-material';
 import DexCardHeader from '../../components/DexCard/DexCardHeader';
 import DexCardSubmitButton from '../../components/DexCard/DexCardSubmitButton';
 import DexCardBody from '../../components/DexCard/DexCardBody';
-import { LiquidityWalletType } from '../../types/LiquidityWalletType';
-import LiquidityWallet from '../../components/LiquidityWallet/LiquidityWallet';
-import { useNavigate } from 'react-router-dom';
-import Loading from '../../components/Loading/Loading';
-import { useAppSelector } from '../../store/storeHooks';
-import { selectChainsItems } from '../../store/slices/chainsSlice';
-import { ROUTES } from '../../config/routes';
-import { selectUserId } from '../../store/slices/userSlice';
-import { useUserController } from '../../controllers/UserController';
+import { LiquidityWalletType } from '../../types';
+import { LiquidityWallet, Loading } from '../../components';
+import { useAppSelector, selectChainsItems, selectUserId } from '../../store';
+import { ROUTES } from '../../config';
+import { useUserController } from '../../controllers';
 import {
   selectWalletsItems,
   selectWalletsLoading,

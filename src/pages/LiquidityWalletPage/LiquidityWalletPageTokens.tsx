@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { IconButton, Skeleton, Tooltip } from '@mui/material';
 import { Box } from '@mui/system';
 import { AddCircleOutline as AddCircleOutlineIcon } from '@mui/icons-material';
@@ -6,25 +7,21 @@ import DexCardHeader from '../../components/DexCard/DexCardHeader';
 import DexCardSubmitButton from '../../components/DexCard/DexCardSubmitButton';
 import DexCardBody from '../../components/DexCard/DexCardBody';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
-import { useNavigate, useParams } from 'react-router-dom';
-import { TokenType } from '../../types/TokenType';
+import { TokenType } from '../../types';
 import LiquidityWalletToken, {
   WalletToken,
 } from '../../components/LiquidityWalletToken/LiquidityWalletToken';
-import Loading from '../../components/Loading/Loading';
-import { useAppSelector } from '../../store/storeHooks';
-import { selectChainsItems } from '../../store/slices/chainsSlice';
-import { selectUserId } from '../../store/slices/userSlice';
-import { useUserController } from '../../controllers/UserController';
-import { ROUTES } from '../../config/routes';
+import { Loading } from '../../components';
 import {
+  useAppSelector,
+  selectChainsItems,
+  selectUserId,
   selectWalletsItems,
   selectWalletsLoading,
-} from '../../store/slices/walletsSlice';
-import {
-  getWalletById,
-  getWalletChain,
-} from '../../utils/helpers/walletHelpers';
+} from '../../store';
+import { useUserController } from '../../controllers';
+import { ROUTES } from '../../config';
+import { getWalletById, getWalletChain } from '../../utils';
 
 function LiquidityWalletPageTokens() {
   let navigate = useNavigate();
@@ -43,7 +40,7 @@ function LiquidityWalletPageTokens() {
     if (!currentWallet && !walletsIsLoading) {
       navigate(ROUTES.SELL.WALLETS.ROOT.FULL_PATH);
     }
-  }, [currentWallet, walletsIsLoading]);
+  }, [currentWallet, walletsIsLoading, navigate]);
 
   return (
     <>

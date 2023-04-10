@@ -1,6 +1,6 @@
 import React from 'react';
-import DexCard from '../../components/DexCard/DexCard';
 import { Route, Routes } from 'react-router-dom';
+import { DexCard } from '../../components';
 import LiquidityWalletPageRoot from './LiquidityWalletPageRoot';
 import LiquidityWalletPageCreate from './LiquidityWalletPageCreate';
 import LiquidityWalletPageWithdraw from './LiquidityWalletPageWithdraw';
@@ -8,7 +8,7 @@ import LiquidityWalletPageAdd from './LiquidityWalletPageAdd';
 import LiquidityWalletPageSelectChain from './LiquidityWalletPageSelectChain';
 import LiquidityWalletPageTokens from './LiquidityWalletPageTokens';
 import LiquidityWalletPageSelectToken from './LiquidityWalletPageSelectToken';
-import { ROUTES } from '../../config/routes';
+import { ROUTES } from '../../config';
 
 function LiquidityWalletPage() {
   return (

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
-import PageContainer from '../../components/PageContainer/PageContainer';
+import { PageContainer } from '../../components';
 import TradePage from '../TradePage/TradePage';
 import ShopPage from '../ShopPage/ShopPage';
 

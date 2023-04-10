@@ -1,25 +1,23 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { IconButton, Tooltip } from '@mui/material';
 import { AddCircleOutline as AddCircleOutlineIcon } from '@mui/icons-material';
 import DexCardHeader from '../../components/DexCard/DexCardHeader';
-import Stake from '../../components/Stake/Stake';
 import DexCardSubmitButton from '../../components/DexCard/DexCardSubmitButton';
 import DexCardBody from '../../components/DexCard/DexCardBody';
-import Loading from '../../components/Loading/Loading';
-import { StakeType } from '../../types/StakeType';
-import AlertBox from '../../components/AlertBox/AlertBox';
-import { useNavigate } from 'react-router-dom';
-import { useAppSelector } from '../../store/storeHooks';
-import { selectChainsItems } from '../../store/slices/chainsSlice';
+import { AlertBox, Stake, Loading } from '../../components';
+import { StakeType } from '../../types';
 import {
+  useAppSelector,
+  selectChainsItems,
   selectStakesError,
   selectStakesItems,
   selectStakesLoading,
-} from '../../store/slices/stakesSlice';
-import { selectUserId } from '../../store/slices/userSlice';
-import { useUserController } from '../../controllers/UserController';
-import { ROUTES } from '../../config/routes';
-import { getStakeChain } from '../../utils/helpers/stakeHelpers';
+  selectUserId,
+} from '../../store';
+import { useUserController } from '../../controllers';
+import { ROUTES } from '../../config';
+import { getStakeChain } from '../../utils';
 
 function StakingPageRoot() {
   let navigate = useNavigate();

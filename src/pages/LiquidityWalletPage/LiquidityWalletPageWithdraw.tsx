@@ -1,38 +1,30 @@
 import React, { useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { IconButton, Button as MuiButton } from '@mui/material';
 import { Box } from '@mui/system';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
 import DexCardHeader from '../../components/DexCard/DexCardHeader';
 import DexCardSubmitButton from '../../components/DexCard/DexCardSubmitButton';
 import DexCardBody from '../../components/DexCard/DexCardBody';
-import Loading from '../../components/Loading/Loading';
-import TextInput from '../../components/TextInput/TextInput';
-import { LiquidityWalletType } from '../../types/LiquidityWalletType';
-import { useNavigate, useParams } from 'react-router-dom';
-import AlertBox from '../../components/AlertBox/AlertBox';
-import { useAppDispatch, useAppSelector } from '../../store/storeHooks';
+import { AlertBox, Loading, TextInput } from '../../components';
+import { LiquidityWalletType } from '../../types';
 import {
+  useAppDispatch,
+  useAppSelector,
   selectUserAccessToken,
   selectUserChainId,
   selectUserId,
-} from '../../store/slices/userSlice';
-import { useUserController } from '../../controllers/UserController';
-import { selectChainsItems } from '../../store/slices/chainsSlice';
-import {
+  selectChainsItems,
   clearWalletsWithdrawTokensInput,
   selectWalletWithdrawTokensInput,
   selectWalletsError,
   selectWalletsItems,
   selectWalletsLoading,
-} from '../../store/slices/walletsSlice';
-import {
-  getWalletById,
-  getWalletChain,
-} from '../../utils/helpers/walletHelpers';
-import { ROUTES } from '../../config/routes';
-import { getTokenBySymbol } from '../../utils/helpers/tokenHelpers';
-import { useWalletsController } from '../../controllers/WalletsController';
-import { selectLiquidityWalletAbi } from '../../store/slices/abiSlice';
+  selectLiquidityWalletAbi,
+} from '../../store';
+import { useUserController, useWalletsController } from '../../controllers';
+import { getWalletById, getWalletChain, getTokenBySymbol } from '../../utils';
+import { ROUTES } from '../../config';
 
 function LiquidityWalletPageWithdraw() {
   let navigate = useNavigate();
@@ -65,7 +57,7 @@ function LiquidityWalletPageWithdraw() {
     if (!currentWallet && !walletsIsLoading) {
       navigate(ROUTES.SELL.WALLETS.ROOT.FULL_PATH);
     }
-  }, [currentWallet, walletsIsLoading]);
+  }, [currentWallet, walletsIsLoading, navigate]);
 
   return (
     <>

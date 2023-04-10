@@ -12,29 +12,23 @@ import TransactionID from '../../components/TransactionID/TransactionID';
 import Loading from '../../components/Loading/Loading';
 import TextInput from '../../components/TextInput/TextInput';
 import { CardTitle } from '../../components/Card/CardTitle';
-import { useAppSelector } from '../../store/storeHooks';
 import {
+  useAppSelector,
   selectLiquidityWalletAbi,
   selectPoolAbi,
-} from '../../store/slices/abiSlice';
-import {
   selectUserAccessToken,
   selectUserChainId,
   selectUserId,
-} from '../../store/slices/userSlice';
-import { useUserController } from '../../controllers/UserController';
-import { ROUTES } from '../../config/routes';
-import {
   selectAutomationsBotAddress,
   selectAutomationsError,
   selectAutomationsInput,
   selectAutomationsLoading,
-} from '../../store/slices/automationsSlice';
-import { selectChainsItems } from '../../store/slices/chainsSlice';
-import { ChainType } from '../../types/ChainType';
-import { useAutomationsController } from '../../controllers/AutomationsController';
-import { LiquidityWalletType } from '../../types/LiquidityWalletType';
-import { selectWalletsItems } from '../../store/slices/walletsSlice';
+  selectChainsItems,
+  selectWalletsItems,
+} from '../../store';
+import { useUserController, useAutomationsController } from '../../controllers';
+import { ROUTES } from '../../config';
+import { ChainType, LiquidityWalletType } from '../../types';
 
 type Props = {};
 
