@@ -10,3 +10,5 @@ export * from './slices/stakesSlice';
 export * from './slices/tradeSlice';
 export * from './slices/userSlice';
 export * from './slices/walletsSlice';
+export * from './storeHooks';
+export * from './store';
