@@ -1,7 +1,7 @@
-import { Alert } from 'grindery-ui';
+import { ReactElement } from 'react';
 import { Wrapper } from './style';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
-import { ReactElement } from 'react';
+import { Alert } from '@mui/material';
 
 type Props = {
   color?: 'success' | 'error';

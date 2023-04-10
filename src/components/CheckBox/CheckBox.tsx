@@ -1,5 +1,5 @@
-import React from "react";
-import { ICONS } from "../../constants";
+import React from 'react';
+import { ICONS } from '../../config';
 
 type Props = {
   checked: boolean;
@@ -14,12 +14,12 @@ const CheckBox = (props: Props) => {
       onClick={() => {
         onChange(!checked);
       }}
-      style={{ cursor: "pointer", ...style }}
+      style={{ cursor: 'pointer', ...style }}
     >
       <img
         src={checked ? ICONS.CHECKBOX_CHECKED : ICONS.CHECKBOX_EMPTY}
-        alt={checked ? "filled checkbox icon" : "empty checkbox icon"}
-        style={{ display: "block" }}
+        alt={checked ? 'filled checkbox icon' : 'empty checkbox icon'}
+        style={{ display: 'block' }}
       />
     </div>
   );

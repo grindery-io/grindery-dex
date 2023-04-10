@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box } from '@mui/system';
-import useShopPage from '../../hooks/useShopPage';
+import Countdown from 'react-countdown';
 import {
   Button,
   Dialog,
@@ -8,33 +8,51 @@ import {
   DialogContent,
   DialogTitle,
 } from '@mui/material';
-import useGrinderyChains from '../../hooks/useGrinderyChains';
-import Loading from '../../components/Loading/Loading';
-import AlertBox from '../../components/AlertBox/AlertBox';
-import Countdown from 'react-countdown';
-import TransactionID from '../../components/TransactionID/TransactionID';
-import Offer from '../../models/Offer';
+import { TransactionID, AlertBox, Loading } from '../../components';
+import {
+  useAppDispatch,
+  useAppSelector,
+  selectChainsItems,
+  selectShopAcceptedOffer,
+  selectShopAcceptedOfferTx,
+  selectShopAccepting,
+  selectShopError,
+  selectShopFilter,
+  selectShopModal,
+  selectShopOffers,
+  setShopAcceptedOffer,
+  setShopAcceptedOfferTx,
+  setShopModal,
+} from '../../store';
+import { OfferType } from '../../types';
 
 type Props = {};
 
 const ShopPageOfferAccept = (props: Props) => {
-  const {
-    foundOffers,
-    showModal,
-    handleModalClosed,
-    accepting,
-    errorMessage,
-    accepted,
-  } = useShopPage();
-  const { chains } = useGrinderyChains();
+  const dispatch = useAppDispatch();
+  const foundOffers = useAppSelector(selectShopOffers);
+  const showModal = useAppSelector(selectShopModal);
+  const accepting = useAppSelector(selectShopAccepting);
+  const errorMessage = useAppSelector(selectShopError);
+  const accepted = useAppSelector(selectShopAcceptedOffer);
+  const acceptedOfferTx = useAppSelector(selectShopAcceptedOfferTx);
+  const chains = useAppSelector(selectChainsItems);
+  const filter = useAppSelector(selectShopFilter);
+  const { fromChainId } = filter;
   const acceptedOffer =
-    accepting && foundOffers.find((o: Offer) => o.offerId === accepting);
-
-  const explorerLink = accepted
+    accepting && foundOffers.find((o: OfferType) => o.offerId === accepting);
+  const explorerLink = acceptedOfferTx
     ? (
-        chains.find((c) => c.value === `eip155:5`)?.transactionExplorerUrl || ''
-      ).replace('{hash}', accepted)
+        chains.find((c) => c.value === `eip155:${fromChainId}`)
+          ?.transactionExplorerUrl || ''
+      ).replace('{hash}', acceptedOfferTx)
     : '';
+
+  const handleModalClosed = () => {
+    dispatch(setShopAcceptedOffer(''));
+    dispatch(setShopAcceptedOfferTx(''));
+    dispatch(setShopModal(false));
+  };
 
   const countdownRenderer = ({
     total,
@@ -55,7 +73,7 @@ const ShopPageOfferAccept = (props: Props) => {
   return (
     <Dialog
       fullWidth
-      sx={{ maxWidth: '375px' }}
+      sx={{ width: '100%', maxWidth: '375px', margin: '0 auto' }}
       open={showModal}
       onClose={handleModalClosed}
     >
@@ -117,7 +135,7 @@ const ShopPageOfferAccept = (props: Props) => {
               </p>
               <TransactionID
                 containerStyle={{ marginTop: '8px' }}
-                value={accepted}
+                value={acceptedOfferTx}
                 label="ID"
                 link={explorerLink}
                 startLength={6}

@@ -1,62 +1,84 @@
 import React, { useEffect } from 'react';
 import { IconButton } from '@mui/material';
-import { useGrinderyNexus } from 'use-grindery-nexus';
 import { Box } from '@mui/system';
-import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
-import DexCardHeader from '../../components/DexCard/DexCardHeader';
-import DexCardSubmitButton from '../../components/DexCard/DexCardSubmitButton';
-import DexCardBody from '../../components/DexCard/DexCardBody';
-import Loading from '../../components/Loading/Loading';
-import TextInput from '../../components/TextInput/TextInput';
 import { useNavigate, useParams } from 'react-router-dom';
-import useLiquidityWalletPage from '../../hooks/useLiquidityWalletPage';
-import SelectTokenButton from '../../components/SelectTokenButton/SelectTokenButton';
-import { TokenType } from '../../types/TokenType';
-import { LiquidityWallet } from '../../types/LiquidityWallet';
-import useGrinderyChains from '../../hooks/useGrinderyChains';
-import { Chain } from '../../types/Chain';
-import useLiquidityWallets from '../../hooks/useLiquidityWallets';
-import AlertBox from '../../components/AlertBox/AlertBox';
+import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
+import {
+  AlertBox,
+  Loading,
+  TextInput,
+  SelectTokenButton,
+  PageCardHeader,
+  PageCardBody,
+  PageCardSubmitButton,
+} from '../../components';
+import {
+  useAppDispatch,
+  useAppSelector,
+  selectChainsItems,
+  selectUserAccessToken,
+  selectUserChainId,
+  selectUserId,
+  clearWalletsAddTokensInput,
+  selectWalletsAddTokensInput,
+  selectWalletsError,
+  selectWalletsItems,
+  selectWalletsLoading,
+} from '../../store';
+import { useUserController, useWalletsController } from '../../controllers';
+import { ROUTES } from '../../config';
+import {
+  getWalletById,
+  getWalletChain,
+  getTokenById,
+  getTokenBySymbol,
+} from '../../utils';
 
 function LiquidityWalletPageAdd() {
-  const { user, connect } = useGrinderyNexus();
-  const {
-    amountAdd,
-    loading,
-    errorMessage,
-    VIEWS,
-    setAmountAdd,
-    setErrorMessage,
-    handleAddClick,
-    token,
-    setToken,
-  } = useLiquidityWalletPage();
   let navigate = useNavigate();
-  const { wallets, isLoading: walletsIsLoading } = useLiquidityWallets();
-
-  const { chains } = useGrinderyChains();
-  let { walletId } = useParams();
-
-  const currentWallet = wallets.find(
-    (w: LiquidityWallet) => w._id === walletId
-  );
-
-  const walletChain = chains.find(
-    (c: Chain) => c.chainId === currentWallet?.chainId
-  );
-
-  const selectedToken =
-    walletChain?.tokens?.find((t: TokenType) => t.symbol === token) || '';
+  let { walletId, tokenSymbol } = useParams();
+  const dispatch = useAppDispatch();
+  const user = useAppSelector(selectUserId);
+  const { connectUser: connect } = useUserController();
+  const accessToken = useAppSelector(selectUserAccessToken);
+  const userChainId = useAppSelector(selectUserChainId);
+  const chains = useAppSelector(selectChainsItems);
+  const wallets = useAppSelector(selectWalletsItems);
+  const walletsIsLoading = useAppSelector(selectWalletsLoading);
+  const loading = useAppSelector(selectWalletsLoading);
+  const errorMessage = useAppSelector(selectWalletsError);
+  const input = useAppSelector(selectWalletsAddTokensInput);
+  const { amount, tokenId } = input;
+  const currentWallet = getWalletById(walletId || '', wallets);
+  const walletChain = currentWallet
+    ? getWalletChain(currentWallet, chains)
+    : null;
+  const token = getTokenById(tokenId, walletChain?.chainId || '', chains);
+  const preselectedToken =
+    tokenSymbol && tokenSymbol !== 'any'
+      ? getTokenBySymbol(tokenSymbol, walletChain?.chainId || '', chains)
+      : null;
+  const { handleWalletsAddtokensInputChange, handleAddTokensAction } =
+    useWalletsController();
 
   useEffect(() => {
     if (!currentWallet && !walletsIsLoading) {
-      navigate(VIEWS.ROOT.fullPath);
+      navigate(ROUTES.SELL.WALLETS.ROOT.FULL_PATH);
     }
-  }, [currentWallet, walletsIsLoading]);
+  }, [currentWallet, walletsIsLoading, navigate]);
+
+  useEffect(() => {
+    if (preselectedToken) {
+      handleWalletsAddtokensInputChange(
+        'tokenId',
+        preselectedToken.coinmarketcapId || ''
+      );
+    }
+  }, [preselectedToken, handleWalletsAddtokensInputChange]);
 
   return (
     <>
-      <DexCardHeader
+      <PageCardHeader
         title="Add funds"
         titleSize={18}
         titleAlign="center"
@@ -65,10 +87,12 @@ function LiquidityWalletPageAdd() {
             size="medium"
             edge="start"
             onClick={() => {
-              setAmountAdd('');
-              setToken('');
+              dispatch(clearWalletsAddTokensInput());
               navigate(
-                VIEWS.TOKENS.fullPath.replace(':walletId', walletId || '')
+                ROUTES.SELL.WALLETS.TOKENS.FULL_PATH.replace(
+                  ':walletId',
+                  walletId || ''
+                )
               );
             }}
           >
@@ -78,7 +102,7 @@ function LiquidityWalletPageAdd() {
         endAdornment={<Box width={28} height={40} />}
       />
 
-      <DexCardBody>
+      <PageCardBody>
         {user && walletsIsLoading ? (
           <Loading />
         ) : (
@@ -86,40 +110,36 @@ function LiquidityWalletPageAdd() {
             <SelectTokenButton
               onClick={() => {
                 navigate(
-                  VIEWS.SELECT_TOKEN.fullPath.replace(
+                  ROUTES.SELL.WALLETS.SELECT_TOKEN.FULL_PATH.replace(
                     ':walletId',
                     walletId || ''
                   )
                 );
               }}
               title="Token"
-              token={selectedToken}
+              token={token || ''}
               error={errorMessage}
             />
             <TextInput
               label="Amount"
-              value={amountAdd}
+              value={amount}
               onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                setErrorMessage({
-                  type: '',
-                  text: '',
-                });
-                setAmountAdd(event.target.value);
+                handleWalletsAddtokensInputChange('amount', event.target.value);
               }}
-              name="amountAdd"
+              name="amount"
               placeholder="Enter amount of tokens"
               disabled={false}
               error={errorMessage}
             />
             {errorMessage &&
-              errorMessage.type === 'tx' &&
+              errorMessage.type === 'addTokens' &&
               errorMessage.text && (
                 <AlertBox color="error">
                   <p>{errorMessage.text}</p>
                 </AlertBox>
               )}
             {loading && <Loading />}
-            <DexCardSubmitButton
+            <PageCardSubmitButton
               disabled={loading}
               label={
                 loading
@@ -131,7 +151,13 @@ function LiquidityWalletPageAdd() {
               onClick={
                 user
                   ? () => {
-                      handleAddClick(walletId || '');
+                      handleAddTokensAction(
+                        accessToken,
+                        input,
+                        userChainId,
+                        currentWallet,
+                        token
+                      );
                     }
                   : () => {
                       connect();
@@ -140,7 +166,7 @@ function LiquidityWalletPageAdd() {
             />
           </>
         )}
-      </DexCardBody>
+      </PageCardBody>
     </>
   );
 }

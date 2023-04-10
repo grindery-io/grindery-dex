@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
   Avatar,
   Badge,
@@ -24,16 +24,17 @@ import EvStationIcon from '@mui/icons-material/EvStation';
 import AccessTimeFilledIcon from '@mui/icons-material/AccessTimeFilled';
 import LayersIcon from '@mui/icons-material/Layers';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import useGrinderyChains from '../../hooks/useGrinderyChains';
-import { Chain } from '../../types/Chain';
-import { useGrinderyNexus } from 'use-grindery-nexus';
+import { ChainType, TokenType, OfferType } from '../../types';
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
-import DexCardSubmitButton from '../DexCard/DexCardSubmitButton';
-import { TokenType } from '../../types/TokenType';
 import TransactionID from '../TransactionID/TransactionID';
 import SwapHorizontalCircleIcon from '@mui/icons-material/SwapHorizontalCircle';
-import Offer from '../../models/Offer';
-import { ThemeProvider } from 'styled-components';
+import {
+  getOfferFromChain,
+  getOfferFromToken,
+  getOfferLink,
+  getOfferProviderLink,
+} from '../../utils';
+import PageCardSubmitButton from '../PageCardSubmitButton/PageCardSubmitButton';
 
 export type OfferChain = {
   label: string;
@@ -47,10 +48,10 @@ export type OfferToken = {
 };
 
 type Props = {
-  offer: Offer;
-  fromChain?: Chain | null;
+  offer: OfferType;
+  fromChain?: ChainType | null;
   fromToken?: TokenType | '';
-  onClick?: (offer: Offer) => void;
+  onClick?: (offer: OfferType) => void;
   fromAmount?: string;
   label?: string;
   fromLabel?: string;
@@ -62,6 +63,7 @@ type Props = {
   containerStyle?: SxProps | React.CSSProperties;
   excludeSteps?: ('gas' | 'rate' | 'time' | 'impact')[];
   calculateAmount?: boolean;
+  chains: ChainType[];
 };
 
 interface ExpandMoreProps extends IconButtonProps {
@@ -98,15 +100,12 @@ const OfferPublic = (props: Props) => {
     fromToken,
     excludeSteps,
     calculateAmount,
+    chains,
   } = props;
-  const { token: userToken } = useGrinderyNexus();
-
   const isUserA = !userType || userType === 'a';
 
-  const { chains } = useGrinderyChains();
-
-  const chain = offer.getChain(chains);
-  const token = offer.getToken(chains);
+  const chain = getOfferFromChain(offer, chains);
+  const token = getOfferFromToken(offer, chains);
 
   const amount =
     isUserA || calculateAmount
@@ -119,11 +118,11 @@ const OfferPublic = (props: Props) => {
 
   const [expanded, setExpanded] = useState(false);
 
-  const explorerLink = offer.getOfferLink(chains);
+  const explorerLink = getOfferLink(offer, chains);
 
   const provider = offer.provider;
 
-  const providerLink = offer.getProviderLink(chains);
+  const providerLink = getOfferProviderLink(offer, chains);
 
   const handleExpandClick: React.MouseEventHandler<HTMLButtonElement> = (
     event
@@ -478,7 +477,7 @@ const OfferPublic = (props: Props) => {
                     },
                   }}
                 >
-                  <DexCardSubmitButton
+                  <PageCardSubmitButton
                     loading={isActivating === offer._id}
                     disabled={Boolean(isActivating)}
                     label={offer.isActive ? 'Deactivate' : 'Activate'}
@@ -574,7 +573,7 @@ const OfferPublic = (props: Props) => {
             )}
           </Stepper>
           <Box p="16px">
-            {ThemeProvider ? (
+            {provider ? (
               <TransactionID
                 value={provider || ''}
                 label="Provider"

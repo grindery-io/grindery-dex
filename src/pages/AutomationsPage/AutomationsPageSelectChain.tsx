@@ -2,24 +2,33 @@ import React from 'react';
 import { IconButton } from '@mui/material';
 import { Box } from '@mui/system';
 import { useNavigate } from 'react-router-dom';
-import DexCardBody from '../../components/DexCard/DexCardBody';
-import DexCardHeader from '../../components/DexCard/DexCardHeader';
-import useAutomationsPage from '../../hooks/useAutomationsPage';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
 import ChainsList from '../../components/ChainsList/ChainsList';
-import { Chain } from '../../types/Chain';
-import useGrinderyChains from '../../hooks/useGrinderyChains';
+import { ChainType } from '../../types';
+import {
+  useAppSelector,
+  selectChainsItems,
+  selectChainsLoading,
+  selectAutomationsInput,
+} from '../../store';
+import { ROUTES } from '../../config';
+import { useAutomationsController } from '../../controllers';
+import PageCardHeader from '../../components/PageCardHeader/PageCardHeader';
+import PageCardBody from '../../components/PageCardBody/PageCardBody';
 
 type Props = {};
 
 const AutomationsPageSelectChain = (props: Props) => {
-  const { chain, handleChainChange, VIEWS } = useAutomationsPage();
-  const { chains, isLoading: chainsIsLoading } = useGrinderyChains();
-  const filteredChains = chains.filter((c: Chain) => c.chainId === '97');
+  const chains = useAppSelector(selectChainsItems);
+  const { handleAutomationsInputChange } = useAutomationsController();
+  const chainsIsLoading = useAppSelector(selectChainsLoading);
+  const input = useAppSelector(selectAutomationsInput);
+  const { chainId } = input;
+  const filteredChains = chains.filter((c: ChainType) => c.chainId === '97');
   let navigate = useNavigate();
   return (
     <>
-      <DexCardHeader
+      <PageCardHeader
         title="Select chain"
         titleSize={18}
         titleAlign="center"
@@ -28,7 +37,7 @@ const AutomationsPageSelectChain = (props: Props) => {
             size="medium"
             edge="start"
             onClick={() => {
-              navigate(VIEWS.ROOT.fullPath);
+              navigate(ROUTES.SELL.AUTOMATIONS.ROOT.FULL_PATH);
             }}
           >
             <ArrowBackIcon />
@@ -36,15 +45,18 @@ const AutomationsPageSelectChain = (props: Props) => {
         }
         endAdornment={<Box width={28} height={40} />}
       />
-      <DexCardBody>
+      <PageCardBody>
         <ChainsList
-          chain={chain?.caipId || ''}
+          chain={chainId}
           chains={filteredChains}
-          onClick={handleChainChange}
+          onClick={(chain: ChainType) => {
+            handleAutomationsInputChange('chainId', chain.chainId);
+            navigate(ROUTES.SELL.AUTOMATIONS.ROOT.FULL_PATH);
+          }}
           loading={chainsIsLoading}
         />
         <Box height="20px" />
-      </DexCardBody>
+      </PageCardBody>
     </>
   );
 };

@@ -1,22 +1,28 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { IconButton } from '@mui/material';
 import { Box } from '@mui/system';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
-import DexCardHeader from '../../components/DexCard/DexCardHeader';
-import ChainsList from '../../components/ChainsList/ChainsList';
-import useGrinderyChains from '../../hooks/useGrinderyChains';
-import { useNavigate } from 'react-router-dom';
-import useStakingPage from '../../hooks/useStakingPage';
-import DexCardBody from '../../components/DexCard/DexCardBody';
+import { ChainsList, PageCardBody, PageCardHeader } from '../../components';
+import {
+  useAppSelector,
+  selectChainsItems,
+  selectStakesCreateInput,
+} from '../../store';
+import { ROUTES } from '../../config';
+import { useStakesController } from '../../controllers';
+import { ChainType } from '../../types';
 
 function StakingPageSelectChain() {
-  const { VIEWS, chain, setChain } = useStakingPage();
   let navigate = useNavigate();
-  const { chains } = useGrinderyChains();
+  const chains = useAppSelector(selectChainsItems);
+  const { handleCreateInputChange } = useStakesController();
+  const { chainId } = useAppSelector(selectStakesCreateInput);
+  const currentChain = chains.find((c: ChainType) => c.chainId === chainId);
 
   return (
     <>
-      <DexCardHeader
+      <PageCardHeader
         title="Select blockchain"
         titleSize={18}
         titleAlign="center"
@@ -25,7 +31,7 @@ function StakingPageSelectChain() {
             size="medium"
             edge="start"
             onClick={() => {
-              navigate(VIEWS.STAKE.fullPath);
+              navigate(ROUTES.SELL.STAKING.STAKE.FULL_PATH);
             }}
           >
             <ArrowBackIcon />
@@ -33,17 +39,17 @@ function StakingPageSelectChain() {
         }
         endAdornment={<Box width={28} height={40} />}
       />
-      <DexCardBody>
+      <PageCardBody>
         <ChainsList
-          chain={chain}
+          chain={currentChain?.value || chainId}
           chains={chains}
-          onClick={(blockchain: any) => {
-            setChain(blockchain.value);
-            navigate(VIEWS.STAKE.fullPath);
+          onClick={(blockchain: ChainType) => {
+            handleCreateInputChange('chainId', blockchain.chainId);
+            navigate(ROUTES.SELL.STAKING.STAKE.FULL_PATH);
           }}
         />
         <Box height="20px" />
-      </DexCardBody>
+      </PageCardBody>
     </>
   );
 }

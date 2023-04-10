@@ -1,18 +1,13 @@
 import React from 'react';
 import { Box, Skeleton } from '@mui/material';
-import useGrinderyChains from '../../hooks/useGrinderyChains';
 import TransactionID from '../TransactionID/TransactionID';
-import Offer from '../../models/Offer';
+import { getOfferLink } from '../../utils';
+import { OfferCardProps } from './OfferCard';
 
-type Props = {
-  offer: Offer;
-};
+const OfferCardFooter = (props: OfferCardProps) => {
+  const { offer, chains } = props;
 
-const OfferCardFooter = (props: Props) => {
-  const { offer } = props;
-  const { chains } = useGrinderyChains();
-
-  const explorerLink = offer.getOfferLink(chains);
+  const explorerLink = getOfferLink(offer, chains);
 
   return (
     <Box sx={{ padding: '16px', textAlign: 'center' }}>

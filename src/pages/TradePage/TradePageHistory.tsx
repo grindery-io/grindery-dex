@@ -1,37 +1,38 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Box } from '@mui/system';
-import DexCard from '../../components/DexCard/DexCard';
-import DexCardHeader from '../../components/DexCard/DexCardHeader';
-import useTradePage from '../../hooks/useTradePage';
-import DexCardBody from '../../components/DexCard/DexCardBody';
-import NotFound from '../../components/NotFound/NotFound';
 import { useNavigate } from 'react-router-dom';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
 import { IconButton } from '@mui/material';
-import useOrders from '../../hooks/useOrders';
-import OrderCard from '../../components/OrderCard/OrderCard';
-import OrderSkeleton from '../../components/OrderCard/OrderSkeleton';
-import Order from '../../models/Order';
+import {
+  OrderSkeleton,
+  OrderCard,
+  NotFound,
+  PageCard,
+  PageCardHeader,
+  PageCardBody,
+} from '../../components';
+import { ROUTES } from '../../config';
+import { OrderType } from '../../types';
+import {
+  useAppSelector,
+  selectOrdersHistoryItems,
+  selectOrdersHistoryLoading,
+  selectChainsItems,
+} from '../../store';
+import { sortOrdersByDate } from '../../utils';
 
 type Props = {};
 
 const TradePageHistory = (props: Props) => {
-  const { VIEWS } = useTradePage();
-  const { orders, getOrders, isLoading } = useOrders();
-
-  const sortedOrders = orders?.sort((a: any, b: any) => {
-    return new Date(b.date).getTime() - new Date(a.date).getTime();
-  });
-
   let navigate = useNavigate();
-
-  useEffect(() => {
-    getOrders();
-  }, []);
+  const orders = useAppSelector(selectOrdersHistoryItems);
+  const isLoading = useAppSelector(selectOrdersHistoryLoading);
+  const sortedOrders = sortOrdersByDate(orders);
+  const chains = useAppSelector(selectChainsItems);
 
   return (
-    <DexCard>
-      <DexCardHeader
+    <PageCard>
+      <PageCardHeader
         title="Orders history"
         titleSize={18}
         titleAlign="center"
@@ -40,7 +41,7 @@ const TradePageHistory = (props: Props) => {
             size="medium"
             edge="start"
             onClick={() => {
-              navigate(VIEWS.ROOT.fullPath);
+              navigate(ROUTES.BUY.TRADE.ROOT.FULL_PATH);
             }}
           >
             <ArrowBackIcon />
@@ -48,8 +49,8 @@ const TradePageHistory = (props: Props) => {
         }
         endAdornment={<Box width={28} height={40} />}
       />
-      <DexCardBody maxHeight="540px">
-        {isLoading ? (
+      <PageCardBody maxHeight="540px">
+        {orders.length < 1 && isLoading ? (
           <>
             <OrderSkeleton />
             <OrderSkeleton />
@@ -58,8 +59,13 @@ const TradePageHistory = (props: Props) => {
           <>
             {sortedOrders && sortedOrders.length > 0 ? (
               <>
-                {sortedOrders.map((order: Order) => (
-                  <OrderCard key={order._id} order={order} userType="a" />
+                {sortedOrders.map((order: OrderType) => (
+                  <OrderCard
+                    key={order._id}
+                    chains={chains}
+                    order={order}
+                    userType="a"
+                  />
                 ))}
                 <Box height="10px" />
               </>
@@ -68,8 +74,8 @@ const TradePageHistory = (props: Props) => {
             )}
           </>
         )}
-      </DexCardBody>
-    </DexCard>
+      </PageCardBody>
+    </PageCard>
   );
 };
 

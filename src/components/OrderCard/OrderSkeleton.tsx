@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Skeleton, Stack } from '@mui/material';
+import { Box, Skeleton } from '@mui/material';
 import { Card } from '../Card/Card';
 
 type Props = {};

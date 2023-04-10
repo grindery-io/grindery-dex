@@ -1,18 +1,11 @@
 import React from 'react';
 import { Box } from '@mui/material';
-import useShopPage from '../../hooks/useShopPage';
 import LoadingButton from '@mui/lab/LoadingButton';
 import Loading from '../Loading/Loading';
-import Offer from '../../models/Offer';
+import { OfferCardProps } from './OfferCard';
 
-type Props = {
-  offer: Offer;
-};
-
-const OfferCardAction = (props: Props) => {
-  const { offer } = props;
-  const { handleAcceptOfferClick, accepting, handleModalOpened } =
-    useShopPage();
+const OfferCardAction = (props: OfferCardProps) => {
+  const { offer, accepting, onAcceptOfferClick } = props;
   const loading = Boolean(
     accepting && offer.offerId && accepting === offer.offerId
   );
@@ -52,11 +45,7 @@ const OfferCardAction = (props: Props) => {
           ) : undefined
         }
         onClick={() => {
-          if (loading) {
-            handleModalOpened();
-          } else {
-            handleAcceptOfferClick(offer);
-          }
+          onAcceptOfferClick(offer);
         }}
       >
         {loading ? 'Waiting transaction' : 'Buy now'}

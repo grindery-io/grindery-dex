@@ -1,23 +1,17 @@
 import React from 'react';
 import { StyledTab, StyledTabs } from './NavTabs.style';
 import { useLocation, useNavigate } from 'react-router-dom';
-
-export type MenuItem = {
-  path: string;
-  label: string;
-  icon?: React.ReactElement;
-  iconPosition?: 'bottom' | 'end' | 'start' | 'top';
-};
+import { NavTabsItemType } from './NavTabs.type';
 
 type Props = {
-  menu: MenuItem[];
+  menu: NavTabsItemType[];
 };
 
 const NavTabs = (props: Props) => {
   const { menu } = props;
   let location = useLocation();
   let navigate = useNavigate();
-  const value = menu.findIndex((item: MenuItem) =>
+  const value = menu.findIndex((item: NavTabsItemType) =>
     location.pathname.includes(item.path)
   );
 
@@ -25,8 +19,10 @@ const NavTabs = (props: Props) => {
     navigate(menu[newValue].path);
   };
   return (
-    <StyledTabs value={value} onChange={handleChange}>
-      {menu.map((item: MenuItem) => (
+    // Ignore Material Tabs error for `false` value.
+    // @ts-ignore
+    <StyledTabs value={value >= 0 ? value : false} onChange={handleChange}>
+      {menu.map((item: NavTabsItemType) => (
         <StyledTab
           key={item.path}
           icon={item.icon}

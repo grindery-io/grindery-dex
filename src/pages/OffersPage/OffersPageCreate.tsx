@@ -1,62 +1,77 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { IconButton, Stack } from '@mui/material';
-import { useGrinderyNexus } from 'use-grindery-nexus';
 import { Box } from '@mui/system';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
-import DexCardHeader from '../../components/DexCard/DexCardHeader';
-import DexCardSubmitButton from '../../components/DexCard/DexCardSubmitButton';
-import DexCardBody from '../../components/DexCard/DexCardBody';
-import SelectChainAndTokenButton from '../../components/SelectChainAndTokenButton/SelectChainAndTokenButton';
-import TextInput from '../../components/TextInput/TextInput';
-import Loading from '../../components/Loading/Loading';
-import { useNavigate } from 'react-router-dom';
-import AlertBox from '../../components/AlertBox/AlertBox';
-import useOffersPage from '../../hooks/useOffersPage';
 import { CardTitle } from '../../components/Card/CardTitle';
-import { chain } from 'lodash';
-import useGrinderyChains from '../../hooks/useGrinderyChains';
-import { Chain } from '../../types/Chain';
-import AmountInput from '../../components/AmountInput/AmountInput';
-import UploadButton from '../../components/UploadButton/UploadButton';
+import {
+  AlertBox,
+  SelectChainAndTokenButton,
+  TextInput,
+  Loading,
+  UploadButton,
+  PageCardHeader,
+  PageCardBody,
+  PageCardSubmitButton,
+} from '../../components';
+import {
+  useAppDispatch,
+  useAppSelector,
+  selectUserAccessToken,
+  selectUserChainId,
+  selectUserId,
+  clearOffersCreateInput,
+  selectOffersCreateInput,
+  selectOffersError,
+  selectOffersLoading,
+  selectChainsItems,
+  selectPoolAbi,
+  selectWalletsItems,
+} from '../../store';
+import { ROUTES } from '../../config';
+import { useUserController, useOffersController } from '../../controllers';
+import { getChainById, getTokenById } from '../../utils';
+import { LiquidityWalletType } from '../../types';
 
 function OffersPageCreate() {
-  const { user, connect } = useGrinderyNexus();
+  let navigate = useNavigate();
+  const dispatch = useAppDispatch();
+  const user = useAppSelector(selectUserId);
+  const { connectUser: connect } = useUserController();
+  const accessToken = useAppSelector(selectUserAccessToken);
+  const userChainId = useAppSelector(selectUserChainId);
+  const loading = useAppSelector(selectOffersLoading);
+  const errorMessage = useAppSelector(selectOffersError);
+  const input = useAppSelector(selectOffersCreateInput);
+  const { handleOfferCreateInputChange, handleOfferCreateAction } =
+    useOffersController();
+  const poolAbi = useAppSelector(selectPoolAbi);
   const {
     amountMin,
     amountMax,
-    loading,
-    errorMessage,
-    token,
-    currentChain,
     exchangeRate,
     estimatedTime,
-    setEstimatedTime,
-    setAmountMin,
-    setAmountMax,
-    setErrorMessage,
-    handleCreateClick,
-    setExchangeRate,
-    VIEWS,
-    chain,
-    toChain,
-    toToken,
-    currentToChain,
     title,
-    setTitle,
     image,
-    setImage,
     amount,
-    setAmount,
-  } = useOffersPage();
-  let navigate = useNavigate();
-
-  const { chains } = useGrinderyChains();
-
-  const chainLabel = chains.find((c: Chain) => c.value === chain)?.label;
+    fromChainId,
+    fromTokenId,
+    toChainId,
+    toTokenId,
+  } = input;
+  const wallets = useAppSelector(selectWalletsItems);
+  const wallet = wallets.find(
+    (w: LiquidityWalletType) => w.chainId === fromChainId
+  );
+  const chains = useAppSelector(selectChainsItems);
+  const fromChain = getChainById(fromChainId, chains);
+  const fromToken = getTokenById(fromTokenId, fromChainId, chains);
+  const toChain = getChainById(toChainId, chains);
+  const toToken = getTokenById(toTokenId, toChainId, chains);
 
   return (
     <>
-      <DexCardHeader
+      <PageCardHeader
         title="Create offer"
         titleSize={18}
         titleAlign="center"
@@ -65,11 +80,8 @@ function OffersPageCreate() {
             size="medium"
             edge="start"
             onClick={() => {
-              setAmountMin('');
-              setAmountMax('');
-              setExchangeRate('');
-              setEstimatedTime('');
-              navigate(VIEWS.ROOT.fullPath);
+              dispatch(clearOffersCreateInput());
+              navigate(ROUTES.SELL.OFFERS.ROOT.FULL_PATH);
             }}
           >
             <ArrowBackIcon />
@@ -78,7 +90,7 @@ function OffersPageCreate() {
         endAdornment={<Box width={28} height={40} />}
       />
 
-      <DexCardBody maxHeight="540px">
+      <PageCardBody maxHeight="540px">
         <Stack
           direction="row"
           alignItems="stretch"
@@ -87,26 +99,26 @@ function OffersPageCreate() {
         >
           <SelectChainAndTokenButton
             onClick={() => {
-              navigate(VIEWS.SELECT_CHAIN.fullPath);
+              navigate(ROUTES.SELL.OFFERS.SELECT_CHAIN.FULL_PATH);
             }}
             title="You sell"
-            chain={currentChain}
-            token={token}
+            chain={fromChain}
+            token={fromToken || ''}
             error={errorMessage}
           />
           <SelectChainAndTokenButton
             onClick={() => {
-              navigate(VIEWS.SELECT_TO_CHAIN.fullPath);
+              navigate(ROUTES.SELL.OFFERS.SELECT_TO_CHAIN.FULL_PATH);
             }}
             title="You receive"
-            chain={currentToChain}
-            token={toToken}
+            chain={toChain}
+            token={toToken || ''}
             error={errorMessage}
             name="toChain"
           />
         </Stack>
 
-        {token && toToken && (
+        {fromToken && toToken ? (
           <>
             <CardTitle
               sx={{
@@ -125,7 +137,7 @@ function OffersPageCreate() {
               gap="16px"
             >
               <TextInput
-                label={`${token.symbol} value`}
+                label={`${fromToken.symbol} value`}
                 value={'1'}
                 onChange={() => {}}
                 name="sellRate"
@@ -138,11 +150,10 @@ function OffersPageCreate() {
                 label={`${toToken.symbol} value`}
                 value={exchangeRate}
                 onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                  setErrorMessage({
-                    type: '',
-                    text: '',
-                  });
-                  setExchangeRate(event.target.value);
+                  handleOfferCreateInputChange(
+                    'exchangeRate',
+                    event.target.value
+                  );
                 }}
                 name="exchangeRate"
                 placeholder="1"
@@ -160,18 +171,14 @@ function OffersPageCreate() {
                 marginBottom: '6px',
               }}
             >
-              {token.symbol} order amounts:
+              {fromToken.symbol} order amounts:
             </CardTitle>
 
             <Box display="flex" flexDirection="row" gap="16px">
               <TextInput
                 label="Min. order"
                 onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                  setErrorMessage({
-                    type: '',
-                    text: '',
-                  });
-                  setAmountMin(event.target.value);
+                  handleOfferCreateInputChange('amountMin', event.target.value);
                 }}
                 name="amountMin"
                 placeholder="0.1"
@@ -184,11 +191,7 @@ function OffersPageCreate() {
                 label="Max. order"
                 value={amountMax}
                 onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                  setErrorMessage({
-                    type: '',
-                    text: '',
-                  });
-                  setAmountMax(event.target.value);
+                  handleOfferCreateInputChange('amountMax', event.target.value);
                 }}
                 name="amountMax"
                 placeholder="10"
@@ -201,11 +204,7 @@ function OffersPageCreate() {
               label={`Fixed amount`}
               value={amount}
               onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                setErrorMessage({
-                  type: '',
-                  text: '',
-                });
-                setAmount(event.target.value);
+                handleOfferCreateInputChange('amount', event.target.value);
               }}
               name="amount"
               placeholder="1"
@@ -217,11 +216,10 @@ function OffersPageCreate() {
               label={`Average execution time`}
               value={estimatedTime}
               onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                setErrorMessage({
-                  type: '',
-                  text: '',
-                });
-                setEstimatedTime(event.target.value);
+                handleOfferCreateInputChange(
+                  'estimatedTime',
+                  event.target.value
+                );
               }}
               name="estimatedTime"
               placeholder="60"
@@ -233,11 +231,7 @@ function OffersPageCreate() {
               label={`Offer title`}
               value={title}
               onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                setErrorMessage({
-                  type: '',
-                  text: '',
-                });
-                setTitle(event.target.value);
+                handleOfferCreateInputChange('title', event.target.value);
               }}
               name="title"
               placeholder="Describe your offer"
@@ -250,35 +244,50 @@ function OffersPageCreate() {
               label="Offer image"
               value={image}
               onChange={(img: string) => {
-                setImage(img);
+                handleOfferCreateInputChange('image', img);
               }}
               name="image"
               helpText="Optimal image size 167x174px"
             />
+            {errorMessage &&
+              errorMessage.type === 'saveOffer' &&
+              errorMessage.text && (
+                <AlertBox color="error">
+                  <p>{errorMessage.text}</p>
+                </AlertBox>
+              )}
+            {loading && <Loading />}
+            <PageCardSubmitButton
+              label={
+                loading
+                  ? 'Waiting transaction'
+                  : user
+                  ? 'Create'
+                  : 'Connect wallet'
+              }
+              onClick={
+                user
+                  ? () => {
+                      handleOfferCreateAction(
+                        input,
+                        accessToken,
+                        userChainId,
+                        wallet?.walletAddress || '',
+                        poolAbi,
+                        chains
+                      );
+                    }
+                  : () => {
+                      connect();
+                    }
+              }
+              disabled={loading}
+            />
           </>
+        ) : (
+          <Box height="20px" />
         )}
-        {errorMessage &&
-          errorMessage.type === 'saveOffer' &&
-          errorMessage.text && (
-            <AlertBox color="error">
-              <p>{errorMessage.text}</p>
-            </AlertBox>
-          )}
-        {loading && <Loading />}
-        <DexCardSubmitButton
-          label={
-            loading ? 'Waiting transaction' : user ? 'Create' : 'Connect wallet'
-          }
-          onClick={
-            user
-              ? handleCreateClick
-              : () => {
-                  connect();
-                }
-          }
-          disabled={loading}
-        />
-      </DexCardBody>
+      </PageCardBody>
     </>
   );
 }

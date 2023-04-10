@@ -1,38 +1,50 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Box } from '@mui/system';
-import { Navigate, Route, Routes, useNavigate } from 'react-router-dom';
-import DexCard from '../../components/DexCard/DexCard';
-import DexCardBody from '../../components/DexCard/DexCardBody';
-import DexCardHeader from '../../components/DexCard/DexCardHeader';
 import { IconButton } from '@mui/material';
-import useTradePage from '../../hooks/useTradePage';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
-import ChainsList from '../../components/ChainsList/ChainsList';
-import useGrinderyChains from '../../hooks/useGrinderyChains';
-import TokenSearch from '../../components/TokenSearch/TokenSearch';
-import TokensList from '../../components/TokensList/TokensList';
-import NotFound from '../../components/NotFound/NotFound';
-import { Chain } from '../../types/Chain';
+import {
+  NotFound,
+  TokensList,
+  TokenSearch,
+  ChainsList,
+  PageCard,
+  PageCardHeader,
+  PageCardBody,
+} from '../../components';
+import { ChainType, TokenType } from '../../types';
+import {
+  useAppSelector,
+  selectChainsItems,
+  selectChainsLoading,
+  selectTradeFilter,
+} from '../../store';
+import { ROUTES } from '../../config';
+import { getChainById, getTokensByChain } from '../../utils';
+import { useTradeController } from '../../controllers';
 
 type Props = {};
 
 const TradePageSelectFromChainAndToken = (props: Props) => {
-  const {
-    VIEWS,
-    searchToken,
-    setSearchToken,
-    fromChain,
-    handleFromChainChange,
-    fromChainTokens,
-    currentFromChain,
-    handleFromTokenChange,
-  } = useTradePage();
-  const { chains, isLoading: chainsIsLoading } = useGrinderyChains();
   let navigate = useNavigate();
-  const filteredChains = chains.filter((c: Chain) => c.value === 'eip155:5');
+  const chains = useAppSelector(selectChainsItems);
+  const filter = useAppSelector(selectTradeFilter);
+  const { fromChainId } = filter;
+  const fromChain = getChainById(fromChainId, chains);
+  const chainTokens = getTokensByChain(fromChain);
+  const { handleTradeFilterChange } = useTradeController();
+  const [searchToken, setSearchToken] = useState('');
+  const chainsIsLoading = useAppSelector(selectChainsLoading);
+  const filteredChains = chains.filter(
+    (c: ChainType) => c.value === 'eip155:5'
+  );
+  const fromChainTokens = chainTokens.filter(
+    (t: TokenType) =>
+      !searchToken || t.symbol.toLowerCase().includes(searchToken.toLowerCase())
+  );
   return (
-    <DexCard>
-      <DexCardHeader
+    <PageCard>
+      <PageCardHeader
         title="Select chain and token"
         titleSize={18}
         titleAlign="center"
@@ -41,8 +53,7 @@ const TradePageSelectFromChainAndToken = (props: Props) => {
             size="medium"
             edge="start"
             onClick={() => {
-              setSearchToken('');
-              navigate(VIEWS.ROOT.fullPath);
+              navigate(ROUTES.BUY.TRADE.ROOT.FULL_PATH);
             }}
           >
             <ArrowBackIcon />
@@ -50,11 +61,14 @@ const TradePageSelectFromChainAndToken = (props: Props) => {
         }
         endAdornment={<Box width={28} height={40} />}
       />
-      <DexCardBody>
+      <PageCardBody>
         <ChainsList
           chain={fromChain?.value || ''}
           chains={filteredChains}
-          onClick={handleFromChainChange}
+          onClick={(chain: ChainType) => {
+            handleTradeFilterChange('fromChainId', chain.chainId);
+            handleTradeFilterChange('fromTokenId', '');
+          }}
           loading={chainsIsLoading}
         />
         <TokenSearch
@@ -66,33 +80,35 @@ const TradePageSelectFromChainAndToken = (props: Props) => {
         {chainsIsLoading ? (
           <TokensList
             tokens={fromChainTokens}
-            onClick={handleFromTokenChange}
+            onClick={() => {}}
             loading={chainsIsLoading}
             chainLabel={fromChain?.label}
           />
         ) : (
           <>
-            {currentFromChain &&
-            fromChainTokens &&
-            fromChainTokens.length > 0 ? (
+            {fromChain && fromChainTokens && fromChainTokens.length > 0 ? (
               <TokensList
                 tokens={fromChainTokens}
-                onClick={handleFromTokenChange}
+                onClick={(token: TokenType) => {
+                  handleTradeFilterChange(
+                    'fromTokenId',
+                    token.coinmarketcapId || ''
+                  );
+                  navigate(ROUTES.BUY.TRADE.ROOT.FULL_PATH);
+                }}
                 loading={chainsIsLoading}
                 chainLabel={fromChain?.label}
               />
             ) : (
               <NotFound
                 text={
-                  !currentFromChain ? (
+                  !fromChain ? (
                     <>Please, select a chain to see a list of tokens.</>
                   ) : (
                     <>
                       We couldn't find tokens{' '}
-                      {currentFromChain
-                        ? `on ${currentFromChain?.label} chain`
-                        : ''}
-                      . Please try search again or switch the chain.
+                      {fromChain ? `on ${fromChain?.label} chain` : ''}. Please
+                      try search again or switch the chain.
                     </>
                   )
                 }
@@ -102,8 +118,8 @@ const TradePageSelectFromChainAndToken = (props: Props) => {
         )}
 
         <Box height="20px" />
-      </DexCardBody>
-    </DexCard>
+      </PageCardBody>
+    </PageCard>
   );
 };
 

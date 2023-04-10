@@ -1,23 +1,13 @@
 import React from 'react';
-import './index.css';
-import { ThemeProvider as GrinderyThemeProvider } from 'grindery-ui';
-import GrinderyNexusContextProvider from 'use-grindery-nexus';
+import { Provider as StoreProvider } from 'react-redux';
+import { default as AuthenticationProvider } from 'use-grindery-nexus';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
-import AppContextProvider from './context/AppContext';
-import EarlyAccessModal from './components/EarlyAccessModal/EarlyAccessModal';
-import AppHeader from './components/AppHeader/AppHeader';
-import PageContainer from './components/PageContainer/PageContainer';
-import AbiContextProvider from './context/AbiContext';
-import GrinderyChainsContextProvider from './context/GrinderyChainsContext';
-import SellPage from './pages/SellPage/SellPage';
-import FaucetPage from './pages/FaucetPage/FaucetPage';
-import FaucetPageContextProvider from './context/FaucetPageContext';
-import OffersContextProvider from './context/OffersContext';
-import { OrdersContextProvider } from './context/OrdersContext';
-import StakesContextProvider from './context/StakesContext';
-import LiquidityWalletsContextProvider from './context/LiquidityWalletsContext';
-import AdminContextProvider from './context/AdminContext';
-import BuyPage from './pages/BuyPage/BuyPage';
+import { ThemeProvider } from '@mui/material/styles';
+import './index.css';
+import { store } from './store';
+import { BuyPage, SellPage, FaucetPage, MainNavigation } from './pages';
+import { UserController, ChainsController, AbiController } from './controllers';
+import { theme } from './theme';
 
 declare global {
   interface Window {
@@ -27,58 +17,26 @@ declare global {
 
 export const App = () => {
   return (
-    <GrinderyNexusContextProvider>
-      <AppContextProvider>
-        <BrowserRouter>
-          <AdminContextProvider>
-            <GrinderyThemeProvider>
-              <EarlyAccessModal />
-            </GrinderyThemeProvider>
-            <AppHeader />
-
-            <GrinderyChainsContextProvider>
-              <AbiContextProvider>
-                <StakesContextProvider>
-                  <LiquidityWalletsContextProvider>
-                    <Routes>
-                      <Route
-                        path="/buy/*"
-                        element={
-                          <OffersContextProvider userType="a">
-                            <OrdersContextProvider>
-                              <BuyPage />
-                            </OrdersContextProvider>
-                          </OffersContextProvider>
-                        }
-                      />
-                      <Route
-                        path="/sell/*"
-                        element={
-                          <OffersContextProvider userType="b">
-                            <SellPage />
-                          </OffersContextProvider>
-                        }
-                      />
-                      <Route
-                        path="/faucet/*"
-                        element={
-                          <PageContainer>
-                            <FaucetPageContextProvider>
-                              <FaucetPage />
-                            </FaucetPageContextProvider>
-                          </PageContainer>
-                        }
-                      />
-
-                      <Route path="*" element={<Navigate to="/buy" />} />
-                    </Routes>
-                  </LiquidityWalletsContextProvider>
-                </StakesContextProvider>
-              </AbiContextProvider>
-            </GrinderyChainsContextProvider>
-          </AdminContextProvider>
-        </BrowserRouter>
-      </AppContextProvider>
-    </GrinderyNexusContextProvider>
+    <ThemeProvider theme={theme}>
+      <AuthenticationProvider>
+        <StoreProvider store={store}>
+          <UserController>
+            <AbiController>
+              <ChainsController>
+                <BrowserRouter>
+                  <MainNavigation />
+                  <Routes>
+                    <Route path="/buy/*" element={<BuyPage />} />
+                    <Route path="/sell/*" element={<SellPage />} />
+                    <Route path="/faucet/*" element={<FaucetPage />} />
+                    <Route path="*" element={<Navigate to="/buy" />} />
+                  </Routes>
+                </BrowserRouter>
+              </ChainsController>
+            </AbiController>
+          </UserController>
+        </StoreProvider>
+      </AuthenticationProvider>
+    </ThemeProvider>
   );
 };

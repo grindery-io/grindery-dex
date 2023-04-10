@@ -1,52 +1,55 @@
 import React, { useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { IconButton, Button as MuiButton } from '@mui/material';
-import { useGrinderyNexus } from 'use-grindery-nexus';
 import { Box } from '@mui/system';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
-import DexCardHeader from '../../components/DexCard/DexCardHeader';
-import DexCardSubmitButton from '../../components/DexCard/DexCardSubmitButton';
-import DexCardBody from '../../components/DexCard/DexCardBody';
-import Loading from '../../components/Loading/Loading';
-import TextInput from '../../components/TextInput/TextInput';
-import { useNavigate, useParams } from 'react-router-dom';
-import useStakes from '../../hooks/useStakes';
-import useStakingPage from '../../hooks/useStakingPage';
-import { Stake } from '../../types/Stake';
+import {
+  TextInput,
+  Loading,
+  PageCardHeader,
+  PageCardBody,
+  PageCardSubmitButton,
+} from '../../components';
+import { StakeType } from '../../types';
+import {
+  useAppSelector,
+  selectStakesError,
+  selectStakesItems,
+  selectStakesLoading,
+  selectStakesWithdrawInput,
+  selectUserChainId,
+  selectUserId,
+  selectPoolAbi,
+} from '../../store';
+import { useUserController, useStakesController } from '../../controllers';
+import { ROUTES } from '../../config';
 
 function StakingPageWithdraw() {
-  const { user, connect } = useGrinderyNexus();
-  const {
-    VIEWS,
-    amountAdd,
-    loading,
-    errorMessage,
-    selectedStake,
-    setChain,
-    setAmountAdd,
-    setErrorMessage,
-    setSelectedStake,
-    handleWithdrawClick,
-  } = useStakingPage();
+  const user = useAppSelector(selectUserId);
+  const userChainId = useAppSelector(selectUserChainId);
+  const { connectUser: connect } = useUserController();
+  const input = useAppSelector(selectStakesWithdrawInput);
+  const { amount } = input;
+  const loading = useAppSelector(selectStakesLoading);
+  const errorMessage = useAppSelector(selectStakesError);
+  const poolAbi = useAppSelector(selectPoolAbi);
   let navigate = useNavigate();
-  const { stakes, isLoading: stakesIsLoading } = useStakes();
+  const stakes = useAppSelector(selectStakesItems);
+  const stakesIsLoading = useAppSelector(selectStakesLoading);
+  const { handleWithdrawInputChange, handleStakeWithdrawAction } =
+    useStakesController();
   let { stakeId } = useParams();
-  const currentStake = stakes.find((s: Stake) => s._id === stakeId);
-
-  useEffect(() => {
-    if (currentStake) {
-      setChain(`eip155:${currentStake.chainId}`);
-    }
-  }, [currentStake]);
+  const currentStake = stakes.find((s: StakeType) => s._id === stakeId);
 
   useEffect(() => {
     if (!currentStake && !stakesIsLoading) {
-      navigate(VIEWS.ROOT.fullPath);
+      navigate(ROUTES.SELL.STAKING.ROOT.FULL_PATH);
     }
-  }, [currentStake, stakesIsLoading]);
+  }, [currentStake, stakesIsLoading, navigate]);
 
   return (
     <>
-      <DexCardHeader
+      <PageCardHeader
         title="Withdraw"
         titleSize={18}
         titleAlign="center"
@@ -55,9 +58,8 @@ function StakingPageWithdraw() {
             size="medium"
             edge="start"
             onClick={() => {
-              setAmountAdd('');
-              setSelectedStake('');
-              navigate(VIEWS.ROOT.fullPath);
+              handleWithdrawInputChange('amount', '');
+              navigate(ROUTES.SELL.STAKING.ROOT.FULL_PATH);
             }}
           >
             <ArrowBackIcon />
@@ -66,21 +68,15 @@ function StakingPageWithdraw() {
         endAdornment={<Box width={28} height={40} />}
       />
 
-      <DexCardBody>
-        {user && stakesIsLoading ? (
-          <Loading />
-        ) : (
+      <PageCardBody>
+        {user && (
           <TextInput
             label="GRT Amount"
-            value={amountAdd}
+            value={amount}
             onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-              setErrorMessage({
-                type: '',
-                text: '',
-              });
-              setAmountAdd(event.target.value);
+              handleWithdrawInputChange('amount', event.target.value);
             }}
-            name="amountAdd"
+            name="amount"
             placeholder="Enter amount of tokens"
             disabled={false}
             endAdornment={
@@ -108,8 +104,10 @@ function StakingPageWithdraw() {
                   size="small"
                   variant="contained"
                   onClick={() => {
-                    setAmountAdd(
-                      stakes.find((s) => s._id === selectedStake)?.amount || '0'
+                    handleWithdrawInputChange(
+                      'amount',
+                      stakes.find((s) => s._id === currentStake?._id)?.amount ||
+                        '0'
                     );
                   }}
                 >
@@ -122,7 +120,7 @@ function StakingPageWithdraw() {
         )}
 
         {loading && <Loading />}
-        <DexCardSubmitButton
+        <PageCardSubmitButton
           disabled={loading}
           label={
             loading
@@ -133,13 +131,22 @@ function StakingPageWithdraw() {
           }
           onClick={
             user
-              ? handleWithdrawClick
+              ? () => {
+                  if (currentStake) {
+                    handleStakeWithdrawAction(
+                      input,
+                      currentStake,
+                      userChainId,
+                      poolAbi
+                    );
+                  }
+                }
               : () => {
                   connect();
                 }
           }
         />
-      </DexCardBody>
+      </PageCardBody>
     </>
   );
 }

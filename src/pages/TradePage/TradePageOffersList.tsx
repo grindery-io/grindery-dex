@@ -1,27 +1,37 @@
 import React from 'react';
-import { Box } from '@mui/system';
-import DexCard from '../../components/DexCard/DexCard';
-import DexCardHeader from '../../components/DexCard/DexCardHeader';
-import useTradePage from '../../hooks/useTradePage';
-import DexCardBody from '../../components/DexCard/DexCardBody';
-import NotFound from '../../components/NotFound/NotFound';
-import useGrinderyChains from '../../hooks/useGrinderyChains';
-import OfferPublic from '../../components/Offer/OfferPublic';
-import OfferSkeleton from '../../components/Offer/OfferSkeleton';
 import { useNavigate } from 'react-router-dom';
-import Offer from '../../models/Offer';
+import { Box } from '@mui/system';
+import {
+  OfferSkeleton,
+  OfferPublic,
+  NotFound,
+  PageCard,
+  PageCardHeader,
+  PageCardBody,
+} from '../../components';
+import { OfferType } from '../../types';
+import { ROUTES } from '../../config';
+import {
+  useAppSelector,
+  selectTradeFilter,
+  selectTradeLoading,
+  selectTradeOffers,
+  selectChainsItems,
+} from '../../store';
 
 type Props = {};
 
 const TradePageOffersList = (props: Props) => {
-  const { VIEWS, loading, foundOffers, fromAmount } = useTradePage();
-  const { chains } = useGrinderyChains();
   let navigate = useNavigate();
+  const loading = useAppSelector(selectTradeLoading);
+  const foundOffers = useAppSelector(selectTradeOffers);
+  const { amount } = useAppSelector(selectTradeFilter);
+  const chains = useAppSelector(selectChainsItems);
 
   return (
-    <DexCard>
-      <DexCardHeader title="Offers" />
-      <DexCardBody maxHeight="540px">
+    <PageCard>
+      <PageCardHeader title="Offers" />
+      <PageCardBody maxHeight="540px">
         {loading && [1, 2, 3].map((i: number) => <OfferSkeleton key={i} />)}
         {!loading && foundOffers.length < 1 && (
           <NotFound
@@ -35,15 +45,16 @@ const TradePageOffersList = (props: Props) => {
         )}
         {!loading &&
           foundOffers.length > 0 &&
-          foundOffers.map((offer: Offer) => (
+          foundOffers.map((offer: OfferType) => (
             <OfferPublic
               key={offer._id}
+              chains={chains}
               compact
               offer={offer}
-              fromAmount={fromAmount}
-              onClick={(o: Offer) => {
+              fromAmount={amount}
+              onClick={(o: OfferType) => {
                 navigate(
-                  VIEWS.ACCEPT_OFFER.fullPath.replace(
+                  ROUTES.BUY.TRADE.ACCEPT_OFFER.FULL_PATH.replace(
                     ':offerId',
                     o.offerId || o._id
                   )
@@ -53,8 +64,8 @@ const TradePageOffersList = (props: Props) => {
           ))}
 
         <Box height="10px" />
-      </DexCardBody>
-    </DexCard>
+      </PageCardBody>
+    </PageCard>
   );
 };
 

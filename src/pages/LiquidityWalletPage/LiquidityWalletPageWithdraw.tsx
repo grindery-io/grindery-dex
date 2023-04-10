@@ -1,49 +1,71 @@
 import React, { useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { IconButton, Button as MuiButton } from '@mui/material';
-import { useGrinderyNexus } from 'use-grindery-nexus';
 import { Box } from '@mui/system';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
-import DexCardHeader from '../../components/DexCard/DexCardHeader';
-import DexCardSubmitButton from '../../components/DexCard/DexCardSubmitButton';
-import DexCardBody from '../../components/DexCard/DexCardBody';
-import Loading from '../../components/Loading/Loading';
-import TextInput from '../../components/TextInput/TextInput';
-import { LiquidityWallet } from '../../types/LiquidityWallet';
-import { useNavigate, useParams } from 'react-router-dom';
-import useLiquidityWalletPage from '../../hooks/useLiquidityWalletPage';
-import useLiquidityWallets from '../../hooks/useLiquidityWallets';
-import AlertBox from '../../components/AlertBox/AlertBox';
+import {
+  AlertBox,
+  Loading,
+  PageCardBody,
+  PageCardHeader,
+  PageCardSubmitButton,
+  TextInput,
+} from '../../components';
+import { LiquidityWalletType } from '../../types';
+import {
+  useAppDispatch,
+  useAppSelector,
+  selectUserAccessToken,
+  selectUserChainId,
+  selectUserId,
+  selectChainsItems,
+  clearWalletsWithdrawTokensInput,
+  selectWalletWithdrawTokensInput,
+  selectWalletsError,
+  selectWalletsItems,
+  selectWalletsLoading,
+  selectLiquidityWalletAbi,
+} from '../../store';
+import { useUserController, useWalletsController } from '../../controllers';
+import { getWalletById, getWalletChain, getTokenBySymbol } from '../../utils';
+import { ROUTES } from '../../config';
 
 function LiquidityWalletPageWithdraw() {
-  const { user, connect } = useGrinderyNexus();
-  const {
-    amountAdd,
-    loading,
-    errorMessage,
-    VIEWS,
-    setAmountAdd,
-    setErrorMessage,
-    setToken,
-    handleWithdrawClick,
-    token,
-  } = useLiquidityWalletPage();
   let navigate = useNavigate();
-  const { wallets, isLoading: walletsIsLoading } = useLiquidityWallets();
-  let { walletId } = useParams();
-
-  const currentWallet = wallets.find(
-    (w: LiquidityWallet) => w._id === walletId
-  );
+  let { walletId, tokenSymbol } = useParams();
+  const dispatch = useAppDispatch();
+  const user = useAppSelector(selectUserId);
+  const { connectUser: connect } = useUserController();
+  const accessToken = useAppSelector(selectUserAccessToken);
+  const userChainId = useAppSelector(selectUserChainId);
+  const chains = useAppSelector(selectChainsItems);
+  const liquidityWalletAbi = useAppSelector(selectLiquidityWalletAbi);
+  const wallets = useAppSelector(selectWalletsItems);
+  const walletsIsLoading = useAppSelector(selectWalletsLoading);
+  const loading = useAppSelector(selectWalletsLoading);
+  const errorMessage = useAppSelector(selectWalletsError);
+  const input = useAppSelector(selectWalletWithdrawTokensInput);
+  const { amount } = input;
+  const currentWallet = getWalletById(walletId || '', wallets);
+  const walletChain = currentWallet
+    ? getWalletChain(currentWallet, chains)
+    : null;
+  const preselectedToken =
+    tokenSymbol && tokenSymbol !== 'any'
+      ? getTokenBySymbol(tokenSymbol, walletChain?.chainId || '', chains)
+      : null;
+  const { handleWalletsWithdrawtokensInputChange, handleWithdrawTokensAction } =
+    useWalletsController();
 
   useEffect(() => {
     if (!currentWallet && !walletsIsLoading) {
-      navigate(VIEWS.ROOT.fullPath);
+      navigate(ROUTES.SELL.WALLETS.ROOT.FULL_PATH);
     }
-  }, [currentWallet, walletsIsLoading]);
+  }, [currentWallet, walletsIsLoading, navigate]);
 
   return (
     <>
-      <DexCardHeader
+      <PageCardHeader
         title="Withdraw"
         titleSize={18}
         titleAlign="center"
@@ -52,10 +74,12 @@ function LiquidityWalletPageWithdraw() {
             size="medium"
             edge="start"
             onClick={() => {
-              setAmountAdd('');
-              setToken('');
+              dispatch(clearWalletsWithdrawTokensInput());
               navigate(
-                VIEWS.TOKENS.fullPath.replace(':walletId', walletId || '')
+                ROUTES.SELL.WALLETS.TOKENS.FULL_PATH.replace(
+                  ':walletId',
+                  walletId || ''
+                )
               );
             }}
           >
@@ -65,22 +89,21 @@ function LiquidityWalletPageWithdraw() {
         endAdornment={<Box width={28} height={40} />}
       />
 
-      <DexCardBody>
+      <PageCardBody>
         {user && walletsIsLoading ? (
           <Loading />
         ) : (
           <>
             <TextInput
               label="Amount"
-              value={amountAdd}
+              value={amount}
               onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                setErrorMessage({
-                  type: '',
-                  text: '',
-                });
-                setAmountAdd(event.target.value);
+                handleWalletsWithdrawtokensInputChange(
+                  'amount',
+                  event.target.value
+                );
               }}
-              name="amountAdd"
+              name="amount"
               placeholder="Enter amount of tokens"
               disabled={false}
               endAdornment={
@@ -108,10 +131,12 @@ function LiquidityWalletPageWithdraw() {
                     size="small"
                     variant="contained"
                     onClick={() => {
-                      setAmountAdd(
+                      handleWalletsWithdrawtokensInputChange(
+                        'amount',
                         wallets.find(
-                          (wallet: LiquidityWallet) => wallet._id === walletId
-                        )?.tokens?.[token] || '0'
+                          (wallet: LiquidityWalletType) =>
+                            wallet._id === walletId
+                        )?.tokens?.[tokenSymbol || ''] || '0'
                       );
                     }}
                   >
@@ -122,14 +147,14 @@ function LiquidityWalletPageWithdraw() {
               error={errorMessage}
             />
             {errorMessage &&
-              errorMessage.type === 'tx' &&
+              errorMessage.type === 'withdrawTokens' &&
               errorMessage.text && (
                 <AlertBox color="error">
                   <p>{errorMessage.text}</p>
                 </AlertBox>
               )}
             {loading && <Loading />}
-            <DexCardSubmitButton
+            <PageCardSubmitButton
               disabled={loading}
               label={
                 loading
@@ -141,7 +166,14 @@ function LiquidityWalletPageWithdraw() {
               onClick={
                 user
                   ? () => {
-                      handleWithdrawClick(walletId || '');
+                      handleWithdrawTokensAction(
+                        accessToken,
+                        input,
+                        userChainId,
+                        currentWallet,
+                        preselectedToken,
+                        liquidityWalletAbi
+                      );
                     }
                   : () => {
                       connect();
@@ -150,7 +182,7 @@ function LiquidityWalletPageWithdraw() {
             />
           </>
         )}
-      </DexCardBody>
+      </PageCardBody>
     </>
   );
 }

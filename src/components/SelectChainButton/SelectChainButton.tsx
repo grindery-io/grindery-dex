@@ -1,6 +1,6 @@
 import React from 'react';
 import { Avatar, FormHelperText } from '@mui/material';
-import { Chain } from '../../types/Chain';
+import { ChainType } from '../../types';
 import { Card } from '../Card/Card';
 import { CardTitle } from '../Card/CardTitle';
 import { ChainTokenBox } from '../ChainTokenBox/ChainTokenBox';
@@ -9,7 +9,7 @@ import { AvatarDefault } from '../Avatar/AvatarDefault';
 type Props = {
   title: string;
   onClick: () => void;
-  chain?: Chain | null;
+  chain?: ChainType | null;
   error?: {
     type: string;
     text: string;
@@ -28,7 +28,7 @@ const SelectChainButton = (props: Props) => {
         avatar={
           chain ? (
             <Avatar src={chain.icon} alt={chain.label}>
-              {chain.nativeToken}
+              {chain.token}
             </Avatar>
           ) : (
             <AvatarDefault width={32} height={32} />

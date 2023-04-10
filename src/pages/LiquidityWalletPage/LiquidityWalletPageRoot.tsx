@@ -1,30 +1,37 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { IconButton, Tooltip } from '@mui/material';
-import { useGrinderyNexus } from 'use-grindery-nexus';
 import { Box } from '@mui/system';
 import { AddCircleOutline as AddCircleOutlineIcon } from '@mui/icons-material';
-import DexCardHeader from '../../components/DexCard/DexCardHeader';
-import DexCardSubmitButton from '../../components/DexCard/DexCardSubmitButton';
-import DexCardBody from '../../components/DexCard/DexCardBody';
-import { LiquidityWallet as LiquidityWalletType } from '../../types/LiquidityWallet';
-import LiquidityWallet from '../../components/LiquidityWallet/LiquidityWallet';
-import { useNavigate } from 'react-router-dom';
-import useGrinderyChains from '../../hooks/useGrinderyChains';
-import useLiquidityWalletPage from '../../hooks/useLiquidityWalletPage';
-import useLiquidityWallets from '../../hooks/useLiquidityWallets';
-import Loading from '../../components/Loading/Loading';
+import { LiquidityWalletType } from '../../types';
+import {
+  LiquidityWallet,
+  Loading,
+  PageCardBody,
+  PageCardHeader,
+  PageCardSubmitButton,
+} from '../../components';
+import {
+  useAppSelector,
+  selectChainsItems,
+  selectUserId,
+  selectWalletsItems,
+  selectWalletsLoading,
+} from '../../store';
+import { ROUTES } from '../../config';
+import { useUserController } from '../../controllers';
 
 function LiquidityWalletPageRoot() {
-  const { user, connect } = useGrinderyNexus();
-  const { VIEWS } = useLiquidityWalletPage();
   let navigate = useNavigate();
-  const { wallets, isLoading: walletsIsLoading } = useLiquidityWallets();
-
-  const { chains } = useGrinderyChains();
+  const user = useAppSelector(selectUserId);
+  const { connectUser } = useUserController();
+  const wallets = useAppSelector(selectWalletsItems);
+  const walletsIsLoading = useAppSelector(selectWalletsLoading);
+  const chains = useAppSelector(selectChainsItems);
 
   return (
     <>
-      <DexCardHeader
+      <PageCardHeader
         title="Liquidity wallets"
         endAdornment={
           user && wallets.length > 4 && wallets.length < chains.length ? (
@@ -33,7 +40,7 @@ function LiquidityWalletPageRoot() {
                 size="medium"
                 edge="end"
                 onClick={() => {
-                  navigate(VIEWS.CREATE.fullPath);
+                  navigate(ROUTES.SELL.WALLETS.CREATE.FULL_PATH);
                 }}
               >
                 <AddCircleOutlineIcon sx={{ color: 'black' }} />
@@ -42,7 +49,7 @@ function LiquidityWalletPageRoot() {
           ) : null
         }
       />
-      <DexCardBody>
+      <PageCardBody>
         <>
           {user &&
             wallets.map((wallet: LiquidityWalletType) => {
@@ -58,22 +65,27 @@ function LiquidityWalletPageRoot() {
                   wallet={wallet}
                   walletChain={walletChain}
                   onClick={(w: LiquidityWalletType) => {
-                    navigate(VIEWS.TOKENS.fullPath.replace(':walletId', w._id));
+                    navigate(
+                      ROUTES.SELL.WALLETS.TOKENS.FULL_PATH.replace(
+                        ':walletId',
+                        w._id
+                      )
+                    );
                   }}
                 />
               );
             })}
           {user && walletsIsLoading && <Loading />}
           {wallets.length < chains.length ? (
-            <DexCardSubmitButton
+            <PageCardSubmitButton
               label={user ? 'Create wallet' : 'Connect wallet'}
               onClick={
                 user
                   ? () => {
-                      navigate(VIEWS.CREATE.fullPath);
+                      navigate(ROUTES.SELL.WALLETS.CREATE.FULL_PATH);
                     }
                   : () => {
-                      connect();
+                      connectUser();
                     }
               }
             />
@@ -81,7 +93,7 @@ function LiquidityWalletPageRoot() {
             <Box pb="20px"></Box>
           )}
         </>
-      </DexCardBody>
+      </PageCardBody>
     </>
   );
 }

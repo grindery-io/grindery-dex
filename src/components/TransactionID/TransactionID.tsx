@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { IconButton, Tooltip, Typography } from '@mui/material';
 import { Stack, SxProps } from '@mui/system';
-import { formatAddress } from '../../utils/address';
+import { formatAddress } from '../../utils';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 
@@ -20,7 +20,7 @@ type Props = {
   iconStyle?: SxProps | React.CSSProperties;
 };
 
-const TransactionID: React.FC<Props> = (props) => {
+const TransactionID = (props: Props) => {
   const {
     value,
     label,

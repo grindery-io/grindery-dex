@@ -1,7 +1,6 @@
-import { Avatar, Badge, Box, FormHelperText, SxProps } from '@mui/material';
 import React from 'react';
-import { Chain } from '../../types/Chain';
-import { TokenType } from '../../types/TokenType';
+import { Avatar, Badge, Box, FormHelperText, SxProps } from '@mui/material';
+import { ChainType, TokenType } from '../../types';
 import { AvatarDefault } from '../Avatar/AvatarDefault';
 import { Card } from '../Card/Card';
 import { CardTitle } from '../Card/CardTitle';
@@ -19,7 +18,7 @@ type Props = {
   };
   placeholder?: string;
   endAdornment?: React.ReactNode;
-  chain?: Chain | null;
+  chain?: ChainType | null;
   token?: TokenType | '';
   disableTopMargin?: boolean;
   helpText?: string | React.ReactNode;

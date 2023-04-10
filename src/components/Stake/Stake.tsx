@@ -3,14 +3,14 @@ import { Avatar, IconButton, Tooltip } from '@mui/material';
 import { Box } from '@mui/system';
 import { StakeBadge } from './Stake.style';
 import { Remove as RemoveIcon } from '@mui/icons-material';
-import { Stake as StakeType } from '../../types/Stake';
+import { StakeType, ChainType } from '../../types';
 import { Card } from '../Card/Card';
 import { ChainTokenBox } from '../ChainTokenBox/ChainTokenBox';
 import { AvatarDefault } from '../Avatar/AvatarDefault';
 
 type Props = {
   stake: StakeType;
-  stakeChain: any;
+  stakeChain: ChainType;
   onWithdrawClick: (stake: StakeType) => void;
 };
 
@@ -40,7 +40,7 @@ const Stake = (props: Props) => {
         avatar={
           stakeChain ? (
             <Avatar src={stakeChain.icon} alt={stakeChain.label}>
-              {stakeChain.nativeToken}
+              {stakeChain.token}
             </Avatar>
           ) : (
             <AvatarDefault width={32} height={32} />

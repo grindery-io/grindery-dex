@@ -9,10 +9,11 @@ import {
   ListItemText,
   Skeleton,
 } from '@mui/material';
+import { TokenType } from '../../types';
 
 type Props = {
   tokens: any[];
-  onClick: (token: any) => void;
+  onClick: (token: TokenType) => void;
   loading?: boolean;
   chainLabel?: string;
 };

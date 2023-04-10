@@ -1,44 +1,38 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Skeleton, Typography } from '@mui/material';
 import { Box } from '@mui/system';
-import useOffers from '../../hooks/useOffers';
-import useGrinderyChains from '../../hooks/useGrinderyChains';
 import moment from 'moment';
-import DexCardSubmitButton from '../DexCard/DexCardSubmitButton';
 import { Card } from '../Card/Card';
 import AlertBox from '../AlertBox/AlertBox';
 import TransactionID from '../TransactionID/TransactionID';
 import OfferPublic from '../Offer/OfferPublic';
-import Offer from '../../models/Offer';
-import Order from '../../models/Order';
+import { OrderType, ChainType } from '../../types';
+import {
+  getOrderBuyerLink,
+  getOrderFromChain,
+  getOrderFromToken,
+  getOrderLink,
+} from '../../utils';
+import PageCardSubmitButton from '../PageCardSubmitButton/PageCardSubmitButton';
 
 type Props = {
-  order: Order;
+  order: OrderType;
   userType: 'a' | 'b';
-  onCompleteClick?: (order: Order) => Promise<boolean>;
+  onCompleteClick?: (order: OrderType) => Promise<boolean>;
   error?: string;
+  chains: ChainType[];
 };
 
 const OrderCard = (props: Props) => {
-  const { order, userType, onCompleteClick, error } = props;
-  const { getOfferById } = useOffers();
-  const [offer, setOffer] = useState<Offer | false>(false);
-  const { chains } = useGrinderyChains();
+  const { order, userType, onCompleteClick, error, chains } = props;
+  const offer = order.offer;
   const [loading, setLoading] = useState(false);
   const isUserA = userType === 'a';
-
-  const explorerLink = order.getOrderLink(chains);
-
-  const fromChain = order.getFromChain(chains);
-  const fromToken = order.getFromToken(chains);
-
+  const explorerLink = getOrderLink(order, chains);
+  const fromChain = getOrderFromChain(order, chains);
+  const fromToken = getOrderFromToken(order, chains);
   const buyer = !isUserA && order && order.destAddr;
-  const buyerLink = !isUserA ? order.getBuyerLink(chains) : '';
-
-  const getOffer = async (offerId: string) => {
-    const offerRes = await getOfferById(offerId);
-    setOffer(offerRes);
-  };
+  const buyerLink = !isUserA ? getOrderBuyerLink(order, chains) : '';
 
   const handleCompleteClick = async () => {
     if (order.orderId && onCompleteClick) {
@@ -52,13 +46,6 @@ const OrderCard = (props: Props) => {
       setLoading(false);
     }
   };
-
-  useEffect(() => {
-    if (order.offerId) {
-      getOffer(order.offerId);
-    }
-    // eslint-disable-next-line
-  }, [order.offerId]);
 
   return (
     <Card
@@ -101,6 +88,7 @@ const OrderCard = (props: Props) => {
       {offer ? (
         <OfferPublic
           key={offer._id}
+          chains={chains}
           offer={offer}
           fromAmount={order.amountTokenDeposit}
           containerStyle={{
@@ -110,7 +98,7 @@ const OrderCard = (props: Props) => {
           }}
           userType={userType}
           fromChain={fromChain}
-          fromToken={fromToken}
+          fromToken={fromToken || ''}
           label={isUserA ? 'You receive' : 'You sell'}
           fromLabel={isUserA ? 'You pay' : 'You receive'}
           excludeSteps={
@@ -180,7 +168,7 @@ const OrderCard = (props: Props) => {
           },
         }}
       >
-        <DexCardSubmitButton
+        <PageCardSubmitButton
           label={
             order.isComplete
               ? 'Completed'

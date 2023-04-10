@@ -1,14 +1,17 @@
+import { OfferType } from './OfferType';
+
 export type OrderType = {
   _id: string;
   amountTokenDeposit: string;
   addressTokenDeposit: string;
   chainIdTokenDeposit: string;
   amountTokenOffer: string;
+  orderId: string;
   date?: string;
   destAddr?: string;
   isComplete?: boolean;
   offerId?: string;
-  orderId?: string;
   userId?: string;
   hash?: string;
+  offer?: OfferType;
 };

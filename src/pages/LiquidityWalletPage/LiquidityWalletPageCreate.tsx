@@ -1,33 +1,51 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { IconButton } from '@mui/material';
-import { useGrinderyNexus } from 'use-grindery-nexus';
 import { Box } from '@mui/system';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
-import DexCardHeader from '../../components/DexCard/DexCardHeader';
-import DexCardSubmitButton from '../../components/DexCard/DexCardSubmitButton';
-import DexCardBody from '../../components/DexCard/DexCardBody';
-import Loading from '../../components/Loading/Loading';
-import SelectChainButton from '../../components/SelectChainButton/SelectChainButton';
-import { useNavigate } from 'react-router-dom';
-import useLiquidityWalletPage from '../../hooks/useLiquidityWalletPage';
-import AlertBox from '../../components/AlertBox/AlertBox';
+import {
+  Loading,
+  SelectChainButton,
+  AlertBox,
+  PageCardHeader,
+  PageCardBody,
+  PageCardSubmitButton,
+} from '../../components';
+import { ROUTES } from '../../config';
+import {
+  useAppSelector,
+  selectUserAccessToken,
+  selectUserChainId,
+  selectUserId,
+  selectWalletsCreateInput,
+  selectWalletsError,
+  selectWalletsItems,
+  selectWalletsLoading,
+  selectChainsItems,
+  selectSatelliteAbi,
+} from '../../store';
+import { useUserController, useWalletsController } from '../../controllers';
+import { getChainById } from '../../utils';
 
 function LiquidityWalletPageCreate() {
-  const { user, connect } = useGrinderyNexus();
-  const {
-    loading,
-    errorMessage,
-    currentChain,
-    VIEWS,
-    setAmountAdd,
-    setErrorMessage,
-    handleCreateClick,
-  } = useLiquidityWalletPage();
   let navigate = useNavigate();
+  const user = useAppSelector(selectUserId);
+  const { connectUser: connect } = useUserController();
+  const accessToken = useAppSelector(selectUserAccessToken);
+  const userChainId = useAppSelector(selectUserChainId);
+  const loading = useAppSelector(selectWalletsLoading);
+  const errorMessage = useAppSelector(selectWalletsError);
+  const chains = useAppSelector(selectChainsItems);
+  const wallets = useAppSelector(selectWalletsItems);
+  const satelliteAbi = useAppSelector(selectSatelliteAbi);
+  const input = useAppSelector(selectWalletsCreateInput);
+  const { chainId } = input;
+  const currentChain = getChainById(chainId, chains);
+  const { handleWalletsCreateAction } = useWalletsController();
 
   return (
     <>
-      <DexCardHeader
+      <PageCardHeader
         title="Create wallet"
         titleSize={18}
         titleAlign="center"
@@ -36,8 +54,7 @@ function LiquidityWalletPageCreate() {
             size="medium"
             edge="start"
             onClick={() => {
-              setAmountAdd('');
-              navigate(VIEWS.ROOT.fullPath);
+              navigate(ROUTES.SELL.WALLETS.ROOT.FULL_PATH);
             }}
           >
             <ArrowBackIcon />
@@ -46,29 +63,27 @@ function LiquidityWalletPageCreate() {
         endAdornment={<Box width={28} height={40} />}
       />
 
-      <DexCardBody>
+      <PageCardBody>
         <SelectChainButton
           title="Blockchain"
           chain={currentChain}
           onClick={() => {
-            setErrorMessage({
-              type: '',
-              text: '',
-            });
-            navigate(VIEWS.SELECT_CHAIN.fullPath);
+            navigate(ROUTES.SELL.WALLETS.SELECT_CHAIN.FULL_PATH);
           }}
           error={errorMessage}
         />
 
         {loading && <Loading />}
 
-        {errorMessage && errorMessage.type === 'tx' && errorMessage.text && (
-          <AlertBox color="error">
-            <p>{errorMessage.text}</p>
-          </AlertBox>
-        )}
+        {errorMessage &&
+          errorMessage.type === 'createWallet' &&
+          errorMessage.text && (
+            <AlertBox color="error">
+              <p>{errorMessage.text}</p>
+            </AlertBox>
+          )}
 
-        <DexCardSubmitButton
+        <PageCardSubmitButton
           disabled={loading}
           label={
             loading
@@ -79,13 +94,21 @@ function LiquidityWalletPageCreate() {
           }
           onClick={
             user
-              ? handleCreateClick
+              ? () => {
+                  handleWalletsCreateAction(
+                    accessToken,
+                    input,
+                    wallets,
+                    userChainId,
+                    satelliteAbi
+                  );
+                }
               : () => {
                   connect();
                 }
           }
         />
-      </DexCardBody>
+      </PageCardBody>
     </>
   );
 }

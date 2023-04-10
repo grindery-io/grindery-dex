@@ -1,24 +1,17 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Box, Skeleton, Stack, Tooltip, Typography } from '@mui/material';
-import { useGrinderyNexus } from 'use-grindery-nexus';
-import useGrinderyChains from '../../hooks/useGrinderyChains';
 import TransactionID from '../TransactionID/TransactionID';
 import GavelIcon from '@mui/icons-material/Gavel';
 import CurrencyExchangeIcon from '@mui/icons-material/CurrencyExchange';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
-import Offer from '../../models/Offer';
+import { getOfferProviderLink } from '../../utils';
+import { OfferCardProps } from './OfferCard';
 
-type Props = {
-  offer: Offer;
-};
-
-const OfferCardHeader = (props: Props) => {
-  const { token: userToken } = useGrinderyNexus();
-  const { offer } = props;
-  const { chains } = useGrinderyChains();
+const OfferCardHeader = (props: OfferCardProps) => {
+  const { offer, chains } = props;
 
   const provider = offer.provider;
-  const providerLink = offer.getProviderLink(chains);
+  const providerLink = getOfferProviderLink(offer, chains);
 
   return (
     <Box

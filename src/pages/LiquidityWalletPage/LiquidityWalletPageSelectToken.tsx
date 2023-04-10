@@ -1,48 +1,55 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { IconButton } from '@mui/material';
 import { Box } from '@mui/system';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
-import DexCardHeader from '../../components/DexCard/DexCardHeader';
-import { useNavigate, useParams } from 'react-router-dom';
-import useLiquidityWalletPage from '../../hooks/useLiquidityWalletPage';
-import TokenSearch from '../../components/TokenSearch/TokenSearch';
-import TokensList from '../../components/TokensList/TokensList';
-import NotFound from '../../components/NotFound/NotFound';
-import useGrinderyChains from '../../hooks/useGrinderyChains';
-import { LiquidityWallet } from '../../types/LiquidityWallet';
-import { Chain } from '../../types/Chain';
-import useLiquidityWallets from '../../hooks/useLiquidityWallets';
-import Loading from '../../components/Loading/Loading';
-import { useGrinderyNexus } from 'use-grindery-nexus';
-import DexCardBody from '../../components/DexCard/DexCardBody';
+import {
+  TokenSearch,
+  TokensList,
+  NotFound,
+  Loading,
+  PageCardHeader,
+  PageCardBody,
+} from '../../components';
+import {
+  useAppSelector,
+  selectChainsItems,
+  selectUserId,
+  selectWalletsItems,
+  selectWalletsLoading,
+} from '../../store';
+import { ROUTES } from '../../config';
+import { getWalletById, getWalletChain } from '../../utils';
+import { useWalletsController } from '../../controllers';
+import { TokenType } from '../../types';
 
 function LiquidityWalletPageSelectToken() {
-  const { user } = useGrinderyNexus();
-  const { VIEWS, setErrorMessage, setToken, searchToken, setSearchToken } =
-    useLiquidityWalletPage();
   let navigate = useNavigate();
-  const { wallets, isLoading: walletsIsLoading } = useLiquidityWallets();
   let { walletId } = useParams();
-
-  const { chains } = useGrinderyChains();
-
-  const currentWallet = wallets.find(
-    (w: LiquidityWallet) => w._id === walletId
-  );
-
-  const walletChain = chains.find(
-    (c: Chain) => c.chainId === currentWallet?.chainId
+  const userId = useAppSelector(selectUserId);
+  const chains = useAppSelector(selectChainsItems);
+  const [searchToken, setSearchToken] = useState('');
+  const wallets = useAppSelector(selectWalletsItems);
+  const walletsIsLoading = useAppSelector(selectWalletsLoading);
+  const currentWallet = getWalletById(walletId || '', wallets);
+  const walletChain = currentWallet
+    ? getWalletChain(currentWallet, chains)
+    : null;
+  const { handleWalletsAddtokensInputChange } = useWalletsController();
+  const tokens = (walletChain?.tokens || []).filter(
+    (t: TokenType) =>
+      !searchToken || t.symbol.toLowerCase().includes(searchToken.toLowerCase())
   );
 
   useEffect(() => {
     if (!currentWallet && !walletsIsLoading) {
-      navigate(VIEWS.ROOT.fullPath);
+      navigate(ROUTES.SELL.WALLETS.ROOT.FULL_PATH);
     }
-  }, [currentWallet, walletsIsLoading]);
+  }, [currentWallet, walletsIsLoading, navigate]);
 
   return (
     <>
-      <DexCardHeader
+      <PageCardHeader
         title="Select token"
         titleSize={18}
         titleAlign="center"
@@ -51,7 +58,12 @@ function LiquidityWalletPageSelectToken() {
             size="medium"
             edge="start"
             onClick={() => {
-              navigate(VIEWS.ADD.fullPath.replace(':walletId', walletId || ''));
+              navigate(
+                ROUTES.SELL.WALLETS.ADD.FULL_PATH.replace(
+                  ':walletId',
+                  walletId || ''
+                ).replace(':tokenSymbol', 'any')
+              );
             }}
           >
             <ArrowBackIcon />
@@ -59,9 +71,12 @@ function LiquidityWalletPageSelectToken() {
         }
         endAdornment={<Box width={28} height={40} />}
       />
-      <DexCardBody>
-        {user && walletsIsLoading ? (
-          <Loading />
+      <PageCardBody>
+        {userId && walletsIsLoading ? (
+          <>
+            <Loading />
+            <Box height="20px" />
+          </>
         ) : (
           <>
             <TokenSearch
@@ -71,23 +86,22 @@ function LiquidityWalletPageSelectToken() {
               }}
             />
 
-            {walletChain &&
-            walletChain.tokens &&
-            walletChain.tokens.length > 0 ? (
+            {tokens && tokens.length > 0 ? (
               <TokensList
-                tokens={walletChain.tokens}
-                onClick={(chainToken: any) => {
-                  setToken(chainToken.symbol || '');
-                  setSearchToken('');
-                  setErrorMessage({
-                    type: '',
-                    text: '',
-                  });
+                tokens={tokens}
+                onClick={(t: TokenType) => {
+                  handleWalletsAddtokensInputChange(
+                    'tokenId',
+                    t.coinmarketcapId || ''
+                  );
                   navigate(
-                    VIEWS.ADD.fullPath.replace(':walletId', walletId || '')
+                    ROUTES.SELL.WALLETS.ADD.FULL_PATH.replace(
+                      ':walletId',
+                      walletId || ''
+                    ).replace(':tokenSymbol', 'any')
                   );
                 }}
-                chainLabel={walletChain.label}
+                chainLabel={walletChain?.label || ''}
               />
             ) : (
               <NotFound
@@ -98,7 +112,6 @@ function LiquidityWalletPageSelectToken() {
                     <>
                       We couldn't find tokens{' '}
                       {walletChain ? `on ${walletChain?.label} chain` : ''}.
-                      Please try search again or switch the chain.
                     </>
                   )
                 }
@@ -106,7 +119,7 @@ function LiquidityWalletPageSelectToken() {
             )}
           </>
         )}
-      </DexCardBody>
+      </PageCardBody>
     </>
   );
 }

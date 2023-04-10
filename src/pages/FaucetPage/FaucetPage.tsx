@@ -1,69 +1,57 @@
 import React from 'react';
-import DexCard from '../../components/DexCard/DexCard';
-import { Navigate } from 'react-router-dom';
-//import useFaucetPage from '../../hooks/useFaucetPage';
-//import FaucetPageRoot from './FaucetPageRoot';
-//import FaucetPageSelectChain from './FaucetPageSelectChain';
-import FaucetMenu from '../../components/FaucetMenu/FaucetMenu';
-import useAdmin from '../../hooks/useAdmin';
-import Loading from '../../components/Loading/Loading';
-import DexCardBody from '../../components/DexCard/DexCardBody';
-import { Box, Typography } from '@mui/material';
-import DexCardHeader from '../../components/DexCard/DexCardHeader';
-import OpenInNewIcon from '@mui/icons-material/OpenInNew';
-import Icon from '@mdi/react';
-import { mdiWaterPump } from '@mdi/js';
+import { Route, Routes } from 'react-router-dom';
+import { FaucetMenu, Loading, PageCard, PageContainer } from '../../components';
+import { ROUTES } from '../../config';
+import FaucetPageRoot from './FaucetPageRoot';
+import FaucetPageSelectChain from './FaucetPageSelectChain';
+import FaucetPagePlaceholder from './FaucetPagePlaceholder';
+import { FaucetController } from '../../controllers';
+import {
+  useAppSelector,
+  selectUserId,
+  selectUserIsAdmin,
+  selectUserIsAdminLoading,
+} from '../../store';
 
 function FaucetPage() {
-  //const { VIEWS } = useFaucetPage();
-  const { isLoading, isAdmin } = useAdmin();
-  if (isLoading) {
+  const isLoading = useAppSelector(selectUserIsAdminLoading);
+  const isAdmin = useAppSelector(selectUserIsAdmin);
+  const user = useAppSelector(selectUserId);
+
+  if (!user) {
+    return null;
+  }
+
+  if (user && isLoading) {
     return <Loading />;
   }
 
   return (
-    <>
-      <FaucetMenu />
-      <DexCard>
-        <DexCardHeader title="Faucet" titleAlign="center" />
-        <DexCardBody>
-          <Box sx={{ textAlign: 'center' }}>
-            <Icon
-              path={mdiWaterPump}
-              style={{ width: '40px', height: '40px', marginBottom: '16px' }}
+    <FaucetController>
+      <PageContainer>
+        <FaucetMenu />
+        <PageCard>
+          <Routes>
+            <Route
+              path={ROUTES.FAUCET.PLACEHOLDER.RELATIVE_PATH}
+              element={<FaucetPagePlaceholder />}
             />
-            <Typography>
-              Visit{' '}
-              <a
-                style={{ color: '#3f49e1' }}
-                href="https://goerlifaucet.com/"
-                target="_blank"
-              >
-                <strong>goerlifaucet.com</strong>
-                <OpenInNewIcon
-                  sx={{
-                    display: 'inline-block',
-                    marginBottom: '-4px',
-                    fontSize: '16px',
-                  }}
+            {isAdmin && (
+              <>
+                <Route
+                  path={ROUTES.FAUCET.ROOT.RELATIVE_PATH}
+                  element={<FaucetPageRoot />}
                 />
-              </a>
-              <br />
-              to get some Goerli-ETH tokens.
-            </Typography>
-          </Box>
-
-          <Box height="36px"></Box>
-        </DexCardBody>
-        {/*<Routes>
-          <Route path={VIEWS.ROOT.path} element={<FaucetPageRoot />} />
-          <Route
-            path={VIEWS.SELECT_CHAIN.path}
-            element={<FaucetPageSelectChain />}
-          />
-  </Routes>*/}
-      </DexCard>
-    </>
+                <Route
+                  path={ROUTES.FAUCET.SELECT_CHAIN.RELATIVE_PATH}
+                  element={<FaucetPageSelectChain />}
+                />
+              </>
+            )}
+          </Routes>
+        </PageCard>
+      </PageContainer>
+    </FaucetController>
   );
 }
 

@@ -7,7 +7,7 @@ export type OfferType = {
   tokenAddress: string;
   isActive: boolean;
   hash?: string;
-  offerId?: string;
+  offerId: string;
   tokenId?: string;
   exchangeRate?: string;
   estimatedTime?: string;

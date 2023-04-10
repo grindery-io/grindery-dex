@@ -1,90 +1,71 @@
 import React from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
-import Loading from '../../components/Loading/Loading';
-import PageContainer from '../../components/PageContainer/PageContainer';
-import SellMenu from '../../components/SellMenu/SellMenu';
-//import LiquidityWalletPageContextProvider from '../../context/LiquidityWalletPageContext';
-import OffersPageContextProvider from '../../context/OffersPageContext';
-//import StakingPageContextProvider from '../../context/StakingPageContext';
-import OrdersPageContextProvider from '../../context/OrdersPageContext';
-import OrdersContextProvider from '../../context/OrdersContext';
-import useAdmin from '../../hooks/useAdmin';
-//import LiquidityWalletPage from '../LiquidityWalletPage/LiquidityWalletPage';
 import OffersPage from '../OffersPage/OffersPage';
-//import StakingPage from '../StakingPage/StakingPage';
-import OrdersBPage from '../OrdersPage/OrdersPage';
+import OrdersPage from '../OrdersPage/OrdersPage';
 import AutomationsPage from '../AutomationsPage/AutomationsPage';
-import AutomationsPageContextProvider from '../../context/AutomationsPageContext';
-import DexCard from '../../components/DexCard/DexCard';
-import DexCardHeader from '../../components/DexCard/DexCardHeader';
-import DexCardBody from '../../components/DexCard/DexCardBody';
+import {
+  SellMenu,
+  PageContainer,
+  Loading,
+  PageCard,
+  PageCardHeader,
+  PageCardBody,
+} from '../../components';
 import { Box, Typography } from '@mui/material';
 import TimerIcon from '@mui/icons-material/Timer';
+import {
+  useAppSelector,
+  selectUserIsAdmin,
+  selectUserIsAdminLoading,
+} from '../../store';
+import { ROUTES } from '../../config';
+import { WalletsController } from '../../controllers';
 
 export const sellPages = [
-  // {
-  //   path: '/staking',
-  //   fullPath: '/sell/staking',
-  //   label: 'Staking',
-  //   component: (
-  //     <StakingPageContextProvider>
-  //       <StakingPage />
-  //     </StakingPageContextProvider>
-  //   ),
-  // },
+  // Route temporary disabled
+  /*{
+    path: ROUTES.SELL.STAKING.RELATIVE_PATH,
+    fullPath: ROUTES.SELL.STAKING.ROOT.FULL_PATH,
+    label: 'Staking',
+    component: <StakingPage />,
+  },*/
   {
-    path: '/offers',
-    fullPath: '/sell/offers',
+    path: ROUTES.SELL.OFFERS.RELATIVE_PATH,
+    fullPath: ROUTES.SELL.OFFERS.ROOT.FULL_PATH,
     label: 'Offers',
-    component: (
-      <OffersPageContextProvider>
-        <OffersPage />
-      </OffersPageContextProvider>
-    ),
+    component: <OffersPage />,
   },
   {
-    path: '/orders',
-    fullPath: '/sell/orders',
+    path: ROUTES.SELL.ORDERS.RELATIVE_PATH,
+    fullPath: ROUTES.SELL.ORDERS.ROOT.FULL_PATH,
     label: 'Orders',
-    component: (
-      <OrdersContextProvider userType="b">
-        <OrdersPageContextProvider>
-          <OrdersBPage />
-        </OrdersPageContextProvider>
-      </OrdersContextProvider>
-    ),
+    component: <OrdersPage />,
   },
   {
-    path: '/automations',
-    fullPath: '/sell/automations',
+    path: ROUTES.SELL.AUTOMATIONS.RELATIVE_PATH,
+    fullPath: ROUTES.SELL.AUTOMATIONS.ROOT.FULL_PATH,
     label: 'Trading Automation',
-    component: (
-      <AutomationsPageContextProvider>
-        <AutomationsPage />
-      </AutomationsPageContextProvider>
-    ),
+    component: <AutomationsPage />,
   },
-  // {
-  //   path: '/wallets',
-  //   fullPath: '/sell/wallets',
-  //   label: 'Wallets',
-  //   component: (
-  //     <LiquidityWalletPageContextProvider>
-  //       <LiquidityWalletPage />
-  //     </LiquidityWalletPageContextProvider>
-  //   ),
-  // },
+  // Route temporary disabled
+  /*{
+    path: ROUTES.SELL.WALLETS.RELATIVE_PATH,
+    fullPath: ROUTES.SELL.WALLETS.ROOT.FULL_PATH,
+    label: 'Wallets',
+    component: <LiquidityWalletPage />,
+  },*/
 ];
 
 type Props = {};
 
 const SellPage = (props: Props) => {
-  const { isLoading, isAdmin } = useAdmin();
+  const isLoading = useAppSelector(selectUserIsAdminLoading);
+  const isAdmin = useAppSelector(selectUserIsAdmin);
   if (isLoading) {
     return <Loading />;
   }
   return (
-    <div>
+    <WalletsController>
       <PageContainer>
         {isAdmin ? (
           <>
@@ -93,32 +74,36 @@ const SellPage = (props: Props) => {
               {sellPages.map((page: any) => (
                 <Route
                   key={page.path}
-                  path={`${page.path}/*`}
+                  path={`${page.path}`}
                   element={page.component}
                 />
               ))}
               <Route
                 path="/"
-                element={<Navigate to={`/sell${sellPages[0].path}`} />}
+                element={
+                  <Navigate
+                    to={`/sell${sellPages[0].path.replace('/*', '')}`}
+                  />
+                }
               />
             </Routes>
           </>
         ) : (
           <>
-            <DexCard>
-              <DexCardHeader title="Coming soon" titleAlign="center" />
-              <DexCardBody>
+            <PageCard>
+              <PageCardHeader title="Coming soon" titleAlign="center" />
+              <PageCardBody>
                 <Box height="24px" />
                 <Typography fontSize="42px" textAlign="center">
                   <TimerIcon sx={{ fontSize: 'inherit' }} />
                 </Typography>
                 <Box height="40px" />
-              </DexCardBody>
-            </DexCard>
+              </PageCardBody>
+            </PageCard>
           </>
         )}
       </PageContainer>
-    </div>
+    </WalletsController>
   );
 };
 

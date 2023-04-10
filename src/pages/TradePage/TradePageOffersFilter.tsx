@@ -1,41 +1,57 @@
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button, IconButton, Stack, Tooltip } from '@mui/material';
 import { Box } from '@mui/system';
-import React from 'react';
-import { Navigate, Route, Routes, useNavigate } from 'react-router-dom';
-import { useGrinderyNexus } from 'use-grindery-nexus';
-import AlertBox from '../../components/AlertBox/AlertBox';
-import AmountInput from '../../components/AmountInput/AmountInput';
-import DexCard from '../../components/DexCard/DexCard';
-import DexCardBody from '../../components/DexCard/DexCardBody';
-import DexCardHeader from '../../components/DexCard/DexCardHeader';
-import DexCardSubmitButton from '../../components/DexCard/DexCardSubmitButton';
-import SelectChainAndTokenButton from '../../components/SelectChainAndTokenButton/SelectChainAndTokenButton';
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
-import { GRT_CONTRACT_ADDRESS } from '../../constants';
-import useTradePage from '../../hooks/useTradePage';
+import {
+  SelectChainAndTokenButton,
+  AmountInput,
+  AlertBox,
+  PageCard,
+  PageCardHeader,
+  PageCardBody,
+  PageCardSubmitButton,
+} from '../../components';
+import { ROUTES, GRT_CONTRACT_ADDRESS } from '../../config';
+import {
+  useAppSelector,
+  selectUserAccessToken,
+  selectUserId,
+  selectTradeError,
+  selectTradeFilter,
+  selectTradeFromTokenBalance,
+  selectTradeLoading,
+  selectChainsItems,
+} from '../../store';
+import { useUserController, useTradeController } from '../../controllers';
+import { getChainById, getTokenById } from '../../utils';
 
 type Props = {};
 
 const TradePageOffersFilter = (props: Props) => {
-  const { user, connect } = useGrinderyNexus();
-  const {
-    VIEWS,
-    errorMessage,
-    toChain,
-    toToken,
-    fromAmount,
-    loading,
-    fromChain,
-    fromToken,
-    fromTokenBalance,
-    handleFromAmountChange,
-    handleSearchClick,
-    handleFromAmountMaxClick,
-  } = useTradePage();
   let navigate = useNavigate();
+  const user = useAppSelector(selectUserId);
+  const accessToken = useAppSelector(selectUserAccessToken);
+  const { connectUser: connect } = useUserController();
+  const errorMessage = useAppSelector(selectTradeError);
+  const loading = useAppSelector(selectTradeLoading);
+  const fromTokenBalance = useAppSelector(selectTradeFromTokenBalance);
+  const chains = useAppSelector(selectChainsItems);
+  const filter = useAppSelector(selectTradeFilter);
+  const { fromChainId, fromTokenId, toChainId, toTokenId, amount } = filter;
+  const fromChain = getChainById(fromChainId, chains);
+  const fromToken = getTokenById(fromTokenId, fromChainId, chains);
+  const toChain = getChainById(toChainId, chains);
+  const toToken = getTokenById(toTokenId, toChainId, chains);
+  const {
+    handleTradeFilterChange,
+    handleFromAmountMaxClick,
+    handleSearchOffersAction,
+  } = useTradeController();
+
   return (
-    <DexCard>
-      <DexCardHeader
+    <PageCard>
+      <PageCardHeader
         title="Trade"
         endAdornment={
           user ? (
@@ -43,7 +59,7 @@ const TradePageOffersFilter = (props: Props) => {
               <IconButton
                 sx={{ marginRight: '-8px' }}
                 onClick={() => {
-                  navigate(VIEWS.HISTORY.fullPath);
+                  navigate(ROUTES.BUY.TRADE.HISTORY.FULL_PATH);
                 }}
               >
                 <ReceiptLongIcon />
@@ -52,7 +68,7 @@ const TradePageOffersFilter = (props: Props) => {
           ) : undefined
         }
       />
-      <DexCardBody>
+      <PageCardBody>
         <Stack
           direction="row"
           alignItems="stretch"
@@ -63,10 +79,10 @@ const TradePageOffersFilter = (props: Props) => {
             <SelectChainAndTokenButton
               title="Deposit"
               chain={fromChain}
-              token={fromToken}
+              token={fromToken || ''}
               error={errorMessage}
               onClick={() => {
-                navigate(VIEWS.SELECT_FROM.fullPath);
+                navigate(ROUTES.BUY.TRADE.SELECT_FROM.FULL_PATH);
               }}
               name="fromChain"
             />
@@ -75,10 +91,10 @@ const TradePageOffersFilter = (props: Props) => {
             <SelectChainAndTokenButton
               title="Receive"
               onClick={() => {
-                navigate(VIEWS.SELECT_TO.fullPath);
+                navigate(ROUTES.BUY.TRADE.SELECT_TO.FULL_PATH);
               }}
               chain={toChain}
-              token={toToken}
+              token={toToken || ''}
               error={errorMessage}
               name="toChain"
             />
@@ -87,14 +103,16 @@ const TradePageOffersFilter = (props: Props) => {
 
         <AmountInput
           label="You pay"
-          value={fromAmount}
-          onChange={handleFromAmountChange}
-          name="fromAmount"
+          value={amount}
+          onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+            handleTradeFilterChange('amount', event.target.value);
+          }}
+          name="amount"
           disabled={false}
           error={errorMessage}
           placeholder="0"
           chain={fromChain}
-          token={fromToken}
+          token={fromToken || ''}
           helpText={
             fromToken && fromChain
               ? `${(fromToken && fromToken.symbol) || ''} on ${
@@ -109,7 +127,9 @@ const TradePageOffersFilter = (props: Props) => {
                   disableElevation
                   size="small"
                   variant="contained"
-                  onClick={handleFromAmountMaxClick}
+                  onClick={() => {
+                    handleFromAmountMaxClick(fromTokenBalance);
+                  }}
                   sx={{
                     fontSize: '14px',
                     padding: '4px 8px 5px',
@@ -140,29 +160,26 @@ const TradePageOffersFilter = (props: Props) => {
             </AlertBox>
           )}
 
-        <DexCardSubmitButton
+        <PageCardSubmitButton
           label={user ? 'Search offers' : 'Connect wallet'}
           onClick={
             user
               ? () => {
-                  handleSearchClick(fromAmount);
+                  handleSearchOffersAction(
+                    accessToken,
+                    filter,
+                    chains,
+                    fromTokenBalance
+                  );
                 }
               : () => {
                   connect();
                 }
           }
-          disabled={
-            Boolean(user) &&
-            (loading ||
-              Boolean(
-                errorMessage &&
-                  errorMessage.type === 'search' &&
-                  errorMessage.text
-              ))
-          }
+          disabled={Boolean(user) && loading}
         />
-      </DexCardBody>
-    </DexCard>
+      </PageCardBody>
+    </PageCard>
   );
 };
 

@@ -1,29 +1,40 @@
 import React from 'react';
-import { IconButton, Tooltip } from '@mui/material';
-import { useGrinderyNexus } from 'use-grindery-nexus';
-import { AddCircleOutline as AddCircleOutlineIcon } from '@mui/icons-material';
-import DexCardHeader from '../../components/DexCard/DexCardHeader';
-import Stake from '../../components/Stake/Stake';
-import DexCardSubmitButton from '../../components/DexCard/DexCardSubmitButton';
-import DexCardBody from '../../components/DexCard/DexCardBody';
-import Loading from '../../components/Loading/Loading';
-import { Stake as StakeType } from '../../types/Stake';
-import AlertBox from '../../components/AlertBox/AlertBox';
-import useGrinderyChains from '../../hooks/useGrinderyChains';
 import { useNavigate } from 'react-router-dom';
-import useStakes from '../../hooks/useStakes';
-import useStakingPage from '../../hooks/useStakingPage';
+import { IconButton, Tooltip } from '@mui/material';
+import { AddCircleOutline as AddCircleOutlineIcon } from '@mui/icons-material';
+import {
+  AlertBox,
+  Stake,
+  Loading,
+  PageCardHeader,
+  PageCardBody,
+  PageCardSubmitButton,
+} from '../../components';
+import { StakeType } from '../../types';
+import {
+  useAppSelector,
+  selectChainsItems,
+  selectStakesError,
+  selectStakesItems,
+  selectStakesLoading,
+  selectUserId,
+} from '../../store';
+import { useUserController } from '../../controllers';
+import { ROUTES } from '../../config';
+import { getStakeChain } from '../../utils';
 
 function StakingPageRoot() {
-  const { user, connect } = useGrinderyNexus();
-  const { VIEWS, errorMessage, setSelectedStake } = useStakingPage();
   let navigate = useNavigate();
-  const { chains } = useGrinderyChains();
-  const { stakes, isLoading: stakesIsLoading } = useStakes();
+  const user = useAppSelector(selectUserId);
+  const { connectUser: connect } = useUserController();
+  const errorMessage = useAppSelector(selectStakesError);
+  const chains = useAppSelector(selectChainsItems);
+  const stakes = useAppSelector(selectStakesItems);
+  const stakesIsLoading = useAppSelector(selectStakesLoading);
 
   return (
     <>
-      <DexCardHeader
+      <PageCardHeader
         title="Staking"
         endAdornment={
           user && stakes.length > 4 ? (
@@ -32,7 +43,7 @@ function StakingPageRoot() {
                 size="medium"
                 edge="end"
                 onClick={() => {
-                  navigate(VIEWS.STAKE.fullPath);
+                  navigate(ROUTES.SELL.STAKING.STAKE.FULL_PATH);
                 }}
               >
                 <AddCircleOutlineIcon sx={{ color: 'black' }} />
@@ -41,31 +52,25 @@ function StakingPageRoot() {
           ) : null
         }
       />
-      <DexCardBody>
+      <PageCardBody>
         {user &&
           stakes.map((stake: StakeType) => {
-            const stakeChain = {
-              icon: chains.find((c) => c.value === `eip155:${stake.chainId}`)
-                ?.icon,
-              label: chains.find((c) => c.value === `eip155:${stake.chainId}`)
-                ?.label,
-              nativeToken: chains.find(
-                (c) => c.value === `eip155:${stake.chainId}`
-              )?.nativeToken,
-            };
-            return (
+            const stakeChain = getStakeChain(stake, chains);
+            return stakeChain ? (
               <Stake
                 key={stake._id}
                 stake={stake}
                 stakeChain={stakeChain}
                 onWithdrawClick={(s: any) => {
-                  setSelectedStake(stake._id);
                   navigate(
-                    VIEWS.WITHDRAW.fullPath.replace(':stakeId', stake._id)
+                    ROUTES.SELL.STAKING.WITHDRAW.FULL_PATH.replace(
+                      ':stakeId',
+                      stake._id
+                    )
                   );
                 }}
               />
-            );
+            ) : null;
           })}
         {user && stakesIsLoading && <Loading />}
         {errorMessage &&
@@ -75,19 +80,19 @@ function StakingPageRoot() {
               <p>{errorMessage.text}</p>
             </AlertBox>
           )}
-        <DexCardSubmitButton
+        <PageCardSubmitButton
           label={user ? 'Stake' : 'Connect wallet'}
           onClick={
             user
               ? () => {
-                  navigate(VIEWS.STAKE.fullPath);
+                  navigate(ROUTES.SELL.STAKING.STAKE.FULL_PATH);
                 }
               : () => {
                   connect();
                 }
           }
         />
-      </DexCardBody>
+      </PageCardBody>
     </>
   );
 }

@@ -1,59 +1,82 @@
-import React, { useEffect, useState } from 'react';
-import { Box } from '@mui/system';
-import DexCard from '../../components/DexCard/DexCard';
-import DexCardHeader from '../../components/DexCard/DexCardHeader';
-import Loading from '../../components/Loading/Loading';
-import useTradePage from '../../hooks/useTradePage';
-import DexCardBody from '../../components/DexCard/DexCardBody';
-import useGrinderyChains from '../../hooks/useGrinderyChains';
-import OfferPublic from '../../components/Offer/OfferPublic';
+import React from 'react';
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
-import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
+import { Box } from '@mui/system';
+import { IconButton } from '@mui/material';
 import Countdown from 'react-countdown';
-import { IconButton, Stack, Tooltip } from '@mui/material';
-import DexCardSubmitButton from '../../components/DexCard/DexCardSubmitButton';
-import { useGrinderyNexus } from 'use-grindery-nexus';
-import AlertBox from '../../components/AlertBox/AlertBox';
-import { formatAddress } from '../../utils/address';
-import ContentCopyIcon from '@mui/icons-material/ContentCopy';
-import OpenInNewIcon from '@mui/icons-material/OpenInNew';
-import Offer from '../../models/Offer';
+import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
+import {
+  TransactionID,
+  AlertBox,
+  OfferPublic,
+  Loading,
+  PageCard,
+  PageCardHeader,
+  PageCardBody,
+  PageCardSubmitButton,
+} from '../../components';
+import {
+  useAppDispatch,
+  useAppSelector,
+  selectChainsItems,
+  selectUserAccessToken,
+  selectUserAddress,
+  selectUserChainId,
+  selectUserId,
+  selectTradeAcceptedOfferTx,
+  selectTradeApproved,
+  selectTradeError,
+  selectTradeFilter,
+  selectTradeLoading,
+  selectTradeOffers,
+  setTradeAcceptedOfferTx,
+  setTradeApproved,
+  selectPoolAbi,
+  selectTokenAbi,
+} from '../../store';
+import { OfferType } from '../../types';
+import { ROUTES } from '../../config';
+import { useUserController, useTradeController } from '../../controllers';
+import { getChainById, getTokenById, getTokenBySymbol } from '../../utils';
 
 type Props = {};
 
 const TradePageOfferAccept = (props: Props) => {
-  const { user, connect } = useGrinderyNexus();
-  const {
-    VIEWS,
-    loading,
-    foundOffers,
-    accepted,
-    approved,
-    handleAcceptOfferClick,
-    setAccepted,
-    setApproved,
-    errorMessage,
-    fromAmount,
-    fromChain,
-    fromToken,
-    toTokenPrice,
-    fromTokenPrice,
-  } = useTradePage();
-  const { chains } = useGrinderyChains();
   let navigate = useNavigate();
   let { offerId } = useParams();
-  const [copied, setCopied] = useState(false);
-  const offer = foundOffers.find((o: Offer) => o.offerId === offerId);
-  const offerChain = chains.find((c) => c.value === `eip155:${offer?.chainId}`);
-
+  const dispatch = useAppDispatch();
+  const user = useAppSelector(selectUserId);
+  const accessToken = useAppSelector(selectUserAccessToken);
+  const userChainId = useAppSelector(selectUserChainId);
+  const userAddress = useAppSelector(selectUserAddress);
+  const { connectUser: connect } = useUserController();
+  const loading = useAppSelector(selectTradeLoading);
+  const foundOffers = useAppSelector(selectTradeOffers);
+  const tokenAbi = useAppSelector(selectTokenAbi);
+  const poolAbi = useAppSelector(selectPoolAbi);
+  const accepted = useAppSelector(selectTradeAcceptedOfferTx);
+  const approved = useAppSelector(selectTradeApproved);
+  const errorMessage = useAppSelector(selectTradeError);
+  const chains = useAppSelector(selectChainsItems);
+  const filter = useAppSelector(selectTradeFilter);
+  const { amount, fromChainId, fromTokenId } = filter;
+  const fromChain = getChainById(fromChainId, chains);
+  const fromToken = getTokenById(fromTokenId, fromChainId, chains);
+  const { handleAcceptOfferAction } = useTradeController();
+  const offer = foundOffers.find((o: OfferType) => o.offerId === offerId);
+  const offerChain = getChainById(offer?.chainId || '', chains);
+  const exchangeChain = getChainById(offer?.exchangeChainId || '', chains);
+  const exchangeToken = getTokenBySymbol(
+    offer?.exchangeToken || '',
+    offer?.exchangeChainId || '',
+    chains
+  );
   const explorerLink = accepted
-    ? (
-        chains.find((c) => c.value === `eip155:5`)?.transactionExplorerUrl || ''
-      ).replace('{hash}', accepted)
+    ? (exchangeChain?.transactionExplorerUrl || '').replace('{hash}', accepted)
     : '';
-
-  const offerToken = offerChain?.tokens?.find(
-    (t) => t.coinmarketcapId === offer?.tokenId
+  const offerToken = getTokenById(
+    offer?.tokenId || '',
+    offer?.chainId || '',
+    chains
   );
 
   const countdownRenderer = ({
@@ -73,8 +96,8 @@ const TradePageOfferAccept = (props: Props) => {
   };
 
   return offer ? (
-    <DexCard>
-      <DexCardHeader
+    <PageCard>
+      <PageCardHeader
         title="Review offer"
         titleSize={18}
         titleAlign="center"
@@ -83,9 +106,9 @@ const TradePageOfferAccept = (props: Props) => {
             size="medium"
             edge="start"
             onClick={() => {
-              setAccepted('');
-              setApproved(false);
-              navigate(VIEWS.ROOT.fullPath);
+              dispatch(setTradeAcceptedOfferTx(''));
+              dispatch(setTradeApproved(false));
+              navigate(ROUTES.BUY.TRADE.ROOT.FULL_PATH);
             }}
           >
             <ArrowBackIcon />
@@ -93,40 +116,18 @@ const TradePageOfferAccept = (props: Props) => {
         }
         endAdornment={<Box width={28} height={40} />}
       />
-      <DexCardBody maxHeight="540px">
+      <PageCardBody maxHeight="540px">
         {!accepted ? (
           <>
-            {/*<AmountInput
-              label="You pay"
-              value={parseFloat(fromAmount).toFixed(6).toLocaleString()}
-              onChange={() => {}}
-              name="fromAmount"
-              disabled={true}
-              error={errorMessage}
-              placeholder="0"
-              chain={fromChain}
-              token={fromToken}
-              disableTopMargin
-              helpText={
-                fromToken && typeof fromToken !== 'string' ? (
-                  <span style={{ whiteSpace: 'pre-wrap' }}>{`${
-                    fromToken?.symbol
-                  } on ${fromChain?.label} chain\n1 ${
-                    fromToken?.symbol
-                  } = $${fromTokenPrice?.toLocaleString()}`}</span>
-                ) : (
-                  <Skeleton />
-                )
-              }
-            />*/}
             <Box mt="0px">
               {offerChain && offerToken && (
                 <OfferPublic
                   key={offer._id}
+                  chains={chains}
                   offer={offer}
-                  fromAmount={fromAmount}
+                  fromAmount={amount}
                   fromChain={fromChain}
-                  fromToken={fromToken}
+                  fromToken={fromToken || ''}
                   label="You receive"
                   fromLabel="You pay"
                   userType="a"
@@ -150,28 +151,39 @@ const TradePageOfferAccept = (props: Props) => {
                   <p>{errorMessage.text}</p>
                 </AlertBox>
               )}
-
-            <DexCardSubmitButton
-              label={
-                user
-                  ? approved ||
-                    (typeof fromToken !== 'string' &&
-                      fromToken?.address === '0x0')
-                    ? 'Place Order'
-                    : 'Approve tokens'
-                  : 'Connect wallet'
-              }
-              onClick={
-                user
-                  ? () => {
-                      handleAcceptOfferClick(offer);
-                    }
-                  : () => {
-                      connect();
-                    }
-              }
-              disabled={Boolean(user) && loading}
-            />
+            {exchangeToken && (
+              <PageCardSubmitButton
+                label={
+                  user
+                    ? approved ||
+                      (typeof fromToken !== 'string' &&
+                        fromToken?.address === '0x0')
+                      ? 'Place Order'
+                      : 'Approve tokens'
+                    : 'Connect wallet'
+                }
+                onClick={
+                  user
+                    ? () => {
+                        handleAcceptOfferAction(
+                          offer,
+                          accessToken,
+                          userChainId,
+                          approved,
+                          exchangeToken,
+                          tokenAbi,
+                          poolAbi,
+                          userAddress,
+                          amount
+                        );
+                      }
+                    : () => {
+                        connect();
+                      }
+                }
+                disabled={Boolean(user) && loading}
+              />
+            )}
           </>
         ) : (
           <>
@@ -199,66 +211,25 @@ const TradePageOfferAccept = (props: Props) => {
                   </>
                 )}
               </p>
-              <Stack
-                direction="row"
-                alignItems="center"
-                justifyContent="flex-start"
-                mt="10px"
-                gap="4px"
-              >
-                <p>Transaction ID: {formatAddress(accepted)}</p>
-                <Stack
-                  direction="row"
-                  alignItems="center"
-                  justifyContent="flex-start"
-                >
-                  <Tooltip
-                    title={copied ? 'Copied' : 'Copy to clipboard'}
-                    onClose={() => {
-                      setTimeout(() => {
-                        setCopied(false);
-                      }, 300);
-                    }}
-                  >
-                    <IconButton
-                      size="small"
-                      sx={{ fontSize: '14px' }}
-                      onClick={() => {
-                        navigator.clipboard.writeText(accepted);
-                        setCopied(true);
-                      }}
-                    >
-                      <ContentCopyIcon fontSize="inherit" />
-                    </IconButton>
-                  </Tooltip>
-                  {explorerLink && (
-                    <Tooltip title="View on blockchain explorer">
-                      <IconButton
-                        size="small"
-                        sx={{ fontSize: '14px' }}
-                        onClick={() => {
-                          window.open(explorerLink, '_blank');
-                        }}
-                      >
-                        <OpenInNewIcon fontSize="inherit" />
-                      </IconButton>
-                    </Tooltip>
-                  )}
-                </Stack>
-              </Stack>
+              <TransactionID
+                containerStyle={{ marginTop: '10px' }}
+                value={accepted}
+                label="Transaction ID"
+                link={explorerLink}
+              />
             </AlertBox>
-            <DexCardSubmitButton
+            <PageCardSubmitButton
               label="Close"
               onClick={() => {
-                setAccepted('');
-                setApproved(false);
-                navigate(VIEWS.ROOT.fullPath);
+                dispatch(setTradeAcceptedOfferTx(''));
+                dispatch(setTradeApproved(false));
+                navigate(ROUTES.BUY.TRADE.ROOT.FULL_PATH);
               }}
             />
           </>
         )}
-      </DexCardBody>
-    </DexCard>
+      </PageCardBody>
+    </PageCard>
   ) : (
     <Navigate to="/buy" />
   );

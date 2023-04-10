@@ -1,41 +1,52 @@
 import React from 'react';
-import { IconButton, Tooltip } from '@mui/material';
-import { useGrinderyNexus } from 'use-grindery-nexus';
-import { AddCircleOutline as AddCircleOutlineIcon } from '@mui/icons-material';
-import DexCardHeader from '../../components/DexCard/DexCardHeader';
-import DexCardSubmitButton from '../../components/DexCard/DexCardSubmitButton';
-import DexCardBody from '../../components/DexCard/DexCardBody';
-import { Chain } from '../../types/Chain';
 import { useNavigate } from 'react-router-dom';
-import useGrinderyChains from '../../hooks/useGrinderyChains';
-import useOffers from '../../hooks/useOffers';
-import ListSubheader from '../../components/ListSubheader/ListSubheader';
-import useOffersPage from '../../hooks/useOffersPage';
-import _ from 'lodash';
-import OfferPublic from '../../components/Offer/OfferPublic';
-import { LiquidityWallet } from '../../types/LiquidityWallet';
-import useLiquidityWallets from '../../hooks/useLiquidityWallets';
-import OfferSkeleton from '../../components/Offer/OfferSkeleton';
-import Offer from '../../models/Offer';
+import { IconButton, Tooltip } from '@mui/material';
+import { AddCircleOutline as AddCircleOutlineIcon } from '@mui/icons-material';
+import {
+  ListSubheader,
+  OfferPublic,
+  OfferSkeleton,
+  PageCardBody,
+  PageCardHeader,
+  PageCardSubmitButton,
+} from '../../components';
+import {
+  useAppSelector,
+  selectChainsItems,
+  selectOffersActivating,
+  selectOffersItems,
+  selectOffersLoading,
+  selectUserAccessToken,
+  selectUserChainId,
+  selectUserId,
+  selectPoolAbi,
+} from '../../store';
+import { useUserController, useOffersController } from '../../controllers';
+import { ROUTES } from '../../config';
+import { OfferType } from '../../types';
+import {
+  groupOffersByChainId,
+  orderOffersByActiveState,
+  getChainById,
+} from '../../utils';
 
 function OffersPageRoot() {
-  const { user, connect } = useGrinderyNexus();
-  const {
-    isActivating,
-    groupedOffers,
-    handleDeactivateClick,
-    handleActivateClick,
-    VIEWS,
-  } = useOffersPage();
+  const user = useAppSelector(selectUserId);
+  const { connectUser: connect } = useUserController();
+  const accessToken = useAppSelector(selectUserAccessToken);
+  const userChain = useAppSelector(selectUserChainId);
+  const isActivating = useAppSelector(selectOffersActivating);
+  const { handleActivationAction } = useOffersController();
   let navigate = useNavigate();
-
-  const { chains } = useGrinderyChains();
-  const { offers, isLoading: offersIsLoading } = useOffers();
-  const { wallets } = useLiquidityWallets();
+  const chains = useAppSelector(selectChainsItems);
+  const offers = useAppSelector(selectOffersItems);
+  const offersIsLoading = useAppSelector(selectOffersLoading);
+  const poolAbi = useAppSelector(selectPoolAbi);
+  const groupedOffers = groupOffersByChainId(offers);
 
   return (
     <>
-      <DexCardHeader
+      <PageCardHeader
         title="Offers"
         endAdornment={
           user && offers.length > 4 ? (
@@ -44,7 +55,7 @@ function OffersPageRoot() {
                 size="medium"
                 edge="end"
                 onClick={() => {
-                  navigate(VIEWS.CREATE.fullPath);
+                  navigate(ROUTES.SELL.OFFERS.CREATE.FULL_PATH);
                 }}
               >
                 <AddCircleOutlineIcon sx={{ color: 'black' }} />
@@ -54,10 +65,10 @@ function OffersPageRoot() {
         }
       />
 
-      <DexCardBody maxHeight="540px">
+      <PageCardBody maxHeight="540px">
         {user && (
           <>
-            {offersIsLoading ? (
+            {offers.length < 1 && offersIsLoading ? (
               <>
                 {[0, 1].map((i: number) => (
                   <OfferSkeleton key={i} />
@@ -69,24 +80,40 @@ function OffersPageRoot() {
                   Object.keys(groupedOffers).map((key: any) => (
                     <React.Fragment key={key}>
                       <ListSubheader>
-                        {chains.find((c: Chain) => c.value === `eip155:${key}`)
-                          ?.label || ''}
+                        {getChainById(key, chains)?.label || ''}
                       </ListSubheader>
-                      {_.orderBy(
-                        groupedOffers[key],
-                        ['isActive'],
-                        ['desc']
-                      ).map((offer: Offer) => (
-                        <OfferPublic
-                          key={offer._id}
-                          compact
-                          userType="b"
-                          offer={offer}
-                          isActivating={isActivating}
-                          onDeactivateClick={handleDeactivateClick}
-                          onActivateClick={handleActivateClick}
-                        />
-                      ))}
+                      {orderOffersByActiveState(groupedOffers[key]).map(
+                        (offer: OfferType) => (
+                          <OfferPublic
+                            key={offer._id}
+                            chains={chains}
+                            compact
+                            userType="b"
+                            offer={offer}
+                            isActivating={isActivating}
+                            onDeactivateClick={() => {
+                              handleActivationAction(
+                                accessToken,
+                                offer,
+                                false,
+                                userChain,
+                                chains,
+                                poolAbi
+                              );
+                            }}
+                            onActivateClick={() => {
+                              handleActivationAction(
+                                accessToken,
+                                offer,
+                                true,
+                                userChain,
+                                chains,
+                                poolAbi
+                              );
+                            }}
+                          />
+                        )
+                      )}
                     </React.Fragment>
                   ))}
               </>
@@ -94,19 +121,19 @@ function OffersPageRoot() {
           </>
         )}
 
-        <DexCardSubmitButton
+        <PageCardSubmitButton
           label={user ? 'Create offer' : 'Connect wallet'}
           onClick={
             user
               ? () => {
-                  navigate(VIEWS.CREATE.fullPath);
+                  navigate(ROUTES.SELL.OFFERS.CREATE.FULL_PATH);
                 }
               : () => {
                   connect();
                 }
           }
         />
-      </DexCardBody>
+      </PageCardBody>
     </>
   );
 }

@@ -2,7 +2,7 @@ import React from 'react';
 import { Avatar } from '@mui/material';
 import { Box } from '@mui/system';
 import { StakeBadge } from './LiquidityWallet.style';
-import { LiquidityWallet as LiquidityWalletType } from '../../types/LiquidityWallet';
+import { LiquidityWalletType } from '../../types';
 import { Card } from '../Card/Card';
 import { ChainTokenBox } from '../ChainTokenBox/ChainTokenBox';
 import { AvatarDefault } from '../Avatar/AvatarDefault';

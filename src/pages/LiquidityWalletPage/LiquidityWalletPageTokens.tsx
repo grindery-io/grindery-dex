@@ -1,55 +1,52 @@
 import React, { useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { IconButton, Skeleton, Tooltip } from '@mui/material';
-import { useGrinderyNexus } from 'use-grindery-nexus';
 import { Box } from '@mui/system';
 import { AddCircleOutline as AddCircleOutlineIcon } from '@mui/icons-material';
-import DexCardHeader from '../../components/DexCard/DexCardHeader';
-import DexCardSubmitButton from '../../components/DexCard/DexCardSubmitButton';
-import DexCardBody from '../../components/DexCard/DexCardBody';
-import { LiquidityWallet } from '../../types/LiquidityWallet';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
-import { useNavigate, useParams } from 'react-router-dom';
-import useGrinderyChains from '../../hooks/useGrinderyChains';
-import useLiquidityWalletPage from '../../hooks/useLiquidityWalletPage';
-import { Chain } from '../../types/Chain';
-import { TokenType } from '../../types/TokenType';
+import { TokenType } from '../../types';
 import LiquidityWalletToken, {
   WalletToken,
 } from '../../components/LiquidityWalletToken/LiquidityWalletToken';
-import useLiquidityWallets from '../../hooks/useLiquidityWallets';
-import Loading from '../../components/Loading/Loading';
+import {
+  Loading,
+  PageCardBody,
+  PageCardHeader,
+  PageCardSubmitButton,
+} from '../../components';
+import {
+  useAppSelector,
+  selectChainsItems,
+  selectUserId,
+  selectWalletsItems,
+  selectWalletsLoading,
+} from '../../store';
+import { useUserController } from '../../controllers';
+import { ROUTES } from '../../config';
+import { getWalletById, getWalletChain } from '../../utils';
 
 function LiquidityWalletPageTokens() {
-  const { user, connect } = useGrinderyNexus();
-  const { VIEWS, setToken, setChain } = useLiquidityWalletPage();
   let navigate = useNavigate();
   let { walletId } = useParams();
-  const { wallets, isLoading: walletsIsLoading } = useLiquidityWallets();
-  const { chains } = useGrinderyChains();
-
-  const currentWallet = wallets.find(
-    (w: LiquidityWallet) => w._id === walletId
-  );
-
-  const walletChain = chains.find(
-    (c: Chain) => c.chainId === currentWallet?.chainId
-  );
-
-  useEffect(() => {
-    if (currentWallet) {
-      setChain(`eip155:${currentWallet.chainId}`);
-    }
-  }, [currentWallet]);
+  const user = useAppSelector(selectUserId);
+  const { connectUser: connect } = useUserController();
+  const chains = useAppSelector(selectChainsItems);
+  const wallets = useAppSelector(selectWalletsItems);
+  const walletsIsLoading = useAppSelector(selectWalletsLoading);
+  const currentWallet = getWalletById(walletId || '', wallets);
+  const walletChain = currentWallet
+    ? getWalletChain(currentWallet, chains)
+    : null;
 
   useEffect(() => {
     if (!currentWallet && !walletsIsLoading) {
-      navigate(VIEWS.ROOT.fullPath);
+      navigate(ROUTES.SELL.WALLETS.ROOT.FULL_PATH);
     }
-  }, [currentWallet, walletsIsLoading]);
+  }, [currentWallet, walletsIsLoading, navigate]);
 
   return (
     <>
-      <DexCardHeader
+      <PageCardHeader
         title={
           walletChain?.label ? (
             `${walletChain?.label || ''} chain wallet`
@@ -64,7 +61,7 @@ function LiquidityWalletPageTokens() {
             size="medium"
             edge="start"
             onClick={() => {
-              navigate(VIEWS.ROOT.fullPath);
+              navigate(ROUTES.SELL.WALLETS.ROOT.FULL_PATH);
             }}
           >
             <ArrowBackIcon />
@@ -78,7 +75,10 @@ function LiquidityWalletPageTokens() {
                 edge="end"
                 onClick={() => {
                   navigate(
-                    VIEWS.ADD.fullPath.replace(':walletId', walletId || '')
+                    ROUTES.SELL.WALLETS.ADD.FULL_PATH.replace(
+                      ':walletId',
+                      walletId || ''
+                    )
                   );
                 }}
               >
@@ -90,7 +90,7 @@ function LiquidityWalletPageTokens() {
           )
         }
       />
-      <DexCardBody>
+      <PageCardBody>
         <>
           {user && walletsIsLoading && <Loading />}
           {user &&
@@ -106,33 +106,37 @@ function LiquidityWalletPageTokens() {
                 <LiquidityWalletToken
                   key={token.label}
                   token={token}
-                  tokenChain={walletChain}
+                  tokenChain={walletChain || undefined}
                   onWithdrawClick={(t: WalletToken) => {
-                    setToken(t.label);
                     navigate(
-                      VIEWS.WITHDRAW.fullPath.replace(
+                      ROUTES.SELL.WALLETS.WITHDRAW.FULL_PATH.replace(
                         ':walletId',
                         walletId || ''
-                      )
+                      ).replace(':tokenSymbol', t.label || '')
                     );
                   }}
                   onAddClick={(t: WalletToken) => {
-                    setToken(t.label);
                     navigate(
-                      VIEWS.ADD.fullPath.replace(':walletId', walletId || '')
+                      ROUTES.SELL.WALLETS.ADD.FULL_PATH.replace(
+                        ':walletId',
+                        walletId || ''
+                      ).replace(':tokenSymbol', t.label || '')
                     );
                   }}
                 />
               );
             })}
 
-          <DexCardSubmitButton
+          <PageCardSubmitButton
             label={user ? 'Add tokens' : 'Connect wallet'}
             onClick={
               user
                 ? () => {
                     navigate(
-                      VIEWS.ADD.fullPath.replace(':walletId', walletId || '')
+                      ROUTES.SELL.WALLETS.ADD.FULL_PATH.replace(
+                        ':walletId',
+                        walletId || ''
+                      ).replace(':tokenSymbol', 'any')
                     );
                   }
                 : () => {
@@ -141,7 +145,7 @@ function LiquidityWalletPageTokens() {
             }
           />
         </>
-      </DexCardBody>
+      </PageCardBody>
     </>
   );
 }

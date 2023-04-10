@@ -1,25 +1,30 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { IconButton } from '@mui/material';
 import { Box } from '@mui/system';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
-import DexCardHeader from '../../components/DexCard/DexCardHeader';
-import ChainsList from '../../components/ChainsList/ChainsList';
-import { Chain } from '../../types/Chain';
-import { LiquidityWallet } from '../../types/LiquidityWallet';
-import { useNavigate } from 'react-router-dom';
-import useGrinderyChains from '../../hooks/useGrinderyChains';
-import useLiquidityWalletPage from '../../hooks/useLiquidityWalletPage';
-import DexCardBody from '../../components/DexCard/DexCardBody';
+import { ChainsList, PageCardBody, PageCardHeader } from '../../components';
+import { ChainType, LiquidityWalletType } from '../../types';
+import {
+  useAppSelector,
+  selectChainsItems,
+  selectWalletsCreateInput,
+  selectWalletsItems,
+} from '../../store';
+import { ROUTES } from '../../config';
+import { useWalletsController } from '../../controllers';
 
 function LiquidityWalletPageSelectChain() {
-  const { chain, wallets, VIEWS, setChain } = useLiquidityWalletPage();
   let navigate = useNavigate();
-
-  const { chains } = useGrinderyChains();
+  const chains = useAppSelector(selectChainsItems);
+  const wallets = useAppSelector(selectWalletsItems);
+  const input = useAppSelector(selectWalletsCreateInput);
+  const { chainId } = input;
+  const { handleWalletsCreateInputChange } = useWalletsController();
 
   return (
     <>
-      <DexCardHeader
+      <PageCardHeader
         title="Select blockchain"
         titleSize={18}
         titleAlign="center"
@@ -28,7 +33,7 @@ function LiquidityWalletPageSelectChain() {
             size="medium"
             edge="start"
             onClick={() => {
-              navigate(VIEWS.CREATE.fullPath);
+              navigate(ROUTES.SELL.WALLETS.CREATE.FULL_PATH);
             }}
           >
             <ArrowBackIcon />
@@ -36,22 +41,22 @@ function LiquidityWalletPageSelectChain() {
         }
         endAdornment={<Box width={28} height={40} />}
       />
-      <DexCardBody>
+      <PageCardBody>
         <ChainsList
-          chain={chain}
+          chain={chainId}
           chains={chains.filter(
-            (chain: Chain) =>
+            (chain: ChainType) =>
               !wallets
-                .map((wallet: LiquidityWallet) => wallet.chainId)
+                .map((wallet: LiquidityWalletType) => wallet.chainId)
                 .includes(chain.chainId)
           )}
-          onClick={(blockchain: any) => {
-            setChain(blockchain.value);
-            navigate(VIEWS.CREATE.fullPath);
+          onClick={(chain: ChainType) => {
+            handleWalletsCreateInputChange('chainId', chain.chainId);
+            navigate(ROUTES.SELL.WALLETS.CREATE.FULL_PATH);
           }}
         />
         <Box height="20px" />
-      </DexCardBody>
+      </PageCardBody>
     </>
   );
 }
