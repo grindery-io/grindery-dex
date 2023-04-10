@@ -24,12 +24,12 @@ import StakingPage from '../StakingPage/StakingPage';
 
 export const sellPages = [
   // Route temporary disabled
-  {
+  /*{
     path: ROUTES.SELL.STAKING.RELATIVE_PATH,
     fullPath: ROUTES.SELL.STAKING.ROOT.FULL_PATH,
     label: 'Staking',
     component: <StakingPage />,
-  },
+  },*/
   {
     path: ROUTES.SELL.OFFERS.RELATIVE_PATH,
     fullPath: ROUTES.SELL.OFFERS.ROOT.FULL_PATH,
