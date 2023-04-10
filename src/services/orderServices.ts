@@ -1,6 +1,6 @@
 import axios from 'axios';
-import { DELIGHT_API_URL } from '../config/constants';
-import { OrderType } from '../types/OrderType';
+import { DELIGHT_API_URL } from '../config';
+import { OrderType } from '../types';
 
 export const addOrderRequest = (
   accessToken: string,

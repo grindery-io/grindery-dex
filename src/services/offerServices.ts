@@ -1,6 +1,6 @@
 import axios from 'axios';
-import { DELIGHT_API_URL } from '../config/constants';
-import { OfferType } from '../types/OfferType';
+import { DELIGHT_API_URL } from '../config';
+import { OfferType } from '../types';
 
 export const getOffer = (
   accessToken: string,

@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { DELIGHT_API_URL } from '../config/constants';
+import { DELIGHT_API_URL } from '../config';
 
 export const isUserAdmin = (accessToken: string): Promise<boolean> => {
   return new Promise((resolve, reject) => {

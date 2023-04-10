@@ -1,6 +1,6 @@
 import axios from 'axios';
-import { ChainType } from '../types/ChainType';
-import { DELIGHT_API_URL } from '../config/constants';
+import { ChainType } from '../types';
+import { DELIGHT_API_URL } from '../config';
 
 export const getChainsWithTokens = (
   accessToken: string

@@ -1,6 +1,6 @@
 import axios from 'axios';
-import { DELIGHT_API_URL } from '../config/constants';
-import { StakeType } from '../types/StakeType';
+import { DELIGHT_API_URL } from '../config';
+import { StakeType } from '../types';
 
 export const getStake = (
   accessToken: string,

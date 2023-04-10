@@ -1,6 +1,6 @@
 import axios from 'axios';
-import { DELIGHT_API_URL } from '../config/constants';
-import { LiquidityWalletType } from '../types/LiquidityWalletType';
+import { DELIGHT_API_URL } from '../config';
+import { LiquidityWalletType } from '../types';
 
 export const addWalletRequest = (
   accessToken: string,
