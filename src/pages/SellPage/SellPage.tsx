@@ -47,12 +47,12 @@ export const sellPages = [
     component: <AutomationsPage />,
   },
   // Route temporary disabled
-  {
+  /*{
     path: ROUTES.SELL.WALLETS.RELATIVE_PATH,
     fullPath: ROUTES.SELL.WALLETS.ROOT.FULL_PATH,
     label: 'Wallets',
     component: <LiquidityWalletPage />,
-  },
+  },*/
 ];
 
 type Props = {};
