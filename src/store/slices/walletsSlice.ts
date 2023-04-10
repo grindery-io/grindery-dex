@@ -1,7 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../store';
-import { ErrorMessageType } from '../../types/ErrorMessageType';
-import { LiquidityWalletType } from '../../types/LiquidityWalletType';
+import { LiquidityWalletType, ErrorMessageType } from '../../types';
 
 export type WalletsCreateInputFieldName = 'chainId';
 export type WalletsAddTokensInputFieldName = 'tokenId' | 'amount';

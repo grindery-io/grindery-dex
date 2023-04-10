@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../store';
-import { ChainType } from '../../types/ChainType';
+import { ChainType } from '../../types';
 
 interface ChainsState {
   items: ChainType[];

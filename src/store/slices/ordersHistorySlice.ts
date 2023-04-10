@@ -1,7 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../store';
-import { ErrorMessageType } from '../../types/ErrorMessageType';
-import { OrderType } from '../../types/OrderType';
+import { OrderType, ErrorMessageType } from '../../types';
 
 interface OrdersHistoryState {
   error: ErrorMessageType;

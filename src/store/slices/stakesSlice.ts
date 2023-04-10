@@ -1,7 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../store';
-import { StakeType } from '../../types/StakeType';
-import { ErrorMessageType } from '../../types/ErrorMessageType';
+import { StakeType, ErrorMessageType } from '../../types';
 
 export type StakeCreateInputFieldName = 'amount' | 'chainId';
 

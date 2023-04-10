@@ -1,7 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../store';
-import { ErrorMessageType } from '../../types/ErrorMessageType';
-import { OfferType } from '../../types/OfferType';
+import { OfferType, ErrorMessageType } from '../../types';
 
 export type OffersCreateInputInputFieldName =
   | 'fromChainId'

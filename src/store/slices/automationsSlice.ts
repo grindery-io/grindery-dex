@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../store';
-import { ErrorMessageType } from '../../types/ErrorMessageType';
+import { ErrorMessageType } from '../../types';
 
 export type AutomationsInputFieldName = 'bot' | 'chainId';
 
