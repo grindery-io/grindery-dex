@@ -16,6 +16,7 @@ import {
   selectTradeFilter,
   selectTradeLoading,
   selectTradeOffers,
+  selectChainsItems,
 } from '../../store';
 
 type Props = {};
@@ -25,6 +26,7 @@ const TradePageOffersList = (props: Props) => {
   const loading = useAppSelector(selectTradeLoading);
   const foundOffers = useAppSelector(selectTradeOffers);
   const { amount } = useAppSelector(selectTradeFilter);
+  const chains = useAppSelector(selectChainsItems);
 
   return (
     <PageCard>
@@ -46,6 +48,7 @@ const TradePageOffersList = (props: Props) => {
           foundOffers.map((offer: OfferType) => (
             <OfferPublic
               key={offer._id}
+              chains={chains}
               compact
               offer={offer}
               fromAmount={amount}

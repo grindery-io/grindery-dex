@@ -123,6 +123,7 @@ const TradePageOfferAccept = (props: Props) => {
               {offerChain && offerToken && (
                 <OfferPublic
                   key={offer._id}
+                  chains={chains}
                   offer={offer}
                   fromAmount={amount}
                   fromChain={fromChain}

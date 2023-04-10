@@ -28,7 +28,6 @@ import { ChainType, TokenType, OfferType } from '../../types';
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
 import TransactionID from '../TransactionID/TransactionID';
 import SwapHorizontalCircleIcon from '@mui/icons-material/SwapHorizontalCircle';
-import { useAppSelector, selectChainsItems } from '../../store';
 import {
   getOfferFromChain,
   getOfferFromToken,
@@ -64,6 +63,7 @@ type Props = {
   containerStyle?: SxProps | React.CSSProperties;
   excludeSteps?: ('gas' | 'rate' | 'time' | 'impact')[];
   calculateAmount?: boolean;
+  chains: ChainType[];
 };
 
 interface ExpandMoreProps extends IconButtonProps {
@@ -100,10 +100,9 @@ const OfferPublic = (props: Props) => {
     fromToken,
     excludeSteps,
     calculateAmount,
+    chains,
   } = props;
   const isUserA = !userType || userType === 'a';
-
-  const chains = useAppSelector(selectChainsItems);
 
   const chain = getOfferFromChain(offer, chains);
   const token = getOfferFromToken(offer, chains);

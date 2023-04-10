@@ -86,6 +86,7 @@ function OffersPageRoot() {
                         (offer: OfferType) => (
                           <OfferPublic
                             key={offer._id}
+                            chains={chains}
                             compact
                             userType="b"
                             offer={offer}

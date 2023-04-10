@@ -88,6 +88,7 @@ const OrderCard = (props: Props) => {
       {offer ? (
         <OfferPublic
           key={offer._id}
+          chains={chains}
           offer={offer}
           fromAmount={order.amountTokenDeposit}
           containerStyle={{
