@@ -4,7 +4,6 @@ export const getAbis = async () => {
   const promises = [
     'https://raw.githubusercontent.com/grindery-io/Depay-Reality/main/abis/GrtPool.json',
     'https://raw.githubusercontent.com/grindery-io/Depay-Reality/main/abis/ERC20Sample.json',
-    'https://raw.githubusercontent.com/grindery-io/Depay-Reality/main/abis/GrtSatellite.json',
     'https://raw.githubusercontent.com/grindery-io/Depay-Reality/main/abis/GrtLiquidityWallet.json',
   ].map(async (url: string) => {
     const result = await axios.get(url).catch(() => {
@@ -18,7 +17,7 @@ export const getAbis = async () => {
   return {
     poolAbi: results[0],
     tokenAbi: results[1],
-    satelliteAbi: results[2],
-    liquidityWalletAbi: results[3],
+    liquidityWalletAbi: results[2],
+    satelliteAbi: null,
   };
 };
