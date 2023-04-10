@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { LoadingButton } from '@mui/lab';
+import Loading from '../Loading/Loading';
 
 export const ButtonWrapper = styled.div`
   margin: 10px 0 0;
@@ -36,7 +37,14 @@ const PageCardSubmitButton = (props: Props) => {
         disabled={disabled}
         fullWidth
         onClick={onClick}
-        loadingPosition="start"
+        startIcon={
+          loading ? (
+            <Loading
+              style={{ margin: '0 10px 0 0', color: '#fff' }}
+              size={16}
+            />
+          ) : undefined
+        }
       >
         {label}
       </LoadingButton>

@@ -29,6 +29,11 @@ export const theme = createTheme({
   components: {
     MuiLoadingButton: {
       styleOverrides: {
+        root: {
+          '&.Mui-disabled': {
+            color: 'rgba(255,255,255,0.6)',
+          },
+        },
         loading: {
           color: 'rgba(255,255,255,0.6)',
         },
@@ -61,6 +66,9 @@ export const theme = createTheme({
           '&:hover': {
             opacity: 0.7,
           },
+          '&.Mui-disabled': {
+            color: 'rgba(255,255,255,0.6)',
+          },
         },
         containedPrimary: ({ theme }) => ({
           '&:disabled': {
@@ -89,9 +97,6 @@ export const theme = createTheme({
         outlinedSecondary: {
           color: '#0B0D17',
           border: '1px solid #0B0D17',
-        },
-        disabled: {
-          color: 'rgba(255,255,255,0.6)',
         },
       },
     },

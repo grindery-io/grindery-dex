@@ -46,7 +46,7 @@ export const getOfferToToken = (
 };
 
 export const groupOffersByChainId = (offers: OfferType[]) => {
-  return _.groupBy(offers, (offer) => offer.chainId);
+  return _.groupBy(offers, (offer: OfferType) => offer.chainId);
 };
 
 export const getOfferExchangeRate = (
