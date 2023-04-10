@@ -39,8 +39,8 @@ import { getErrorMessage } from '../utils/error';
 import { getWalletAddressFromReceipt } from '../utils/helpers/walletHelpers';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '../config/routes';
-import isNumeric from '../utils/isNumeric';
 import { TokenType } from '../types/TokenType';
+import { isNumeric } from '../utils';
 
 // Context props
 type ContextProps = {

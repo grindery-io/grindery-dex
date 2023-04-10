@@ -14,7 +14,7 @@ import {
   setFaucetInputValue,
   FaucetInputFieldName,
 } from '../store/slices/faucetSlice';
-import isNumeric from '../utils/isNumeric';
+import { isNumeric } from '../utils';
 import { useUserController } from './UserController';
 import {
   selectUserAddress,

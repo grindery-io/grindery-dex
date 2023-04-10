@@ -27,7 +27,7 @@ import {
   updateOffer,
 } from '../services/offerServices';
 import { OfferType } from '../types/OfferType';
-import isNumeric from '../utils/isNumeric';
+import { isNumeric } from '../utils';
 import { POOL_CONTRACT_ADDRESS } from '../config/constants';
 import { ChainType } from '../types/ChainType';
 import { getTokenById } from '../utils/helpers/tokenHelpers';

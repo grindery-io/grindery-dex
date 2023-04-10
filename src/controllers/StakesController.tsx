@@ -27,7 +27,7 @@ import {
   updateStake,
 } from '../services/stakeServices';
 import { StakeType } from '../types/StakeType';
-import isNumeric from '../utils/isNumeric';
+import { isNumeric } from '../utils';
 import { getChainIdHex } from '../utils/helpers/chainHelpers';
 import { useUserController } from './UserController';
 import {

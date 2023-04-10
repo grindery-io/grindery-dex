@@ -1,5 +1,3 @@
-const isNumeric = (value: string) => {
+export const isNumeric = (value: string) => {
   return /^\d*(\.\d+)?$/.test(value);
 };
-
-export default isNumeric;

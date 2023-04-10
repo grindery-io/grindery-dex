@@ -42,7 +42,7 @@ import { addOrderRequest } from '../services/orderServices';
 import { ChainType } from '../types/ChainType';
 import { getTokenById } from '../utils/helpers/tokenHelpers';
 import { selectChainsItems } from '../store/slices/chainsSlice';
-import isNumeric from '../utils/isNumeric';
+import { isNumeric } from '../utils';
 
 // Context props
 type ContextProps = {
