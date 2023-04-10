@@ -4,14 +4,15 @@ import { IconButton } from '@mui/material';
 import { Box } from '@mui/system';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
 import { ChainsList, PageCardBody, PageCardHeader } from '../../components';
-import { useAppSelector, selectFaucetInput } from '../../store';
-import { ROUTES } from '../../config';
-import { useFaucetController } from '../../controllers';
 import {
+  useAppSelector,
+  selectFaucetInput,
   selectChainsItems,
   selectChainsLoading,
-} from '../../store/slices/chainsSlice';
-import { ChainType } from '../../types/ChainType';
+} from '../../store';
+import { ROUTES } from '../../config';
+import { useFaucetController } from '../../controllers';
+import { ChainType } from '../../types';
 
 function FaucetPageSelectChain() {
   const input = useAppSelector(selectFaucetInput);

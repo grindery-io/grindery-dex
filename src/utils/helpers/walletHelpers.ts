@@ -1,5 +1,4 @@
-import { ChainType } from '../../types/ChainType';
-import { LiquidityWalletType } from '../../types/LiquidityWalletType';
+import { LiquidityWalletType, ChainType } from '../../types';
 
 export const getWalletChain = (
   wallet: LiquidityWalletType,

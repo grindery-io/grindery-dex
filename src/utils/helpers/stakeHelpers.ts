@@ -1,5 +1,4 @@
-import { ChainType } from '../../types/ChainType';
-import { StakeType } from '../../types/StakeType';
+import { ChainType, StakeType } from '../../types';
 
 export const getStakeChain = (
   stake: StakeType,

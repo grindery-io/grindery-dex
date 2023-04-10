@@ -2,7 +2,7 @@ import React from 'react';
 import { Avatar, IconButton, Tooltip } from '@mui/material';
 import { Box } from '@mui/system';
 import { Remove as RemoveIcon, Add as AddIcon } from '@mui/icons-material';
-import { ChainType } from '../../types/ChainType';
+import { ChainType } from '../../types';
 import { Card } from '../Card/Card';
 import { ChainTokenBox } from '../ChainTokenBox/ChainTokenBox';
 import { AvatarDefault } from '../Avatar/AvatarDefault';

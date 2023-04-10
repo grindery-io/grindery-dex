@@ -3,11 +3,10 @@ import { Avatar, IconButton, Tooltip } from '@mui/material';
 import { Box } from '@mui/system';
 import { StakeBadge } from './Stake.style';
 import { Remove as RemoveIcon } from '@mui/icons-material';
-import { StakeType } from '../../types/StakeType';
+import { StakeType, ChainType } from '../../types';
 import { Card } from '../Card/Card';
 import { ChainTokenBox } from '../ChainTokenBox/ChainTokenBox';
 import { AvatarDefault } from '../Avatar/AvatarDefault';
-import { ChainType } from '../../types/ChainType';
 
 type Props = {
   stake: StakeType;

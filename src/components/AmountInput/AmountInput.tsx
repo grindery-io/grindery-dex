@@ -1,7 +1,6 @@
 import React from 'react';
 import { Avatar, Badge, Box, FormHelperText, SxProps } from '@mui/material';
-import { ChainType } from '../../types/ChainType';
-import { TokenType } from '../../types/TokenType';
+import { ChainType, TokenType } from '../../types';
 import { AvatarDefault } from '../Avatar/AvatarDefault';
 import { Card } from '../Card/Card';
 import { CardTitle } from '../Card/CardTitle';

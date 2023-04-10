@@ -24,20 +24,17 @@ import EvStationIcon from '@mui/icons-material/EvStation';
 import AccessTimeFilledIcon from '@mui/icons-material/AccessTimeFilled';
 import LayersIcon from '@mui/icons-material/Layers';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { ChainType } from '../../types/ChainType';
+import { ChainType, TokenType, OfferType } from '../../types';
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
-import { TokenType } from '../../types/TokenType';
 import TransactionID from '../TransactionID/TransactionID';
 import SwapHorizontalCircleIcon from '@mui/icons-material/SwapHorizontalCircle';
-import { useAppSelector } from '../../store/storeHooks';
-import { selectChainsItems } from '../../store/slices/chainsSlice';
-import { OfferType } from '../../types/OfferType';
+import { useAppSelector, selectChainsItems } from '../../store';
 import {
   getOfferFromChain,
   getOfferFromToken,
   getOfferLink,
   getOfferProviderLink,
-} from '../../utils/helpers/offerHelpers';
+} from '../../utils';
 import PageCardSubmitButton from '../PageCardSubmitButton/PageCardSubmitButton';
 
 export type OfferChain = {

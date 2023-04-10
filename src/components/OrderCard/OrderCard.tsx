@@ -6,14 +6,13 @@ import { Card } from '../Card/Card';
 import AlertBox from '../AlertBox/AlertBox';
 import TransactionID from '../TransactionID/TransactionID';
 import OfferPublic from '../Offer/OfferPublic';
-import { OrderType } from '../../types/OrderType';
+import { OrderType, ChainType } from '../../types';
 import {
   getOrderBuyerLink,
   getOrderFromChain,
   getOrderFromToken,
   getOrderLink,
-} from '../../utils/helpers/orderHelpers';
-import { ChainType } from '../../types/ChainType';
+} from '../../utils';
 import PageCardSubmitButton from '../PageCardSubmitButton/PageCardSubmitButton';
 
 type Props = {

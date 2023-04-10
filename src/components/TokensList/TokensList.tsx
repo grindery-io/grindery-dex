@@ -9,7 +9,7 @@ import {
   ListItemText,
   Skeleton,
 } from '@mui/material';
-import { TokenType } from '../../types/TokenType';
+import { TokenType } from '../../types';
 
 type Props = {
   tokens: any[];

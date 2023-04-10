@@ -1,4 +1,4 @@
-import { ChainType } from '../../types/ChainType';
+import { ChainType } from '../../types';
 
 export const getChainIdHex = (chain: ChainType | string) => {
   const chainId = typeof chain === 'string' ? chain : chain.chainId;

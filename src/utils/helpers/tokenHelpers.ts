@@ -1,5 +1,4 @@
-import { ChainType } from '../../types/ChainType';
-import { TokenType } from '../../types/TokenType';
+import { TokenType, ChainType } from '../../types';
 
 export const getTokenById = (
   tokenId: string,

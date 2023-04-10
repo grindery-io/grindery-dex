@@ -1,7 +1,7 @@
 import React from 'react';
 import { Avatar, Skeleton, Tooltip } from '@mui/material';
 import { ChainCard, ChainContainer } from './ChainsList.style';
-import { ChainType } from '../../types/ChainType';
+import { ChainType } from '../../types';
 
 type Props = {
   chain: string | number;

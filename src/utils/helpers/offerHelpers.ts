@@ -1,7 +1,5 @@
 import _ from 'lodash';
-import { ChainType } from '../../types/ChainType';
-import { OfferType } from '../../types/OfferType';
-import { TokenType } from '../../types/TokenType';
+import { ChainType, OfferType, TokenType } from '../../types';
 
 export const getOfferIdFromReceipt = (receipt: any): string => {
   return receipt?.logs?.[0]?.topics?.[1] || '';

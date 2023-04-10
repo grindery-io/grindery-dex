@@ -1,6 +1,4 @@
-import { ChainType } from '../../types/ChainType';
-import { OrderType } from '../../types/OrderType';
-import { TokenType } from '../../types/TokenType';
+import { ChainType, OrderType, TokenType } from '../../types';
 
 export const getOrderIdFromReceipt = (receipt: any): string => {
   return receipt?.logs?.[0]?.topics?.[2] || '';
