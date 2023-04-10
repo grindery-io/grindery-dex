@@ -3,7 +3,6 @@ export * from './Card/Card';
 export * from './ChainTokenBox/ChainTokenBox';
 export { default as AlertBox } from './AlertBox/AlertBox';
 export { default as AmountInput } from './AmountInput/AmountInput';
-export { default as Button } from './Button/Button';
 export { default as BuyMenu } from './BuyMenu/BuyMenu';
 export { default as ChainsList } from './ChainsList/ChainsList';
 export { default as CheckBox } from './CheckBox/CheckBox';

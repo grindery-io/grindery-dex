@@ -1,5 +1,5 @@
-import { Avatar, Badge, Box, FormHelperText, SxProps } from '@mui/material';
 import React from 'react';
+import { Avatar, Badge, Box, FormHelperText, SxProps } from '@mui/material';
 import { ChainType } from '../../types/ChainType';
 import { TokenType } from '../../types/TokenType';
 import { AvatarDefault } from '../Avatar/AvatarDefault';

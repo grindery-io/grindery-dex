@@ -16,7 +16,6 @@
     "@types/react-dom": "^18.0.0",
     "axios": "^1.3.4",
     "grindery-nexus-client": "0.9.14",
-    "grindery-ui": "^0.10.1",
     "lodash": "^4.17.21",
     "moment": "^2.29.4",
     "react": "^18.2.0",

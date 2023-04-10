@@ -1,10 +1,34 @@
+import { Box } from '@mui/material';
+import { styled as MuiStyled } from '@mui/material/styles';
 import styled from 'styled-components';
 
 export const UserContainer = styled.div`
   position: relative;
 `;
 
-export const UserWrapper = styled.div`
+export const UserWrapper = MuiStyled(Box)({
+  border: '1px solid #dcdcdc',
+  borderRadius: 34,
+  padding: '7px 12px 7px 8px',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'flex-start',
+  flexDirection: 'row',
+  flexWrap: 'nowrap',
+  gap: 8,
+  cursor: 'pointer',
+  transition: 'border-color 0.2s ease-in-out',
+
+  '&:hover, &.opened': {
+    borderColor: '#0b0d17 !important',
+  },
+
+  '&.dark:hover, &.dark.opened': {
+    borderColor: '#ffffff !important',
+  },
+});
+
+/*export const UserWrapper = styled.div`
   border: 1px solid #dcdcdc;
   border-radius: 34px;
   padding: 7px 12px 7px 8px;
@@ -27,7 +51,7 @@ export const UserWrapper = styled.div`
   &.dark.opened {
     border-color: #ffffff !important;
   }
-`;
+`;*/
 
 export const UserStatus = styled.div`
   background: #f4f5f7;

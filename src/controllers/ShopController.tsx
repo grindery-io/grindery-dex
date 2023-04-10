@@ -205,6 +205,12 @@ export const ShopController = ({ children }: ShopControllerProps) => {
 
       // stop executing if approval failed
       if (!txApprove) {
+        dispatch(
+          setShopError({
+            type: 'acceptOffer',
+            text: 'Approval transaction failed',
+          })
+        );
         dispatch(setShopAccepting(''));
         return;
       }
@@ -239,8 +245,8 @@ export const ShopController = ({ children }: ShopControllerProps) => {
       const poolContract = _poolContract.connect(signer);
 
       // get gas estimation
-      const gasEstimate =
-        await poolContract.estimateGas.depositETHAndAcceptOffer(
+      const gasEstimate = await poolContract.estimateGas
+        .depositETHAndAcceptOffer(
           offer.offerId,
           userAddress,
           ethers.utils.parseEther(
@@ -251,7 +257,17 @@ export const ShopController = ({ children }: ShopControllerProps) => {
           {
             value: ethers.utils.parseEther(amountToPay),
           }
-        );
+        )
+        .catch((error: any) => {
+          dispatch(
+            setShopError({
+              type: 'acceptOffer',
+              text: getErrorMessage(error.error, 'Gas estimation error'),
+            })
+          );
+          dispatch(setShopAccepting(''));
+          return;
+        });
 
       // create transaction
       const tx = await poolContract
@@ -285,6 +301,12 @@ export const ShopController = ({ children }: ShopControllerProps) => {
 
       // stop execution if offer activation failed
       if (!tx) {
+        dispatch(
+          setShopError({
+            type: 'acceptOffer',
+            text: 'Offer acceptance transaction failed',
+          })
+        );
         dispatch(setShopAccepting(''));
         return;
       }

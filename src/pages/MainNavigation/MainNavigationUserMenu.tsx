@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
-import { ThemeProvider as GrinderyThemeProvider } from 'grindery-ui';
 import Foco from 'react-foco';
 import Jdenticon from 'react-jdenticon';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { ICONS } from '../../config/constants';
-import { Snackbar } from 'grindery-ui';
+import { Alert, Snackbar } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import Icon from '@mdi/react';
 import { mdiWaterPump } from '@mdi/js';
@@ -38,91 +37,89 @@ const MainNavigationUserMenu = (props: Props) => {
   const address = useAppSelector(selectUserAddress);
 
   return address ? (
-    <GrinderyThemeProvider>
-      <UserContainer>
-        <Foco
-          onClickOutside={() => {
-            setMenuOpened(false);
+    <UserContainer>
+      <Foco
+        onClickOutside={() => {
+          setMenuOpened(false);
+        }}
+        onFocusOutside={() => {
+          setMenuOpened(false);
+        }}
+      >
+        <UserWrapper
+          onClick={() => {
+            setMenuOpened(!menuOpened);
           }}
-          onFocusOutside={() => {
-            setMenuOpened(false);
-          }}
+          className={`${menuOpened ? 'opened' : ''} ${mode}`}
         >
-          <UserWrapper
-            onClick={() => {
-              setMenuOpened(!menuOpened);
-            }}
-            className={`${menuOpened ? 'opened' : ''} ${mode}`}
-          >
-            <UserStatus>
-              <Jdenticon size="20" value={encodeURIComponent(address)} />
-            </UserStatus>
-            <UserId className={mode}>
-              {address.substring(0, 6) +
-                '...' +
-                address.substring(address.length - 4)}
-            </UserId>
-          </UserWrapper>
+          <UserStatus>
+            <Jdenticon size="20" value={encodeURIComponent(address)} />
+          </UserStatus>
+          <UserId className={mode}>
+            {address.substring(0, 6) +
+              '...' +
+              address.substring(address.length - 4)}
+          </UserId>
+        </UserWrapper>
 
-          <UserDropdown className={menuOpened ? 'opened' : ''}>
-            <UserDropdownContent>
-              <CopyToClipboard
-                text={address}
-                onCopy={() => {
-                  setMenuOpened(false);
-                  setCopied(true);
-                }}
-              >
-                <button onClick={() => {}}>
-                  <img src={ICONS.COPY} alt="" />
-                  <span>{'Copy wallet addres'}</span>
-                </button>
-              </CopyToClipboard>
+        <UserDropdown className={menuOpened ? 'opened' : ''}>
+          <UserDropdownContent>
+            <CopyToClipboard
+              text={address}
+              onCopy={() => {
+                setMenuOpened(false);
+                setCopied(true);
+              }}
+            >
+              <button onClick={() => {}}>
+                <img src={ICONS.COPY} alt="" />
+                <span>{'Copy wallet addres'}</span>
+              </button>
+            </CopyToClipboard>
+            <button
+              onClick={() => {
+                navigate('/faucet');
+              }}
+            >
+              <Icon
+                path={mdiWaterPump}
+                style={{ width: '20px', height: '20px' }}
+              />
+              <span>Faucet</span>
+            </button>
+            {isAdmin && (
               <button
                 onClick={() => {
-                  navigate('/faucet');
+                  navigate('/sell');
                 }}
               >
-                <Icon
-                  path={mdiWaterPump}
-                  style={{ width: '20px', height: '20px' }}
-                />
-                <span>Faucet</span>
-              </button>
-              {isAdmin && (
-                <button
-                  onClick={() => {
-                    navigate('/sell');
-                  }}
-                >
-                  <SellOutlinedIcon sx={{ width: '20px', height: '20px' }} />
+                <SellOutlinedIcon sx={{ width: '20px', height: '20px' }} />
 
-                  <span>Sell</span>
-                </button>
-              )}
-              <button
-                onClick={() => {
-                  disconnectUser();
-                }}
-              >
-                <img src={ICONS.DISCONNECT} alt="" />
-                <span>Disconnect</span>
+                <span>Sell</span>
               </button>
-            </UserDropdownContent>
-          </UserDropdown>
-        </Foco>
-        <Snackbar
-          open={copied}
-          handleClose={() => {
-            setCopied(false);
-          }}
-          message="Wallet address copied!"
-          hideCloseButton
-          autoHideDuration={2000}
-          severity="success"
-        />
-      </UserContainer>
-    </GrinderyThemeProvider>
+            )}
+            <button
+              onClick={() => {
+                disconnectUser();
+              }}
+            >
+              <img src={ICONS.DISCONNECT} alt="" />
+              <span>Disconnect</span>
+            </button>
+          </UserDropdownContent>
+        </UserDropdown>
+      </Foco>
+      <Snackbar
+        open={copied}
+        onClose={() => {
+          setCopied(false);
+        }}
+        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+        autoHideDuration={2000}
+      >
+        <Alert severity="success">Wallet address copied!</Alert>
+      </Snackbar>
+    </UserContainer>
   ) : null;
 };
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Button } from 'grindery-ui';
+import { LoadingButton } from '@mui/lab';
 
 export const ButtonWrapper = styled.div`
   margin: 10px 0 0;
@@ -31,13 +31,15 @@ const PageCardSubmitButton = (props: Props) => {
   const { label, onClick, disabled, loading } = props;
   return (
     <ButtonWrapper>
-      <Button
+      <LoadingButton
         loading={loading}
         disabled={disabled}
         fullWidth
-        value={label}
         onClick={onClick}
-      />
+        loadingPosition="start"
+      >
+        {label}
+      </LoadingButton>
     </ButtonWrapper>
   );
 };

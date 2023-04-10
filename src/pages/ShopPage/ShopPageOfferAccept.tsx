@@ -73,7 +73,7 @@ const ShopPageOfferAccept = (props: Props) => {
   return (
     <Dialog
       fullWidth
-      sx={{ maxWidth: '375px' }}
+      sx={{ width: '100%', maxWidth: '375px', margin: '0 auto' }}
       open={showModal}
       onClose={handleModalClosed}
     >
