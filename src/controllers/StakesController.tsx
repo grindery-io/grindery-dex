@@ -20,23 +20,12 @@ import {
   setStakesLoading,
   setStakesWithdrawInputValue,
 } from '../store/slices/stakesSlice';
-import {
-  addStake,
-  getStake,
-  getUserStakes,
-  updateStake,
-} from '../services/stakeServices';
-import { StakeType } from '../types/StakeType';
-import { isNumeric } from '../utils';
-import { getChainIdHex } from '../utils/helpers/chainHelpers';
+import { addStake, getStake, getUserStakes, updateStake } from '../services';
+import { StakeType } from '../types';
+import { getErrorMessage, isNumeric, getChainIdHex } from '../utils';
 import { useUserController } from './UserController';
-import {
-  GRT_CONTRACT_ADDRESS,
-  POOL_CONTRACT_ADDRESS,
-} from '../config/constants';
-import { getErrorMessage } from '../utils/error';
+import { ROUTES, GRT_CONTRACT_ADDRESS, POOL_CONTRACT_ADDRESS } from '../config';
 import { useNavigate } from 'react-router-dom';
-import { ROUTES } from '../config/routes';
 
 // Context props
 type ContextProps = {

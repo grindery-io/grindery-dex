@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '../store/storeHooks';
 import { selectUserAccessToken } from '../store/slices/userSlice';
-import { getChainsWithTokens } from '../services/chainServices';
+import { getChainsWithTokens } from '../services';
 import { setChainsItems, setChainsLoading } from '../store/slices/chainsSlice';
 
 type ChainsControllerProps = {

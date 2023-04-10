@@ -22,7 +22,7 @@ import {
   setAutomationsInputValue,
   setAutomationsLoading,
 } from '../store/slices/automationsSlice';
-import { getBotAddress } from '../services/automationServices';
+import { getBotAddress } from '../services';
 import { selectLiquidityWalletAbi } from '../store/slices/abiSlice';
 import { LiquidityWalletType } from '../types/LiquidityWalletType';
 import { selectWalletsItems } from '../store/slices/walletsSlice';

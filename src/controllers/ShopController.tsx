@@ -6,12 +6,9 @@ import React, {
 } from 'react';
 import { useAppDispatch, useAppSelector } from '../store/storeHooks';
 import { selectUserAccessToken } from '../store/slices/userSlice';
-import { getChainIdHex } from '../utils/helpers/chainHelpers';
 import { useUserController } from './UserController';
-import { getAllOffers } from '../services/offerServices';
-import { OfferType } from '../types/OfferType';
-import { POOL_CONTRACT_ADDRESS } from '../config/constants';
-import { getErrorMessage } from '../utils/error';
+import { getAllOffers, getTokenPriceById, addOrderRequest } from '../services';
+import { POOL_CONTRACT_ADDRESS } from '../config';
 import {
   clearShopError,
   selectShopFilter,
@@ -26,10 +23,12 @@ import {
   setShopOffers,
   setShopPricesLoading,
 } from '../store/slices/shopSlice';
-import { getTokenPriceById } from '../services/tokenServices';
-import { TokenType } from '../types/TokenType';
-import { getOrderIdFromReceipt } from '../utils/helpers/orderHelpers';
-import { addOrderRequest } from '../services/orderServices';
+import { TokenType, OfferType } from '../types';
+import {
+  getErrorMessage,
+  getOrderIdFromReceipt,
+  getChainIdHex,
+} from '../utils';
 
 // Context props
 type ContextProps = {

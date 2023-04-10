@@ -4,16 +4,14 @@ import React, {
   useContext,
   useEffect,
 } from 'react';
-import { OrderType } from '../types/OrderType';
 import { useAppDispatch, useAppSelector } from '../store/storeHooks';
-import { getBuyerOrdersRequest } from '../services/orderServices';
+import { getBuyerOrdersRequest, getOfferById } from '../services';
 import { selectUserAccessToken } from '../store/slices/userSlice';
-import { getOfferById } from '../services/offerServices';
 import {
   setOrdersHistoryItems,
   setOrdersHistoryLoading,
 } from '../store/slices/ordersHistorySlice';
-import { OfferType } from '../types/OfferType';
+import { OrderType, OfferType } from '../types';
 
 // Context props
 type ContextProps = {};

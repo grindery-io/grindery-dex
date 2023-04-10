@@ -18,14 +18,12 @@ import { getErrorMessage } from '../utils/error';
 import {
   completeSellerOrderRequest,
   getSellerOrdersRequest,
-} from '../services/orderServices';
-import { selectUserAccessToken } from '../store/slices/userSlice';
-import { getOfferById } from '../services/offerServices';
-import { OfferType } from '../types/OfferType';
-import {
+  getOfferById,
   getWalletBalanceRequest,
   updateWalletRequest,
-} from '../services/walletServices';
+} from '../services';
+import { selectUserAccessToken } from '../store/slices/userSlice';
+import { OfferType } from '../types/OfferType';
 
 // Context props
 type ContextProps = {

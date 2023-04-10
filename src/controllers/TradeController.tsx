@@ -4,18 +4,11 @@ import React, {
   useContext,
   useEffect,
 } from 'react';
-import { useAppDispatch, useAppSelector } from '../store/storeHooks';
 import {
+  useAppDispatch,
+  useAppSelector,
   selectUserAccessToken,
   selectUserAddress,
-} from '../store/slices/userSlice';
-import { getChainIdHex } from '../utils/helpers/chainHelpers';
-import { useUserController } from './UserController';
-import { searchOffersRequest } from '../services/offerServices';
-import { OfferType } from '../types/OfferType';
-import { POOL_CONTRACT_ADDRESS } from '../config/constants';
-import { getErrorMessage } from '../utils/error';
-import {
   TradeFilterFieldName,
   Tradefilter,
   clearTradeError,
@@ -31,18 +24,24 @@ import {
   setTradeOffersVisible,
   setTradePricesLoading,
   setTradeToTokenPrice,
-} from '../store/slices/tradeSlice';
+  selectChainsItems,
+} from '../store';
 import {
+  getChainIdHex,
+  getErrorMessage,
+  getOrderIdFromReceipt,
+  getTokenById,
+  isNumeric,
+} from '../utils';
+import { useUserController } from './UserController';
+import {
+  searchOffersRequest,
   getTokenBalanceRequest,
   getTokenPriceById,
-} from '../services/tokenServices';
-import { TokenType } from '../types/TokenType';
-import { getOrderIdFromReceipt } from '../utils/helpers/orderHelpers';
-import { addOrderRequest } from '../services/orderServices';
-import { ChainType } from '../types/ChainType';
-import { getTokenById } from '../utils/helpers/tokenHelpers';
-import { selectChainsItems } from '../store/slices/chainsSlice';
-import { isNumeric } from '../utils';
+  addOrderRequest,
+} from '../services';
+import { OfferType, TokenType, ChainType } from '../types';
+import { POOL_CONTRACT_ADDRESS } from '../config';
 
 // Context props
 type ContextProps = {

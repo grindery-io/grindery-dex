@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect } from 'react';
 import { useAppDispatch } from '../store/storeHooks';
 import { setAbiLoading, setAbis } from '../store/slices/abiSlice';
-import { getAbis } from '../services/abiServices';
+import { getAbis } from '../services';
 
 type AbiControllerProps = {
   children: React.ReactNode;

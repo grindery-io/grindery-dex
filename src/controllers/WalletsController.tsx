@@ -4,9 +4,11 @@ import React, {
   useContext,
   useEffect,
 } from 'react';
-import { useAppDispatch, useAppSelector } from '../store/storeHooks';
-import { selectUserAccessToken } from '../store/slices/userSlice';
+import { useNavigate } from 'react-router-dom';
 import {
+  useAppDispatch,
+  useAppSelector,
+  selectUserAccessToken,
   WalletsAddTokensInput,
   WalletsAddTokensInputFieldName,
   WalletsCreateInput,
@@ -23,24 +25,22 @@ import {
   setWalletsItems,
   setWalletsLoading,
   setWalletsWithdrawTokensInputValue,
-} from '../store/slices/walletsSlice';
+} from '../store';
 import {
   addWalletRequest,
   getWalletsRequest,
   getWalletRequest,
   updateWalletRequest,
-} from '../services/walletServices';
-import { ErrorMessageType } from '../types/ErrorMessageType';
-import { LiquidityWalletType } from '../types/LiquidityWalletType';
-import { getChainIdHex } from '../utils/helpers/chainHelpers';
+} from '../services';
+import { ErrorMessageType, LiquidityWalletType, TokenType } from '../types';
+import {
+  getChainIdHex,
+  getErrorMessage,
+  getWalletAddressFromReceipt,
+  isNumeric,
+} from '../utils';
 import { useUserController } from './UserController';
-import { GRTSATELLITE_CONTRACT_ADDRESS } from '../config/constants';
-import { getErrorMessage } from '../utils/error';
-import { getWalletAddressFromReceipt } from '../utils/helpers/walletHelpers';
-import { useNavigate } from 'react-router-dom';
-import { ROUTES } from '../config/routes';
-import { TokenType } from '../types/TokenType';
-import { isNumeric } from '../utils';
+import { ROUTES, GRTSATELLITE_CONTRACT_ADDRESS } from '../config';
 
 // Context props
 type ContextProps = {

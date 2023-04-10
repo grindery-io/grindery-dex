@@ -5,16 +5,16 @@ import React, {
   useCallback,
 } from 'react';
 import { useGrinderyNexus } from 'use-grindery-nexus';
-import { useAppDispatch } from '../store/storeHooks';
 import {
+  useAppDispatch,
   setUserAccessToken,
   setUserAddress,
   setUserChain,
   setUserId,
   setUserIsAdmin,
   setUserIsAdminLoading,
-} from '../store/slices/userSlice';
-import { isUserAdmin } from '../services/userServices';
+} from '../store';
+import { isUserAdmin } from '../services';
 
 // Context props
 type ContextProps = {

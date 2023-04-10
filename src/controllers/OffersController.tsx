@@ -20,12 +20,7 @@ import {
   setOffersItems,
   setOffersLoading,
 } from '../store/slices/offersSlice';
-import {
-  addOffer,
-  getOffer,
-  getUserOffers,
-  updateOffer,
-} from '../services/offerServices';
+import { addOffer, getOffer, getUserOffers, updateOffer } from '../services';
 import { OfferType } from '../types/OfferType';
 import { isNumeric } from '../utils';
 import { POOL_CONTRACT_ADDRESS } from '../config/constants';
