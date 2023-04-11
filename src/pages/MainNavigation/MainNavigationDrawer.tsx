@@ -13,6 +13,7 @@ import { Collapse, List, ListItemButton, ListItemText } from '@mui/material';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import { Drawer } from '../../components';
 import { useAppSelector, selectUserIsAdmin } from '../../store';
+import { SidebarNavigationItemType } from '../../types';
 
 const drawerWidth = 240;
 
@@ -64,8 +65,9 @@ const MainNavigationDrawer = (props: Props) => {
         <Box sx={{ overflow: 'auto' }}>
           <List>
             {DRAWER_NAVIGATION.filter(
-              (link: any) => isAdmin || link.path === '/buy'
-            ).map((link: any) => (
+              (link: SidebarNavigationItemType) =>
+                isAdmin || link.path === '/buy'
+            ).map((link: SidebarNavigationItemType) => (
               <React.Fragment key={link.path}>
                 <ListItemButton
                   key={link.path}
@@ -100,7 +102,7 @@ const MainNavigationDrawer = (props: Props) => {
                 {link.path === '/buy' && (
                   <Collapse in={buyOpen} timeout="auto">
                     <List component="div" disablePadding>
-                      {BUY_NAVIGATION.map((page: any) => (
+                      {BUY_NAVIGATION.map((page: SidebarNavigationItemType) => (
                         <ListItemButton
                           sx={{ pl: 4 }}
                           key={page.path}
@@ -120,20 +122,22 @@ const MainNavigationDrawer = (props: Props) => {
                 {link.path === '/sell' && (
                   <Collapse in={open} timeout="auto">
                     <List component="div" disablePadding>
-                      {SELL_NAVIGATION.map((page: any) => (
-                        <ListItemButton
-                          sx={{ pl: 4 }}
-                          key={page.path}
-                          onClick={(event: React.MouseEvent<HTMLElement>) => {
-                            event.preventDefault();
-                            onClose();
-                            navigate(page.path);
-                          }}
-                          selected={location.pathname.startsWith(page.path)}
-                        >
-                          <ListItemText primary={page.label} />
-                        </ListItemButton>
-                      ))}
+                      {SELL_NAVIGATION.map(
+                        (page: SidebarNavigationItemType) => (
+                          <ListItemButton
+                            sx={{ pl: 4 }}
+                            key={page.path}
+                            onClick={(event: React.MouseEvent<HTMLElement>) => {
+                              event.preventDefault();
+                              onClose();
+                              navigate(page.path);
+                            }}
+                            selected={location.pathname.startsWith(page.path)}
+                          >
+                            <ListItemText primary={page.label} />
+                          </ListItemButton>
+                        )
+                      )}
                     </List>
                   </Collapse>
                 )}

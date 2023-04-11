@@ -10,6 +10,7 @@ import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import DrawerDesktop from '../Drawer/DrawerDesktop';
 import { SELL_NAVIGATION } from '../../config';
+import { SidebarNavigationItemType } from '../../types';
 
 type Props = {};
 
@@ -41,7 +42,7 @@ const SellMenu = (props: Props) => {
               </ListSubheader>
             }
           >
-            {SELL_NAVIGATION.map((page: any) => (
+            {SELL_NAVIGATION.map((page: SidebarNavigationItemType) => (
               <ListItem key={page.path} disablePadding>
                 <ListItemButton
                   onClick={(event: React.MouseEvent<HTMLElement>) => {

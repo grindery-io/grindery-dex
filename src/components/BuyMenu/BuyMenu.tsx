@@ -10,6 +10,7 @@ import { Box } from '@mui/system';
 import { useLocation, useNavigate } from 'react-router-dom';
 import DrawerDesktop from '../Drawer/DrawerDesktop';
 import { BUY_NAVIGATION } from '../../config';
+import { SidebarNavigationItemType } from '../../types';
 
 type Props = {};
 
@@ -41,7 +42,7 @@ const BuyMenu = (props: Props) => {
               </ListSubheader>
             }
           >
-            {BUY_NAVIGATION.map((page: any) => (
+            {BUY_NAVIGATION.map((page: SidebarNavigationItemType) => (
               <ListItem key={page.path} disablePadding>
                 <ListItemButton
                   onClick={(event: React.MouseEvent<HTMLElement>) => {
