@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyledTab, StyledTabs } from './NavTabs.style';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { NavTabsItemType } from './NavTabs.type';
+import { NavTabsItemType } from '../../types';
 
 type Props = {
   menu: NavTabsItemType[];

@@ -4,15 +4,13 @@ import { IconButton, Skeleton, Tooltip } from '@mui/material';
 import { Box } from '@mui/system';
 import { AddCircleOutline as AddCircleOutlineIcon } from '@mui/icons-material';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
-import { TokenType } from '../../types';
-import LiquidityWalletToken, {
-  WalletToken,
-} from '../../components/LiquidityWalletToken/LiquidityWalletToken';
+import { TokenType, WalletTokenType } from '../../types';
 import {
   Loading,
   PageCardBody,
   PageCardHeader,
   PageCardSubmitButton,
+  LiquidityWalletToken,
 } from '../../components';
 import {
   useAppSelector,
@@ -95,7 +93,7 @@ function LiquidityWalletPageTokens() {
           {user && walletsIsLoading && <Loading />}
           {user &&
             Object.keys(currentWallet?.tokens || {}).map((key: string) => {
-              const token: WalletToken = {
+              const token: WalletTokenType = {
                 label: key,
                 icon:
                   walletChain?.tokens?.find((t: TokenType) => t.symbol === key)
@@ -107,7 +105,7 @@ function LiquidityWalletPageTokens() {
                   key={token.label}
                   token={token}
                   tokenChain={walletChain || undefined}
-                  onWithdrawClick={(t: WalletToken) => {
+                  onWithdrawClick={(t: WalletTokenType) => {
                     navigate(
                       ROUTES.SELL.WALLETS.WITHDRAW.FULL_PATH.replace(
                         ':walletId',
@@ -115,7 +113,7 @@ function LiquidityWalletPageTokens() {
                       ).replace(':tokenSymbol', t.label || '')
                     );
                   }}
-                  onAddClick={(t: WalletToken) => {
+                  onAddClick={(t: WalletTokenType) => {
                     navigate(
                       ROUTES.SELL.WALLETS.ADD.FULL_PATH.replace(
                         ':walletId',

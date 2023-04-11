@@ -3,8 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { IconButton, Stack } from '@mui/material';
 import { Box } from '@mui/system';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
-import { CardTitle } from '../../components/Card/CardTitle';
 import {
+  CardTitle,
   AlertBox,
   SelectChainAndTokenButton,
   TextInput,

@@ -8,8 +8,8 @@ import {
 } from '@mui/material';
 import { Box } from '@mui/system';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { buyPages } from '../../pages/BuyPage/BuyPage';
 import DrawerDesktop from '../Drawer/DrawerDesktop';
+import { BUY_NAVIGATION } from '../../config';
 
 type Props = {};
 
@@ -41,14 +41,14 @@ const BuyMenu = (props: Props) => {
               </ListSubheader>
             }
           >
-            {buyPages.map((page: any) => (
+            {BUY_NAVIGATION.map((page: any) => (
               <ListItem key={page.path} disablePadding>
                 <ListItemButton
                   onClick={(event: React.MouseEvent<HTMLElement>) => {
                     event.preventDefault();
-                    navigate(page.fullPath);
+                    navigate(page.path);
                   }}
-                  selected={location.pathname.startsWith(page.fullPath)}
+                  selected={location.pathname.startsWith(page.path)}
                 >
                   <ListItemText primary={page.label} />
                 </ListItemButton>

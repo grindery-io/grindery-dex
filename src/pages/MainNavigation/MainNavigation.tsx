@@ -18,8 +18,8 @@ import MainNavigationDrawer from './MainNavigationDrawer';
 import MainNavigationUserMenu from './MainNavigationUserMenu';
 import { useAppSelector, selectUserId } from '../../store';
 import { useUserController } from '../../controllers';
-import { NavTabsItemType } from '../../components/NavTabs/NavTabs.type';
 import { ROUTES } from '../../config';
+import { NavTabsItemType } from '../../types';
 
 export const TABS_NAV: NavTabsItemType[] = [
   {
@@ -33,17 +33,6 @@ export const TABS_NAV: NavTabsItemType[] = [
     label: 'Shop',
     icon: <AddShoppingCartIcon />,
     iconPosition: 'start',
-  },
-];
-
-const DRAWER_NAV = [
-  {
-    path: ROUTES.BUY.FULL_PATH,
-    label: 'Buy',
-  },
-  {
-    path: ROUTES.SELL.FULL_PATH,
-    label: 'Sell',
   },
 ];
 
@@ -110,7 +99,6 @@ const MainNavigation = (props: Props) => {
         )}
       </Wrapper>
       <MainNavigationDrawer
-        nav={DRAWER_NAV}
         opened={drawerOpen}
         onClose={() => {
           setDrawerOpen(false);

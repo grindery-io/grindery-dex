@@ -1,5 +1,7 @@
 export * from './Avatar/AvatarDefault';
 export * from './Card/Card';
+export * from './Card/CardTitle';
+export * from './Card/CardHeader';
 export * from './ChainTokenBox/ChainTokenBox';
 export { default as AlertBox } from './AlertBox/AlertBox';
 export { default as AmountInput } from './AmountInput/AmountInput';

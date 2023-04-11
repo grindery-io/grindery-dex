@@ -4,7 +4,7 @@ import AutomationsPageRoot from './AutomationsPageRoot';
 import AutomationsPageSelectChain from './AutomationsPageSelectChain';
 import { ROUTES } from '../../config';
 import { AutomationsController } from '../../controllers';
-import PageCard from '../../components/PageCard/PageCard';
+import { PageCard } from '../../components';
 
 type Props = {};
 

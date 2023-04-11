@@ -5,3 +5,6 @@ export * from './OfferType';
 export * from './OrderType';
 export * from './StakeType';
 export * from './TokenType';
+export * from './SidebarNavigationItemType';
+export * from './NavTabsItemType';
+export * from './WalletTokenType';

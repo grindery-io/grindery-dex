@@ -2,18 +2,16 @@ import React from 'react';
 import { Avatar, IconButton, Tooltip } from '@mui/material';
 import { Box } from '@mui/system';
 import { Remove as RemoveIcon, Add as AddIcon } from '@mui/icons-material';
-import { ChainType } from '../../types';
+import { ChainType, WalletTokenType } from '../../types';
 import { Card } from '../Card/Card';
 import { ChainTokenBox } from '../ChainTokenBox/ChainTokenBox';
 import { AvatarDefault } from '../Avatar/AvatarDefault';
 
-export type WalletToken = { label: string; icon: string; amount: string };
-
 type Props = {
-  token: WalletToken;
+  token: WalletTokenType;
   tokenChain: ChainType | undefined;
-  onWithdrawClick: (token: WalletToken) => void;
-  onAddClick: (token: WalletToken) => void;
+  onWithdrawClick: (token: WalletTokenType) => void;
+  onAddClick: (token: WalletTokenType) => void;
 };
 
 const LiquidityWalletToken = (props: Props) => {

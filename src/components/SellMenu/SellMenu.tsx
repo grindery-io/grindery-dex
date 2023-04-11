@@ -8,8 +8,8 @@ import {
 import { Box } from '@mui/system';
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { sellPages } from '../../pages/SellPage/SellPage';
 import DrawerDesktop from '../Drawer/DrawerDesktop';
+import { SELL_NAVIGATION } from '../../config';
 
 type Props = {};
 
@@ -18,6 +18,7 @@ const drawerWidth = 240;
 const SellMenu = (props: Props) => {
   let navigate = useNavigate();
   const location = useLocation();
+
   return (
     <Box sx={{ display: { xs: 'none', lg: 'block' } }}>
       <DrawerDesktop
@@ -40,14 +41,14 @@ const SellMenu = (props: Props) => {
               </ListSubheader>
             }
           >
-            {sellPages.map((page: any) => (
+            {SELL_NAVIGATION.map((page: any) => (
               <ListItem key={page.path} disablePadding>
                 <ListItemButton
                   onClick={(event: React.MouseEvent<HTMLElement>) => {
                     event.preventDefault();
-                    navigate(page.fullPath);
+                    navigate(page.path);
                   }}
-                  selected={location.pathname.startsWith(page.fullPath)}
+                  selected={location.pathname.startsWith(page.path)}
                 >
                   <ListItemText primary={page.label} />
                 </ListItemButton>

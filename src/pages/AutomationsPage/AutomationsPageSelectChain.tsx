@@ -3,7 +3,7 @@ import { IconButton } from '@mui/material';
 import { Box } from '@mui/system';
 import { useNavigate } from 'react-router-dom';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
-import ChainsList from '../../components/ChainsList/ChainsList';
+import { PageCardHeader, PageCardBody, ChainsList } from '../../components';
 import { ChainType } from '../../types';
 import {
   useAppSelector,
@@ -13,8 +13,6 @@ import {
 } from '../../store';
 import { ROUTES } from '../../config';
 import { useAutomationsController } from '../../controllers';
-import PageCardHeader from '../../components/PageCardHeader/PageCardHeader';
-import PageCardBody from '../../components/PageCardBody/PageCardBody';
 
 type Props = {};
 

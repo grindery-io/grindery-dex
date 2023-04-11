@@ -2,13 +2,18 @@ import React from 'react';
 import { Typography } from '@mui/material';
 import { Box } from '@mui/system';
 import { useNavigate } from 'react-router-dom';
-import AlertBox from '../../components/AlertBox/AlertBox';
-import SelectChainButton from '../../components/SelectChainButton/SelectChainButton';
-import TextArea from '../../components/TextArea/TextArea';
-import TransactionID from '../../components/TransactionID/TransactionID';
-import Loading from '../../components/Loading/Loading';
-import TextInput from '../../components/TextInput/TextInput';
-import { CardTitle } from '../../components/Card/CardTitle';
+import {
+  TextInput,
+  Loading,
+  TransactionID,
+  TextArea,
+  SelectChainButton,
+  AlertBox,
+  CardTitle,
+  PageCardBody,
+  PageCardHeader,
+  PageCardSubmitButton,
+} from '../../components';
 import {
   useAppSelector,
   selectLiquidityWalletAbi,
@@ -26,9 +31,6 @@ import {
 import { useUserController, useAutomationsController } from '../../controllers';
 import { ROUTES } from '../../config';
 import { ChainType, LiquidityWalletType } from '../../types';
-import PageCardBody from '../../components/PageCardBody/PageCardBody';
-import PageCardHeader from '../../components/PageCardHeader/PageCardHeader';
-import PageCardSubmitButton from '../../components/PageCardSubmitButton/PageCardSubmitButton';
 
 type Props = {};
 

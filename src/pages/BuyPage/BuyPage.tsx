@@ -3,21 +3,7 @@ import { Navigate, Route, Routes } from 'react-router-dom';
 import { PageContainer } from '../../components';
 import TradePage from '../TradePage/TradePage';
 import ShopPage from '../ShopPage/ShopPage';
-
-export const buyPages = [
-  {
-    path: '/trade',
-    fullPath: '/buy/trade',
-    label: 'Trade',
-    component: <TradePage />,
-  },
-  {
-    path: '/shop',
-    fullPath: '/buy/shop',
-    label: 'Shop',
-    component: <ShopPage />,
-  },
-];
+import { ROUTES } from '../../config';
 
 type Props = {};
 
@@ -26,17 +12,12 @@ const BuyPage = (props: Props) => {
     <div>
       <PageContainer>
         <Routes>
-          {buyPages.map((page: any) => (
-            <Route
-              key={page.path}
-              path={`${page.path}/*`}
-              element={page.component}
-            />
-          ))}
           <Route
-            path="/"
-            element={<Navigate to={`/buy${buyPages[0].path}`} />}
+            path={ROUTES.BUY.TRADE.RELATIVE_PATH}
+            element={<TradePage />}
           />
+          <Route path={ROUTES.BUY.SHOP.RELATIVE_PATH} element={<ShopPage />} />
+          <Route path="/" element={<Navigate to="/buy/trade" />} />
         </Routes>
       </PageContainer>
     </div>
