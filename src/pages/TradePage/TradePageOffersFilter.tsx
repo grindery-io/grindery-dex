@@ -85,6 +85,7 @@ const TradePageOffersFilter = (props: Props) => {
                 navigate(ROUTES.BUY.TRADE.SELECT_FROM.FULL_PATH);
               }}
               name="fromChain"
+              id="deposit-button"
             />
           </Box>
           <Box sx={{ maxWidth: 'calc(50% - 8px)' }}>
@@ -97,6 +98,7 @@ const TradePageOffersFilter = (props: Props) => {
               token={toToken || ''}
               error={errorMessage}
               name="toChain"
+              id="receive-button"
             />
           </Box>
         </Stack>

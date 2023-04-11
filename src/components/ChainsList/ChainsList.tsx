@@ -41,6 +41,7 @@ const ChainsList = (props: Props) => {
                 }}
                 variant={chain === blockchain.value ? 'selected' : 'default'}
                 style={{ borderRadius: '12px' }}
+                className="ChainsList__card"
               >
                 <Avatar
                   src={blockchain.icon}

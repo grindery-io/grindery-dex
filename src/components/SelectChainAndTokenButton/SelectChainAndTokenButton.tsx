@@ -15,12 +15,13 @@ type Props = {
     text: string;
   };
   name?: string;
+  id?: string;
 };
 
 const SelectChainAndTokenButton = (props: Props) => {
-  const { onClick, title, chain, token, error, name } = props;
+  const { onClick, title, chain, token, error, name, id } = props;
   return (
-    <Card flex={1} onClick={onClick} style={{ borderRadius: '12px' }}>
+    <Card flex={1} onClick={onClick} style={{ borderRadius: '12px' }} id={id}>
       <CardTitle>{title}</CardTitle>
 
       <ChainTokenBox
