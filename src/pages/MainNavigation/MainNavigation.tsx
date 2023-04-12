@@ -87,6 +87,7 @@ const MainNavigation = (props: Props) => {
               onClick={() => {
                 connectUser();
               }}
+              id="connect-button"
             >
               Connect wallet
             </button>

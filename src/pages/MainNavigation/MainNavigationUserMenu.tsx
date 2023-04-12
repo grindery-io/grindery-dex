@@ -51,11 +51,12 @@ const MainNavigationUserMenu = (props: Props) => {
             setMenuOpened(!menuOpened);
           }}
           className={`${menuOpened ? 'opened' : ''} ${mode}`}
+          id="user-menu-button"
         >
           <UserStatus>
             <Jdenticon size="20" value={encodeURIComponent(address)} />
           </UserStatus>
-          <UserId className={mode}>
+          <UserId className={mode} id="user-address">
             {address.substring(0, 6) +
               '...' +
               address.substring(address.length - 4)}
@@ -102,6 +103,7 @@ const MainNavigationUserMenu = (props: Props) => {
               onClick={() => {
                 disconnectUser();
               }}
+              id="disconnect-button"
             >
               <img src={ICONS.DISCONNECT} alt="" />
               <span>Disconnect</span>

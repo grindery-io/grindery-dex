@@ -71,6 +71,7 @@ const TradePage = (props: Props) => {
             transition: 'all 225ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
             marginLeft: showRightColumn ? '20px' : 0,
           }}
+          id="offers-list"
         >
           <TradePageOffersList />
         </Box>

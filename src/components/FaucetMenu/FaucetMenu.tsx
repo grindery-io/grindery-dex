@@ -79,6 +79,7 @@ const FaucetMenu = (props: Props) => {
                     }
                   }}
                   selected={location.pathname.startsWith(page.fullPath)}
+                  id="faucet-list"
                 >
                   <ListItemText primary={page.label} />
                   {page.external && <OpenInNewIcon fontSize="small" />}

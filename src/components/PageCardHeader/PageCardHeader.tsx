@@ -38,6 +38,7 @@ const PageCardHeader = (props: Props) => {
           fontWeight="700"
           flex={1}
           noWrap
+          className="page-card-title"
         >
           {title || ''}
         </Typography>

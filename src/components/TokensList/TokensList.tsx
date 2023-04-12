@@ -46,6 +46,7 @@ const TokensList = (props: Props) => {
                 style={{
                   height: `64px`,
                 }}
+                className="TokensList__item"
               >
                 <ListItemButton
                   onClick={() => {
