@@ -56,7 +56,7 @@ const MainNavigationUserMenu = (props: Props) => {
           <UserStatus>
             <Jdenticon size="20" value={encodeURIComponent(address)} />
           </UserStatus>
-          <UserId className={mode}>
+          <UserId className={mode} id="user-address">
             {address.substring(0, 6) +
               '...' +
               address.substring(address.length - 4)}

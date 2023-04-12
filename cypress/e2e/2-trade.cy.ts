@@ -2,15 +2,13 @@
 
 describe('Trade page', () => {
   beforeEach(() => {
-    cy.intercept('https://orchestrator.grindery.org/oauth/session-register').as(
-      'RegisterUserSession'
-    );
     cy.intercept(
       'https://delight-api.grindery.org/view-blockchains/balance-token?chainId=*&address=*&tokenAddress=*'
     ).as('GetFromTokenBalance');
     cy.visit('http://localhost:3000/buy/trade');
     cy.get('#connect-button').click();
-    cy.wait(['@RegisterUserSession']);
+    cy.confirmMetamaskSignatureRequest();
+    cy.wait(1000);
   });
 
   it('shows Goerli Testnet chain and ETH token in the deposit button when selected', () => {
