@@ -15,13 +15,14 @@ function FaucetPagePlaceholder() {
             path={mdiWaterPump}
             style={{ width: '40px', height: '40px', marginBottom: '16px' }}
           />
-          <Typography>
+          <Typography className="Faucet_text">
             Visit{' '}
             <a
               style={{ color: '#3f49e1' }}
               href="https://goerlifaucet.com/"
               target="_blank"
               rel="noreferrer"
+              id="faucet-link"
             >
               <strong>goerlifaucet.com</strong>
               <OpenInNewIcon
