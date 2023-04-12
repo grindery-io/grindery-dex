@@ -7,8 +7,17 @@ describe('Trade page', () => {
     ).as('GetFromTokenBalance');
     cy.visit('http://localhost:3000/buy/trade');
     cy.get('#connect-button').click();
-    cy.confirmMetamaskSignatureRequest();
+    cy.acceptMetamaskAccess({
+      allAccounts: false,
+      signInSignature: true,
+    });
     cy.wait(1000);
+  });
+
+  afterEach(() => {
+    cy.get('#user-menu-button').click();
+    cy.get('#disconnect-button').click();
+    cy.disconnectMetamaskWalletFromAllDapps();
   });
 
   it('shows Goerli Testnet chain and ETH token in the deposit button when selected', () => {

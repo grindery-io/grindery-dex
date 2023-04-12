@@ -2,13 +2,21 @@
 
 describe('Faucet page', () => {
   beforeEach(() => {
-    cy.intercept(
-      'https://delight-api.grindery.org/view-blockchains/balance-token?chainId=*&address=*&tokenAddress=*'
-    ).as('GetFromTokenBalance');
     cy.visit('http://localhost:3000/faucet');
     cy.get('#connect-button').click();
-    cy.confirmMetamaskSignatureRequest();
+
+    cy.acceptMetamaskAccess({
+      allAccounts: false,
+      signInSignature: true,
+    });
+
     cy.wait(1000);
+  });
+
+  afterEach(() => {
+    cy.get('#user-menu-button').click();
+    cy.get('#disconnect-button').click();
+    cy.disconnectMetamaskWalletFromAllDapps();
   });
 
   it('shows faucet page tabs', () => {

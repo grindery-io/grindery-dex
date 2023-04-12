@@ -5,6 +5,12 @@ describe('Wallet connection', () => {
     cy.visit('http://localhost:3000');
   });
 
+  afterEach(() => {
+    cy.get('#user-menu-button').click();
+    cy.get('#disconnect-button').click();
+    cy.disconnectMetamaskWalletFromAllDapps();
+  });
+
   it('connects wallet on button click', () => {
     cy.get('#connect-button').click();
     cy.acceptMetamaskAccess({

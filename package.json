@@ -43,7 +43,7 @@
     "eject": "react-scripts eject",
     "format": "prettier --write \"src/**/*.{ts,tsx}\"",
     "cypress:run": "env-cmd -f ./.env.test.local cypress run --browser chrome --headed",
-    "test": "start-server-and-test 'yarn start' http-get://localhost:3000 'yarn cypress:run'"
+    "test": "start-server-and-test 'BROWSER=none react-scripts start' http-get://localhost:3000 'npm run cypress:run -- $ARGS'"
   },
   "eslintConfig": {
     "extends": [
