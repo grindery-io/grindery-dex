@@ -7,3 +7,4 @@ export * from './helpers/orderHelpers';
 export * from './helpers/stakeHelpers';
 export * from './helpers/tokenHelpers';
 export * from './helpers/walletHelpers';
+export * from './helpers/metamaskHelpers';

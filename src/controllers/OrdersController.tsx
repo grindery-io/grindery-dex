@@ -14,7 +14,12 @@ import {
   setOrdersLoading,
   selectUserAccessToken,
 } from '../store';
-import { getChainIdHex, getErrorMessage, getOfferFromChain } from '../utils';
+import {
+  getChainIdHex,
+  getErrorMessage,
+  getOfferFromChain,
+  switchMetamaskNetwork,
+} from '../utils';
 import { useUserController } from './UserController';
 import {
   completeSellerOrderRequest,
@@ -127,8 +132,40 @@ export const OrdersController = ({ children }: OrdersControllerProps) => {
 
     const offerChainId = order.offer?.chainId || '';
     const offerTokenSymbol = order.offer?.token || '';
+    if (!order.offer) {
+      dispatch(
+        setOrdersError({
+          type: order.orderId,
+          text: 'Associated offer not found',
+        })
+      );
+      return false;
+    }
+    const offerFromChain = getOfferFromChain(order.offer, chains);
+    if (!offerFromChain) {
+      dispatch(
+        setOrdersError({
+          type: order.orderId,
+          text: 'Offer chain not found',
+        })
+      );
+      return false;
+    }
+    const switchNetwork = await switchMetamaskNetwork(
+      userChainId,
+      offerFromChain
+    );
+    if (!switchNetwork) {
+      dispatch(
+        setOrdersError({
+          type: order.orderId,
+          text: 'Network switching failed. Please, switch network in your MetaMask and try again.',
+        })
+      );
+      return false;
+    }
 
-    if (userChainId !== offerChainId) {
+    /*if (userChainId !== offerChainId) {
       try {
         await window.ethereum.request({
           method: 'wallet_switchEthereumChain',
@@ -183,7 +220,7 @@ export const OrdersController = ({ children }: OrdersControllerProps) => {
           return false;
         }
       }
-    }
+    }*/
 
     let balance = await getWalletBalanceRequest(
       accessToken,
