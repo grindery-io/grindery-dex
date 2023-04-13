@@ -1,29 +1,15 @@
 /// <reference types="cypress" />
 
-/*
-Offers test implementation
-[ ] It shows coming soon page if user is not an admin
-[X] It shows offers page if user is an admin
-[X] It shows offers list
-[X] It shows create an offer form on create offer button click
-[X] It shows BNB as sell option in create offer form
-[X] It shows ETH as receive option in create offer form
-[X] It selects sell option in create offer form
-[X] It select receive option in create offer form
-[X] It shows error if any of required fields is empty
-[_] It creates an offer on create offer form submission
-[ ] It shows offer details when offer selected
-[ ] It deactivates an offer on deactivate button click
-[ ] It activates an offer on activate button click
-*/
-
-describe('Trade page', () => {
+describe('Offers page', () => {
   beforeEach(() => {
     cy.intercept('https://delight-api.grindery.org/offers/user').as(
       'GetUserOffers'
     );
     cy.intercept('https://delight-api.grindery.org/offers/id?id=*').as(
       'GetCreatedOffer'
+    );
+    cy.intercept('PUT', 'https://delight-api.grindery.org/offers/*').as(
+      'UpdateOffer'
     );
 
     cy.visit('http://localhost:3000/sell/offers');
@@ -41,23 +27,23 @@ describe('Trade page', () => {
     cy.disconnectMetamaskWalletFromAllDapps();
   });
 
-  it('It shows offers page if user is an admin', () => {
+  it('Shows offers page if user is an admin', () => {
     cy.get('.page-card-title').should('have.text', 'Offers');
   });
 
-  it('It shows offers list', () => {
+  it('Shows offers list', () => {
     cy.wait('@GetUserOffers').then(() => {
       cy.wait(1000);
       cy.get('.offers-list').should('exist');
     });
   });
 
-  it('It shows create an offer form on create offer button click', () => {
+  it('Shows create an offer form on create offer button click', () => {
     cy.get('button').contains('Create offer').click();
     cy.get('.page-card-title').should('have.text', 'Create offer');
   });
 
-  it('It shows BNB as sell option in create offer form', () => {
+  it('Shows BNB as sell option in create offer form', () => {
     cy.get('button').contains('Create offer').click();
     cy.get('#sell-button .MuiCardHeader-title').should('have.text', 'BNB');
     cy.get('#sell-button .MuiCardHeader-subheader').should(
@@ -66,7 +52,7 @@ describe('Trade page', () => {
     );
   });
 
-  it('It shows ETH as receive option in create offer form', () => {
+  it('Shows ETH as receive option in create offer form', () => {
     cy.get('button').contains('Create offer').click();
     cy.get('#receive-button .MuiCardHeader-title').should('have.text', 'ETH');
     cy.get('#receive-button .MuiCardHeader-subheader').should(
@@ -75,7 +61,7 @@ describe('Trade page', () => {
     );
   });
 
-  it('It selects sell option in create offer form', () => {
+  it('Selects sell option in create offer form', () => {
     cy.get('button').contains('Create offer').click();
     cy.get('#sell-button').click({ force: true });
     cy.get('.ChainsList__card').first().click();
@@ -95,7 +81,7 @@ describe('Trade page', () => {
       });
   });
 
-  it('It select receive option in create offer form', () => {
+  it('Selects receive option in create offer form', () => {
     cy.get('button').contains('Create offer').click();
     cy.get('#receive-button').click({ force: true });
     cy.get('.ChainsList__card').first().click();
@@ -115,7 +101,7 @@ describe('Trade page', () => {
       });
   });
 
-  it('It shows error if any of required fields is empty', () => {
+  it('Shows error if any of required fields is empty', () => {
     cy.get('button').contains('Create offer').click();
 
     cy.get('button').contains('Create').click();
@@ -175,7 +161,7 @@ describe('Trade page', () => {
     cy.wait(1000);
   });
 
-  it('It creates an offer on create offer form submission', () => {
+  it('Creates an offer on create offer form submission', () => {
     let offersLength;
     cy.wait('@GetUserOffers').then(() => {
       cy.wait(1000);
@@ -197,7 +183,10 @@ describe('Trade page', () => {
 
         cy.confirmMetamaskTransaction();
 
-        cy.wait('@GetCreatedOffer', { requestTimeout: 120000 }).then(() => {
+        cy.wait('@GetCreatedOffer', {
+          requestTimeout: 120000,
+          responseTimeout: 120000,
+        }).then(() => {
           cy.wait(1000);
           let offersLengthAfterNewOfferCreated;
           cy.get('.OfferPublic').then((newElements) => {
@@ -208,5 +197,123 @@ describe('Trade page', () => {
         });
       });
     });
+  });
+
+  it('Shows offer details when offer selected', () => {
+    cy.wait('@GetUserOffers').then(() => {
+      cy.wait(1000);
+      cy.get('.OfferPublic').first().should('exist');
+      cy.get('.OfferPublic')
+        .first()
+        .find('button[aria-label="show more"]')
+        .should('exist');
+      cy.get('.OfferPublic')
+        .first()
+        .find('button[aria-label="show more"]')
+        .click();
+      cy.get('.OfferPublic').first().find('.MuiCollapse-root').should('exist');
+      cy.get('.OfferPublic')
+        .first()
+        .find('.MuiCollapse-root button')
+        .should('exist');
+      cy.get('.OfferPublic')
+        .first()
+        .find('.MuiCollapse-root p.MuiTypography-body1')
+        .first()
+        .should('include.text', 'Provider:');
+      cy.get('.OfferPublic')
+        .first()
+        .find('.MuiCollapse-root p.MuiTypography-body1')
+        .last()
+        .should('include.text', 'Offer ID:');
+    });
+  });
+
+  it('Deactivates an offer on deactivate button click', () => {
+    cy.wait('@GetUserOffers').then(() => {
+      cy.wait(1000);
+      let offerId: string;
+      cy.get('.OfferPublic')
+        .first()
+        .then((offer) => {
+          offerId = offer.attr('id');
+          cy.get('#' + offerId)
+            .find('button[aria-label="show more"]')
+            .click();
+          cy.get('#' + offerId)
+            .find('button')
+            .contains('Deactivate')
+            .click();
+
+          cy.confirmMetamaskTransaction();
+
+          cy.wait('@UpdateOffer', {
+            requestTimeout: 120000,
+            responseTimeout: 120000,
+          }).then(() => {
+            cy.wait(1000);
+            cy.get('#' + offerId)
+              .find('button[aria-label="show more"]')
+              .click();
+            cy.get('#' + offerId)
+              .find('button')
+              .contains('Activate')
+              .should('exist');
+          });
+        });
+    });
+  });
+
+  it('Activates an offer on activate button click', () => {
+    cy.wait('@GetUserOffers').then(() => {
+      cy.wait(1000);
+      let offerId: string;
+      cy.get('.OfferPublic')
+        .last()
+        .then((offer) => {
+          offerId = offer.attr('id');
+          cy.get('#' + offerId)
+            .find('button[aria-label="show more"]')
+            .click();
+          cy.get('#' + offerId)
+            .find('button')
+            .contains('Activate')
+            .click();
+
+          cy.confirmMetamaskTransaction();
+
+          cy.wait('@UpdateOffer', {
+            requestTimeout: 120000,
+            responseTimeout: 120000,
+          }).then(() => {
+            cy.wait(1000);
+            cy.get('#' + offerId)
+              .find('button[aria-label="show more"]')
+              .click();
+            cy.get('#' + offerId)
+              .find('button')
+              .contains('Deactivate')
+              .should('exist');
+          });
+        });
+    });
+  });
+
+  it('Shows coming soon page if user is not an admin', () => {
+    cy.get('#user-menu-button').click();
+    cy.get('#disconnect-button').click();
+    cy.disconnectMetamaskWalletFromAllDapps();
+    cy.resetMetamaskAccount();
+    cy.wait(1000);
+    cy.importMetamaskAccount(
+      '0x58856f4656304035ae28cefe74f46089f5df125a1e7853b4e8bee55e30ca048d'
+    );
+    cy.get('#connect-button').click();
+    cy.acceptMetamaskAccess({
+      allAccounts: false,
+      signInSignature: true,
+    });
+    cy.wait(1000);
+    cy.get('.page-card-title').should('have.text', 'Coming soon');
   });
 });

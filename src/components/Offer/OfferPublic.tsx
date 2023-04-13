@@ -58,8 +58,8 @@ type Props = {
   compact?: boolean;
   userType?: 'a' | 'b';
   isActivating?: string;
-  onDeactivateClick?: (offerId: string) => void;
-  onActivateClick?: (offerId: string) => void;
+  onDeactivateClick?: () => void;
+  onActivateClick?: () => void;
   containerStyle?: SxProps | React.CSSProperties;
   excludeSteps?: ('gas' | 'rate' | 'time' | 'impact')[];
   calculateAmount?: boolean;
@@ -134,6 +134,7 @@ const OfferPublic = (props: Props) => {
   return (
     <Card
       className="OfferPublic"
+      id={`offer-${offer.offerId}`}
       flex={1}
       sx={{
         borderRadius: '12px',
@@ -462,31 +463,31 @@ const OfferPublic = (props: Props) => {
                       fontSize: '13px',
                       padding: '8px 20px',
                       backgroundColor: 'transparent',
-                      border: Boolean(isActivating)
-                        ? 'none'
-                        : `1px solid ${offer.isActive ? '#FF5858' : '#00B674'}`,
-                      color: offer.isActive ? '#FF5858' : '#00B674',
+                      border: `1px solid ${
+                        offer.isActive ? '#FF5858' : '#00B674'
+                      }`,
+                      color: offer.isActive
+                        ? '#FF5858 !important'
+                        : '#00B674 !important',
                       '&:hover': {
                         backgroundColor: offer.isActive ? '#FF5858' : '#00B674',
-                        border: Boolean(isActivating)
-                          ? 'none'
-                          : `1px solid ${
-                              offer.isActive ? '#FF5858' : '#00B674'
-                            }`,
-                        color: '#ffffff',
+                        border: `1px solid ${
+                          offer.isActive ? '#FF5858' : '#00B674'
+                        }`,
+                        color: '#ffffff !important',
                       },
                     },
                   }}
                 >
                   <PageCardSubmitButton
-                    loading={isActivating === offer._id}
+                    loading={isActivating === offer.offerId}
                     disabled={Boolean(isActivating)}
                     label={offer.isActive ? 'Deactivate' : 'Activate'}
                     onClick={() => {
                       if (offer.isActive) {
-                        onDeactivateClick(offer._id);
+                        onDeactivateClick();
                       } else {
-                        onActivateClick(offer._id);
+                        onActivateClick();
                       }
                     }}
                   />
