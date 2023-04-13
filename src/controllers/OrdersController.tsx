@@ -165,63 +165,6 @@ export const OrdersController = ({ children }: OrdersControllerProps) => {
       return false;
     }
 
-    /*if (userChainId !== offerChainId) {
-      try {
-        await window.ethereum.request({
-          method: 'wallet_switchEthereumChain',
-          params: [
-            {
-              chainId: getChainIdHex(offerChainId),
-            },
-          ],
-        });
-      } catch (error: any) {
-        // handle change switching error
-        if (error?.code === 4902 && order.offer) {
-          const offerChain = getOfferFromChain(order.offer, chains);
-          try {
-            await window.ethereum.request({
-              method: 'wallet_addEthereumChain',
-              params: [
-                {
-                  chainName: offerChain?.label || '',
-                  chainId: getChainIdHex(offerChainId),
-                  nativeCurrency: {
-                    name: offerChain?.nativeToken || '',
-                    decimals: 18,
-                    symbol: offerChain?.nativeToken || '',
-                  },
-                  rpcUrls: offerChain?.rpc || [],
-                },
-              ],
-            });
-          } catch (addError) {
-            console.error(
-              'handleOrderCompleteClick error: chain adding failed'
-            );
-            dispatch(
-              setOrdersError({
-                type: order.orderId,
-                text: 'Network adding failed. Please, add required network to your MetaMask and try again.',
-              })
-            );
-            return false;
-          }
-        } else {
-          console.error(
-            'handleOrderCompleteClick error: chain switching failed'
-          );
-          dispatch(
-            setOrdersError({
-              type: order.orderId,
-              text: 'Network switching failed. Please, switch to required network in your MetaMask and try again.',
-            })
-          );
-          return false;
-        }
-      }
-    }*/
-
     let balance = await getWalletBalanceRequest(
       accessToken,
       offerChainId,
