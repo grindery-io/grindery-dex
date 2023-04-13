@@ -44,12 +44,13 @@ function OrdersPageRoot() {
             <OrderSkeleton />
           </>
         ) : (
-          <>
+          <Box className="orders-list">
             {sortedOrders && sortedOrders.length > 0 ? (
               <>
                 {sortedOrders.map((order: OrderType) => (
                   <OrderCard
                     key={order._id}
+                    id={order.orderId}
                     order={order}
                     userType="b"
                     chains={chains}
@@ -79,7 +80,7 @@ function OrdersPageRoot() {
             ) : (
               <NotFound text="No orders found" />
             )}
-          </>
+          </Box>
         )}
       </PageCardBody>
     </>
