@@ -65,7 +65,8 @@ function OrdersPageRoot() {
                         wallet?.walletAddress || '',
                         userChainId,
                         liquidityWalletAbi,
-                        orders
+                        orders,
+                        chains
                       );
                     }}
                     error={

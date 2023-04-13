@@ -1,13 +1,5 @@
 /// <reference types="cypress" />
 
-/*
-Order page tests implementation progress
-[X] Shows orders page if user is an admin
-[X] Shows orders list
-[ ] Pays an order and updates order status
-[X] Shows coming soon page if user is not an admin
-*/
-
 describe('Orders page', () => {
   beforeEach(() => {
     cy.intercept(
@@ -60,13 +52,14 @@ describe('Orders page', () => {
           let orderCardId: string;
           cy.get('.OrderCard-incomplete')
             .first()
-            .find('.OrderCard__button')
             .then((orderCard) => {
               orderCardId = orderCard.attr('id');
               cy.get('#' + orderCardId)
                 .find('.OrderCard__button')
                 .click();
-              cy.allowMetamaskToSwitchNetwork();
+              cy.wait(2000);
+              cy.allowMetamaskToAddAndSwitchNetwork();
+              cy.wait(2000);
               cy.confirmMetamaskTransaction();
               cy.wait('@UpdateOrder', {
                 requestTimeout: 120000,
