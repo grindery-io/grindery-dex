@@ -52,9 +52,7 @@ const tradeSlice = createSlice({
   initialState,
   reducers: {
     setTradeOffers(state, action: PayloadAction<OfferType[]>) {
-      state.offers = action.payload.filter(
-        (o: OfferType) => o.isActive && o.amount
-      );
+      state.offers = action.payload.filter((o: OfferType) => o.isActive);
     },
     setTradeLoading(state, action: PayloadAction<boolean>) {
       state.loading = action.payload;
