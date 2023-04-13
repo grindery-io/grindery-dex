@@ -7,7 +7,7 @@ export const switchMetamaskNetwork = async (
   successCallback?: () => void,
   errorCallback?: (error: ErrorMessageType) => void
 ): Promise<boolean> => {
-  if (currentChainId !== newChain.chainId) {
+  if (!currentChainId || currentChainId !== newChain.chainId) {
     try {
       await window.ethereum.request({
         method: 'wallet_switchEthereumChain',

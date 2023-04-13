@@ -129,7 +129,8 @@ const AutomationsPageRoot = (props: Props) => {
                         input,
                         userChainId,
                         wallet?.walletAddress || '',
-                        liquidityWalletAbi
+                        liquidityWalletAbi,
+                        chains
                       );
                     }
                   : () => {
