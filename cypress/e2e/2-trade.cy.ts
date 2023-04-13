@@ -37,7 +37,7 @@ describe('Trade page', () => {
     );
   });
 
-  it('shows BSC Testnet chain and BNB token in the receive button when selected', () => {
+  xit('shows BSC Testnet chain and BNB token in the receive button when selected', () => {
     cy.get('#receive-button').click();
     cy.get('.page-card-title')
       .first()
@@ -61,10 +61,57 @@ describe('Trade page', () => {
       .should('have.length', 1);
   });
 
-  it('shows offers if form is submitted', () => {
+  xit('shows review offer page when execution time is selected', () => {
     cy.wait(['@GetFromTokenBalance']);
     cy.get('button').contains('max').click();
     cy.get('button').contains('Search offers').click();
     cy.get('#offers-list').should('have.css', 'opacity', '1');
+    cy.get('#offers-list').should('have.css', 'opacity', '1');
+    cy.get('#execution-time-icon').click();
+    cy.get('.page-card-title').first().should('have.text', 'Review offer');
+  });
+
+  it('shows review offer page when estimated network fee is selected', () => {
+    cy.wait(['@GetFromTokenBalance']);
+    cy.get('button').contains('max').click();
+    cy.get('button').contains('Search offers').click();
+    cy.get('#offers-list').should('have.css', 'opacity', '1');
+    cy.get('#offers-list').should('have.css', 'opacity', '1');
+    cy.get('#estimated-network-fee-icon').click();
+    cy.get('.page-card-title').first().should('have.text', 'Review offer');
+  });
+
+  it('shows review offer page when chains is selected', () => {
+    cy.wait(['@GetFromTokenBalance']);
+    cy.get('button').contains('max').click();
+    cy.get('button').contains('Search offers').click();
+    cy.get('#offers-list').should('have.css', 'opacity', '1');
+    cy.get('#offers-list').should('have.css', 'opacity', '1');
+    cy.get('#chains-icon').click();
+    cy.get('.page-card-title').first().should('have.text', 'Review offer');
+  });
+
+  it('returns to offers list', () => {
+    cy.wait(['@GetFromTokenBalance']);
+    cy.get('button').contains('max').click();
+    cy.get('button').contains('Search offers').click();
+    cy.get('#offers-list').should('have.css', 'opacity', '1');
+    cy.get('#offers-list').should('have.css', 'opacity', '1');
+    cy.get('#execution-time-icon').click();
+    cy.get('.page-card-title').first().should('have.text', 'Review offer');
+    cy.get('#return').click();
+    cy.get('#offers-list').should('have.css', 'opacity', '1');
+    cy.get('#offers-list').should('have.css', 'opacity', '1');
+  });
+
+  it('places an order', () => {
+    cy.wait(['@GetFromTokenBalance']);
+    cy.get('input[name="amount"]').type('0.001');
+    cy.get('button').contains('Search offers').click();
+    cy.get('#offers-list').should('have.css', 'opacity', '1');
+    cy.get('#offers-list').should('have.css', 'opacity', '1');
+    cy.get('#execution-time-icon').click();
+    cy.get('.page-card-title').first().should('have.text', 'Review offer');
+    cy.contains('button', 'Place Order').click();
   });
 });

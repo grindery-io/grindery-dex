@@ -175,6 +175,7 @@ const OfferPublic = (props: Props) => {
               alignItems="center"
               justifyContent="flex-start"
               gap="3px"
+              id="execution-time-icon"
             >
               <AccessTimeFilledIcon
                 fontSize="small"
@@ -191,6 +192,7 @@ const OfferPublic = (props: Props) => {
               alignItems="center"
               justifyContent="flex-start"
               gap="3px"
+              id="estimated-network-fee-icon"
             >
               <EvStationIcon
                 fontSize="small"
@@ -205,6 +207,7 @@ const OfferPublic = (props: Props) => {
               alignItems="center"
               justifyContent="flex-start"
               gap="3px"
+              id="chains-icon"
             >
               <LayersIcon
                 fontSize="small"
@@ -340,6 +343,7 @@ const OfferPublic = (props: Props) => {
                 onClick={handleExpandClick}
                 aria-expanded={expanded}
                 aria-label="show more"
+                id="expand_details"
               >
                 <ExpandMoreIcon />
               </ExpandMore>
