@@ -44,6 +44,7 @@ function OffersPageSelectChain() {
         titleAlign="center"
         startAdornment={
           <IconButton
+            id="back-button"
             size="medium"
             edge="start"
             onClick={() => {

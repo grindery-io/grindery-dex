@@ -105,6 +105,7 @@ function OffersPageCreate() {
             chain={fromChain}
             token={fromToken || ''}
             error={errorMessage}
+            id="sell-button"
           />
           <SelectChainAndTokenButton
             onClick={() => {
@@ -115,6 +116,7 @@ function OffersPageCreate() {
             token={toToken || ''}
             error={errorMessage}
             name="toChain"
+            id="receive-button"
           />
         </Stack>
 
