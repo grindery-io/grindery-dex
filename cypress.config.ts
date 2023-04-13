@@ -1,5 +1,6 @@
 import { defineConfig } from 'cypress';
 const synpressPlugins = require('@synthetixio/synpress/plugins');
+require('dotenv').config({ path: '/.env.test.local' });
 
 export default defineConfig({
   projectId: '1cse2f',
@@ -16,5 +17,8 @@ export default defineConfig({
     viewportWidth: 1280,
     viewportHeight: 768,
     baseUrl: 'http://localhost:3000',
+  },
+  env: {
+    ...process.env,
   },
 });

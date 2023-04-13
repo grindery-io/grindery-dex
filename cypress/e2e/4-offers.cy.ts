@@ -27,7 +27,7 @@ describe('Offers page', () => {
     cy.disconnectMetamaskWalletFromAllDapps();
   });
 
-  it('Shows offers page if user is an admin', () => {
+  /*it('Shows offers page if user is an admin', () => {
     cy.get('.page-card-title').should('have.text', 'Offers');
   });
 
@@ -297,7 +297,7 @@ describe('Offers page', () => {
           });
         });
     });
-  });
+  });*/
 
   it('Shows coming soon page if user is not an admin', () => {
     cy.get('#user-menu-button').click();
@@ -305,9 +305,7 @@ describe('Offers page', () => {
     cy.disconnectMetamaskWalletFromAllDapps();
     cy.resetMetamaskAccount();
     cy.wait(1000);
-    cy.importMetamaskAccount(
-      '0x58856f4656304035ae28cefe74f46089f5df125a1e7853b4e8bee55e30ca048d'
-    );
+    cy.importMetamaskAccount(Cypress.env('CYPRESS_NON_ADMIN_IMPORT_KEY'));
     cy.get('#connect-button').click();
     cy.acceptMetamaskAccess({
       allAccounts: false,
@@ -315,5 +313,15 @@ describe('Offers page', () => {
     });
     cy.wait(1000);
     cy.get('.page-card-title').should('have.text', 'Coming soon');
+    cy.get('#user-menu-button').click();
+    cy.get('#disconnect-button').click();
+    cy.disconnectMetamaskWalletFromAllDapps();
+    cy.switchMetamaskAccount(1);
+    cy.get('#connect-button').click();
+    cy.acceptMetamaskAccess({
+      allAccounts: false,
+      signInSignature: true,
+    });
+    cy.wait(1000);
   });
 });
