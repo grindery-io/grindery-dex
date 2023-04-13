@@ -29,6 +29,7 @@ const NotFound = (props: Props) => {
         textAlign="center"
         mt={2}
         px={2}
+        id="not-found-message"
       >
         {text}
       </Typography>

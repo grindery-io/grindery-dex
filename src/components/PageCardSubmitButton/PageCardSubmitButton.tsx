@@ -8,14 +8,15 @@ type Props = {
   onClick: () => void;
   disabled?: boolean;
   loading?: boolean;
+  className?: string;
 };
 
 const PageCardSubmitButton = (props: Props) => {
-  const { label, onClick, disabled, loading } = props;
+  const { label, onClick, disabled, loading, className } = props;
   return (
     <ButtonWrapper>
       <LoadingButton
-        //loading={loading}
+        className={className}
         disabled={disabled}
         fullWidth
         onClick={onClick}

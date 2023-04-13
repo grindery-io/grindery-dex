@@ -4,7 +4,7 @@ import React, {
   useContext,
   useEffect,
 } from 'react';
-import { OrderType, OfferType } from '../types';
+import { OrderType, OfferType, ChainType } from '../types';
 import {
   useAppDispatch,
   useAppSelector,
@@ -14,7 +14,7 @@ import {
   setOrdersLoading,
   selectUserAccessToken,
 } from '../store';
-import { getChainIdHex, getErrorMessage } from '../utils';
+import { getChainIdHex, getErrorMessage, getOfferFromChain } from '../utils';
 import { useUserController } from './UserController';
 import {
   completeSellerOrderRequest,
@@ -32,7 +32,8 @@ type ContextProps = {
     userWalletAddress: string,
     userChainId: string,
     liquidityWalletAbi: any,
-    orders: OrderType[]
+    orders: OrderType[],
+    chains: ChainType[]
   ) => Promise<boolean>;
 };
 
@@ -115,7 +116,8 @@ export const OrdersController = ({ children }: OrdersControllerProps) => {
     userWalletAddress: string,
     userChainId: string,
     liquidityWalletAbi: any,
-    orders: OrderType[]
+    orders: OrderType[],
+    chains: ChainType[]
   ): Promise<boolean> => {
     dispatch(clearOrdersError());
 
@@ -138,14 +140,48 @@ export const OrdersController = ({ children }: OrdersControllerProps) => {
         });
       } catch (error: any) {
         // handle change switching error
-        console.error('handleOrderCompleteClick error: chain switching failed');
-        dispatch(
-          setOrdersError({
-            type: order.orderId,
-            text: 'Blockchain switching failed. Try again, please.',
-          })
-        );
-        return false;
+        if (error?.code === 4902 && order.offer) {
+          const offerChain = getOfferFromChain(order.offer, chains);
+          try {
+            await window.ethereum.request({
+              method: 'wallet_addEthereumChain',
+              params: [
+                {
+                  chainName: offerChain?.label || '',
+                  chainId: getChainIdHex(offerChainId),
+                  nativeCurrency: {
+                    name: offerChain?.nativeToken || '',
+                    decimals: 18,
+                    symbol: offerChain?.nativeToken || '',
+                  },
+                  rpcUrls: offerChain?.rpc || [],
+                },
+              ],
+            });
+          } catch (addError) {
+            console.error(
+              'handleOrderCompleteClick error: chain adding failed'
+            );
+            dispatch(
+              setOrdersError({
+                type: order.orderId,
+                text: 'Network adding failed. Please, add required network to your MetaMask and try again.',
+              })
+            );
+            return false;
+          }
+        } else {
+          console.error(
+            'handleOrderCompleteClick error: chain switching failed'
+          );
+          dispatch(
+            setOrdersError({
+              type: order.orderId,
+              text: 'Network switching failed. Please, switch to required network in your MetaMask and try again.',
+            })
+          );
+          return false;
+        }
       }
     }
 
