@@ -4,9 +4,8 @@
 Order page tests implementation progress
 [X] Shows orders page if user is an admin
 [X] Shows orders list
-[ ] Sends an order
-[ ] Updates the order status after sending
-[ ] Shows coming soon page if user is not an admin
+[ ] Pays an order and updates order status
+[X] Shows coming soon page if user is not an admin
 */
 
 describe('Orders page', () => {
@@ -15,6 +14,9 @@ describe('Orders page', () => {
       'GET',
       'https://delight-api.grindery.org/orders/liquidity-provider'
     ).as('GetUserOrders');
+    cy.intercept('PUT', 'https://delight-api.grindery.org/orders/complete').as(
+      'UpdateOrder'
+    );
 
     cy.visit('http://localhost:3000/sell/orders');
     cy.get('#connect-button').click();
@@ -48,5 +50,64 @@ describe('Orders page', () => {
         }
       });
     });
+  });
+
+  it('Pays an order and updates order status', () => {
+    cy.wait('@GetUserOrders').then(() => {
+      cy.wait(1000);
+      cy.get('.orders-list').then((ordersList) => {
+        if (ordersList.find('.OrderCard-incomplete').length) {
+          let orderCardId: string;
+          cy.get('.OrderCard-incomplete')
+            .first()
+            .find('.OrderCard__button')
+            .then((orderCard) => {
+              orderCardId = orderCard.attr('id');
+              cy.get('#' + orderCardId)
+                .find('.OrderCard__button')
+                .click();
+              cy.allowMetamaskToSwitchNetwork();
+              cy.confirmMetamaskTransaction();
+              cy.wait('@UpdateOrder', {
+                requestTimeout: 120000,
+                responseTimeout: 120000,
+              }).then(() => {
+                cy.wait(1000);
+                cy.get('#' + orderCardId)
+                  .find('.OrderCard__button')
+                  .should('have.text', 'Completed');
+              });
+            });
+        } else {
+          cy.get('.orders-list .OrderCard-incomplete').should('exist');
+        }
+      });
+    });
+  });
+
+  it('Shows coming soon page if user is not an admin', () => {
+    cy.get('#user-menu-button').click();
+    cy.get('#disconnect-button').click();
+    cy.disconnectMetamaskWalletFromAllDapps();
+    cy.resetMetamaskAccount();
+    cy.wait(1000);
+    cy.importMetamaskAccount(Cypress.env('CYPRESS_NON_ADMIN_IMPORT_KEY'));
+    cy.get('#connect-button').click();
+    cy.acceptMetamaskAccess({
+      allAccounts: false,
+      signInSignature: true,
+    });
+    cy.wait(1000);
+    cy.get('.page-card-title').should('have.text', 'Coming soon');
+    cy.get('#user-menu-button').click();
+    cy.get('#disconnect-button').click();
+    cy.disconnectMetamaskWalletFromAllDapps();
+    cy.switchMetamaskAccount(1);
+    cy.get('#connect-button').click();
+    cy.acceptMetamaskAccess({
+      allAccounts: false,
+      signInSignature: true,
+    });
+    cy.wait(1000);
   });
 });

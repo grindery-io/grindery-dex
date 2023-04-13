@@ -50,7 +50,9 @@ const OrderCard = (props: Props) => {
 
   return (
     <Card
-      className="OrderCard"
+      className={`OrderCard ${
+        order.isComplete ? 'OrderCard-complete' : 'OrderCard-incomplete'
+      }`}
       id={id}
       flex={1}
       style={{
@@ -172,6 +174,7 @@ const OrderCard = (props: Props) => {
         }}
       >
         <PageCardSubmitButton
+          className="OrderCard__button"
           label={
             order.isComplete
               ? 'Completed'
