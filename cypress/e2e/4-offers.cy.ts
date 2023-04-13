@@ -27,7 +27,7 @@ describe('Offers page', () => {
     cy.disconnectMetamaskWalletFromAllDapps();
   });
 
-  /*it('Shows offers page if user is an admin', () => {
+  it('Shows offers page if user is an admin', () => {
     cy.get('.page-card-title').should('have.text', 'Offers');
   });
 
@@ -297,7 +297,7 @@ describe('Offers page', () => {
           });
         });
     });
-  });*/
+  });
 
   it('Shows coming soon page if user is not an admin', () => {
     cy.get('#user-menu-button').click();
