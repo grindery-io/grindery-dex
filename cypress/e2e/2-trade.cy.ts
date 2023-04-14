@@ -37,7 +37,7 @@ describe('Trade page', () => {
     );
   });
 
-  xit('shows BSC Testnet chain and BNB token in the receive button when selected', () => {
+  it('shows BSC Testnet chain and BNB token in the receive button when selected', () => {
     cy.get('#receive-button').click();
     cy.get('.page-card-title')
       .first()
