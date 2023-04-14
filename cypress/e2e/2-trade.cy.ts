@@ -61,7 +61,7 @@ describe('Trade page', () => {
       .should('have.length', 1);
   });
 
-  xit('shows review offer page when execution time is selected', () => {
+  it('shows offers if form is submitted', () => {
     cy.wait(['@GetFromTokenBalance']);
     cy.get('button').contains('max').click();
     cy.get('button').contains('Search offers').click();
