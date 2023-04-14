@@ -66,7 +66,6 @@ describe('Trade page', () => {
     cy.get('button').contains('max').click();
     cy.get('button').contains('Search offers').click();
     cy.get('#offers-list').should('have.css', 'opacity', '1');
-    cy.get('#offers-list').should('have.css', 'opacity', '1');
     cy.get('#execution-time-icon').click();
     cy.get('.page-card-title').first().should('have.text', 'Review offer');
   });
