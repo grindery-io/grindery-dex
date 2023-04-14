@@ -51,6 +51,8 @@ export const UserController = ({ children }: UserControllerProps) => {
 
   const disconnectUser = () => {
     disconnect();
+    dispatch(setUserId(''));
+    dispatch(setUserAddress(''));
   };
 
   const getEthers = () => {
@@ -77,11 +79,15 @@ export const UserController = ({ children }: UserControllerProps) => {
   );
 
   useEffect(() => {
-    dispatch(setUserId(user || ''));
+    if (user) {
+      dispatch(setUserId(user));
+    }
   }, [user, dispatch]);
 
   useEffect(() => {
-    dispatch(setUserAddress(address || ''));
+    if (address) {
+      dispatch(setUserAddress(address));
+    }
   }, [address, dispatch]);
 
   useEffect(() => {
