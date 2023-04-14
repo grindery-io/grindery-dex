@@ -44,7 +44,7 @@ const TradePageHistory = (props: Props) => {
               navigate(ROUTES.BUY.TRADE.ROOT.FULL_PATH);
             }}
           >
-            <ArrowBackIcon />
+            <ArrowBackIcon className="return-icon" />
           </IconButton>
         }
         endAdornment={<Box width={28} height={40} />}
