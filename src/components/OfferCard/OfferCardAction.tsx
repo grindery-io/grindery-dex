@@ -12,6 +12,7 @@ const OfferCardAction = (props: OfferCardProps) => {
 
   return (
     <Box
+      className="shop-offer-action"
       sx={{
         margin: '8px 16px 0',
         '& > div': {
@@ -34,6 +35,7 @@ const OfferCardAction = (props: OfferCardProps) => {
       }}
     >
       <LoadingButton
+        id={props.id}
         fullWidth
         disabled={Boolean(accepting) && !loading}
         startIcon={
