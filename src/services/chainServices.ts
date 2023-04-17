@@ -27,6 +27,7 @@ export const getChainsWithTokens = (
                   (chain: any) => ({
                     ...chain,
                     value: chain.caipId,
+                    nativeToken: chain.nativeTokenSymbol || '',
                     tokens: (res2?.data || []).filter(
                       (token: any) => token.chainId === chain.chainId
                     ),

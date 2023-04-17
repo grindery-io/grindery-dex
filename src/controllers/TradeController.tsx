@@ -278,7 +278,7 @@ export const TradeController = ({ children }: TradeControllerProps) => {
       return false;
     }
 
-    if (!offer.amount) {
+    if (!amount) {
       dispatch(
         setTradeError({
           type: 'acceptOffer',

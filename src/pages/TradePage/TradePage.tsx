@@ -5,11 +5,11 @@ import TradePageSelectToChainAndToken from './TradePageSelectToChainAndToken';
 import TradePageOffersList from './TradePageOffersList';
 import TradePageOffersFilter from './TradePageOffersFilter';
 import TradePageOfferAccept from './TradePageOfferAccept';
-import TradePageHistory from './TradePageHistory';
 import TradePageSelectFromChainAndToken from './TradePageSelectFromChainAndToken';
-import { TradeController, OrdersHistoryController } from '../../controllers';
+import { TradeController } from '../../controllers';
 import { ROUTES } from '../../config';
 import { useAppSelector, selectTradeOffersVisible } from '../../store';
+import Page404 from '../Page404/Page404';
 
 type Props = {};
 
@@ -49,14 +49,7 @@ const TradePage = (props: Props) => {
               path={ROUTES.BUY.TRADE.ACCEPT_OFFER.RELATIVE_PATH}
               element={<TradePageOfferAccept />}
             />
-            <Route
-              path={ROUTES.BUY.TRADE.HISTORY.RELATIVE_PATH}
-              element={
-                <OrdersHistoryController>
-                  <TradePageHistory />
-                </OrdersHistoryController>
-              }
-            />
+            <Route path="*" element={<Page404 />} />
           </Routes>
         </Box>
 

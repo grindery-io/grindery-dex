@@ -7,6 +7,8 @@ import OfferCardFooter from './OfferCardFooter';
 import { ChainType, OfferType, TokenType } from '../../types';
 
 export type OfferCardProps = {
+  id: string;
+  key: string;
   offer: OfferType;
   fromChain: ChainType;
   fromToken: TokenType;
@@ -19,6 +21,7 @@ export type OfferCardProps = {
 const OfferCard = (props: OfferCardProps) => {
   return (
     <Box
+      className="OfferCard__box"
       sx={{
         background: '#FFFFFF',
         boxShadow: '0px 8px 32px rgba(0, 0, 0, 0.08)',

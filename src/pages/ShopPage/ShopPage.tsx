@@ -4,6 +4,7 @@ import { Route, Routes } from 'react-router-dom';
 import ShopPageRoot from './ShopPageRoot';
 import { ShopController } from '../../controllers';
 import { ROUTES } from '../../config';
+import Page404 from '../Page404/Page404';
 
 type Props = {};
 
@@ -21,6 +22,7 @@ const ShopPage = (props: Props) => {
             path={ROUTES.BUY.SHOP.ROOT.RELATIVE_PATH}
             element={<ShopPageRoot />}
           />
+          <Route path="*" element={<Page404 />} />
         </Routes>
       </Box>
     </ShopController>

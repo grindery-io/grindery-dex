@@ -174,11 +174,15 @@ export const updateOffer = (
   return new Promise((resolve, reject) => {
     try {
       axios
-        .put(`${DELIGHT_API_URL}/offers/${body.offerId}`, body, {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        })
+        .put(
+          `${DELIGHT_API_URL}/offers/${body.offerId}`,
+          { isActive: body.isActive },
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        )
         .then((res) => {
           resolve(res?.data?.modifiedCount ? true : false);
         })

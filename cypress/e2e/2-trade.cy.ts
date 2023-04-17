@@ -3,8 +3,11 @@
 describe('Trade page', () => {
   beforeEach(() => {
     cy.intercept(
-      'https://delight-api.grindery.org/view-blockchains/balance-token?chainId=*&address=*&tokenAddress=*'
+      `${Cypress.env(
+        'CYPRESS_DELIGHT_API_URL'
+      )}/view-blockchains/balance-token?chainId=*&address=*&tokenAddress=*`
     ).as('GetFromTokenBalance');
+
     cy.visit('http://localhost:3000/buy/trade');
     cy.get('#connect-button').click();
     cy.acceptMetamaskAccess({

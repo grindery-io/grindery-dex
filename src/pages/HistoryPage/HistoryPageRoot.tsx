@@ -1,17 +1,13 @@
 import React from 'react';
 import { Box } from '@mui/system';
-import { useNavigate } from 'react-router-dom';
-import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
-import { IconButton } from '@mui/material';
 import {
   OrderSkeleton,
   OrderCard,
   NotFound,
-  PageCard,
   PageCardHeader,
   PageCardBody,
+  PageCard,
 } from '../../components';
-import { ROUTES } from '../../config';
 import { OrderType } from '../../types';
 import {
   useAppSelector,
@@ -23,8 +19,7 @@ import { sortOrdersByDate } from '../../utils';
 
 type Props = {};
 
-const TradePageHistory = (props: Props) => {
-  let navigate = useNavigate();
+const HistoryPageRoot = (props: Props) => {
   const orders = useAppSelector(selectOrdersHistoryItems);
   const isLoading = useAppSelector(selectOrdersHistoryLoading);
   const sortedOrders = sortOrdersByDate(orders);
@@ -32,23 +27,7 @@ const TradePageHistory = (props: Props) => {
 
   return (
     <PageCard>
-      <PageCardHeader
-        title="Orders history"
-        titleSize={18}
-        titleAlign="center"
-        startAdornment={
-          <IconButton
-            size="medium"
-            edge="start"
-            onClick={() => {
-              navigate(ROUTES.BUY.TRADE.ROOT.FULL_PATH);
-            }}
-          >
-            <ArrowBackIcon />
-          </IconButton>
-        }
-        endAdornment={<Box width={28} height={40} />}
-      />
+      <PageCardHeader title="Orders history" />
       <PageCardBody maxHeight="540px">
         {orders.length < 1 && isLoading ? (
           <>
@@ -79,4 +58,4 @@ const TradePageHistory = (props: Props) => {
   );
 };
 
-export default TradePageHistory;
+export default HistoryPageRoot;

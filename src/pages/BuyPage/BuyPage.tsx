@@ -4,6 +4,7 @@ import { PageContainer } from '../../components';
 import TradePage from '../TradePage/TradePage';
 import ShopPage from '../ShopPage/ShopPage';
 import { ROUTES } from '../../config';
+import Page404 from '../Page404/Page404';
 
 type Props = {};
 
@@ -17,7 +18,11 @@ const BuyPage = (props: Props) => {
             element={<TradePage />}
           />
           <Route path={ROUTES.BUY.SHOP.RELATIVE_PATH} element={<ShopPage />} />
-          <Route path="/" element={<Navigate to="/buy/trade" />} />
+          <Route
+            path="/"
+            element={<Navigate to={ROUTES.BUY.TRADE.FULL_PATH} />}
+          />
+          <Route path="*" element={<Page404 />} />
         </Routes>
       </PageContainer>
     </div>

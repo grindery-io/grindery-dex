@@ -4,7 +4,7 @@ import React, {
   useContext,
   useEffect,
 } from 'react';
-import { OrderType, OfferType } from '../types';
+import { OrderType, OfferType, ChainType } from '../types';
 import {
   useAppDispatch,
   useAppSelector,
@@ -14,7 +14,12 @@ import {
   setOrdersLoading,
   selectUserAccessToken,
 } from '../store';
-import { getChainIdHex, getErrorMessage } from '../utils';
+import {
+  getChainIdHex,
+  getErrorMessage,
+  getOfferFromChain,
+  switchMetamaskNetwork,
+} from '../utils';
 import { useUserController } from './UserController';
 import {
   completeSellerOrderRequest,
@@ -32,7 +37,8 @@ type ContextProps = {
     userWalletAddress: string,
     userChainId: string,
     liquidityWalletAbi: any,
-    orders: OrderType[]
+    orders: OrderType[],
+    chains: ChainType[]
   ) => Promise<boolean>;
 };
 
@@ -115,7 +121,8 @@ export const OrdersController = ({ children }: OrdersControllerProps) => {
     userWalletAddress: string,
     userChainId: string,
     liquidityWalletAbi: any,
-    orders: OrderType[]
+    orders: OrderType[],
+    chains: ChainType[]
   ): Promise<boolean> => {
     dispatch(clearOrdersError());
 
@@ -125,28 +132,37 @@ export const OrdersController = ({ children }: OrdersControllerProps) => {
 
     const offerChainId = order.offer?.chainId || '';
     const offerTokenSymbol = order.offer?.token || '';
-
-    if (userChainId !== offerChainId) {
-      try {
-        await window.ethereum.request({
-          method: 'wallet_switchEthereumChain',
-          params: [
-            {
-              chainId: getChainIdHex(offerChainId),
-            },
-          ],
-        });
-      } catch (error: any) {
-        // handle change switching error
-        console.error('handleOrderCompleteClick error: chain switching failed');
-        dispatch(
-          setOrdersError({
-            type: order.orderId,
-            text: 'Blockchain switching failed. Try again, please.',
-          })
-        );
-        return false;
-      }
+    if (!order.offer) {
+      dispatch(
+        setOrdersError({
+          type: order.orderId,
+          text: 'Associated offer not found',
+        })
+      );
+      return false;
+    }
+    const offerFromChain = getOfferFromChain(order.offer, chains);
+    if (!offerFromChain) {
+      dispatch(
+        setOrdersError({
+          type: order.orderId,
+          text: 'Offer chain not found',
+        })
+      );
+      return false;
+    }
+    const switchNetwork = await switchMetamaskNetwork(
+      userChainId,
+      offerFromChain
+    );
+    if (!switchNetwork) {
+      dispatch(
+        setOrdersError({
+          type: order.orderId,
+          text: 'Network switching failed. Please, switch network in your MetaMask and try again.',
+        })
+      );
+      return false;
     }
 
     let balance = await getWalletBalanceRequest(

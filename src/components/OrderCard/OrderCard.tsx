@@ -21,10 +21,11 @@ type Props = {
   onCompleteClick?: (order: OrderType) => Promise<boolean>;
   error?: string;
   chains: ChainType[];
+  id?: string;
 };
 
 const OrderCard = (props: Props) => {
-  const { order, userType, onCompleteClick, error, chains } = props;
+  const { order, userType, onCompleteClick, error, chains, id } = props;
   const offer = order.offer;
   const [loading, setLoading] = useState(false);
   const isUserA = userType === 'a';
@@ -49,6 +50,10 @@ const OrderCard = (props: Props) => {
 
   return (
     <Card
+      className={`OrderCard ${
+        order.isComplete ? 'OrderCard-complete' : 'OrderCard-incomplete'
+      }`}
+      id={id}
       flex={1}
       style={{
         borderRadius: '12px',
@@ -169,6 +174,7 @@ const OrderCard = (props: Props) => {
         }}
       >
         <PageCardSubmitButton
+          className="OrderCard__button"
           label={
             order.isComplete
               ? 'Completed'

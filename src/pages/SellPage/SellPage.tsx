@@ -20,6 +20,7 @@ import {
 } from '../../store';
 import { ROUTES } from '../../config';
 import { WalletsController } from '../../controllers';
+import Page404 from '../Page404/Page404';
 
 type Props = {};
 
@@ -48,7 +49,11 @@ const SellPage = (props: Props) => {
                 path={ROUTES.SELL.AUTOMATIONS.RELATIVE_PATH}
                 element={<AutomationsPage />}
               />
-              <Route path="/" element={<Navigate to="/sell/offers" />} />
+              <Route
+                path="/"
+                element={<Navigate to={ROUTES.SELL.OFFERS.ROOT.FULL_PATH} />}
+              />
+              <Route path="*" element={<Page404 />} />
             </Routes>
           </>
         ) : (

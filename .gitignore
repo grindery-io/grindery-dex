@@ -22,5 +22,6 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# e2e test videos
+# e2e test videos and screenshots
 /cypress/videos
+/cypress/screenshots

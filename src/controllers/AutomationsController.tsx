@@ -19,11 +19,17 @@ import {
   setAutomationsLoading,
   selectLiquidityWalletAbi,
   selectWalletsItems,
+  selectChainsItems,
 } from '../store';
-import { getChainIdHex, getErrorMessage } from '../utils';
+import {
+  getChainById,
+  getChainIdHex,
+  getErrorMessage,
+  switchMetamaskNetwork,
+} from '../utils';
 import { useUserController } from './UserController';
 import { getBotAddress } from '../services';
-import { LiquidityWalletType } from '../types';
+import { ChainType, LiquidityWalletType } from '../types';
 
 // Context props
 type ContextProps = {
@@ -36,7 +42,8 @@ type ContextProps = {
     input: AutomationsInput,
     userChainId: string,
     walletAddress: string,
-    liquidityWalletAbi: any
+    liquidityWalletAbi: any,
+    chains: ChainType[]
   ) => void;
 };
 
@@ -57,6 +64,7 @@ export const AutomationsController = ({
   const dispatch = useAppDispatch();
   const input = useAppSelector(selectAutomationsInput);
   const { chainId } = input;
+  const chains = useAppSelector(selectChainsItems);
   const wallets = useAppSelector(selectWalletsItems);
   const liquidityWalletAbi = useAppSelector(selectLiquidityWalletAbi);
   const wallet = wallets.find(
@@ -90,31 +98,35 @@ export const AutomationsController = ({
       walletAddress: string,
       chainId: string,
       userChainId: string,
-      liquidityWalletAbi: any
+      liquidityWalletAbi: any,
+      chains: ChainType[]
     ) => {
       if (!walletAddress) {
         return;
       }
       dispatch(clearAutomationsError());
-      if (userChainId !== chainId) {
-        try {
-          await window.ethereum.request({
-            method: 'wallet_switchEthereumChain',
-            params: [
-              {
-                chainId: `0x${parseFloat(chainId).toString(16)}`,
-              },
-            ],
-          });
-        } catch (error: any) {
-          // handle change switching error
-          dispatch(
-            setAutomationsError({
-              type: 'setBot',
-              text: "Chain hasn't been switched. Please, open MetaMask extension and switch chain to BSC Testnet manually.",
-            })
-          );
-        }
+
+      const chain = getChainById(chainId, chains);
+      if (!chain) {
+        dispatch(
+          setAutomationsError({
+            type: 'setBot',
+            text: 'Chain not found',
+          })
+        );
+        dispatch(setAutomationsLoading(false));
+        return;
+      }
+      const networkSwitched = await switchMetamaskNetwork(userChainId, chain);
+      if (!networkSwitched) {
+        dispatch(
+          setAutomationsError({
+            type: 'setBot',
+            text: 'Network switching failed. Please, switch network in your MetaMask and try again.',
+          })
+        );
+        dispatch(setAutomationsLoading(false));
+        return;
       }
 
       const ethers = getEthers();
@@ -184,7 +196,8 @@ export const AutomationsController = ({
     input: AutomationsInput,
     userChainId: string,
     walletAddress: string,
-    liquidityWalletAbi: any
+    liquidityWalletAbi: any,
+    chains: ChainType[]
   ) => {
     // clear error message
     dispatch(clearAutomationsError());
@@ -197,21 +210,32 @@ export const AutomationsController = ({
     // start executing
     dispatch(setAutomationsLoading(true));
 
-    if (input.chainId !== userChainId || !userChainId) {
-      try {
-        await window.ethereum.request({
-          method: 'wallet_switchEthereumChain',
-          params: [
-            {
-              chainId: getChainIdHex(input.chainId),
-            },
-          ],
-        });
-      } catch (error: any) {
-        dispatch(setAutomationsLoading(false));
-        return;
-      }
+    const inputChain = getChainById(input.chainId, chains);
+    if (!inputChain) {
+      dispatch(
+        setAutomationsError({
+          type: 'setBot',
+          text: 'Chain not found',
+        })
+      );
+      dispatch(setAutomationsLoading(false));
+      return;
     }
+    const networkSwitched = await switchMetamaskNetwork(
+      userChainId,
+      inputChain
+    );
+    if (!networkSwitched) {
+      dispatch(
+        setAutomationsError({
+          type: 'setBot',
+          text: 'Network switching failed. Please, switch network in your MetaMask and try again.',
+        })
+      );
+      dispatch(setAutomationsLoading(false));
+      return;
+    }
+
     const ethers = getEthers();
     const signer = getSigner();
 
@@ -263,7 +287,8 @@ export const AutomationsController = ({
         walletAddress,
         input.chainId,
         userChainId,
-        liquidityWalletAbi
+        liquidityWalletAbi,
+        chains
       );
     }, 1000);
   };
@@ -274,14 +299,16 @@ export const AutomationsController = ({
       wallet?.walletAddress &&
       chainId &&
       userChainId &&
-      liquidityWalletAbi
+      liquidityWalletAbi &&
+      chains
     ) {
       handleAutomationsCheckDelegationAction(
         accessToken,
         wallet?.walletAddress,
         chainId,
         userChainId,
-        liquidityWalletAbi
+        liquidityWalletAbi,
+        chains
       );
     }
   }, [
@@ -291,6 +318,7 @@ export const AutomationsController = ({
     userChainId,
     liquidityWalletAbi,
     handleAutomationsCheckDelegationAction,
+    chains,
   ]);
 
   return (

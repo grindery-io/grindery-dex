@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { IconButton, Tooltip } from '@mui/material';
+import { Box, IconButton, Tooltip } from '@mui/material';
 import { AddCircleOutline as AddCircleOutlineIcon } from '@mui/icons-material';
 import {
   ListSubheader,
@@ -76,46 +76,48 @@ function OffersPageRoot() {
               </>
             ) : (
               <>
-                {offers.length > 0 &&
-                  Object.keys(groupedOffers).map((key: any) => (
-                    <React.Fragment key={key}>
-                      <ListSubheader>
-                        {getChainById(key, chains)?.label || ''}
-                      </ListSubheader>
-                      {orderOffersByActiveState(groupedOffers[key]).map(
-                        (offer: OfferType) => (
-                          <OfferPublic
-                            key={offer._id}
-                            chains={chains}
-                            compact
-                            userType="b"
-                            offer={offer}
-                            isActivating={isActivating}
-                            onDeactivateClick={() => {
-                              handleActivationAction(
-                                accessToken,
-                                offer,
-                                false,
-                                userChain,
-                                chains,
-                                poolAbi
-                              );
-                            }}
-                            onActivateClick={() => {
-                              handleActivationAction(
-                                accessToken,
-                                offer,
-                                true,
-                                userChain,
-                                chains,
-                                poolAbi
-                              );
-                            }}
-                          />
-                        )
-                      )}
-                    </React.Fragment>
-                  ))}
+                <Box className="offers-list">
+                  {offers.length > 0 &&
+                    Object.keys(groupedOffers).map((key: any) => (
+                      <Box key={key}>
+                        <ListSubheader>
+                          {getChainById(key, chains)?.label || ''}
+                        </ListSubheader>
+                        {orderOffersByActiveState(groupedOffers[key]).map(
+                          (offer: OfferType) => (
+                            <OfferPublic
+                              key={offer._id}
+                              chains={chains}
+                              compact
+                              userType="b"
+                              offer={offer}
+                              isActivating={isActivating}
+                              onDeactivateClick={() => {
+                                handleActivationAction(
+                                  accessToken,
+                                  offer,
+                                  false,
+                                  userChain,
+                                  chains,
+                                  poolAbi
+                                );
+                              }}
+                              onActivateClick={() => {
+                                handleActivationAction(
+                                  accessToken,
+                                  offer,
+                                  true,
+                                  userChain,
+                                  chains,
+                                  poolAbi
+                                );
+                              }}
+                            />
+                          )
+                        )}
+                      </Box>
+                    ))}
+                </Box>
               </>
             )}
           </>
