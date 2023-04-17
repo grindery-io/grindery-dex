@@ -4,11 +4,12 @@ describe('Orders page', () => {
   beforeEach(() => {
     cy.intercept(
       'GET',
-      'https://delight-api.grindery.org/orders/liquidity-provider'
+      `${Cypress.env('CYPRESS_DELIGHT_API_URL')}/orders/liquidity-provider`
     ).as('GetUserOrders');
-    cy.intercept('PUT', 'https://delight-api.grindery.org/orders/complete').as(
-      'UpdateOrder'
-    );
+    cy.intercept(
+      'PUT',
+      `${Cypress.env('CYPRESS_DELIGHT_API_URL')}/orders/complete`
+    ).as('UpdateOrder');
 
     cy.visit('http://localhost:3000/sell/orders');
     cy.get('#connect-button').click();

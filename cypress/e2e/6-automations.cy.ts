@@ -4,7 +4,9 @@ describe('Automations page', () => {
   beforeEach(() => {
     cy.intercept(
       'GET',
-      'https://delight-api.grindery.org/view-blockchains/drone-address*'
+      `${Cypress.env(
+        'CYPRESS_DELIGHT_API_URL'
+      )}/view-blockchains/drone-address*`
     ).as('GetBotAddress');
 
     cy.visit('http://localhost:3000/sell/automations');
