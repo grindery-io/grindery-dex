@@ -18,19 +18,21 @@ describe('Shop page', () => {
   });
 
   it('Shows shop offers', () => {
-    cy.get('.shop-offers-list').should('exist');
-    cy.get('.shop-offer').first().should('exist');
+    cy.get('.ShopPageRoot__box').should('exist');
+    cy.get('.OfferCard__box').first().should('exist');
   });
 
   it('buys a shop offer', () => {
-    cy.get('.shop-offer')
+    cy.get('.OfferCard__box')
       .first()
-      .get('.shop-offer-action button')
+      .get('.OfferCardAction__box button')
       .invoke('attr', 'id')
       .then((idValue) => {
         cy.get('#' + idValue).click();
       });
     cy.wait(2000);
-    // cy.confirmMetamaskTransaction();
+    cy.confirmMetamaskTransaction();
+    cy.wait(2000);
+    cy.contains('button', 'Close').click();
   });
 });

@@ -12,7 +12,7 @@ const OfferCardAction = (props: OfferCardProps) => {
 
   return (
     <Box
-      className="shop-offer-action"
+      className="OfferCardAction__box"
       sx={{
         margin: '8px 16px 0',
         '& > div': {

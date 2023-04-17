@@ -52,7 +52,7 @@ const ShopPageRoot = (props: Props) => {
           marginRight: { xs: '16px', lg: '24px' },
         }}
         flex="1"
-        className="shop-offers-list"
+        className="ShopPageRoot__box"
       >
         {loading && offers.length < 1 ? (
           <Loading />
