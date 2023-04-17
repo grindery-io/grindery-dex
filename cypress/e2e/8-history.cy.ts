@@ -2,7 +2,7 @@
 
 describe('Orders page', () => {
   beforeEach(() => {
-    cy.visit('http://localhost:3000/buy/trade/history');
+    cy.visit('http://localhost:3000/history');
     cy.get('#connect-button').click();
     cy.acceptMetamaskAccess({
       allAccounts: false,
