@@ -133,6 +133,7 @@ const OfferPublic = (props: Props) => {
 
   return (
     <Card
+      className="OfferPublic__card"
       flex={1}
       sx={{
         borderRadius: '12px',
