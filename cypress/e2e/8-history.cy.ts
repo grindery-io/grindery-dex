@@ -22,7 +22,7 @@ describe('Orders page', () => {
   });
 
   it('Returns to trade page', () => {
-    cy.get('#return-icon').click();
+    cy.get('button.MuiIconButton-root').eq(1).click();
     cy.get('.PageCardHeader__typography').first().should('have.text', 'Trade');
   });
 
