@@ -9,6 +9,7 @@ import LiquidityWalletPageSelectChain from './LiquidityWalletPageSelectChain';
 import LiquidityWalletPageTokens from './LiquidityWalletPageTokens';
 import LiquidityWalletPageSelectToken from './LiquidityWalletPageSelectToken';
 import { ROUTES } from '../../config';
+import Page404 from '../Page404/Page404';
 
 function LiquidityWalletPage() {
   return (
@@ -43,6 +44,7 @@ function LiquidityWalletPage() {
             path={ROUTES.SELL.WALLETS.SELECT_TOKEN.RELATIVE_PATH}
             element={<LiquidityWalletPageSelectToken />}
           />
+          <Route path="*" element={<Page404 />} />
         </Routes>
       </PageCard>
     </>

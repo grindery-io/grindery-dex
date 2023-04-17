@@ -3,6 +3,7 @@ import {
   BUY_NAVIGATION,
   DRAWER_NAVIGATION,
   FAUCET_MENU,
+  ROUTES,
   SELL_NAVIGATION,
 } from '../../config';
 import { useLocation, useNavigate } from 'react-router';
@@ -66,18 +67,18 @@ const MainNavigationDrawer = (props: Props) => {
           <List>
             {DRAWER_NAVIGATION.filter(
               (link: SidebarNavigationItemType) =>
-                isAdmin || link.path === '/buy'
+                isAdmin || link.path === ROUTES.BUY.FULL_PATH
             ).map((link: SidebarNavigationItemType) => (
               <React.Fragment key={link.path}>
                 <ListItemButton
                   key={link.path}
                   onClick={(event: React.MouseEvent<HTMLElement>) => {
                     event.preventDefault();
-                    if (link.path === '/sell') {
+                    if (link.path === ROUTES.SELL.FULL_PATH) {
                       handleClick();
-                    } else if (link.path === '/faucet') {
+                    } else if (link.path === ROUTES.FAUCET.FULL_PATH) {
                       handleFaucetClick();
-                    } else if (link.path === '/buy') {
+                    } else if (link.path === ROUTES.BUY.FULL_PATH) {
                       handleBuyClick();
                     } else {
                       onClose();
@@ -85,21 +86,22 @@ const MainNavigationDrawer = (props: Props) => {
                     }
                   }}
                   selected={
-                    location.pathname === link.path && link.path !== '/faucet'
+                    location.pathname === link.path &&
+                    link.path !== ROUTES.FAUCET.FULL_PATH
                   }
                 >
                   <ListItemText primary={link.label} />
-                  {link.path === '/buy' && (
+                  {link.path === ROUTES.BUY.FULL_PATH && (
                     <>{buyOpen ? <ExpandLess /> : <ExpandMore />}</>
                   )}
-                  {link.path === '/sell' && (
+                  {link.path === ROUTES.SELL.FULL_PATH && (
                     <>{open ? <ExpandLess /> : <ExpandMore />}</>
                   )}
-                  {link.path === '/faucet' && (
+                  {link.path === ROUTES.FAUCET.FULL_PATH && (
                     <>{faucetOpen ? <ExpandLess /> : <ExpandMore />}</>
                   )}
                 </ListItemButton>
-                {link.path === '/buy' && (
+                {link.path === ROUTES.BUY.FULL_PATH && (
                   <Collapse in={buyOpen} timeout="auto">
                     <List component="div" disablePadding>
                       {BUY_NAVIGATION.map((page: SidebarNavigationItemType) => (
@@ -119,7 +121,7 @@ const MainNavigationDrawer = (props: Props) => {
                     </List>
                   </Collapse>
                 )}
-                {link.path === '/sell' && (
+                {link.path === ROUTES.SELL.FULL_PATH && (
                   <Collapse in={open} timeout="auto">
                     <List component="div" disablePadding>
                       {SELL_NAVIGATION.map(
@@ -141,7 +143,7 @@ const MainNavigationDrawer = (props: Props) => {
                     </List>
                   </Collapse>
                 )}
-                {link.path === '/faucet' && (
+                {link.path === ROUTES.FAUCET.FULL_PATH && (
                   <Collapse in={faucetOpen} timeout="auto">
                     <List component="div" disablePadding>
                       {FAUCET_MENU.map((page: any) => (

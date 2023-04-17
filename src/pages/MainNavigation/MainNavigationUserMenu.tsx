@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Foco from 'react-foco';
 import Jdenticon from 'react-jdenticon';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
-import { ICONS } from '../../config';
+import { ICONS, ROUTES } from '../../config';
 import { Alert, Snackbar } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import Icon from '@mdi/react';
@@ -22,6 +22,7 @@ import {
   UserStatus,
   UserWrapper,
 } from './MainNavigationUserMenu.style';
+import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 
 type Props = {
   mode?: 'dark' | 'light';
@@ -79,7 +80,15 @@ const MainNavigationUserMenu = (props: Props) => {
             </CopyToClipboard>
             <button
               onClick={() => {
-                navigate('/faucet');
+                navigate(ROUTES.HISTORY.ROOT.FULL_PATH);
+              }}
+            >
+              <ReceiptLongIcon sx={{ width: '20px', height: '20px' }} />
+              <span>Orders history</span>
+            </button>
+            <button
+              onClick={() => {
+                navigate(ROUTES.FAUCET.FULL_PATH);
               }}
             >
               <Icon
@@ -91,7 +100,7 @@ const MainNavigationUserMenu = (props: Props) => {
             {isAdmin && (
               <button
                 onClick={() => {
-                  navigate('/sell');
+                  navigate(ROUTES.SELL.FULL_PATH);
                 }}
               >
                 <SellOutlinedIcon sx={{ width: '20px', height: '20px' }} />
