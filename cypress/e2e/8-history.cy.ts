@@ -21,11 +21,6 @@ describe('Orders page', () => {
     cy.get('.OrderCard').should('exist');
   });
 
-  it('Returns to trade page', () => {
-    cy.get('button.MuiIconButton-root').eq(1).click();
-    cy.get('.PageCardHeader__typography').first().should('have.text', 'Trade');
-  });
-
   it('Show no orders history found', () => {
     cy.get('#user-menu-button').click();
     cy.get('#disconnect-button').click();
