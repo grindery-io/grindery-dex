@@ -19,13 +19,13 @@ describe('Shop page', () => {
 
   it('Shows shop offers', () => {
     cy.get('.ShopPageRoot__box').should('exist');
-    cy.get('.OfferCard__box').first().should('exist');
+    cy.get('.OfferCard').first().should('exist');
   });
 
   it('buys a shop offer', () => {
-    cy.get('.OfferCard__box')
+    cy.get('.OfferCard')
       .first()
-      .get('.OfferCardAction__box button')
+      .get('.OfferCardAction button')
       .invoke('attr', 'id')
       .then((idValue) => {
         cy.get('#' + idValue).click();

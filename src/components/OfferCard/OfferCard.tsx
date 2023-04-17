@@ -21,7 +21,7 @@ export type OfferCardProps = {
 const OfferCard = (props: OfferCardProps) => {
   return (
     <Box
-      className="OfferCard__box"
+      className="OfferCard"
       sx={{
         background: '#FFFFFF',
         boxShadow: '0px 8px 32px rgba(0, 0, 0, 0.08)',
