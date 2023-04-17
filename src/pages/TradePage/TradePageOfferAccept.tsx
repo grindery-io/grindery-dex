@@ -103,6 +103,7 @@ const TradePageOfferAccept = (props: Props) => {
         titleAlign="center"
         startAdornment={
           <IconButton
+            id="return"
             size="medium"
             edge="start"
             onClick={() => {
