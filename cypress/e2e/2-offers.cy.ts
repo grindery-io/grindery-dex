@@ -179,6 +179,7 @@ describe('Offers page', () => {
         cy.get('input[name="amountMin"]').type('0.1', { force: true });
         cy.get('input[name="amountMax"]').type('20', { force: true });
         cy.get('input[name="estimatedTime"]').type('120', { force: true });
+        cy.get('input[name="amount"]').type('0.01', { force: true });
 
         cy.get('button').contains('Create').click();
 

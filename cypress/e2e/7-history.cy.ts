@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 
-describe('Orders page', () => {
+describe('Orders history page', () => {
   beforeEach(() => {
     cy.visit('http://localhost:3000/history');
     cy.get('#connect-button').click();
