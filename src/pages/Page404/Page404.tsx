@@ -1,10 +1,5 @@
 import React from 'react';
-import {
-  PageCard,
-  PageCardBody,
-  PageCardHeader,
-  PageContainer,
-} from '../../components';
+import { PageCard, PageCardBody, PageCardHeader } from '../../components';
 import { Box, Typography } from '@mui/material';
 import { ROUTES } from '../../config';
 import { mdiRobotDeadOutline } from '@mdi/js';
