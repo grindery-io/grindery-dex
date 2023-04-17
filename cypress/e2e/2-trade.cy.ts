@@ -69,7 +69,7 @@ describe('Trade page', () => {
     cy.get('button').contains('max').click();
     cy.get('button').contains('Search offers').click();
     cy.get('.TradePage__box').should('have.css', 'opacity', '1');
-    cy.get('.OfferPublic__card').click();
+    cy.get('.OfferPublic').click();
     cy.get('.PageCardHeader__typography')
       .first()
       .should('have.text', 'Review offer');
@@ -91,7 +91,6 @@ describe('Trade page', () => {
     cy.get('button').contains('max').click();
     cy.get('button').contains('Search offers').click();
     cy.get('.TradePage__box').should('have.css', 'opacity', '1');
-    cy.get('.TradePage__box').should('have.css', 'opacity', '1');
     cy.get('#estimated-network-fee-icon').click();
     cy.get('.PageCardHeader__typography')
       .first()
@@ -102,7 +101,6 @@ describe('Trade page', () => {
     cy.wait(['@GetFromTokenBalance']);
     cy.get('button').contains('max').click();
     cy.get('button').contains('Search offers').click();
-    cy.get('.TradePage__box').should('have.css', 'opacity', '1');
     cy.get('.TradePage__box').should('have.css', 'opacity', '1');
     cy.get('#chains-icon').click();
     cy.get('.PageCardHeader__typography')
@@ -115,13 +113,11 @@ describe('Trade page', () => {
     cy.get('button').contains('max').click();
     cy.get('button').contains('Search offers').click();
     cy.get('.TradePage__box').should('have.css', 'opacity', '1');
-    cy.get('.TradePage__box').should('have.css', 'opacity', '1');
     cy.get('#execution-time-icon').click();
     cy.get('.PageCardHeader__typography')
       .first()
       .should('have.text', 'Review offer');
     cy.get('#return').click();
-    cy.get('.TradePage__box').should('have.css', 'opacity', '1');
     cy.get('.TradePage__box').should('have.css', 'opacity', '1');
   });
 
@@ -130,7 +126,7 @@ describe('Trade page', () => {
     cy.get('input[name="amount"]').type('0.001');
     cy.get('button').contains('Search offers').click();
     cy.get('.TradePage__box').should('have.css', 'opacity', '1');
-    cy.get('.OfferPublic__card').click();
+    cy.get('.OfferPublic').click();
     cy.get('.PageCardHeader__typography')
       .first()
       .should('have.text', 'Review offer');
