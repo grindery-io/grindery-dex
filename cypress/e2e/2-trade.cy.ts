@@ -127,7 +127,6 @@ describe('Trade page', () => {
     cy.get('input[name="amount"]').type('0.001');
     cy.get('button').contains('Search offers').click();
     cy.get('.TradePage__box').should('have.css', 'opacity', '1');
-    cy.get('.TradePage__box').should('have.css', 'opacity', '1');
     cy.get('.OfferPublic__card').click();
     cy.get('.PageCardHeader__typography')
       .first()
