@@ -69,6 +69,8 @@ describe('Orders page', () => {
                 cy.get('#' + orderCardId)
                   .find('.OrderCard__button')
                   .should('have.text', 'Completed');
+                cy.changeMetamaskNetwork('goerli');
+                cy.wait(2000);
               });
             });
         } else {
