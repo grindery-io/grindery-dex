@@ -52,6 +52,7 @@ const ShopPageRoot = (props: Props) => {
           marginRight: { xs: '16px', lg: '24px' },
         }}
         flex="1"
+        className="ShopPageRoot__box"
       >
         {loading && offers.length < 1 ? (
           <Loading />
@@ -72,6 +73,7 @@ const ShopPageRoot = (props: Props) => {
               >
                 {offers.map((offer: OfferType) => (
                   <OfferCard
+                    id={offer.offerId}
                     key={offer._id}
                     offer={offer}
                     tokenPrice={tokenPrice}
