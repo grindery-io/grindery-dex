@@ -22,8 +22,8 @@ describe('Orders page', () => {
   });
 
   it('Returns to trade page', () => {
-    cy.get('.return-icon').click();
-    cy.get('.page-card-title').first().should('have.text', 'Trade');
+    cy.get('#return-icon').click();
+    cy.get('.PageCardHeader__typography').first().should('have.text', 'Trade');
   });
 
   it('Show no orders history found', () => {
