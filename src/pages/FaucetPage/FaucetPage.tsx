@@ -12,6 +12,7 @@ import {
   selectUserIsAdmin,
   selectUserIsAdminLoading,
 } from '../../store';
+import Page404 from '../Page404/Page404';
 
 function FaucetPage() {
   const isLoading = useAppSelector(selectUserIsAdminLoading);
@@ -48,6 +49,7 @@ function FaucetPage() {
                 />
               </>
             )}
+            <Route path="*" element={<Page404 />} />
           </Routes>
         </PageCard>
       </PageContainer>

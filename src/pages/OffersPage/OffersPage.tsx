@@ -7,6 +7,7 @@ import OffersPageSelectChain from './OffersPageSelectChain';
 import OffersPageSelectToChain from './OffersPageSelectToChain';
 import { OffersController } from '../../controllers';
 import { ROUTES } from '../../config';
+import Page404 from '../Page404/Page404';
 
 function OffersPage() {
   return (
@@ -29,6 +30,7 @@ function OffersPage() {
             path={ROUTES.SELL.OFFERS.SELECT_TO_CHAIN.RELATIVE_PATH}
             element={<OffersPageSelectToChain />}
           />
+          <Route path="*" element={<Page404 />} />
         </Routes>
       </PageCard>
     </OffersController>

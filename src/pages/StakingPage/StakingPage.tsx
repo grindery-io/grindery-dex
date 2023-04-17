@@ -7,6 +7,7 @@ import StakingPageWithdraw from './StakingPageWithdraw';
 import StakingPageSelectChain from './StakingPageSelectChain';
 import { ROUTES } from '../../config';
 import { StakesController } from '../../controllers';
+import Page404 from '../Page404/Page404';
 
 function StakingPage() {
   return (
@@ -29,6 +30,7 @@ function StakingPage() {
             path={ROUTES.SELL.STAKING.SELECT_CHAIN.RELATIVE_PATH}
             element={<StakingPageSelectChain />}
           />
+          <Route path="*" element={<Page404 />} />
         </Routes>
       </PageCard>
     </StakesController>

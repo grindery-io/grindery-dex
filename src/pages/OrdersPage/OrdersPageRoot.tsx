@@ -6,6 +6,7 @@ import {
   OrderSkeleton,
   PageCardHeader,
   PageCardBody,
+  PageCard,
 } from '../../components';
 import { OrderType, LiquidityWalletType } from '../../types';
 import {
@@ -35,7 +36,7 @@ function OrdersPageRoot() {
   const chains = useAppSelector(selectChainsItems);
 
   return (
-    <>
+    <PageCard>
       <PageCardHeader title="Orders" />
       <PageCardBody maxHeight="540px">
         {orders.length < 1 && isLoading ? (
@@ -84,7 +85,7 @@ function OrdersPageRoot() {
           </Box>
         )}
       </PageCardBody>
-    </>
+    </PageCard>
   );
 }
 

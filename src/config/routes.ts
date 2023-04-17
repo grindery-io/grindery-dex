@@ -18,10 +18,6 @@ export const ROUTES = {
         RELATIVE_PATH: '/accept/:offerId',
         FULL_PATH: '/buy/trade/accept/:offerId',
       },
-      HISTORY: {
-        RELATIVE_PATH: '/history',
-        FULL_PATH: '/buy/trade/history',
-      },
     },
     SHOP: {
       RELATIVE_PATH: '/shop/*',
@@ -101,9 +97,17 @@ export const ROUTES = {
       },
     },
   },
+  HISTORY: {
+    RELATIVE_PATH: '/history/*',
+    FULL_PATH: '/history',
+    ROOT: {
+      RELATIVE_PATH: '/',
+      FULL_PATH: '/history',
+    },
+  },
   FAUCET: {
-    RELATIVE_PATH: '/*',
-    FULL_PATH: '/faucet/*',
+    RELATIVE_PATH: '/faucet/*',
+    FULL_PATH: '/faucet',
     PLACEHOLDER: {
       RELATIVE_PATH: '/',
       FULL_PATH: '/faucet',
