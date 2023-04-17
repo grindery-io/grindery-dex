@@ -1,8 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button, IconButton, Stack, Tooltip } from '@mui/material';
+import { Button, Stack } from '@mui/material';
 import { Box } from '@mui/system';
-import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 import {
   SelectChainAndTokenButton,
   AmountInput,
@@ -51,23 +50,7 @@ const TradePageOffersFilter = (props: Props) => {
 
   return (
     <PageCard>
-      <PageCardHeader
-        title="Trade"
-        endAdornment={
-          user ? (
-            <Tooltip title="Orders history">
-              <IconButton
-                sx={{ marginRight: '-8px' }}
-                onClick={() => {
-                  navigate(ROUTES.BUY.TRADE.HISTORY.FULL_PATH);
-                }}
-              >
-                <ReceiptLongIcon />
-              </IconButton>
-            </Tooltip>
-          ) : undefined
-        }
-      />
+      <PageCardHeader title="Trade" />
       <PageCardBody>
         <Stack
           direction="row"

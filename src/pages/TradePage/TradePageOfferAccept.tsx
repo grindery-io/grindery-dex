@@ -231,7 +231,7 @@ const TradePageOfferAccept = (props: Props) => {
       </PageCardBody>
     </PageCard>
   ) : (
-    <Navigate to="/buy" />
+    <Navigate to={ROUTES.BUY.FULL_PATH} />
   );
 };
 

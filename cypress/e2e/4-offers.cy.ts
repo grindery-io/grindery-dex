@@ -2,15 +2,16 @@
 
 describe('Offers page', () => {
   beforeEach(() => {
-    cy.intercept('https://delight-api.grindery.org/offers/user').as(
+    cy.intercept(`${Cypress.env('CYPRESS_DELIGHT_API_URL')}/offers/user`).as(
       'GetUserOffers'
     );
-    cy.intercept('https://delight-api.grindery.org/offers/id?id=*').as(
+    cy.intercept(`${Cypress.env('CYPRESS_DELIGHT_API_URL')}/offers/id?id=*`).as(
       'GetCreatedOffer'
     );
-    cy.intercept('PUT', 'https://delight-api.grindery.org/offers/*').as(
-      'UpdateOffer'
-    );
+    cy.intercept(
+      'PUT',
+      `${Cypress.env('CYPRESS_DELIGHT_API_URL')}/offers/*`
+    ).as('UpdateOffer');
 
     cy.visit('http://localhost:3000/sell/offers');
     cy.get('#connect-button').click();

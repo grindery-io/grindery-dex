@@ -20,7 +20,12 @@ type Props = {
 const SelectChainButton = (props: Props) => {
   const { title, onClick, chain, error, subheader } = props;
   return (
-    <Card flex={1} onClick={onClick} style={{ borderRadius: '12px' }}>
+    <Card
+      flex={1}
+      onClick={onClick}
+      style={{ borderRadius: '12px' }}
+      className="SelectChainButton"
+    >
       <CardTitle>{title}</CardTitle>
 
       <ChainTokenBox
