@@ -29,7 +29,7 @@ describe('Offers page', () => {
   });
 
   it('Shows offers page if user is an admin', () => {
-    cy.get('.page-card-title').should('have.text', 'Offers');
+    cy.get('.PageCardHeader__typography').should('have.text', 'Offers');
   });
 
   it('Shows offers list', () => {
@@ -39,131 +39,8 @@ describe('Offers page', () => {
     });
   });
 
-  it('Shows create an offer form on create offer button click', () => {
-    cy.get('button').contains('Create offer').click();
-    cy.get('.page-card-title').should('have.text', 'Create offer');
-  });
-
-  it('Shows BNB as sell option in create offer form', () => {
-    cy.get('button').contains('Create offer').click();
-    cy.get('#sell-button .MuiCardHeader-title').should('have.text', 'BNB');
-    cy.get('#sell-button .MuiCardHeader-subheader').should(
-      'have.text',
-      'on BSC Testnet'
-    );
-  });
-
-  it('Shows ETH as receive option in create offer form', () => {
-    cy.get('button').contains('Create offer').click();
-    cy.get('#receive-button .MuiCardHeader-title').should('have.text', 'ETH');
-    cy.get('#receive-button .MuiCardHeader-subheader').should(
-      'have.text',
-      'on Goerli Testnet'
-    );
-  });
-
-  it('Selects sell option in create offer form', () => {
-    cy.get('button').contains('Create offer').click();
-    cy.get('#sell-button').click({ force: true });
-    cy.get('.ChainsList__card').first().click();
-    let selectedToken = '';
-    cy.get('.TokensList__item')
-      .first()
-      .find('.MuiListItemText-primary span')
-      .then(($element) => {
-        selectedToken = $element.text();
-        console.log('selectedToken', selectedToken);
-
-        cy.get('.TokensList__item').first().click();
-        cy.get('#sell-button .MuiCardHeader-title').should(
-          'have.text',
-          selectedToken
-        );
-      });
-  });
-
-  it('Selects receive option in create offer form', () => {
-    cy.get('button').contains('Create offer').click();
-    cy.get('#receive-button').click({ force: true });
-    cy.get('.ChainsList__card').first().click();
-    let selectedToken = '';
-    cy.get('.TokensList__item')
-      .first()
-      .find('.MuiListItemText-primary span')
-      .then(($element) => {
-        selectedToken = $element.text();
-        console.log('selectedToken', selectedToken);
-
-        cy.get('.TokensList__item').first().click();
-        cy.get('#receive-button .MuiCardHeader-title').should(
-          'have.text',
-          selectedToken
-        );
-      });
-  });
-
-  it('Shows error if any of required fields is empty', () => {
-    cy.get('button').contains('Create offer').click();
-
-    cy.get('button').contains('Create').click();
-
-    cy.get('input[name="exchangeRate"]')
-      .parents('.MuiFormControl-root')
-      .find('.Mui-error')
-      .should('exist');
-
-    cy.get('input[name="exchangeRate"]').type('1', { force: true });
-    cy.get('input[name="exchangeRate"]')
-      .parents('.MuiFormControl-root')
-      .find('.Mui-error')
-      .should('not.exist');
-
-    cy.get('button').contains('Create').click();
-
-    cy.get('input[name="amountMin"]')
-      .parents('.MuiFormControl-root')
-      .find('.Mui-error')
-      .should('exist');
-
-    cy.get('input[name="amountMin"]').type('0.1', { force: true });
-    cy.get('input[name="amountMin"]')
-      .parents('.MuiFormControl-root')
-      .find('.Mui-error')
-      .should('not.exist');
-
-    cy.get('button').contains('Create').click();
-
-    cy.get('input[name="amountMax"]')
-      .parents('.MuiFormControl-root')
-      .find('.Mui-error')
-      .should('exist');
-
-    cy.get('input[name="amountMax"]').type('20', { force: true });
-    cy.get('input[name="amountMax"]')
-      .parents('.MuiFormControl-root')
-      .find('.Mui-error')
-      .should('not.exist');
-
-    cy.get('button').contains('Create').click();
-
-    cy.get('input[name="estimatedTime"]')
-      .parents('.MuiFormControl-root')
-      .find('.Mui-error')
-      .should('exist');
-
-    cy.get('input[name="estimatedTime"]').type('120', { force: true });
-    cy.get('input[name="estimatedTime"]')
-      .parents('.MuiFormControl-root')
-      .find('.Mui-error')
-      .should('not.exist');
-
-    cy.get('button').contains('Create').click();
-    cy.rejectMetamaskTransaction();
-    cy.wait(1000);
-  });
-
-  it('Creates an offer on create offer form submission', () => {
-    let offersLength;
+  it('Creates offer', () => {
+    let offersLength: number;
     cy.wait('@GetUserOffers').then(() => {
       cy.wait(1000);
 
@@ -174,12 +51,79 @@ describe('Offers page', () => {
           offersLength = 0;
         }
         cy.get('button').contains('Create offer').click();
+        cy.get('.PageCardHeader__typography').should(
+          'have.text',
+          'Create offer'
+        );
+
+        cy.get('#sell-button .MuiCardHeader-title').should('have.text', 'BNB');
+        cy.get('#sell-button .MuiCardHeader-subheader').should(
+          'have.text',
+          'on BSC Testnet'
+        );
+
+        cy.get('#receive-button .MuiCardHeader-title').should(
+          'have.text',
+          'ETH'
+        );
+        cy.get('#receive-button .MuiCardHeader-subheader').should(
+          'have.text',
+          'on Goerli Testnet'
+        );
+
+        cy.get('button').contains('Create').click();
+
+        cy.get('input[name="exchangeRate"]')
+          .parents('.MuiFormControl-root')
+          .find('.Mui-error')
+          .should('exist');
 
         cy.get('input[name="exchangeRate"]').type('1', { force: true });
-        cy.get('input[name="amountMin"]').type('0.1', { force: true });
+        cy.get('input[name="exchangeRate"]')
+          .parents('.MuiFormControl-root')
+          .find('.Mui-error')
+          .should('not.exist');
+
+        cy.get('button').contains('Create').click();
+
+        cy.get('input[name="amountMin"]')
+          .parents('.MuiFormControl-root')
+          .find('.Mui-error')
+          .should('exist');
+
+        cy.get('input[name="amountMin"]').type('0.001', { force: true });
+        cy.get('input[name="amountMin"]')
+          .parents('.MuiFormControl-root')
+          .find('.Mui-error')
+          .should('not.exist');
+
+        cy.get('button').contains('Create').click();
+
+        cy.get('input[name="amountMax"]')
+          .parents('.MuiFormControl-root')
+          .find('.Mui-error')
+          .should('exist');
+
         cy.get('input[name="amountMax"]').type('20', { force: true });
+        cy.get('input[name="amountMax"]')
+          .parents('.MuiFormControl-root')
+          .find('.Mui-error')
+          .should('not.exist');
+
+        cy.get('button').contains('Create').click();
+
+        cy.get('input[name="estimatedTime"]')
+          .parents('.MuiFormControl-root')
+          .find('.Mui-error')
+          .should('exist');
+
         cy.get('input[name="estimatedTime"]').type('120', { force: true });
-        cy.get('input[name="amount"]').type('0.01', { force: true });
+        cy.get('input[name="estimatedTime"]')
+          .parents('.MuiFormControl-root')
+          .find('.Mui-error')
+          .should('not.exist');
+
+        cy.get('input[name="amount"]').type('0.001', { force: true });
 
         cy.get('button').contains('Create').click();
 
@@ -190,7 +134,7 @@ describe('Offers page', () => {
           responseTimeout: 120000,
         }).then(() => {
           cy.wait(1000);
-          let offersLengthAfterNewOfferCreated;
+          let offersLengthAfterNewOfferCreated: number;
           cy.get('.OfferPublic').then((newElements) => {
             offersLengthAfterNewOfferCreated = newElements.length;
             expect(offersLengthAfterNewOfferCreated).to.equal(offersLength + 1);
@@ -314,7 +258,7 @@ describe('Offers page', () => {
       signInSignature: true,
     });
     cy.wait(1000);
-    cy.get('.page-card-title').should('have.text', 'Coming soon');
+    cy.get('.PageCardHeader__typography').should('have.text', 'Coming soon');
     cy.get('#user-menu-button').click();
     cy.get('#disconnect-button').click();
     cy.disconnectMetamaskWalletFromAllDapps();

@@ -2,6 +2,10 @@
 
 describe('Shop page', () => {
   beforeEach(() => {
+    cy.intercept('POST', `${Cypress.env('CYPRESS_DELIGHT_API_URL')}/orders`).as(
+      'PlaceOrder'
+    );
+
     cy.visit('http://localhost:3000/buy/shop');
     cy.get('#connect-button').click();
     cy.acceptMetamaskAccess({
@@ -22,8 +26,10 @@ describe('Shop page', () => {
     cy.get('.OfferCard').first().should('exist');
   });
 
-  it('buys a shop offer', () => {
-    cy.get('.OfferCard')
+  it('Buys a shop offer', () => {
+    cy.get(
+      '.OfferCard[data-provider="0x8730762Cad4a27816A467fAc54e3dd1E2e9617A1"]'
+    )
       .first()
       .get('.OfferCardAction button')
       .invoke('attr', 'id')
@@ -32,7 +38,11 @@ describe('Shop page', () => {
       });
     cy.wait(2000);
     cy.confirmMetamaskTransaction();
-    cy.wait(2000);
-    cy.contains('button', 'Close').click();
+    cy.wait('@PlaceOrder', {
+      requestTimeout: 120000,
+      responseTimeout: 120000,
+    }).then(() => {
+      cy.contains('button', 'Close').click();
+    });
   });
 });

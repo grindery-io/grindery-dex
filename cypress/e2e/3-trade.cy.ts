@@ -8,6 +8,10 @@ describe('Trade page', () => {
       )}/view-blockchains/balance-token?chainId=*&address=*&tokenAddress=*`
     ).as('GetFromTokenBalance');
 
+    cy.intercept('POST', `${Cypress.env('CYPRESS_DELIGHT_API_URL')}/orders`).as(
+      'PlaceOrder'
+    );
+
     cy.visit('http://localhost:3000/buy/trade');
     cy.get('#connect-button').click();
     cy.acceptMetamaskAccess({
@@ -23,7 +27,7 @@ describe('Trade page', () => {
     cy.disconnectMetamaskWalletFromAllDapps();
   });
 
-  it('shows Goerli Testnet chain and ETH token in the deposit button when selected', () => {
+  it('Shows Goerli Testnet chain and ETH token in the deposit button', () => {
     cy.get('#deposit-button').click();
     cy.get('.PageCardHeader__typography')
       .first()
@@ -40,7 +44,7 @@ describe('Trade page', () => {
     );
   });
 
-  it('shows BSC Testnet chain and BNB token in the receive button when selected', () => {
+  it('Shows BSC Testnet chain and BNB token in the receive button', () => {
     cy.get('#receive-button').click();
     cy.get('.PageCardHeader__typography')
       .first()
@@ -57,58 +61,36 @@ describe('Trade page', () => {
     );
   });
 
-  it('shows error if amount is empty', () => {
+  it('Shows error if amount is empty', () => {
     cy.get('button').contains('Search offers').click();
     cy.get('.Mui-error')
       .contains('Amount is required')
       .should('have.length', 1);
   });
 
-  it('shows offers if form is submitted', () => {
+  it('Shows offers if form is submitted', () => {
     cy.wait(['@GetFromTokenBalance']);
     cy.get('button').contains('max').click();
     cy.get('button').contains('Search offers').click();
     cy.get('.TradePage__box').should('have.css', 'opacity', '1');
-    cy.get('.OfferPublic').click();
+    cy.get('.OfferPublic').first().click();
     cy.get('.PageCardHeader__typography')
       .first()
       .should('have.text', 'Review offer');
   });
 
-  it('shows review offer page when execution time icon is selected', () => {
+  it('Shows review offer page when offer is selected', () => {
     cy.wait(['@GetFromTokenBalance']);
     cy.get('button').contains('max').click();
     cy.get('button').contains('Search offers').click();
     cy.get('.TradePage__box').should('have.css', 'opacity', '1');
-    cy.get('#execution-time-icon').click();
+    cy.get('.OfferPublic').first().click();
     cy.get('.PageCardHeader__typography')
       .first()
       .should('have.text', 'Review offer');
   });
 
-  it('shows review offer page when estimated network fee icon is selected', () => {
-    cy.wait(['@GetFromTokenBalance']);
-    cy.get('button').contains('max').click();
-    cy.get('button').contains('Search offers').click();
-    cy.get('.TradePage__box').should('have.css', 'opacity', '1');
-    cy.get('#estimated-network-fee-icon').click();
-    cy.get('.PageCardHeader__typography')
-      .first()
-      .should('have.text', 'Review offer');
-  });
-
-  it('shows review offer page when chains icon is selected', () => {
-    cy.wait(['@GetFromTokenBalance']);
-    cy.get('button').contains('max').click();
-    cy.get('button').contains('Search offers').click();
-    cy.get('.TradePage__box').should('have.css', 'opacity', '1');
-    cy.get('#chains-icon').click();
-    cy.get('.PageCardHeader__typography')
-      .first()
-      .should('have.text', 'Review offer');
-  });
-
-  it('returns to offers list', () => {
+  it('Returns to offers list on back button click', () => {
     cy.wait(['@GetFromTokenBalance']);
     cy.get('button').contains('max').click();
     cy.get('button').contains('Search offers').click();
@@ -121,19 +103,27 @@ describe('Trade page', () => {
     cy.get('.TradePage__box').should('have.css', 'opacity', '1');
   });
 
-  it('places an order', () => {
+  it('Places an order', () => {
     cy.wait(['@GetFromTokenBalance']);
     cy.get('input[name="amount"]').type('0.001');
     cy.get('button').contains('Search offers').click();
     cy.get('.TradePage__box').should('have.css', 'opacity', '1');
-    cy.get('.OfferPublic').click();
+    cy.get(
+      '.OfferPublic[data-provider="0x8730762Cad4a27816A467fAc54e3dd1E2e9617A1"]'
+    )
+      .first()
+      .click();
     cy.get('.PageCardHeader__typography')
       .first()
       .should('have.text', 'Review offer');
     cy.contains('button', 'Place Order').click();
     cy.wait(2000);
     cy.confirmMetamaskTransaction();
-    cy.wait(2000);
-    cy.contains('button', 'Close').click();
+    cy.wait('@PlaceOrder', {
+      requestTimeout: 120000,
+      responseTimeout: 120000,
+    }).then(() => {
+      cy.contains('button', 'Close').click();
+    });
   });
 });

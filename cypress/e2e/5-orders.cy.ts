@@ -27,7 +27,7 @@ describe('Orders page', () => {
   });
 
   it('Shows orders page if user is an admin', () => {
-    cy.get('.page-card-title').should('have.text', 'Orders');
+    cy.get('.PageCardHeader__typography').should('have.text', 'Orders');
   });
 
   it('Shows orders list', () => {
@@ -87,14 +87,14 @@ describe('Orders page', () => {
     cy.disconnectMetamaskWalletFromAllDapps();
     cy.resetMetamaskAccount();
     cy.wait(1000);
-    cy.importMetamaskAccount(Cypress.env('CYPRESS_NON_ADMIN_IMPORT_KEY'));
+    cy.switchMetamaskAccount(2);
     cy.get('#connect-button').click();
     cy.acceptMetamaskAccess({
       allAccounts: false,
       signInSignature: true,
     });
     cy.wait(1000);
-    cy.get('.page-card-title').should('have.text', 'Coming soon');
+    cy.get('.PageCardHeader__typography').should('have.text', 'Coming soon');
     cy.get('#user-menu-button').click();
     cy.get('#disconnect-button').click();
     cy.disconnectMetamaskWalletFromAllDapps();

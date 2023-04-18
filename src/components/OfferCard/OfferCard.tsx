@@ -19,8 +19,10 @@ export type OfferCardProps = {
 };
 
 const OfferCard = (props: OfferCardProps) => {
+  const { offer } = props;
   return (
     <Box
+      data-provider={offer.provider}
       className="OfferCard"
       sx={{
         background: '#FFFFFF',

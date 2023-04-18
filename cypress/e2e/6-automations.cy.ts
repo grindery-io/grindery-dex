@@ -28,7 +28,7 @@ describe('Automations page', () => {
     cy.get('.SelectChainButton').click();
     cy.get('.ChainsList__card').first().click();
     cy.wait(2000);
-    cy.allowMetamaskToAddAndSwitchNetwork();
+    cy.allowMetamaskToSwitchNetwork();
     cy.wait(2000);
     cy.get('textarea[name="liquidityWalletABI"]').should('exist');
     cy.get('textarea[name="poolAbi"]').should('exist');
@@ -88,14 +88,14 @@ describe('Automations page', () => {
     cy.disconnectMetamaskWalletFromAllDapps();
     cy.resetMetamaskAccount();
     cy.wait(1000);
-    cy.importMetamaskAccount(Cypress.env('CYPRESS_NON_ADMIN_IMPORT_KEY'));
+    cy.switchMetamaskAccount(2);
     cy.get('#connect-button').click();
     cy.acceptMetamaskAccess({
       allAccounts: false,
       signInSignature: true,
     });
     cy.wait(1000);
-    cy.get('.page-card-title').should('have.text', 'Coming soon');
+    cy.get('.PageCardHeader__typography').should('have.text', 'Coming soon');
     cy.get('#user-menu-button').click();
     cy.get('#disconnect-button').click();
     cy.disconnectMetamaskWalletFromAllDapps();

@@ -11,7 +11,7 @@ describe('Wallet connection', () => {
     cy.disconnectMetamaskWalletFromAllDapps();
   });
 
-  it('connects wallet on button click', () => {
+  it('Connects wallet on button click', () => {
     cy.get('#connect-button').click();
     cy.acceptMetamaskAccess({
       allAccounts: false,

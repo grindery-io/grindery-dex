@@ -19,14 +19,14 @@ describe('Faucet page', () => {
     cy.disconnectMetamaskWalletFromAllDapps();
   });
 
-  it('shows faucet page tabs', () => {
+  it('Shows faucet page sidebar', () => {
     cy.get('#faucet-list-subheader').first().should('have.text', 'Faucet');
     cy.get('#faucet-list').first().should('have.text', 'Goerli ETH Tokens');
     cy.get('#faucet-list').click();
   });
 
-  it('shows faucet page description', () => {
-    cy.get('.page-card-title').first().should('have.text', 'Faucet');
+  it('Shows link to Goerli faucet', () => {
+    cy.get('.PageCardHeader__typography').first().should('have.text', 'Faucet');
     cy.get('.Faucet_text')
       .first()
       .should(

@@ -17,17 +17,17 @@ describe('Orders history page', () => {
     cy.disconnectMetamaskWalletFromAllDapps();
   });
 
-  it('Shows order history details', () => {
+  it('Shows orders list', () => {
     cy.get('.OrderCard').should('exist');
   });
 
-  it('Show no orders history found', () => {
+  it('Show no orders found message if no orders exist', () => {
     cy.get('#user-menu-button').click();
     cy.get('#disconnect-button').click();
     cy.disconnectMetamaskWalletFromAllDapps();
     cy.resetMetamaskAccount();
     cy.wait(1000);
-    cy.importMetamaskAccount(Cypress.env('CYPRESS_NON_ADMIN_IMPORT_KEY'));
+    cy.switchMetamaskAccount(2);
     cy.get('#connect-button').click();
     cy.acceptMetamaskAccess({
       allAccounts: false,
@@ -35,5 +35,15 @@ describe('Orders history page', () => {
     });
     cy.wait(1000);
     cy.get('#not-found-message').first().should('have.text', 'No orders found');
+    cy.get('#user-menu-button').click();
+    cy.get('#disconnect-button').click();
+    cy.disconnectMetamaskWalletFromAllDapps();
+    cy.switchMetamaskAccount(1);
+    cy.get('#connect-button').click();
+    cy.acceptMetamaskAccess({
+      allAccounts: false,
+      signInSignature: true,
+    });
+    cy.wait(1000);
   });
 });

@@ -135,6 +135,7 @@ const OfferPublic = (props: Props) => {
     <Card
       className="OfferPublic"
       id={`offer-${offer.offerId}`}
+      data-provider={offer.provider}
       flex={1}
       sx={{
         borderRadius: '12px',

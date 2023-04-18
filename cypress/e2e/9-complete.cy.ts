@@ -5,9 +5,6 @@ describe('Complete testing', () => {
     cy.intercept(`${Cypress.env('CYPRESS_DELIGHT_API_URL')}/offers/user`).as(
       'GetUserOffers'
     );
-    cy.intercept(`${Cypress.env('CYPRESS_DELIGHT_API_URL')}/offers/id?id=*`).as(
-      'GetCreatedOffer'
-    );
     cy.intercept(
       'PUT',
       `${Cypress.env('CYPRESS_DELIGHT_API_URL')}/offers/*`
@@ -28,7 +25,7 @@ describe('Complete testing', () => {
     cy.disconnectMetamaskWalletFromAllDapps();
   });
 
-  it('Deactivate active offer', () => {
+  it('Deactivates active offer', () => {
     cy.wait('@GetUserOffers').then(() => {
       cy.wait(1000);
       let offerId: string;
