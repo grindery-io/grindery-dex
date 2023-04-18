@@ -5,11 +5,11 @@ import { getOfferLink } from '../../utils';
 import { OfferCardProps } from './OfferCard';
 
 const OfferCardFooter = (props: OfferCardProps) => {
-  const { offer, chains } = props;
-
+  const { offer, chains, advancedMode } = props;
+  const isInAdvancedMode = advancedMode !== undefined ? advancedMode : true;
   const explorerLink = getOfferLink(offer, chains);
 
-  return (
+  return isInAdvancedMode ? (
     <Box sx={{ padding: '16px', textAlign: 'center' }}>
       {offer.hash ? (
         <TransactionID
@@ -27,6 +27,8 @@ const OfferCardFooter = (props: OfferCardProps) => {
         <Skeleton />
       )}
     </Box>
+  ) : (
+    <Box height="16px" />
   );
 };
 

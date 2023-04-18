@@ -17,6 +17,7 @@ import {
   selectTradeLoading,
   selectTradeOffers,
   selectChainsItems,
+  selectUserAdvancedMode,
 } from '../../store';
 
 type Props = {};
@@ -27,6 +28,7 @@ const TradePageOffersList = (props: Props) => {
   const foundOffers = useAppSelector(selectTradeOffers);
   const { amount } = useAppSelector(selectTradeFilter);
   const chains = useAppSelector(selectChainsItems);
+  const advancedMode = useAppSelector(selectUserAdvancedMode);
 
   return (
     <PageCard>
@@ -52,6 +54,7 @@ const TradePageOffersList = (props: Props) => {
               compact
               offer={offer}
               fromAmount={amount}
+              advancedMode={advancedMode}
               onClick={(o: OfferType) => {
                 navigate(
                   ROUTES.BUY.TRADE.ACCEPT_OFFER.FULL_PATH.replace(

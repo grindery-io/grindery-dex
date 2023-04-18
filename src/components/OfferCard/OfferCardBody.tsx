@@ -19,7 +19,7 @@ const OfferCardBody = (props: OfferCardProps) => {
   const price = getOfferUSDAmount(offer, tokenPrice);
 
   return (
-    <Box>
+    <>
       <Box sx={{ padding: '16px 16px 0' }}>
         <Stack
           direction="row"
@@ -175,116 +175,120 @@ const OfferCardBody = (props: OfferCardProps) => {
           </Box>
         </Stack>
       </Box>
-      <Box sx={{ margin: '8px 16px 0', padding: '12px' }}>
-        <Typography
-          sx={{
-            fontSize: '14px',
-            fontWeight: '400',
-            lineHeight: '21px',
-          }}
-        >
-          You pay
-        </Typography>
-        <Stack
-          direction="row"
-          alignItems="center"
-          justifyContent="space-between"
-        >
-          <Box>
-            {fromChain && fromToken ? (
+      <Box sx={{ marginTop: 'auto' }}>
+        <Box sx={{ margin: '8px 16px 0', padding: '12px' }}>
+          <Typography
+            sx={{
+              fontSize: '14px',
+              fontWeight: '400',
+              lineHeight: '21px',
+            }}
+          >
+            You pay
+          </Typography>
+          <Stack
+            direction="row"
+            alignItems="center"
+            justifyContent="space-between"
+          >
+            <Box>
+              {fromChain && fromToken ? (
+                <ChainTokenBox
+                  sx={{
+                    paddingLeft: '0',
+                    height: 'auto',
+                    paddingTop: '8px',
+                    paddingBottom: '0px',
+                  }}
+                  avatar={
+                    <Badge
+                      overlap="circular"
+                      anchorOrigin={{
+                        vertical: 'bottom',
+                        horizontal: 'right',
+                      }}
+                      badgeContent={
+                        fromChain.label ? (
+                          <Avatar
+                            src={fromChain.icon}
+                            alt={fromChain.label}
+                            sx={{
+                              width: '16px',
+                              height: '16px',
+                              border: '2px solid #fff',
+                              background: '#fff',
+                            }}
+                          >
+                            {fromChain.label}
+                          </Avatar>
+                        ) : (
+                          <AvatarDefault
+                            width={16}
+                            height={16}
+                            sx={{ border: '2px solid #fff' }}
+                          />
+                        )
+                      }
+                    >
+                      {fromToken ? (
+                        <Avatar
+                          sx={{ width: '32px', height: '32px' }}
+                          src={fromToken.icon}
+                          alt={fromToken.symbol || offer.token || ''}
+                        >
+                          {fromToken.symbol || offer.token || ''}
+                        </Avatar>
+                      ) : (
+                        <AvatarDefault width={32} height={32} />
+                      )}
+                    </Badge>
+                  }
+                  title={fromToken.symbol || ''}
+                  subheader={
+                    <span style={{ whiteSpace: 'pre-wrap' }}>
+                      {offer.amount ? `on ${fromChain.label}` : <Skeleton />}
+                    </span>
+                  }
+                  selected={true}
+                  compact={false}
+                />
+              ) : (
+                <Skeleton
+                  variant="rounded"
+                  height="43px"
+                  width="120px"
+                  sx={{ margin: '8px 0 0' }}
+                />
+              )}
+            </Box>
+            <Box>
               <ChainTokenBox
                 sx={{
-                  paddingLeft: '0',
+                  paddingRight: '0',
                   height: 'auto',
                   paddingTop: '8px',
                   paddingBottom: '0px',
+                  '& .MuiCardHeader-title': {
+                    fontWeight: '700',
+                  },
+                  '& .MuiCardHeader-subheader': {
+                    fontWeight: '500',
+                  },
                 }}
-                avatar={
-                  <Badge
-                    overlap="circular"
-                    anchorOrigin={{
-                      vertical: 'bottom',
-                      horizontal: 'right',
-                    }}
-                    badgeContent={
-                      fromChain.label ? (
-                        <Avatar
-                          src={fromChain.icon}
-                          alt={fromChain.label}
-                          sx={{
-                            width: '16px',
-                            height: '16px',
-                            border: '2px solid #fff',
-                            background: '#fff',
-                          }}
-                        >
-                          {fromChain.label}
-                        </Avatar>
-                      ) : (
-                        <AvatarDefault
-                          width={16}
-                          height={16}
-                          sx={{ border: '2px solid #fff' }}
-                        />
-                      )
-                    }
-                  >
-                    {fromToken ? (
-                      <Avatar
-                        sx={{ width: '32px', height: '32px' }}
-                        src={fromToken.icon}
-                        alt={fromToken.symbol || offer.token || ''}
-                      >
-                        {fromToken.symbol || offer.token || ''}
-                      </Avatar>
-                    ) : (
-                      <AvatarDefault width={32} height={32} />
-                    )}
-                  </Badge>
+                title={
+                  price !== '0' ? `US$${price}` : <Skeleton width="70px" />
                 }
-                title={fromToken.symbol || ''}
                 subheader={
-                  <span style={{ whiteSpace: 'pre-wrap' }}>
-                    {offer.amount ? `on ${fromChain.label}` : <Skeleton />}
-                  </span>
+                  fromAmount !== '0' ? `${fromAmount} ETH` : <Skeleton />
                 }
                 selected={true}
                 compact={false}
               />
-            ) : (
-              <Skeleton
-                variant="rounded"
-                height="43px"
-                width="120px"
-                sx={{ margin: '8px 0 0' }}
-              />
-            )}
-          </Box>
-          <Box>
-            <ChainTokenBox
-              sx={{
-                paddingRight: '0',
-                height: 'auto',
-                paddingTop: '8px',
-                paddingBottom: '0px',
-                '& .MuiCardHeader-title': {
-                  fontWeight: '700',
-                },
-                '& .MuiCardHeader-subheader': {
-                  fontWeight: '500',
-                },
-              }}
-              title={price !== '0' ? `US$${price}` : <Skeleton width="70px" />}
-              subheader={
-                fromAmount !== '0' ? `${fromAmount} ETH` : <Skeleton />
-              }
-              selected={true}
-              compact={false}
-            />
-          </Box>
-        </Stack>
+            </Box>
+          </Stack>
+        </Box>
       </Box>
-    </Box>
+    </>
   );
 };
 

@@ -64,6 +64,7 @@ type Props = {
   excludeSteps?: ('gas' | 'rate' | 'time' | 'impact')[];
   calculateAmount?: boolean;
   chains: ChainType[];
+  advancedMode?: boolean;
 };
 
 interface ExpandMoreProps extends IconButtonProps {
@@ -101,6 +102,7 @@ const OfferPublic = (props: Props) => {
     excludeSteps,
     calculateAmount,
     chains,
+    advancedMode,
   } = props;
   const isUserA = !userType || userType === 'a';
 
@@ -123,6 +125,8 @@ const OfferPublic = (props: Props) => {
   const provider = offer.provider;
 
   const providerLink = getOfferProviderLink(offer, chains);
+
+  const isInAdvancedMode = advancedMode !== undefined ? advancedMode : true;
 
   const handleExpandClick: React.MouseEventHandler<HTMLButtonElement> = (
     event
@@ -341,15 +345,19 @@ const OfferPublic = (props: Props) => {
           compact={false}
           action={
             compact ? (
-              <ExpandMore
-                expand={expanded}
-                onClick={handleExpandClick}
-                aria-expanded={expanded}
-                aria-label="show more"
-                id="expand_details"
-              >
-                <ExpandMoreIcon />
-              </ExpandMore>
+              <>
+                {isInAdvancedMode && (
+                  <ExpandMore
+                    expand={expanded}
+                    onClick={handleExpandClick}
+                    aria-expanded={expanded}
+                    aria-label="show more"
+                    id="expand_details"
+                  >
+                    <ExpandMoreIcon />
+                  </ExpandMore>
+                )}
+              </>
             ) : undefined
           }
         />
@@ -430,77 +438,83 @@ const OfferPublic = (props: Props) => {
         )}
       </Stack>
       {compact ? (
-        <Collapse in={expanded} timeout="auto" unmountOnExit>
-          <Box p="0 16px 16px">
-            {provider ? (
-              <TransactionID
-                value={provider || ''}
-                label="Provider"
-                link={providerLink}
-              />
-            ) : (
-              <Stack
-                direction="row"
-                alignItems="center"
-                justifyContent="flex-start"
-                gap="4px"
-                mb="4px"
-                sx={{ minHeight: '24px' }}
-              >
-                <Skeleton width="220px" />
-                <Skeleton width="16px" />
-                <Skeleton width="16px" />
-              </Stack>
-            )}
-            <TransactionID
-              value={offer.hash || ''}
-              label="Offer ID"
-              link={explorerLink}
-            />
-            {!isUserA && onActivateClick && onDeactivateClick && (
-              <Box>
-                <Box
-                  sx={{
-                    padding: '6px 0 0',
-                    '& > div': { paddingBottom: '0' },
-                    '& button': {
-                      margin: 0,
-                      fontSize: '13px',
-                      padding: '8px 20px',
-                      backgroundColor: 'transparent',
-                      border: `1px solid ${
-                        offer.isActive ? '#FF5858' : '#00B674'
-                      }`,
-                      color: offer.isActive
-                        ? '#FF5858 !important'
-                        : '#00B674 !important',
-                      '&:hover': {
-                        backgroundColor: offer.isActive ? '#FF5858' : '#00B674',
-                        border: `1px solid ${
-                          offer.isActive ? '#FF5858' : '#00B674'
-                        }`,
-                        color: '#ffffff !important',
-                      },
-                    },
-                  }}
-                >
-                  <PageCardSubmitButton
-                    loading={isActivating === offer.offerId}
-                    disabled={Boolean(isActivating)}
-                    label={offer.isActive ? 'Deactivate' : 'Activate'}
-                    onClick={() => {
-                      if (offer.isActive) {
-                        onDeactivateClick();
-                      } else {
-                        onActivateClick();
-                      }
-                    }}
+        <>
+          {isInAdvancedMode && (
+            <Collapse in={expanded} timeout="auto" unmountOnExit>
+              <Box p="0 16px 16px">
+                {provider ? (
+                  <TransactionID
+                    value={provider || ''}
+                    label="Provider"
+                    link={providerLink}
                   />
-                </Box>
+                ) : (
+                  <Stack
+                    direction="row"
+                    alignItems="center"
+                    justifyContent="flex-start"
+                    gap="4px"
+                    mb="4px"
+                    sx={{ minHeight: '24px' }}
+                  >
+                    <Skeleton width="220px" />
+                    <Skeleton width="16px" />
+                    <Skeleton width="16px" />
+                  </Stack>
+                )}
+                <TransactionID
+                  value={offer.hash || ''}
+                  label="Offer ID"
+                  link={explorerLink}
+                />
+                {!isUserA && onActivateClick && onDeactivateClick && (
+                  <Box>
+                    <Box
+                      sx={{
+                        padding: '6px 0 0',
+                        '& > div': { paddingBottom: '0' },
+                        '& button': {
+                          margin: 0,
+                          fontSize: '13px',
+                          padding: '8px 20px',
+                          backgroundColor: 'transparent',
+                          border: `1px solid ${
+                            offer.isActive ? '#FF5858' : '#00B674'
+                          }`,
+                          color: offer.isActive
+                            ? '#FF5858 !important'
+                            : '#00B674 !important',
+                          '&:hover': {
+                            backgroundColor: offer.isActive
+                              ? '#FF5858'
+                              : '#00B674',
+                            border: `1px solid ${
+                              offer.isActive ? '#FF5858' : '#00B674'
+                            }`,
+                            color: '#ffffff !important',
+                          },
+                        },
+                      }}
+                    >
+                      <PageCardSubmitButton
+                        loading={isActivating === offer.offerId}
+                        disabled={Boolean(isActivating)}
+                        label={offer.isActive ? 'Deactivate' : 'Activate'}
+                        onClick={() => {
+                          if (offer.isActive) {
+                            onDeactivateClick();
+                          } else {
+                            onActivateClick();
+                          }
+                        }}
+                      />
+                    </Box>
+                  </Box>
+                )}
               </Box>
-            )}
-          </Box>
-        </Collapse>
+            </Collapse>
+          )}
+        </>
       ) : (
         <>
           <Stepper

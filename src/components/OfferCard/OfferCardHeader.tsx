@@ -8,10 +8,10 @@ import { getOfferProviderLink } from '../../utils';
 import { OfferCardProps } from './OfferCard';
 
 const OfferCardHeader = (props: OfferCardProps) => {
-  const { offer, chains } = props;
-
+  const { offer, chains, advancedMode } = props;
   const provider = offer.provider;
   const providerLink = getOfferProviderLink(offer, chains);
+  const isInAdvancedMode = advancedMode !== undefined ? advancedMode : true;
 
   return (
     <Box
@@ -32,18 +32,27 @@ const OfferCardHeader = (props: OfferCardProps) => {
       >
         Provider
       </Typography>
-      {provider ? (
-        <TransactionID
-          containerStyle={{ marginTop: '5px' }}
-          valueStyle={{ color: '#E3E3E8' }}
-          iconStyle={{ color: '#F57F21' }}
-          value={provider}
-          showCopyButton
-          link={providerLink}
-        />
-      ) : (
-        <Skeleton variant="rounded" height="24px" sx={{ marginTop: '5px' }} />
+      {isInAdvancedMode && (
+        <>
+          {provider ? (
+            <TransactionID
+              containerStyle={{ marginTop: '5px' }}
+              valueStyle={{ color: '#E3E3E8' }}
+              iconStyle={{ color: '#F57F21' }}
+              value={provider}
+              showCopyButton
+              link={providerLink}
+            />
+          ) : (
+            <Skeleton
+              variant="rounded"
+              height="24px"
+              sx={{ marginTop: '5px' }}
+            />
+          )}
+        </>
       )}
+
       <Stack
         direction="row"
         alignItems="center"

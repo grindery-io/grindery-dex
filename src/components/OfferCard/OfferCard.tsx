@@ -15,6 +15,7 @@ export type OfferCardProps = {
   tokenPrice: number | null;
   chains: ChainType[];
   accepting: string;
+  advancedMode?: boolean;
   onAcceptOfferClick: (offer: OfferType) => void;
 };
 
@@ -31,6 +32,11 @@ const OfferCard = (props: OfferCardProps) => {
         width: '100%',
         maxWidth: '335px',
         margin: '0',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'stretch',
+        justifyContent: 'flex-start',
+        flexWrap: 'nowrap',
       }}
     >
       <OfferCardHeader {...props} />

@@ -17,6 +17,7 @@ import {
   selectPoolAbi,
   selectTokenAbi,
   selectUserChainTokenPrice,
+  selectUserAdvancedMode,
 } from '../../store';
 import { getChainById } from '../../utils';
 import { useShopController } from '../../controllers';
@@ -42,6 +43,7 @@ const ShopPageRoot = (props: Props) => {
   const { handleAcceptOfferAction } = useShopController();
   const tokenAbi = useAppSelector(selectTokenAbi);
   const poolAbi = useAppSelector(selectPoolAbi);
+  const advancedMode = useAppSelector(selectUserAdvancedMode);
 
   return accessToken ? (
     <>
@@ -84,6 +86,7 @@ const ShopPageRoot = (props: Props) => {
                         fromToken={fromToken}
                         chains={chains}
                         accepting={accepting}
+                        advancedMode={advancedMode}
                         onAcceptOfferClick={(offer: OfferType) => {
                           handleAcceptOfferAction(
                             offer,
