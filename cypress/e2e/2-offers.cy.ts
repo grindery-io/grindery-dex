@@ -156,7 +156,7 @@ describe('Offers page', () => {
       cy.get('.OfferPublic')
         .first()
         .find('button[aria-label="show more"]')
-        .click();
+        .click({ force: true });
       cy.get('.OfferPublic').first().find('.MuiCollapse-root').should('exist');
       cy.get('.OfferPublic')
         .first()
