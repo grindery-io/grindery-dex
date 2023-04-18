@@ -22,6 +22,7 @@ import {
   selectUserAddress,
   selectChainsItems,
   setUserChainTokenBalanceLoading,
+  setUserAdvancedMode,
 } from '../store';
 import {
   getTokenBalanceRequest,
@@ -37,6 +38,7 @@ type ContextProps = {
   getEthers: () => any;
   getProvider: () => any;
   getSigner: () => any;
+  handleAdvancedModeToggleAction: (userId: string, newMode: boolean) => void;
 };
 
 // Context provider props
@@ -51,6 +53,7 @@ export const UserContext = createContext<ContextProps>({
   getEthers: () => {},
   getProvider: () => {},
   getSigner: () => {},
+  handleAdvancedModeToggleAction: () => {},
 });
 
 export const UserController = ({ children }: UserControllerProps) => {
@@ -130,6 +133,11 @@ export const UserController = ({ children }: UserControllerProps) => {
     [dispatch]
   );
 
+  const handleAdvancedModeToggleAction = (userId: string, newMode: boolean) => {
+    dispatch(setUserAdvancedMode(newMode));
+    localStorage.setItem(`${userId}_advancedMode`, newMode.toString());
+  };
+
   useEffect(() => {
     if (user) {
       dispatch(setUserId(user));
@@ -181,6 +189,11 @@ export const UserController = ({ children }: UserControllerProps) => {
     dispatch,
   ]);
 
+  useEffect(() => {
+    const savedAdvancedMode = localStorage.getItem(`${user}_advancedMode`);
+    dispatch(setUserAdvancedMode(savedAdvancedMode === 'true'));
+  }, [user, dispatch]);
+
   return (
     <UserContext.Provider
       value={{
@@ -189,6 +202,7 @@ export const UserController = ({ children }: UserControllerProps) => {
         getEthers,
         getProvider,
         getSigner,
+        handleAdvancedModeToggleAction,
       }}
     >
       {children}

@@ -4,6 +4,7 @@ import { RootState } from '../store';
 interface UserState {
   accessToken: string;
   address: string;
+  advancedMode: boolean;
   chain: string;
   chainId: string;
   chainTokenBalance: string;
@@ -18,6 +19,7 @@ interface UserState {
 const initialState: UserState = {
   accessToken: '',
   address: '',
+  advancedMode: false,
   chain: '',
   chainId: '',
   chainTokenBalance: '',
@@ -64,6 +66,9 @@ const userSlice = createSlice({
     setUserChainTokenBalanceLoading(state, action: PayloadAction<boolean>) {
       state.chainTokenBalanceLoading = action.payload;
     },
+    setUserAdvancedMode(state, action: PayloadAction<boolean>) {
+      state.advancedMode = action.payload;
+    },
   },
 });
 
@@ -84,6 +89,8 @@ export const selectUserChainTokenBalance = (state: RootState) =>
   state.user.chainTokenBalance;
 export const selectUserChainTokenBalanceLoading = (state: RootState) =>
   state.user.chainTokenBalanceLoading;
+export const selectUserAdvancedMode = (state: RootState) =>
+  state.user.advancedMode;
 export const {
   setUserId,
   setUserAddress,
@@ -95,5 +102,6 @@ export const {
   setUserChainTokenPriceLoading,
   setUserChainTokenBalance,
   setUserChainTokenBalanceLoading,
+  setUserAdvancedMode,
 } = userSlice.actions;
 export default userSlice.reducer;

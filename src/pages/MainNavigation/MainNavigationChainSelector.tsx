@@ -175,6 +175,11 @@ const MainNavigationChainSelector = (props: Props) => {
         open={open}
         onClose={handleClose}
       >
+        <MenuItem disabled>
+          <Typography component="span" variant="body2">
+            Select blockchain
+          </Typography>
+        </MenuItem>
         {chainsList.map((chain: ChainType) => (
           <MenuItem
             key={chain.chainId}

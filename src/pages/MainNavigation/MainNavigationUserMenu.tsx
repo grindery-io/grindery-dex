@@ -6,6 +6,8 @@ import {
   ListItemIcon,
   MenuItem,
   Snackbar,
+  Stack,
+  Switch,
   Typography,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
@@ -17,6 +19,8 @@ import {
   useAppSelector,
   selectUserAddress,
   selectUserIsAdmin,
+  selectUserAdvancedMode,
+  selectUserId,
 } from '../../store';
 import {
   UserContainer,
@@ -26,6 +30,7 @@ import {
 } from './MainNavigationUserMenu.style';
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 import { Menu } from '../../components';
+import SettingsIcon from '@mui/icons-material/Settings';
 
 type Props = {
   mode?: 'dark' | 'light';
@@ -35,11 +40,14 @@ const MainNavigationUserMenu = (props: Props) => {
   const mode = props.mode || 'light';
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
-  const { disconnectUser } = useUserController();
+  const { disconnectUser, handleAdvancedModeToggleAction } =
+    useUserController();
   const [copied, setCopied] = useState(false);
   let navigate = useNavigate();
+  const userId = useAppSelector(selectUserId);
   const isAdmin = useAppSelector(selectUserIsAdmin);
   const address = useAppSelector(selectUserAddress);
+  const advancedMode = useAppSelector(selectUserAdvancedMode);
 
   const handleClickListItemButton = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -130,7 +138,39 @@ const MainNavigationUserMenu = (props: Props) => {
             </Typography>
           </MenuItem>
         )}
-
+        <MenuItem disableRipple>
+          <ListItemIcon>
+            <SettingsIcon />
+          </ListItemIcon>
+          <Stack
+            direction="row"
+            flexWrap="nowrap"
+            alignItems="center"
+            justifyContent="space-between"
+            gap="8px"
+          >
+            <Typography component="span" variant="body2">
+              Advanced mode
+            </Typography>
+            <Switch
+              checked={advancedMode}
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                handleAdvancedModeToggleAction(userId, event.target.checked);
+              }}
+              color="success"
+              sx={{
+                marginRight: '-12px',
+                marginTop: '-12px',
+                marginBottom: '-12px',
+                '& .MuiSwitch-switchBase': {
+                  '&:hover': {
+                    background: 'transparent !important',
+                  },
+                },
+              }}
+            />
+          </Stack>
+        </MenuItem>
         <MenuItem
           onClick={() => {
             handleClose();
