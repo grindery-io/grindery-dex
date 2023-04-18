@@ -7,7 +7,6 @@ import {
   ListItemText,
   MenuItem,
   Skeleton,
-  Stack,
   Typography,
 } from '@mui/material';
 import React from 'react';
