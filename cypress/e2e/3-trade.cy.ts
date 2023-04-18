@@ -27,23 +27,6 @@ describe('Trade page', () => {
     cy.disconnectMetamaskWalletFromAllDapps();
   });
 
-  it('Shows Goerli Testnet chain and ETH token in the deposit button', () => {
-    cy.get('#deposit-button').click();
-    cy.get('.PageCardHeader__typography')
-      .first()
-      .should('have.text', 'Select chain and token');
-    cy.get('.ChainsList__card').should('have.length', 1);
-    cy.get('.ChainsList__card').click();
-    cy.get('.TokensList__item').should('have.length', 1);
-    cy.get('.TokensList__item img').should('have.attr', 'alt', 'ETH');
-    cy.get('.TokensList__item').click();
-    cy.get('#deposit-button .MuiCardHeader-title').should('have.text', 'ETH');
-    cy.get('#deposit-button .MuiCardHeader-subheader').should(
-      'have.text',
-      'on Goerli Testnet'
-    );
-  });
-
   it('Shows BSC Testnet chain and BNB token in the receive button', () => {
     cy.get('#receive-button').click();
     cy.get('.PageCardHeader__typography')

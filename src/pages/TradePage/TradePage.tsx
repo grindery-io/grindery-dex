@@ -5,7 +5,6 @@ import TradePageSelectToChainAndToken from './TradePageSelectToChainAndToken';
 import TradePageOffersList from './TradePageOffersList';
 import TradePageOffersFilter from './TradePageOffersFilter';
 import TradePageOfferAccept from './TradePageOfferAccept';
-import TradePageSelectFromChainAndToken from './TradePageSelectFromChainAndToken';
 import { TradeController } from '../../controllers';
 import { ROUTES } from '../../config';
 import { useAppSelector, selectTradeOffersVisible } from '../../store';
@@ -19,7 +18,6 @@ const TradePage = (props: Props) => {
   const showRightColumn =
     [
       ROUTES.BUY.TRADE.ROOT.FULL_PATH,
-      ROUTES.BUY.TRADE.SELECT_FROM.FULL_PATH,
       ROUTES.BUY.TRADE.SELECT_TO.FULL_PATH,
     ].includes(location.pathname) && isOffersVisible;
 
@@ -36,10 +34,6 @@ const TradePage = (props: Props) => {
             <Route
               path={ROUTES.BUY.TRADE.ROOT.RELATIVE_PATH}
               element={<TradePageOffersFilter />}
-            />
-            <Route
-              path={ROUTES.BUY.TRADE.SELECT_FROM.RELATIVE_PATH}
-              element={<TradePageSelectFromChainAndToken />}
             />
             <Route
               path={ROUTES.BUY.TRADE.SELECT_TO.RELATIVE_PATH}

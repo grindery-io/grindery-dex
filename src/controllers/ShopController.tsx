@@ -9,20 +9,17 @@ import {
   useAppSelector,
   selectUserAccessToken,
   clearShopError,
-  selectShopFilter,
   setShopAcceptedOffer,
   setShopAcceptedOfferTx,
   setShopAccepting,
   setShopApproved,
   setShopError,
-  setShopFromTokenPrice,
   setShopLoading,
   setShopModal,
   setShopOffers,
-  setShopPricesLoading,
 } from '../store';
 import { useUserController } from './UserController';
-import { getAllOffers, getTokenPriceById, addOrderRequest } from '../services';
+import { getAllOffers, addOrderRequest } from '../services';
 import { POOL_CONTRACT_ADDRESS } from '../config';
 import { TokenType, OfferType } from '../types';
 import {
@@ -56,8 +53,6 @@ type ShopControllerProps = {
 export const ShopController = ({ children }: ShopControllerProps) => {
   const accessToken = useAppSelector(selectUserAccessToken);
   const dispatch = useAppDispatch();
-  const filter = useAppSelector(selectShopFilter);
-  const { fromTokenId } = filter;
   const { getSigner, getEthers, getProvider } = useUserController();
 
   const fetchOffers = useCallback(
@@ -66,16 +61,6 @@ export const ShopController = ({ children }: ShopControllerProps) => {
       const items = await getAllOffers(accessToken);
       dispatch(setShopOffers(items || []));
       dispatch(setShopLoading(false));
-    },
-    [dispatch]
-  );
-
-  const fetchFromTokenPrice = useCallback(
-    async (accessToken: string, tokenId: string) => {
-      dispatch(setShopPricesLoading(true));
-      const price = await getTokenPriceById(accessToken, tokenId);
-      dispatch(setShopFromTokenPrice(price));
-      dispatch(setShopPricesLoading(false));
     },
     [dispatch]
   );
@@ -372,12 +357,6 @@ export const ShopController = ({ children }: ShopControllerProps) => {
       fetchOffers(accessToken);
     }
   }, [accessToken, fetchOffers]);
-
-  useEffect(() => {
-    if (accessToken && fromTokenId) {
-      fetchFromTokenPrice(accessToken, fromTokenId);
-    }
-  }, [accessToken, fetchFromTokenPrice, fromTokenId]);
 
   return (
     <ShopContext.Provider

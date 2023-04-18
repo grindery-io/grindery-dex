@@ -6,10 +6,6 @@ export const ROUTES = {
       RELATIVE_PATH: '/trade/*',
       FULL_PATH: '/buy/trade',
       ROOT: { RELATIVE_PATH: '', FULL_PATH: '/buy/trade' },
-      SELECT_FROM: {
-        RELATIVE_PATH: '/select-from',
-        FULL_PATH: '/buy/trade/select-from',
-      },
       SELECT_TO: {
         RELATIVE_PATH: '/select-to',
         FULL_PATH: '/buy/trade/select-to',

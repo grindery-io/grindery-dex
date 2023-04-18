@@ -203,30 +203,33 @@ const MainNavigationChainSelector = (props: Props) => {
           </MenuItem>
         ))}
       </Menu>
-      {selectedChain &&
-      userChainTokenBalance &&
-      userChainTokenPrice &&
-      !userChainTokenPriceLoading &&
-      !userChainTokenBalanceLoading ? (
-        <Box
-          sx={{
-            display: { xs: 'none', sm: 'block' },
-          }}
-        >
-          <Typography variant="body2">
-            {parseFloat(
-              parseFloat(userChainTokenBalance).toFixed(6)
-            ).toString()}{' '}
-            / U${' '}
-            {parseFloat(
-              (parseFloat(userChainTokenBalance) * userChainTokenPrice).toFixed(
-                2
-              )
-            ).toString()}
-          </Typography>
-        </Box>
-      ) : (
-        <Skeleton width="100px" />
+      {selectedChain && (
+        <>
+          {userChainTokenBalance &&
+          userChainTokenPrice &&
+          !userChainTokenPriceLoading &&
+          !userChainTokenBalanceLoading ? (
+            <Box
+              sx={{
+                display: { xs: 'none', sm: 'block' },
+              }}
+            >
+              <Typography variant="body2">
+                {parseFloat(
+                  parseFloat(userChainTokenBalance).toFixed(6)
+                ).toString()}{' '}
+                / U${' '}
+                {parseFloat(
+                  (
+                    parseFloat(userChainTokenBalance) * userChainTokenPrice
+                  ).toFixed(2)
+                ).toString()}
+              </Typography>
+            </Box>
+          ) : (
+            <Skeleton width="100px" />
+          )}
+        </>
       )}
     </Stack>
   ) : null;

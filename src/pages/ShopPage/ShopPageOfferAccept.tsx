@@ -17,12 +17,12 @@ import {
   selectShopAcceptedOfferTx,
   selectShopAccepting,
   selectShopError,
-  selectShopFilter,
   selectShopModal,
   selectShopOffers,
   setShopAcceptedOffer,
   setShopAcceptedOfferTx,
   setShopModal,
+  selectUserChainId,
 } from '../../store';
 import { OfferType } from '../../types';
 
@@ -30,15 +30,17 @@ type Props = {};
 
 const ShopPageOfferAccept = (props: Props) => {
   const dispatch = useAppDispatch();
-  const foundOffers = useAppSelector(selectShopOffers);
+  const userChainId = useAppSelector(selectUserChainId);
+  const foundOffers = useAppSelector((state) =>
+    selectShopOffers(state, userChainId)
+  );
   const showModal = useAppSelector(selectShopModal);
   const accepting = useAppSelector(selectShopAccepting);
   const errorMessage = useAppSelector(selectShopError);
   const accepted = useAppSelector(selectShopAcceptedOffer);
   const acceptedOfferTx = useAppSelector(selectShopAcceptedOfferTx);
   const chains = useAppSelector(selectChainsItems);
-  const filter = useAppSelector(selectShopFilter);
-  const { fromChainId } = filter;
+  const fromChainId = userChainId;
   const acceptedOffer =
     accepting && foundOffers.find((o: OfferType) => o.offerId === accepting);
   const explorerLink = acceptedOfferTx

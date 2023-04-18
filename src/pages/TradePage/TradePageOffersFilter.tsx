@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button, Stack } from '@mui/material';
+import { Button } from '@mui/material';
 import { Box } from '@mui/system';
 import {
   SelectChainAndTokenButton,
@@ -18,12 +18,15 @@ import {
   selectUserId,
   selectTradeError,
   selectTradeFilter,
-  selectTradeFromTokenBalance,
   selectTradeLoading,
   selectChainsItems,
+  selectUserChainId,
+  selectUserChainTokenBalance,
+  selectUserChainTokenBalanceLoading,
 } from '../../store';
 import { useUserController, useTradeController } from '../../controllers';
 import { getChainById, getTokenById } from '../../utils';
+import { TokenType } from '../../types';
 
 type Props = {};
 
@@ -34,14 +37,21 @@ const TradePageOffersFilter = (props: Props) => {
   const { connectUser: connect } = useUserController();
   const errorMessage = useAppSelector(selectTradeError);
   const loading = useAppSelector(selectTradeLoading);
-  const fromTokenBalance = useAppSelector(selectTradeFromTokenBalance);
   const chains = useAppSelector(selectChainsItems);
   const filter = useAppSelector(selectTradeFilter);
-  const { fromChainId, fromTokenId, toChainId, toTokenId, amount } = filter;
-  const fromChain = getChainById(fromChainId, chains);
-  const fromToken = getTokenById(fromTokenId, fromChainId, chains);
+  const { toChainId, toTokenId, amount } = filter;
   const toChain = getChainById(toChainId, chains);
   const toToken = getTokenById(toTokenId, toChainId, chains);
+  const userChainId = useAppSelector(selectUserChainId);
+  const fromChain = getChainById(userChainId, chains);
+  const fromToken = fromChain?.tokens?.find(
+    (token: TokenType) => token.symbol === fromChain?.nativeToken
+  );
+  const userChainTokenBalance = useAppSelector(selectUserChainTokenBalance);
+  const userChainTokenBalanceLoading = useAppSelector(
+    selectUserChainTokenBalanceLoading
+  );
+
   const {
     handleTradeFilterChange,
     handleFromAmountMaxClick,
@@ -52,39 +62,17 @@ const TradePageOffersFilter = (props: Props) => {
     <PageCard>
       <PageCardHeader title="Trade" />
       <PageCardBody>
-        <Stack
-          direction="row"
-          alignItems="stretch"
-          justifyContent="space-between"
-          gap="16px"
-        >
-          <Box sx={{ maxWidth: 'calc(50% - 8px)', overflow: 'hidden' }}>
-            <SelectChainAndTokenButton
-              title="Deposit"
-              chain={fromChain}
-              token={fromToken || ''}
-              error={errorMessage}
-              onClick={() => {
-                navigate(ROUTES.BUY.TRADE.SELECT_FROM.FULL_PATH);
-              }}
-              name="fromChain"
-              id="deposit-button"
-            />
-          </Box>
-          <Box sx={{ maxWidth: 'calc(50% - 8px)' }}>
-            <SelectChainAndTokenButton
-              title="Receive"
-              onClick={() => {
-                navigate(ROUTES.BUY.TRADE.SELECT_TO.FULL_PATH);
-              }}
-              chain={toChain}
-              token={toToken || ''}
-              error={errorMessage}
-              name="toChain"
-              id="receive-button"
-            />
-          </Box>
-        </Stack>
+        <SelectChainAndTokenButton
+          title="Receive"
+          onClick={() => {
+            navigate(ROUTES.BUY.TRADE.SELECT_TO.FULL_PATH);
+          }}
+          chain={toChain}
+          token={toToken || ''}
+          error={errorMessage}
+          name="toChain"
+          id="receive-button"
+        />
 
         <AmountInput
           label="You pay"
@@ -106,14 +94,16 @@ const TradePageOffersFilter = (props: Props) => {
               : ''
           }
           endAdornment={
-            GRT_CONTRACT_ADDRESS[fromChain?.value || ''] && fromTokenBalance ? (
+            GRT_CONTRACT_ADDRESS[fromChain?.value || ''] &&
+            userChainTokenBalance &&
+            !userChainTokenBalanceLoading ? (
               <Box>
                 <Button
                   disableElevation
                   size="small"
                   variant="contained"
                   onClick={() => {
-                    handleFromAmountMaxClick(fromTokenBalance);
+                    handleFromAmountMaxClick(userChainTokenBalance);
                   }}
                   sx={{
                     fontSize: '14px',
@@ -154,7 +144,9 @@ const TradePageOffersFilter = (props: Props) => {
                     accessToken,
                     filter,
                     chains,
-                    fromTokenBalance
+                    userChainTokenBalance,
+                    fromChain?.chainId || '',
+                    fromToken?.coinmarketcapId || ''
                   );
                 }
               : () => {

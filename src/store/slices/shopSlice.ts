@@ -2,11 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../store';
 import { OfferType, ErrorMessageType } from '../../types';
 
-export type ShopFilterFieldName =
-  | 'fromChainId'
-  | 'fromTokenId'
-  | 'toChainId'
-  | 'toTokenId';
+export type ShopFilterFieldName = 'toChainId' | 'toTokenId';
 
 export type Shopfilter = {
   [key in ShopFilterFieldName]: string;
@@ -19,11 +15,9 @@ interface ShopState {
   approved: boolean;
   error: ErrorMessageType;
   filter: Shopfilter;
-  fromTokenPrice: number | null;
   loading: boolean;
   modal: boolean;
   offers: OfferType[];
-  pricesLoading: boolean;
 }
 
 const initialState: ShopState = {
@@ -33,16 +27,12 @@ const initialState: ShopState = {
   approved: false,
   error: { type: '', text: '' },
   filter: {
-    fromChainId: '5',
-    fromTokenId: '1027',
     toChainId: '97',
     toTokenId: '1839',
   },
-  fromTokenPrice: null,
   loading: true,
   modal: false,
   offers: [],
-  pricesLoading: false,
 };
 
 const shopSlice = createSlice({
@@ -77,20 +67,12 @@ const shopSlice = createSlice({
     },
     clearShopFilter(state) {
       state.filter = {
-        fromChainId: '',
-        fromTokenId: '',
         toChainId: '',
         toTokenId: '',
       };
     },
     setShopModal(state, action: PayloadAction<boolean>) {
       state.modal = action.payload;
-    },
-    setShopFromTokenPrice(state, action: PayloadAction<number | null>) {
-      state.fromTokenPrice = action.payload;
-    },
-    setShopPricesLoading(state, action: PayloadAction<boolean>) {
-      state.pricesLoading = action.payload;
     },
     setShopAccepting(state, action: PayloadAction<string>) {
       state.accepting = action.payload;
@@ -107,11 +89,11 @@ const shopSlice = createSlice({
   },
 });
 
-export const selectShopOffers = (state: RootState) =>
+export const selectShopOffers = (state: RootState, fromChainId: string) =>
   state.shop.offers.filter(
     (o: OfferType) =>
       o.chainId === state.shop.filter.toChainId &&
-      o.exchangeChainId === state.shop.filter.fromChainId &&
+      o.exchangeChainId === fromChainId &&
       o.tokenId === state.shop.filter.toTokenId
     // TODO: add fromTokenId filter
   );
@@ -126,10 +108,6 @@ export const selectShopAcceptedOffer = (state: RootState) =>
   state.shop.acceptedOffer;
 export const selectShopAcceptedOfferTx = (state: RootState) =>
   state.shop.acceptedOfferTx;
-export const selectShopFromTokenPrice = (state: RootState) =>
-  state.shop.fromTokenPrice;
-export const selectShopPricesLoading = (state: RootState) =>
-  state.shop.pricesLoading;
 
 export const {
   setShopOffers,
@@ -140,8 +118,6 @@ export const {
   setShopFilterValue,
   clearShopFilter,
   setShopModal,
-  setShopFromTokenPrice,
-  setShopPricesLoading,
   setShopAccepting,
   setShopAcceptedOffer,
   setShopApproved,

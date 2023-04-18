@@ -28,8 +28,7 @@ import {
   getTokenPriceById,
   isUserAdmin,
 } from '../services';
-import { getChainById, switchMetamaskNetwork } from '../utils';
-import { ChainType } from '../types';
+import { getChainById } from '../utils';
 
 // Context props
 type ContextProps = {

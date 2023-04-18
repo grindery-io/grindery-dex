@@ -8,7 +8,6 @@ import {
   useAppDispatch,
   useAppSelector,
   selectUserAccessToken,
-  selectUserAddress,
   TradeFilterFieldName,
   Tradefilter,
   clearTradeError,
@@ -17,14 +16,11 @@ import {
   setTradeApproved,
   setTradeError,
   setTradeFilterValue,
-  setTradeFromTokenBalance,
-  setTradeFromTokenPrice,
   setTradeLoading,
   setTradeOffers,
   setTradeOffersVisible,
   setTradePricesLoading,
   setTradeToTokenPrice,
-  selectChainsItems,
 } from '../store';
 import {
   getChainIdHex,
@@ -36,7 +32,6 @@ import {
 import { useUserController } from './UserController';
 import {
   searchOffersRequest,
-  getTokenBalanceRequest,
   getTokenPriceById,
   addOrderRequest,
 } from '../services';
@@ -60,7 +55,9 @@ type ContextProps = {
     accessToken: string,
     filter: Tradefilter,
     chains: ChainType[],
-    fromTokenBalance: string
+    fromTokenBalance: string,
+    fromChainId: string,
+    fromTokenId: string
   ) => void;
   handleTradeFilterChange: (name: TradeFilterFieldName, value: string) => void;
   handleFromAmountMaxClick: (balance: string) => void;
@@ -79,44 +76,17 @@ type TradeControllerProps = {
 
 export const TradeController = ({ children }: TradeControllerProps) => {
   const accessToken = useAppSelector(selectUserAccessToken);
-  const userAddress = useAppSelector(selectUserAddress);
   const dispatch = useAppDispatch();
   const filter = useAppSelector(selectTradeFilter);
-  const { fromChainId, fromTokenId, toTokenId } = filter;
+  const { toTokenId } = filter;
   const { getSigner, getEthers, getProvider } = useUserController();
-  const chains = useAppSelector(selectChainsItems);
-  const fromToken = getTokenById(
-    filter.fromTokenId,
-    filter.fromChainId,
-    chains
-  );
 
-  const fetchTokenPrices = useCallback(
-    async (accessToken: string, fromTokenId: string, toTokenId: string) => {
+  const fetchTokenPrice = useCallback(
+    async (accessToken: string, toTokenId: string) => {
       dispatch(setTradePricesLoading(true));
-      const fromPrice = await getTokenPriceById(accessToken, fromTokenId);
       const toPrice = await getTokenPriceById(accessToken, toTokenId);
-      dispatch(setTradeFromTokenPrice(fromPrice));
       dispatch(setTradeToTokenPrice(toPrice));
       dispatch(setTradePricesLoading(false));
-    },
-    [dispatch]
-  );
-
-  const fetchFromTokenBalance = useCallback(
-    async (
-      accessToken: string,
-      chainId: string,
-      address: string,
-      tokenAddress: string
-    ) => {
-      const balance = await getTokenBalanceRequest(
-        accessToken,
-        chainId,
-        address,
-        tokenAddress
-      );
-      dispatch(setTradeFromTokenBalance(balance || '0'));
     },
     [dispatch]
   );
@@ -138,22 +108,24 @@ export const TradeController = ({ children }: TradeControllerProps) => {
 
   const validateSearchOffersAction = (
     filter: Tradefilter,
-    fromTokenBalance: string
+    fromTokenBalance: string,
+    fromChainId: string,
+    fromTokenId: string
   ): boolean => {
-    if (!filter.fromChainId) {
+    if (!fromChainId) {
       dispatch(
         setTradeError({
-          type: 'fromChain',
+          type: 'amount',
           text: 'Chain is required',
         })
       );
 
       return false;
     }
-    if (!filter.fromTokenId) {
+    if (!fromTokenId) {
       dispatch(
         setTradeError({
-          type: 'fromChain',
+          type: 'amount',
           text: 'Token is required',
         })
       );
@@ -227,22 +199,27 @@ export const TradeController = ({ children }: TradeControllerProps) => {
     accessToken: string,
     filter: Tradefilter,
     chains: ChainType[],
-    fromTokenBalance: string
+    fromTokenBalance: string,
+    fromChainId: string,
+    fromTokenId: string
   ) => {
     dispatch(clearTradeError());
-    if (!validateSearchOffersAction(filter, fromTokenBalance)) {
+    if (
+      !validateSearchOffersAction(
+        filter,
+        fromTokenBalance,
+        fromChainId,
+        fromTokenId
+      )
+    ) {
       return;
     }
     dispatch(setTradeLoading(true));
     dispatch(setTradeOffersVisible(true));
-    const fromToken = getTokenById(
-      filter.fromTokenId,
-      filter.fromChainId,
-      chains
-    );
+    const fromToken = getTokenById(fromTokenId, fromChainId, chains);
     const toToken = getTokenById(filter.toTokenId, filter.toChainId, chains);
     const query = {
-      exchangeChainId: filter.fromChainId,
+      exchangeChainId: fromChainId,
       exchangeToken: fromToken?.symbol || '',
       chainId: filter.toChainId,
       token: toToken?.symbol || '',
@@ -531,27 +508,10 @@ export const TradeController = ({ children }: TradeControllerProps) => {
   };
 
   useEffect(() => {
-    if (accessToken && fromTokenId && toTokenId) {
-      fetchTokenPrices(accessToken, fromTokenId, toTokenId);
+    if (accessToken && toTokenId) {
+      fetchTokenPrice(accessToken, toTokenId);
     }
-  }, [accessToken, fetchTokenPrices, fromTokenId, toTokenId]);
-
-  useEffect(() => {
-    if (accessToken && fromChainId && userAddress && fromToken?.address) {
-      fetchFromTokenBalance(
-        accessToken,
-        fromChainId,
-        userAddress,
-        fromToken?.address
-      );
-    }
-  }, [
-    accessToken,
-    fromChainId,
-    userAddress,
-    fromToken?.address,
-    fetchFromTokenBalance,
-  ]);
+  }, [accessToken, fetchTokenPrice, toTokenId]);
 
   return (
     <TradeContext.Provider

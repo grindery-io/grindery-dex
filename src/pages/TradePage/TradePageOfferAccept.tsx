@@ -33,7 +33,7 @@ import {
   selectPoolAbi,
   selectTokenAbi,
 } from '../../store';
-import { OfferType } from '../../types';
+import { OfferType, TokenType } from '../../types';
 import { ROUTES } from '../../config';
 import { useUserController, useTradeController } from '../../controllers';
 import { getChainById, getTokenById, getTokenBySymbol } from '../../utils';
@@ -58,9 +58,11 @@ const TradePageOfferAccept = (props: Props) => {
   const errorMessage = useAppSelector(selectTradeError);
   const chains = useAppSelector(selectChainsItems);
   const filter = useAppSelector(selectTradeFilter);
-  const { amount, fromChainId, fromTokenId } = filter;
-  const fromChain = getChainById(fromChainId, chains);
-  const fromToken = getTokenById(fromTokenId, fromChainId, chains);
+  const { amount } = filter;
+  const fromChain = getChainById(userChainId, chains);
+  const fromToken = fromChain?.tokens?.find(
+    (token: TokenType) => token.symbol === fromChain?.nativeToken
+  );
   const { handleAcceptOfferAction } = useTradeController();
   const offer = foundOffers.find((o: OfferType) => o.offerId === offerId);
   const offerChain = getChainById(offer?.chainId || '', chains);
