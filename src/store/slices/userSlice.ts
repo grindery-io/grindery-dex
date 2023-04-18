@@ -6,6 +6,10 @@ interface UserState {
   address: string;
   chain: string;
   chainId: string;
+  chainTokenBalance: string;
+  chainTokenBalanceLoading: boolean;
+  chainTokenPrice: number | null;
+  chainTokenPriceLoading: boolean;
   id: string;
   isAdmin: boolean;
   isAdminLoading: boolean;
@@ -16,6 +20,10 @@ const initialState: UserState = {
   address: '',
   chain: '',
   chainId: '',
+  chainTokenBalance: '',
+  chainTokenBalanceLoading: false,
+  chainTokenPrice: null,
+  chainTokenPriceLoading: false,
   id: '',
   isAdmin: false,
   isAdminLoading: true,
@@ -44,6 +52,18 @@ const userSlice = createSlice({
     setUserIsAdminLoading(state, action: PayloadAction<boolean>) {
       state.isAdminLoading = action.payload;
     },
+    setUserChainTokenPrice(state, action: PayloadAction<number | null>) {
+      state.chainTokenPrice = action.payload;
+    },
+    setUserChainTokenPriceLoading(state, action: PayloadAction<boolean>) {
+      state.chainTokenPriceLoading = action.payload;
+    },
+    setUserChainTokenBalance(state, action: PayloadAction<string>) {
+      state.chainTokenBalance = action.payload;
+    },
+    setUserChainTokenBalanceLoading(state, action: PayloadAction<boolean>) {
+      state.chainTokenBalanceLoading = action.payload;
+    },
   },
 });
 
@@ -56,6 +76,14 @@ export const selectUserAccessToken = (state: RootState) =>
 export const selectUserIsAdmin = (state: RootState) => state.user.isAdmin;
 export const selectUserIsAdminLoading = (state: RootState) =>
   state.user.isAdminLoading;
+export const selectUserChainTokenPrice = (state: RootState) =>
+  state.user.chainTokenPrice;
+export const selectUserChainTokenPriceLoading = (state: RootState) =>
+  state.user.chainTokenPriceLoading;
+export const selectUserChainTokenBalance = (state: RootState) =>
+  state.user.chainTokenBalance;
+export const selectUserChainTokenBalanceLoading = (state: RootState) =>
+  state.user.chainTokenBalanceLoading;
 export const {
   setUserId,
   setUserAddress,
@@ -63,5 +91,9 @@ export const {
   setUserAccessToken,
   setUserIsAdmin,
   setUserIsAdminLoading,
+  setUserChainTokenPrice,
+  setUserChainTokenPriceLoading,
+  setUserChainTokenBalance,
+  setUserChainTokenBalanceLoading,
 } = userSlice.actions;
 export default userSlice.reducer;

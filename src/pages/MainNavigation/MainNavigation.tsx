@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router';
 import { Box } from '@mui/system';
-import { IconButton } from '@mui/material';
+import { IconButton, Stack } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import CurrencyExchangeIcon from '@mui/icons-material/CurrencyExchange';
@@ -20,6 +20,7 @@ import { useAppSelector, selectUserId } from '../../store';
 import { useUserController } from '../../controllers';
 import { ROUTES } from '../../config';
 import { NavTabsItemType } from '../../types';
+import MainNavigationChainSelector from './MainNavigationChainSelector';
 
 export const TABS_NAV: NavTabsItemType[] = [
   {
@@ -81,23 +82,39 @@ const MainNavigation = (props: Props) => {
           <NavTabs menu={TABS_NAV} />
         </NavTabsWrapper>
 
-        {!user && 'ethereum' in window && (
-          <ConnectWrapper>
-            <button
-              onClick={() => {
-                connectUser();
-              }}
-              id="connect-button"
-            >
-              Connect wallet
-            </button>
-          </ConnectWrapper>
-        )}
-        {user && (
-          <UserWrapper>
-            <MainNavigationUserMenu />
-          </UserWrapper>
-        )}
+        <Stack
+          ml="auto"
+          justifyContent="flex-end"
+          flex-wrap="nowrap"
+          order="4"
+          sx={{
+            flexDirection: { xs: 'column-reverse', sm: 'row' },
+            alignItems: { xs: 'flex-end', sm: 'center' },
+            gap: {
+              xs: '4px',
+              sm: '20px',
+            },
+          }}
+        >
+          <MainNavigationChainSelector />
+          {!user && 'ethereum' in window && (
+            <ConnectWrapper>
+              <button
+                onClick={() => {
+                  connectUser();
+                }}
+                id="connect-button"
+              >
+                Connect wallet
+              </button>
+            </ConnectWrapper>
+          )}
+          {user && (
+            <UserWrapper>
+              <MainNavigationUserMenu />
+            </UserWrapper>
+          )}
+        </Stack>
       </Wrapper>
       <MainNavigationDrawer
         opened={drawerOpen}

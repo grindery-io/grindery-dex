@@ -13,8 +13,23 @@ import {
   setUserId,
   setUserIsAdmin,
   setUserIsAdminLoading,
+  setUserChainTokenPriceLoading,
+  setUserChainTokenPrice,
+  setUserChainTokenBalance,
+  useAppSelector,
+  selectUserChainId,
+  selectUserAccessToken,
+  selectUserAddress,
+  selectChainsItems,
+  setUserChainTokenBalanceLoading,
 } from '../store';
-import { isUserAdmin } from '../services';
+import {
+  getTokenBalanceRequest,
+  getTokenPriceById,
+  isUserAdmin,
+} from '../services';
+import { getChainById, switchMetamaskNetwork } from '../utils';
+import { ChainType } from '../types';
 
 // Context props
 type ContextProps = {
@@ -42,6 +57,12 @@ export const UserContext = createContext<ContextProps>({
 export const UserController = ({ children }: UserControllerProps) => {
   const { user, address, chain, connect, disconnect, ethers, provider, token } =
     useGrinderyNexus();
+  const userChainId = useAppSelector(selectUserChainId);
+  const userAccessToken = useAppSelector(selectUserAccessToken);
+  const userAddress = useAppSelector(selectUserAddress);
+  const chains = useAppSelector(selectChainsItems);
+  const userChainTokenSymbol =
+    getChainById(userChainId, chains)?.nativeToken || '';
 
   const dispatch = useAppDispatch();
 
@@ -78,6 +99,36 @@ export const UserController = ({ children }: UserControllerProps) => {
     [dispatch]
   );
 
+  const fetchChainTokenPrice = useCallback(
+    async (accessToken: string, tokenSymbol: string) => {
+      dispatch(setUserChainTokenPriceLoading(true));
+      const price = await getTokenPriceById(accessToken, tokenSymbol);
+      dispatch(setUserChainTokenPrice(price));
+      dispatch(setUserChainTokenPriceLoading(false));
+    },
+    [dispatch]
+  );
+
+  const fetchChainTokenBalance = useCallback(
+    async (
+      accessToken: string,
+      chainId: string,
+      address: string,
+      tokenAddress: string
+    ) => {
+      dispatch(setUserChainTokenBalanceLoading(true));
+      const balance = await getTokenBalanceRequest(
+        accessToken,
+        chainId,
+        address,
+        tokenAddress
+      );
+      dispatch(setUserChainTokenBalance(balance || '0'));
+      dispatch(setUserChainTokenBalanceLoading(false));
+    },
+    [dispatch]
+  );
+
   useEffect(() => {
     if (user) {
       dispatch(setUserId(user));
@@ -99,7 +150,9 @@ export const UserController = ({ children }: UserControllerProps) => {
   }, [chain, dispatch]);
 
   useEffect(() => {
-    dispatch(setUserAccessToken(token?.access_token || ''));
+    if (token?.access_token) {
+      dispatch(setUserAccessToken(token?.access_token || ''));
+    }
   }, [token?.access_token, dispatch]);
 
   useEffect(() => {
@@ -107,6 +160,25 @@ export const UserController = ({ children }: UserControllerProps) => {
       checkUserIsAdmin(token?.access_token);
     }
   }, [token?.access_token, checkUserIsAdmin]);
+
+  useEffect(() => {
+    if (userChainId && userAccessToken && userAddress && userChainTokenSymbol) {
+      fetchChainTokenBalance(userAccessToken, userChainId, userAddress, '0x0');
+      fetchChainTokenPrice(userAccessToken, userChainTokenSymbol);
+    } else {
+      dispatch(setUserChainTokenBalance('0'));
+      dispatch(setUserChainTokenPrice(null));
+      dispatch(setUserChainTokenPriceLoading(false));
+    }
+  }, [
+    userChainId,
+    userAccessToken,
+    userAddress,
+    userChainTokenSymbol,
+    fetchChainTokenBalance,
+    fetchChainTokenPrice,
+    dispatch,
+  ]);
 
   return (
     <UserContext.Provider

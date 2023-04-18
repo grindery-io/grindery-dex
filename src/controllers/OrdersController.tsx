@@ -15,7 +15,6 @@ import {
   selectUserAccessToken,
 } from '../store';
 import {
-  getChainIdHex,
   getErrorMessage,
   getOfferFromChain,
   switchMetamaskNetwork,

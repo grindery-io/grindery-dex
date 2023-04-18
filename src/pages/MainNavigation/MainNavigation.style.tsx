@@ -25,7 +25,6 @@ export const Wrapper = styled('div')({
 });
 
 export const UserWrapper = styled('div')({
-  marginLeft: 'auto',
   order: '4',
   '@media (min-width: 960px)': {
     order: '4',
@@ -68,26 +67,21 @@ export const NavTabsWrapper = styled('div')({
 });
 
 export const ConnectWrapper = styled('div')({
-  display: 'none',
-  marginLeft: 'auto',
-  '@media (min-width: 960px)': {
-    order: '4',
-    display: 'block',
-    marginLeft: 'auto',
-    '& button': {
-      background: '#0b0d17',
-      borderRadius: '5px',
-      boxShadow: 'none',
-      fontWeight: '700',
-      fontSize: '16px',
-      lineHeight: '150%',
-      color: '#ffffff',
-      padding: '8px 24px',
-      cursor: 'pointer',
-      border: 'none',
-      '&:hover': {
-        boxShadow: '0px 4px 8px rgba(106, 71, 147, 0.1)',
-      },
+  display: 'block',
+  order: 4,
+  '& button': {
+    background: '#0b0d17',
+    borderRadius: '5px',
+    boxShadow: 'none',
+    fontWeight: '700',
+    fontSize: '16px',
+    lineHeight: '150%',
+    color: '#ffffff',
+    padding: '8px 24px',
+    cursor: 'pointer',
+    border: 'none',
+    '&:hover': {
+      boxShadow: '0px 4px 8px rgba(106, 71, 147, 0.1)',
     },
   },
 });

@@ -21,12 +21,7 @@ import {
   selectWalletsItems,
   selectChainsItems,
 } from '../store';
-import {
-  getChainById,
-  getChainIdHex,
-  getErrorMessage,
-  switchMetamaskNetwork,
-} from '../utils';
+import { getChainById, getErrorMessage, switchMetamaskNetwork } from '../utils';
 import { useUserController } from './UserController';
 import { getBotAddress } from '../services';
 import { ChainType, LiquidityWalletType } from '../types';
