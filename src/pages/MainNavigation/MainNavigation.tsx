@@ -69,6 +69,12 @@ const MainNavigation = (props: Props) => {
           <Logo variant="square" />
         </LogoWrapper>
         <CompanyNameWrapper
+          sx={{
+            display: {
+              xs: 'none',
+              sm: 'block',
+            },
+          }}
           href="/"
           onClick={(e: React.MouseEvent<HTMLElement>) => {
             e.preventDefault();
@@ -88,11 +94,11 @@ const MainNavigation = (props: Props) => {
           flex-wrap="nowrap"
           order="4"
           sx={{
-            flexDirection: { xs: 'column-reverse', sm: 'row' },
-            alignItems: { xs: 'flex-end', sm: 'center' },
+            flexDirection: { xs: 'row', sm: 'row' },
+            alignItems: { xs: 'center', sm: 'center' },
             gap: {
-              xs: '4px',
-              sm: '20px',
+              xs: '12px',
+              sm: '16px',
             },
           }}
         >

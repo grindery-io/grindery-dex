@@ -1,9 +1,13 @@
 import React, { useState } from 'react';
-import Foco from 'react-foco';
 import Jdenticon from 'react-jdenticon';
-import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { ICONS, ROUTES } from '../../config';
-import { Alert, Snackbar } from '@mui/material';
+import {
+  Alert,
+  ListItemIcon,
+  MenuItem,
+  Snackbar,
+  Typography,
+} from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import Icon from '@mdi/react';
 import { mdiWaterPump } from '@mdi/js';
@@ -16,13 +20,12 @@ import {
 } from '../../store';
 import {
   UserContainer,
-  UserDropdown,
-  UserDropdownContent,
   UserId,
   UserStatus,
   UserWrapper,
 } from './MainNavigationUserMenu.style';
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
+import { Menu } from '../../components';
 
 type Props = {
   mode?: 'dark' | 'light';
@@ -30,96 +33,120 @@ type Props = {
 
 const MainNavigationUserMenu = (props: Props) => {
   const mode = props.mode || 'light';
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
   const { disconnectUser } = useUserController();
-  const [menuOpened, setMenuOpened] = useState(false);
   const [copied, setCopied] = useState(false);
   let navigate = useNavigate();
   const isAdmin = useAppSelector(selectUserIsAdmin);
   const address = useAppSelector(selectUserAddress);
 
+  const handleClickListItemButton = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
   return address ? (
     <UserContainer>
-      <Foco
-        onClickOutside={() => {
-          setMenuOpened(false);
-        }}
-        onFocusOutside={() => {
-          setMenuOpened(false);
-        }}
+      <UserWrapper
+        onClick={handleClickListItemButton}
+        className={`${open ? 'opened' : ''} ${mode}`}
+        id="user-menu-button"
       >
-        <UserWrapper
+        <UserStatus>
+          <Jdenticon size="20" value={encodeURIComponent(address)} />
+        </UserStatus>
+        <UserId className={mode} id="user-address">
+          {address.substring(0, 6) +
+            '...' +
+            address.substring(address.length - 4)}
+        </UserId>
+      </UserWrapper>
+
+      <Menu
+        id="user-menu"
+        anchorEl={anchorEl}
+        open={open}
+        onClose={handleClose}
+      >
+        <MenuItem
           onClick={() => {
-            setMenuOpened(!menuOpened);
+            handleClose();
+            navigator.clipboard.writeText(address);
+            setCopied(true);
           }}
-          className={`${menuOpened ? 'opened' : ''} ${mode}`}
-          id="user-menu-button"
         >
-          <UserStatus>
-            <Jdenticon size="20" value={encodeURIComponent(address)} />
-          </UserStatus>
-          <UserId className={mode} id="user-address">
-            {address.substring(0, 6) +
-              '...' +
-              address.substring(address.length - 4)}
-          </UserId>
-        </UserWrapper>
+          <ListItemIcon>
+            <img src={ICONS.COPY} alt="" />
+          </ListItemIcon>
+          <Typography component="span" variant="body2">
+            Copy wallet address
+          </Typography>
+        </MenuItem>
+        <MenuItem
+          onClick={() => {
+            handleClose();
+            navigate(ROUTES.HISTORY.ROOT.FULL_PATH);
+          }}
+        >
+          <ListItemIcon>
+            <ReceiptLongIcon sx={{ width: '20px', height: '20px' }} />
+          </ListItemIcon>
+          <Typography component="span" variant="body2">
+            Orders history
+          </Typography>
+        </MenuItem>
+        <MenuItem
+          onClick={() => {
+            handleClose();
+            navigate(ROUTES.FAUCET.FULL_PATH);
+          }}
+        >
+          <ListItemIcon>
+            <Icon
+              path={mdiWaterPump}
+              style={{ width: '20px', height: '20px' }}
+            />
+          </ListItemIcon>
+          <Typography component="span" variant="body2">
+            Faucet
+          </Typography>
+        </MenuItem>
+        {isAdmin && (
+          <MenuItem
+            onClick={() => {
+              handleClose();
+              navigate(ROUTES.SELL.FULL_PATH);
+            }}
+          >
+            <ListItemIcon>
+              <SellOutlinedIcon sx={{ width: '20px', height: '20px' }} />
+            </ListItemIcon>
+            <Typography component="span" variant="body2">
+              Sell
+            </Typography>
+          </MenuItem>
+        )}
 
-        <UserDropdown className={menuOpened ? 'opened' : ''}>
-          <UserDropdownContent>
-            <CopyToClipboard
-              text={address}
-              onCopy={() => {
-                setMenuOpened(false);
-                setCopied(true);
-              }}
-            >
-              <button onClick={() => {}}>
-                <img src={ICONS.COPY} alt="" />
-                <span>{'Copy wallet addres'}</span>
-              </button>
-            </CopyToClipboard>
-            <button
-              onClick={() => {
-                navigate(ROUTES.HISTORY.ROOT.FULL_PATH);
-              }}
-            >
-              <ReceiptLongIcon sx={{ width: '20px', height: '20px' }} />
-              <span>Orders history</span>
-            </button>
-            <button
-              onClick={() => {
-                navigate(ROUTES.FAUCET.FULL_PATH);
-              }}
-            >
-              <Icon
-                path={mdiWaterPump}
-                style={{ width: '20px', height: '20px' }}
-              />
-              <span>Faucet</span>
-            </button>
-            {isAdmin && (
-              <button
-                onClick={() => {
-                  navigate(ROUTES.SELL.FULL_PATH);
-                }}
-              >
-                <SellOutlinedIcon sx={{ width: '20px', height: '20px' }} />
+        <MenuItem
+          onClick={() => {
+            handleClose();
+            disconnectUser();
+          }}
+          id="disconnect-button"
+        >
+          <ListItemIcon>
+            <img src={ICONS.DISCONNECT} alt="" />
+          </ListItemIcon>
+          <Typography component="span" variant="body2">
+            Disconnect
+          </Typography>
+        </MenuItem>
+      </Menu>
 
-                <span>Sell</span>
-              </button>
-            )}
-            <button
-              onClick={() => {
-                disconnectUser();
-              }}
-              id="disconnect-button"
-            >
-              <img src={ICONS.DISCONNECT} alt="" />
-              <span>Disconnect</span>
-            </button>
-          </UserDropdownContent>
-        </UserDropdown>
-      </Foco>
       <Snackbar
         open={copied}
         onClose={() => {

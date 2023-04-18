@@ -73,6 +73,8 @@ export const UserController = ({ children }: UserControllerProps) => {
     disconnect();
     dispatch(setUserId(''));
     dispatch(setUserAddress(''));
+    dispatch(setUserAccessToken(''));
+    window.location.href = '/';
   };
 
   const getEthers = () => {

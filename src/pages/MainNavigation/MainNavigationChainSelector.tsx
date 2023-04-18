@@ -5,7 +5,6 @@ import {
   ListItemButton,
   ListItemIcon,
   ListItemText,
-  Menu,
   MenuItem,
   Skeleton,
   Stack,
@@ -25,7 +24,7 @@ import {
 } from '../../store';
 import { getChainById, switchMetamaskNetwork } from '../../utils';
 import { ChainType } from '../../types';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { Menu } from '../../components';
 
 type Props = {};
 
@@ -69,19 +68,12 @@ const MainNavigationChainSelector = (props: Props) => {
   };
 
   return userId && !chainsLoading && chains && chains.length > 0 ? (
-    <Stack
-      direction="row"
-      alignItems="center"
-      justifyContent="flex-end"
-      gap="6px"
-      flexWrap="nowrap"
-      className="MainNavigationChainSelector"
-    >
+    <Box className="MainNavigationChainSelector">
       <List
         component="nav"
         aria-label="Blockchain"
         sx={{
-          bgcolor: 'background.paper',
+          bgcolor: 'transparent',
           padding: '0',
           '& .MuiListItemSecondaryAction-root': {
             height: '20px',
@@ -90,18 +82,7 @@ const MainNavigationChainSelector = (props: Props) => {
           },
         }}
       >
-        <ListItem
-          disablePadding
-          secondaryAction={
-            <ExpandMoreIcon
-              sx={{
-                width: '20px',
-                height: '20px',
-                transform: `scaleY(${open ? '-1' : '1'})`,
-              }}
-            />
-          }
-        >
+        <ListItem disablePadding>
           <ListItemButton
             id="lock-button"
             aria-haspopup="listbox"
@@ -111,20 +92,26 @@ const MainNavigationChainSelector = (props: Props) => {
             onClick={handleClickListItemButton}
             sx={{
               borderRadius: '34px',
-              paddingTop: '4px',
-              paddingBottom: '4px',
+              paddingTop: '3px',
+              paddingBottom: '3px',
               paddingLeft: selectedChain ? '8px' : '12px',
-              paddingRight: '32px !important',
+              paddingRight: '12px',
+              transition: 'border-color 0.2s ease-in-out',
+              border: `1px solid ${open ? '#0b0d17' : '#dcdcdc'}`,
+              '&:hover': {
+                background: 'transparent',
+                borderColor: '#0b0d17 !important',
+              },
             }}
           >
             {selectedChain && (
               <ListItemIcon
                 sx={{
-                  minWidth: '28px',
+                  minWidth: '36px',
                   '& img': {
-                    width: '20px',
-                    height: '20px',
-                    maxWidth: '20px',
+                    width: '28px',
+                    height: '28px',
+                    maxWidth: '28px',
                     display: 'block',
                   },
                 }}
@@ -134,10 +121,50 @@ const MainNavigationChainSelector = (props: Props) => {
             )}
 
             <ListItemText
+              sx={{
+                margin: 0,
+                '& .MuiListItemText-secondary': {
+                  lineHeight: 1,
+                  display: {
+                    xs: 'none',
+                    sm: 'block',
+                  },
+                },
+              }}
               primary={
-                selectedChain ? selectedChain.label : 'Select blockchain'
+                <Typography variant="body2">
+                  {selectedChain ? selectedChain.label : 'Select blockchain'}
+                </Typography>
               }
-              //secondary={options[selectedIndex]}
+              secondary={
+                selectedChain && (
+                  <>
+                    {userChainTokenBalance &&
+                    userChainTokenPrice &&
+                    !userChainTokenPriceLoading &&
+                    !userChainTokenBalanceLoading ? (
+                      <Typography
+                        variant="caption"
+                        component="span"
+                        sx={{ lineHeight: 1 }}
+                      >
+                        {parseFloat(
+                          parseFloat(userChainTokenBalance).toFixed(6)
+                        ).toString()}{' '}
+                        / U${' '}
+                        {parseFloat(
+                          (
+                            parseFloat(userChainTokenBalance) *
+                            userChainTokenPrice
+                          ).toFixed(2)
+                        ).toString()}
+                      </Typography>
+                    ) : (
+                      <Skeleton width="100px" />
+                    )}
+                  </>
+                )
+              }
             />
           </ListItemButton>
         </ListItem>
@@ -147,27 +174,6 @@ const MainNavigationChainSelector = (props: Props) => {
         anchorEl={anchorEl}
         open={open}
         onClose={handleClose}
-        PaperProps={{
-          sx: {
-            background: '#ffffff',
-            border: '1px solid #dcdcdc',
-            boxShadow: '2px 2px 24px rgba(0, 0, 0, 0.15)',
-            borderRadius: '10px',
-          },
-        }}
-        MenuListProps={{
-          'aria-labelledby': 'lock-button',
-          role: 'listbox',
-          sx: {
-            padding: '10px',
-            '& .MuiButtonBase-root': {
-              borderRadius: '5px',
-              '&:hover': {
-                background: '#fdfbff',
-              },
-            },
-          },
-        }}
       >
         {chainsList.map((chain: ChainType) => (
           <MenuItem
@@ -180,21 +186,8 @@ const MainNavigationChainSelector = (props: Props) => {
               }
             }}
             id={`chain-${chain.chainId}`}
-            sx={{
-              padding: '8px',
-            }}
           >
-            <ListItemIcon
-              sx={{
-                minWidth: '32px !important',
-                '& img': {
-                  width: '20px',
-                  height: '20px',
-                  maxWidth: '20px',
-                  display: 'block',
-                },
-              }}
-            >
+            <ListItemIcon>
               <img src={chain.icon} alt="" />
             </ListItemIcon>
             <Typography component="span" variant="body2">
@@ -203,35 +196,7 @@ const MainNavigationChainSelector = (props: Props) => {
           </MenuItem>
         ))}
       </Menu>
-      {selectedChain && (
-        <>
-          {userChainTokenBalance &&
-          userChainTokenPrice &&
-          !userChainTokenPriceLoading &&
-          !userChainTokenBalanceLoading ? (
-            <Box
-              sx={{
-                display: { xs: 'none', sm: 'block' },
-              }}
-            >
-              <Typography variant="body2">
-                {parseFloat(
-                  parseFloat(userChainTokenBalance).toFixed(6)
-                ).toString()}{' '}
-                / U${' '}
-                {parseFloat(
-                  (
-                    parseFloat(userChainTokenBalance) * userChainTokenPrice
-                  ).toFixed(2)
-                ).toString()}
-              </Typography>
-            </Box>
-          ) : (
-            <Skeleton width="100px" />
-          )}
-        </>
-      )}
-    </Stack>
+    </Box>
   ) : null;
 };
 

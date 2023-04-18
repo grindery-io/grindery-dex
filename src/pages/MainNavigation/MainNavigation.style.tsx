@@ -40,7 +40,6 @@ export const LogoWrapper = styled('a')({
 });
 
 export const CompanyNameWrapper = styled('a')({
-  display: 'block',
   order: '3',
   fontWeight: '700',
   fontSize: '16px',
