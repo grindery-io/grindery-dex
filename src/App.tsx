@@ -7,6 +7,7 @@ import { store } from './store';
 import { UserController, ChainsController, AbiController } from './controllers';
 import { theme } from './theme';
 import AppRouter from './pages/AppRouter/AppRouter';
+import Popup from './components/Popup/Popup';
 
 declare global {
   interface Window {
@@ -23,6 +24,7 @@ export const App = () => {
             <AbiController>
               <ChainsController>
                 <AppRouter />
+                <Popup />
               </ChainsController>
             </AbiController>
           </UserController>
