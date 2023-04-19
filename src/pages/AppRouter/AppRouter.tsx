@@ -8,14 +8,21 @@ import HistoryPage from '../HistoryPage/HistoryPage';
 import FaucetPage from '../FaucetPage/FaucetPage';
 import Page404 from '../Page404/Page404';
 import { PageContainer } from '../../components';
-import { selectUserAdvancedMode, useAppSelector } from '../../store';
+import {
+  selectUserAdvancedMode,
+  selectUserAdvancedModeAlert,
+  useAppSelector,
+} from '../../store';
 
 type Props = {};
 
 const AppRouter = (props: Props) => {
   const advancedMode = useAppSelector(selectUserAdvancedMode);
+  const advancedModeAlert = useAppSelector(selectUserAdvancedModeAlert);
   return (
-    <PageContainer topShift={advancedMode ? '123px' : '75px'}>
+    <PageContainer
+      topShift={advancedMode && advancedModeAlert ? '123px' : '75px'}
+    >
       <BrowserRouter>
         <MainNavigation />
         <Routes>

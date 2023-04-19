@@ -20,6 +20,7 @@ import { ROUTES } from '../../config';
 import { NavTabsItemType } from '../../types';
 import MainNavigationSwitchChainButton from './MainNavigationSwitchChainButton';
 import MainNavigationWalletBalance from './MainNavigationWalletBalance';
+import MainNavigationAdvancedModeAlert from './MainNavigationAdvancedModeAlert';
 
 export const TABS_NAV: NavTabsItemType[] = [
   {
@@ -46,22 +47,7 @@ const MainNavigation = (props: Props) => {
   return (
     <>
       <Container>
-        {advancedMode && (
-          <Alert
-            sx={{
-              '& .MuiAlert-icon': {
-                marginLeft: 'auto',
-              },
-              '& .MuiAlert-message': {
-                marginRight: 'auto',
-              },
-            }}
-            severity="warning"
-          >
-            Your are in advanced mode. It is safe to use but some information
-            and features might not be working yet.
-          </Alert>
-        )}
+        <MainNavigationAdvancedModeAlert />
         <Wrapper>
           <Box sx={{ display: { xs: 'block', lg: 'none' } }}>
             <IconButton

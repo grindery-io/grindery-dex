@@ -5,6 +5,7 @@ interface UserState {
   accessToken: string;
   address: string;
   advancedMode: boolean;
+  advancedModeAlert: boolean;
   chain: string;
   chainId: string;
   chainTokenBalance: string;
@@ -20,6 +21,7 @@ const initialState: UserState = {
   accessToken: '',
   address: '',
   advancedMode: false,
+  advancedModeAlert: true,
   chain: '',
   chainId: '',
   chainTokenBalance: '',
@@ -69,6 +71,9 @@ const userSlice = createSlice({
     setUserAdvancedMode(state, action: PayloadAction<boolean>) {
       state.advancedMode = action.payload;
     },
+    setUserAdvancedModeAlert(state, action: PayloadAction<boolean>) {
+      state.advancedModeAlert = action.payload;
+    },
   },
 });
 
@@ -91,6 +96,8 @@ export const selectUserChainTokenBalanceLoading = (state: RootState) =>
   state.user.chainTokenBalanceLoading;
 export const selectUserAdvancedMode = (state: RootState) =>
   state.user.advancedMode;
+export const selectUserAdvancedModeAlert = (state: RootState) =>
+  state.user.advancedModeAlert;
 export const {
   setUserId,
   setUserAddress,
@@ -103,5 +110,6 @@ export const {
   setUserChainTokenBalance,
   setUserChainTokenBalanceLoading,
   setUserAdvancedMode,
+  setUserAdvancedModeAlert,
 } = userSlice.actions;
 export default userSlice.reducer;
