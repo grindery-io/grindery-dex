@@ -32,6 +32,7 @@ import {
   setTradeApproved,
   selectPoolAbi,
   selectTokenAbi,
+  selectUserAdvancedMode,
 } from '../../store';
 import { OfferType, TokenType } from '../../types';
 import { ROUTES } from '../../config';
@@ -44,6 +45,7 @@ const TradePageOfferAccept = (props: Props) => {
   let navigate = useNavigate();
   let { offerId } = useParams();
   const dispatch = useAppDispatch();
+  const advancedMode = useAppSelector(selectUserAdvancedMode);
   const user = useAppSelector(selectUserId);
   const accessToken = useAppSelector(selectUserAccessToken);
   const userChainId = useAppSelector(selectUserChainId);
@@ -125,6 +127,7 @@ const TradePageOfferAccept = (props: Props) => {
             <Box mt="0px">
               {offerChain && offerToken && (
                 <OfferPublic
+                  advancedMode={advancedMode}
                   key={offer._id}
                   chains={chains}
                   offer={offer}

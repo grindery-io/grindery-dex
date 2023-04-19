@@ -555,19 +555,20 @@ const OfferPublic = (props: Props) => {
                 </StepLabel>
               </Step>
             )}
-            {(!excludeSteps || !excludeSteps.includes('gas')) && (
-              <Step expanded>
-                <StepLabel
-                  StepIconComponent={({ className }) => (
-                    <Box className={className}>
-                      <EvStationIcon sx={{ color: 'rgba(0, 0, 0, 0.7)' }} />
-                    </Box>
-                  )}
-                >
-                  Estimated gas fee: <strong>$2.5</strong>
-                </StepLabel>
-              </Step>
-            )}
+            {(!excludeSteps || !excludeSteps.includes('gas')) &&
+              isInAdvancedMode && (
+                <Step expanded>
+                  <StepLabel
+                    StepIconComponent={({ className }) => (
+                      <Box className={className}>
+                        <EvStationIcon sx={{ color: 'rgba(0, 0, 0, 0.7)' }} />
+                      </Box>
+                    )}
+                  >
+                    Estimated gas fee: <strong>$2.5</strong>
+                  </StepLabel>
+                </Step>
+              )}
             {(!excludeSteps || !excludeSteps.includes('impact')) && (
               <Step expanded>
                 <StepLabel
@@ -583,51 +584,54 @@ const OfferPublic = (props: Props) => {
                 </StepLabel>
               </Step>
             )}
-            {(!excludeSteps || !excludeSteps.includes('time')) && (
-              <Step expanded>
-                <StepLabel
-                  StepIconComponent={({ className }) => (
-                    <Box className={className}>
-                      <AccessTimeFilledIcon
-                        sx={{ color: 'rgba(0, 0, 0, 0.7)' }}
-                      />
-                    </Box>
-                  )}
-                >
-                  Time to execute: <strong>{offer.estimatedTime}s</strong>
-                </StepLabel>
-              </Step>
-            )}
+            {(!excludeSteps || !excludeSteps.includes('time')) &&
+              isInAdvancedMode && (
+                <Step expanded>
+                  <StepLabel
+                    StepIconComponent={({ className }) => (
+                      <Box className={className}>
+                        <AccessTimeFilledIcon
+                          sx={{ color: 'rgba(0, 0, 0, 0.7)' }}
+                        />
+                      </Box>
+                    )}
+                  >
+                    Time to execute: <strong>{offer.estimatedTime}s</strong>
+                  </StepLabel>
+                </Step>
+              )}
           </Stepper>
-          <Box p="16px">
-            {provider ? (
+          {isInAdvancedMode && (
+            <Box p="16px">
+              {provider ? (
+                <TransactionID
+                  value={provider || ''}
+                  label="Provider"
+                  link={providerLink}
+                  valueStyle={{ color: '#000' }}
+                />
+              ) : (
+                <Stack
+                  direction="row"
+                  alignItems="center"
+                  justifyContent="flex-start"
+                  gap="4px"
+                  mb="4px"
+                  sx={{ minHeight: '24px' }}
+                >
+                  <Skeleton width="220px" />
+                  <Skeleton width="16px" />
+                  <Skeleton width="16px" />
+                </Stack>
+              )}
               <TransactionID
-                value={provider || ''}
-                label="Provider"
-                link={providerLink}
+                value={offer.hash || ''}
+                label="Offer ID"
+                link={explorerLink}
                 valueStyle={{ color: '#000' }}
               />
-            ) : (
-              <Stack
-                direction="row"
-                alignItems="center"
-                justifyContent="flex-start"
-                gap="4px"
-                mb="4px"
-                sx={{ minHeight: '24px' }}
-              >
-                <Skeleton width="220px" />
-                <Skeleton width="16px" />
-                <Skeleton width="16px" />
-              </Stack>
-            )}
-            <TransactionID
-              value={offer.hash || ''}
-              label="Offer ID"
-              link={explorerLink}
-              valueStyle={{ color: '#000' }}
-            />
-          </Box>
+            </Box>
+          )}
         </>
       )}
     </Card>
