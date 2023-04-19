@@ -32,7 +32,7 @@ import {
 } from '../../store';
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 import { Menu } from '../../components';
-import SettingsIcon from '@mui/icons-material/Settings';
+import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import { getChainById } from '../../utils';
 import LockIcon from '@mui/icons-material/Lock';
 
@@ -193,7 +193,9 @@ const MainNavigationUserMenu = (props: Props) => {
           }}
         >
           <ListItemIcon>
-            <ReceiptLongIcon sx={{ width: '20px', height: '20px' }} />
+            <ReceiptLongIcon
+              sx={{ width: '20px', height: '20px', color: '#000' }}
+            />
           </ListItemIcon>
           <Typography component="span" variant="body2">
             Orders history
@@ -208,7 +210,7 @@ const MainNavigationUserMenu = (props: Props) => {
           <ListItemIcon>
             <Icon
               path={mdiWaterPump}
-              style={{ width: '20px', height: '20px' }}
+              style={{ width: '20px', height: '20px', color: '#000' }}
             />
           </ListItemIcon>
           <Typography component="span" variant="body2">
@@ -223,7 +225,9 @@ const MainNavigationUserMenu = (props: Props) => {
             }}
           >
             <ListItemIcon>
-              <SellOutlinedIcon sx={{ width: '20px', height: '20px' }} />
+              <SellOutlinedIcon
+                sx={{ width: '20px', height: '20px', color: '#000' }}
+              />
             </ListItemIcon>
             <Typography component="span" variant="body2">
               Sell
@@ -232,7 +236,7 @@ const MainNavigationUserMenu = (props: Props) => {
         )}
         <MenuItem disableRipple>
           <ListItemIcon>
-            <SettingsIcon />
+            <SettingsOutlinedIcon sx={{ color: '#000' }} />
           </ListItemIcon>
           <Stack
             direction="row"

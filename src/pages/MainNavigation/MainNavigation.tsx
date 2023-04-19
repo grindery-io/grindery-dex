@@ -15,7 +15,11 @@ import {
 import { Logo, NavTabs } from '../../components';
 import MainNavigationDrawer from './MainNavigationDrawer';
 import MainNavigationUserMenu from './MainNavigationUserMenu';
-import { useAppSelector, selectUserAdvancedMode } from '../../store';
+import {
+  useAppSelector,
+  selectUserAdvancedMode,
+  selectUserAdvancedModeAlert,
+} from '../../store';
 import { ROUTES } from '../../config';
 import { NavTabsItemType } from '../../types';
 import MainNavigationSwitchChainButton from './MainNavigationSwitchChainButton';
@@ -43,6 +47,7 @@ const MainNavigation = (props: Props) => {
   let navigate = useNavigate();
   const [drawerOpen, setDrawerOpen] = React.useState(false);
   const advancedMode = useAppSelector(selectUserAdvancedMode);
+  const advancedModeAlert = useAppSelector(selectUserAdvancedModeAlert);
 
   return (
     <>
@@ -117,7 +122,7 @@ const MainNavigation = (props: Props) => {
       </Container>
       <Box
         sx={{
-          height: advancedMode ? '123px' : '75px',
+          height: advancedMode && advancedModeAlert ? '123px' : '75px',
         }}
       />
     </>
