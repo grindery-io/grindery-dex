@@ -158,7 +158,7 @@ const OfferPublic = (props: Props) => {
           : undefined
       }
     >
-      {compact && (
+      {compact && (isInAdvancedMode || !isUserA) && (
         <Stack
           direction="row"
           alignItems="center"
@@ -176,53 +176,59 @@ const OfferPublic = (props: Props) => {
           }}
         >
           {!offer.isActive && <Chip size="small" label="Inactive" />}
-          <Tooltip title="Execution time">
-            <Stack
-              direction="row"
-              alignItems="center"
-              justifyContent="flex-start"
-              gap="3px"
-              id="execution-time-icon"
-            >
-              <AccessTimeFilledIcon
-                fontSize="small"
-                sx={{ marginTop: '-2px', color: 'rgba(0, 0, 0, 0.24)' }}
-              />
-              <p style={{ color: offer.isActive ? '#000' : '#aaa' }}>
-                {offer.estimatedTime}s
-              </p>
-            </Stack>
-          </Tooltip>
-          <Tooltip title="Estimated network fee">
-            <Stack
-              direction="row"
-              alignItems="center"
-              justifyContent="flex-start"
-              gap="3px"
-              id="estimated-network-fee-icon"
-            >
-              <EvStationIcon
-                fontSize="small"
-                sx={{ marginTop: '-2px', color: 'rgba(0, 0, 0, 0.24)' }}
-              />
-              <p style={{ color: offer.isActive ? '#000' : '#aaa' }}>$2.5</p>
-            </Stack>
-          </Tooltip>
-          <Tooltip title="Chains">
-            <Stack
-              direction="row"
-              alignItems="center"
-              justifyContent="flex-start"
-              gap="3px"
-              id="chains-icon"
-            >
-              <LayersIcon
-                fontSize="small"
-                sx={{ marginTop: '-2px', color: 'rgba(0, 0, 0, 0.24)' }}
-              />
-              <p style={{ color: offer.isActive ? '#000' : '#aaa' }}>1</p>
-            </Stack>
-          </Tooltip>
+          {isInAdvancedMode && (
+            <>
+              <Tooltip title="Execution time">
+                <Stack
+                  direction="row"
+                  alignItems="center"
+                  justifyContent="flex-start"
+                  gap="3px"
+                  id="execution-time-icon"
+                >
+                  <AccessTimeFilledIcon
+                    fontSize="small"
+                    sx={{ marginTop: '-2px', color: 'rgba(0, 0, 0, 0.24)' }}
+                  />
+                  <p style={{ color: offer.isActive ? '#000' : '#aaa' }}>
+                    {offer.estimatedTime}s
+                  </p>
+                </Stack>
+              </Tooltip>
+              <Tooltip title="Estimated network fee">
+                <Stack
+                  direction="row"
+                  alignItems="center"
+                  justifyContent="flex-start"
+                  gap="3px"
+                  id="estimated-network-fee-icon"
+                >
+                  <EvStationIcon
+                    fontSize="small"
+                    sx={{ marginTop: '-2px', color: 'rgba(0, 0, 0, 0.24)' }}
+                  />
+                  <p style={{ color: offer.isActive ? '#000' : '#aaa' }}>
+                    $2.5
+                  </p>
+                </Stack>
+              </Tooltip>
+              <Tooltip title="Chains">
+                <Stack
+                  direction="row"
+                  alignItems="center"
+                  justifyContent="flex-start"
+                  gap="3px"
+                  id="chains-icon"
+                >
+                  <LayersIcon
+                    fontSize="small"
+                    sx={{ marginTop: '-2px', color: 'rgba(0, 0, 0, 0.24)' }}
+                  />
+                  <p style={{ color: offer.isActive ? '#000' : '#aaa' }}>1</p>
+                </Stack>
+              </Tooltip>
+            </>
+          )}
         </Stack>
       )}
       <Stack

@@ -19,9 +19,13 @@ import {
   setShopOffers,
 } from '../store';
 import { useUserController } from './UserController';
-import { getAllOffers, addOrderRequest } from '../services';
+import {
+  getAllOffers,
+  addOrderRequest,
+  getProviderWalletRequest,
+} from '../services';
 import { POOL_CONTRACT_ADDRESS } from '../config';
-import { TokenType, OfferType } from '../types';
+import { TokenType, OfferType, LiquidityWalletType } from '../types';
 import {
   getErrorMessage,
   getOrderIdFromReceipt,
@@ -59,7 +63,31 @@ export const ShopController = ({ children }: ShopControllerProps) => {
     async (accessToken: string) => {
       dispatch(setShopLoading(true));
       const items = await getAllOffers(accessToken);
-      dispatch(setShopOffers(items || []));
+
+      if (items) {
+        const promises = items.map(async (offer: OfferType) => {
+          const provider = await getProviderWalletRequest(
+            accessToken,
+            offer.userId || '',
+            offer.chainId
+          ).catch(() => {
+            return null;
+          });
+          return provider || null;
+        });
+        const providers = await Promise.all(promises);
+        const enrichedOffers = items.map((offer: OfferType) => ({
+          ...offer,
+          providerDetails:
+            providers.find(
+              (provider: LiquidityWalletType | null) =>
+                offer && provider && offer.provider === provider.walletAddress
+            ) || undefined,
+        }));
+        dispatch(setShopOffers(enrichedOffers));
+      }
+
+      //dispatch(setShopOffers(items || []));
       dispatch(setShopLoading(false));
     },
     [dispatch]

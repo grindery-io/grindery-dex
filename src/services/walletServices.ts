@@ -146,3 +146,40 @@ export const getWalletBalanceRequest = (
     }
   });
 };
+
+export const getProviderWalletRequest = (
+  accessToken: string,
+  userId: string,
+  chainId: string
+): Promise<LiquidityWalletType> => {
+  return new Promise((resolve, reject) => {
+    try {
+      axios
+        .get(
+          `${DELIGHT_API_URL}/liquidity-wallets/single?chainId=${chainId}&userId=${userId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        )
+        .then((res) => {
+          if (res?.data) {
+            resolve(res.data);
+          } else {
+            reject('Provider not found');
+          }
+        })
+        .catch((err) => {
+          console.error('getProviderWalletRequest > axios err=', err);
+          reject('Error in getProviderWalletRequest axios');
+        });
+    } catch (error) {
+      console.error(
+        'in walletServices > getProviderWalletRequest, Err===',
+        error
+      );
+      reject('System error. Please try again later!');
+    }
+  });
+};

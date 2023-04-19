@@ -30,7 +30,7 @@ const OfferCardHeader = (props: OfferCardProps) => {
           lineHeight: '19px',
         }}
       >
-        Provider
+        {offer.providerDetails?.name || 'Provider'}
       </Typography>
       {isInAdvancedMode && (
         <>
@@ -53,95 +53,97 @@ const OfferCardHeader = (props: OfferCardProps) => {
         </>
       )}
 
-      <Stack
-        direction="row"
-        alignItems="center"
-        justifyContent="flex-start"
-        gap="24px"
-        sx={{ paddingTop: '10px' }}
-      >
-        <Box>
-          <Tooltip title="Trades: 134">
-            <Stack
-              direction="row"
-              alignItems="center"
-              justifyContent="flex-start"
-              gap="4px"
-            >
-              <CurrencyExchangeIcon
-                sx={{
-                  fontSize: '14px',
-                  color: '#808898',
-                }}
-              />
-              <Typography
-                sx={{
-                  fontWeight: '400',
-                  fontSize: '12px',
-                  lineHeight: '12px',
-                  color: '#E3E3E8',
-                }}
+      {isInAdvancedMode && (
+        <Stack
+          direction="row"
+          alignItems="center"
+          justifyContent="flex-start"
+          gap="24px"
+          sx={{ paddingTop: '10px' }}
+        >
+          <Box>
+            <Tooltip title="Trades: 134">
+              <Stack
+                direction="row"
+                alignItems="center"
+                justifyContent="flex-start"
+                gap="4px"
               >
-                134
-              </Typography>
-            </Stack>
-          </Tooltip>
-        </Box>
-        <Box>
-          <Tooltip title="Disputes: 2">
-            <Stack
-              direction="row"
-              alignItems="center"
-              justifyContent="flex-start"
-              gap="4px"
-            >
-              <GavelIcon
-                sx={{
-                  fontSize: '14px',
-                  color: '#808898',
-                }}
-              />
-              <Typography
-                sx={{
-                  fontWeight: '400',
-                  fontSize: '14px',
-                  lineHeight: '14px',
-                  color: '#E3E3E8',
-                }}
+                <CurrencyExchangeIcon
+                  sx={{
+                    fontSize: '14px',
+                    color: '#808898',
+                  }}
+                />
+                <Typography
+                  sx={{
+                    fontWeight: '400',
+                    fontSize: '12px',
+                    lineHeight: '12px',
+                    color: '#E3E3E8',
+                  }}
+                >
+                  134
+                </Typography>
+              </Stack>
+            </Tooltip>
+          </Box>
+          <Box>
+            <Tooltip title="Disputes: 2">
+              <Stack
+                direction="row"
+                alignItems="center"
+                justifyContent="flex-start"
+                gap="4px"
               >
-                2
-              </Typography>
-            </Stack>
-          </Tooltip>
-        </Box>
-        <Box>
-          <Tooltip title="Avg. pay time: 120s">
-            <Stack
-              direction="row"
-              alignItems="center"
-              justifyContent="flex-start"
-              gap="4px"
-            >
-              <AccessTimeIcon
-                sx={{
-                  fontSize: '14px',
-                  color: '#808898',
-                }}
-              />
-              <Typography
-                sx={{
-                  fontWeight: '400',
-                  fontSize: '14px',
-                  lineHeight: '14px',
-                  color: '#E3E3E8',
-                }}
+                <GavelIcon
+                  sx={{
+                    fontSize: '14px',
+                    color: '#808898',
+                  }}
+                />
+                <Typography
+                  sx={{
+                    fontWeight: '400',
+                    fontSize: '14px',
+                    lineHeight: '14px',
+                    color: '#E3E3E8',
+                  }}
+                >
+                  2
+                </Typography>
+              </Stack>
+            </Tooltip>
+          </Box>
+          <Box>
+            <Tooltip title="Avg. pay time: 120s">
+              <Stack
+                direction="row"
+                alignItems="center"
+                justifyContent="flex-start"
+                gap="4px"
               >
-                120s
-              </Typography>
-            </Stack>
-          </Tooltip>
-        </Box>
-      </Stack>
+                <AccessTimeIcon
+                  sx={{
+                    fontSize: '14px',
+                    color: '#808898',
+                  }}
+                />
+                <Typography
+                  sx={{
+                    fontWeight: '400',
+                    fontSize: '14px',
+                    lineHeight: '14px',
+                    color: '#E3E3E8',
+                  }}
+                >
+                  120s
+                </Typography>
+              </Stack>
+            </Tooltip>
+          </Box>
+        </Stack>
+      )}
     </Box>
   );
 };

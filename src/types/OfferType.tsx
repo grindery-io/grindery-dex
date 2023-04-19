@@ -1,3 +1,5 @@
+import { LiquidityWalletType } from './LiquidityWalletType';
+
 export type OfferType = {
   _id: string;
   chainId: string;
@@ -19,4 +21,5 @@ export type OfferType = {
   title?: string;
   new?: boolean;
   provider?: string;
+  providerDetails?: LiquidityWalletType;
 };

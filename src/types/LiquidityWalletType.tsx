@@ -5,4 +5,5 @@ export type LiquidityWalletType = {
   walletAddress: string;
   updated?: boolean;
   new?: boolean;
+  name?: string;
 };
