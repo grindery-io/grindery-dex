@@ -60,6 +60,9 @@ const Popup = (props: Props) => {
           src="https://www.grindery.io/hubfs/mercari-assets/promo-optimized.png"
           alt="A man tries to get BSC testnet tokens"
         />
+        <Typography variant="body2" textAlign="center" gutterBottom>
+          To trade purchase with exactly 0.001 g-eth.
+        </Typography>
         <Typography textAlign="center">
           Something not working? Want to see live transactions?{' '}
           <a
