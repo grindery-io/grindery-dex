@@ -7,25 +7,19 @@ import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import CurrencyExchangeIcon from '@mui/icons-material/CurrencyExchange';
 import {
   CompanyNameWrapper,
-  ConnectWrapper,
   Container,
   LogoWrapper,
   NavTabsWrapper,
-  UserWrapper,
   Wrapper,
 } from './MainNavigation.style';
 import { Logo, NavTabs } from '../../components';
 import MainNavigationDrawer from './MainNavigationDrawer';
 import MainNavigationUserMenu from './MainNavigationUserMenu';
-import {
-  useAppSelector,
-  selectUserId,
-  selectUserAdvancedMode,
-} from '../../store';
-import { useUserController } from '../../controllers';
+import { useAppSelector, selectUserAdvancedMode } from '../../store';
 import { ROUTES } from '../../config';
 import { NavTabsItemType } from '../../types';
-import MainNavigationChainSelector from './MainNavigationChainSelector';
+import MainNavigationSwitchChainButton from './MainNavigationSwitchChainButton';
+import MainNavigationWalletBalance from './MainNavigationWalletBalance';
 
 export const TABS_NAV: NavTabsItemType[] = [
   {
@@ -46,8 +40,6 @@ type Props = {};
 
 const MainNavigation = (props: Props) => {
   let navigate = useNavigate();
-  const user = useAppSelector(selectUserId);
-  const { connectUser } = useUserController();
   const [drawerOpen, setDrawerOpen] = React.useState(false);
   const advancedMode = useAppSelector(selectUserAdvancedMode);
 
@@ -125,24 +117,9 @@ const MainNavigation = (props: Props) => {
               },
             }}
           >
-            <MainNavigationChainSelector />
-            {!user && 'ethereum' in window && (
-              <ConnectWrapper>
-                <button
-                  onClick={() => {
-                    connectUser();
-                  }}
-                  id="connect-button"
-                >
-                  Connect wallet
-                </button>
-              </ConnectWrapper>
-            )}
-            {user && (
-              <UserWrapper>
-                <MainNavigationUserMenu />
-              </UserWrapper>
-            )}
+            <MainNavigationWalletBalance />
+            <MainNavigationSwitchChainButton />
+            <MainNavigationUserMenu />
           </Stack>
         </Wrapper>
         <MainNavigationDrawer

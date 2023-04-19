@@ -3,7 +3,12 @@ import Jdenticon from 'react-jdenticon';
 import { ICONS, ROUTES } from '../../config';
 import {
   Alert,
+  Box,
+  List,
+  ListItem,
+  ListItemButton,
   ListItemIcon,
+  ListItemText,
   MenuItem,
   Snackbar,
   Stack,
@@ -21,58 +26,145 @@ import {
   selectUserIsAdmin,
   selectUserAdvancedMode,
   selectUserId,
+  selectChainsItems,
+  selectUserChainId,
+  selectUserAccessToken,
 } from '../../store';
-import {
-  UserContainer,
-  UserId,
-  UserStatus,
-  UserWrapper,
-} from './MainNavigationUserMenu.style';
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 import { Menu } from '../../components';
 import SettingsIcon from '@mui/icons-material/Settings';
+import { getChainById } from '../../utils';
+import LockIcon from '@mui/icons-material/Lock';
 
-type Props = {
-  mode?: 'dark' | 'light';
-};
+type Props = {};
 
 const MainNavigationUserMenu = (props: Props) => {
-  const mode = props.mode || 'light';
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
-  const { disconnectUser, handleAdvancedModeToggleAction } =
+  const { disconnectUser, connectUser, handleAdvancedModeToggleAction } =
     useUserController();
   const [copied, setCopied] = useState(false);
   let navigate = useNavigate();
   const userId = useAppSelector(selectUserId);
+  const accessToken = useAppSelector(selectUserAccessToken);
   const isAdmin = useAppSelector(selectUserIsAdmin);
   const address = useAppSelector(selectUserAddress);
   const advancedMode = useAppSelector(selectUserAdvancedMode);
+  const userChainId = useAppSelector(selectUserChainId);
+  const chains = useAppSelector(selectChainsItems);
+  const goerliChain = getChainById('5', chains);
 
   const handleClickListItemButton = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
+    if (accessToken) {
+      setAnchorEl(event.currentTarget);
+    } else {
+      connectUser();
+    }
   };
 
   const handleClose = () => {
     setAnchorEl(null);
   };
 
-  return address ? (
-    <UserContainer>
-      <UserWrapper
-        onClick={handleClickListItemButton}
-        className={`${open ? 'opened' : ''} ${mode}`}
-        id="user-menu-button"
+  return (
+    <Box>
+      <List
+        component="nav"
+        aria-label="wallet"
+        sx={{
+          bgcolor: 'transparent',
+          padding: '0',
+          '& .MuiListItemSecondaryAction-root': {
+            height: '20px',
+            width: '20px',
+            right: '8px',
+          },
+        }}
       >
-        <UserStatus>
-          <Jdenticon size="20" value={encodeURIComponent(address)} />
-        </UserStatus>
-        <UserId className={mode} id="user-address">
-          {address.substring(0, 6) +
-            '...' +
-            address.substring(address.length - 4)}
-        </UserId>
-      </UserWrapper>
+        <ListItem disablePadding>
+          <ListItemButton
+            id="user-menu-button"
+            aria-expanded={open ? 'true' : undefined}
+            onClick={handleClickListItemButton}
+            sx={{
+              borderRadius: '34px',
+              paddingTop: '3px',
+              paddingBottom: '3px',
+              paddingLeft: '8px',
+              paddingRight: '16px',
+              transition: 'border-color 0.2s ease-in-out',
+              border: `1px solid ${open ? '#0b0d17' : '#dcdcdc'}`,
+              '&:hover': {
+                background: 'transparent',
+                borderColor: '#0b0d17 !important',
+              },
+            }}
+          >
+            <ListItemIcon
+              sx={{
+                minWidth: '36px',
+                '& img': {
+                  width: '28px',
+                  height: '28px',
+                  maxWidth: '28px',
+                  display: 'block',
+                },
+              }}
+            >
+              {accessToken ? <img src={ICONS.METAMASK} alt="" /> : <LockIcon />}
+            </ListItemIcon>
+
+            <ListItemText
+              sx={{
+                margin: 0,
+                '& .MuiListItemText-secondary': {
+                  lineHeight: 1,
+                  color: '#000',
+                },
+              }}
+              primary={
+                <Typography variant="body2">
+                  {userChainId
+                    ? `MetaMask @ ${
+                        goerliChain && userChainId === '5'
+                          ? goerliChain.label
+                          : 'Unknown'
+                      }`
+                    : 'Not Connected'}
+                </Typography>
+              }
+              secondary={
+                <Stack direction="row" alignItems="center" gap="8px">
+                  {accessToken ? (
+                    <>
+                      <Box
+                        sx={{
+                          borderRadius: '50%',
+                          width: '16px',
+                          height: '16px',
+                          overflow: 'hidden',
+                        }}
+                      >
+                        <Jdenticon
+                          size="16"
+                          value={encodeURIComponent(address)}
+                        />
+                      </Box>
+                      <Typography variant="body2">
+                        {address.substring(0, 6) +
+                          '...' +
+                          address.substring(address.length - 4)}
+                      </Typography>
+                    </>
+                  ) : (
+                    <Typography variant="body2">Connect Wallet</Typography>
+                  )}
+                </Stack>
+              }
+            />
+          </ListItemButton>
+        </ListItem>
+      </List>
 
       <Menu
         id="user-menu"
@@ -197,8 +289,8 @@ const MainNavigationUserMenu = (props: Props) => {
       >
         <Alert severity="success">Wallet address copied!</Alert>
       </Snackbar>
-    </UserContainer>
-  ) : null;
+    </Box>
+  );
 };
 
 export default MainNavigationUserMenu;

@@ -314,12 +314,6 @@ export const ShopController = ({ children }: ShopControllerProps) => {
 
       // stop execution if offer activation failed
       if (!tx) {
-        dispatch(
-          setShopError({
-            type: 'acceptOffer',
-            text: 'Offer acceptance transaction failed',
-          })
-        );
         dispatch(setShopAccepting(''));
         return;
       }

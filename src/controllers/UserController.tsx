@@ -106,7 +106,7 @@ export const UserController = ({ children }: UserControllerProps) => {
   const fetchChainTokenPrice = useCallback(
     async (accessToken: string, tokenSymbol: string) => {
       dispatch(setUserChainTokenPriceLoading(true));
-      const price = await getTokenPriceById(accessToken, tokenSymbol);
+      const price = await getTokenPriceById(accessToken, 'ETH');
       dispatch(setUserChainTokenPrice(price));
       dispatch(setUserChainTokenPriceLoading(false));
     },
@@ -123,9 +123,9 @@ export const UserController = ({ children }: UserControllerProps) => {
       dispatch(setUserChainTokenBalanceLoading(true));
       const balance = await getTokenBalanceRequest(
         accessToken,
-        chainId,
+        '5',
         address,
-        tokenAddress
+        '0x0'
       );
       dispatch(setUserChainTokenBalance(balance || '0'));
       dispatch(setUserChainTokenBalanceLoading(false));

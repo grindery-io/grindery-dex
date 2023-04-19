@@ -23,13 +23,6 @@ export const Wrapper = styled('div')({
   boxSizing: 'border-box',
 });
 
-export const UserWrapper = styled('div')({
-  order: '4',
-  '@media (min-width: 960px)': {
-    order: '4',
-  },
-});
-
 export const LogoWrapper = styled('a')({
   display: 'block',
   textDecoration: 'none',
@@ -61,25 +54,5 @@ export const NavTabsWrapper = styled('div')({
   order: '3',
   '@media (max-width: 1199px)': {
     display: 'none',
-  },
-});
-
-export const ConnectWrapper = styled('div')({
-  display: 'block',
-  order: 4,
-  '& button': {
-    background: '#0b0d17',
-    borderRadius: '5px',
-    boxShadow: 'none',
-    fontWeight: '700',
-    fontSize: '16px',
-    lineHeight: '150%',
-    color: '#ffffff',
-    padding: '8px 24px',
-    cursor: 'pointer',
-    border: 'none',
-    '&:hover': {
-      boxShadow: '0px 4px 8px rgba(106, 71, 147, 0.1)',
-    },
   },
 });
