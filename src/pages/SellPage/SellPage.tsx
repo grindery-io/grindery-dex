@@ -5,7 +5,6 @@ import OrdersPage from '../OrdersPage/OrdersPage';
 import AutomationsPage from '../AutomationsPage/AutomationsPage';
 import {
   SellMenu,
-  PageContainer,
   Loading,
   PageCard,
   PageCardHeader,
@@ -32,45 +31,43 @@ const SellPage = (props: Props) => {
   }
   return (
     <WalletsController>
-      <PageContainer>
-        {isAdmin ? (
-          <>
-            <SellMenu />
-            <Routes>
-              <Route
-                path={ROUTES.SELL.OFFERS.RELATIVE_PATH}
-                element={<OffersPage />}
-              />
-              <Route
-                path={ROUTES.SELL.ORDERS.RELATIVE_PATH}
-                element={<OrdersPage />}
-              />
-              <Route
-                path={ROUTES.SELL.AUTOMATIONS.RELATIVE_PATH}
-                element={<AutomationsPage />}
-              />
-              <Route
-                path="/"
-                element={<Navigate to={ROUTES.SELL.OFFERS.ROOT.FULL_PATH} />}
-              />
-              <Route path="*" element={<Page404 />} />
-            </Routes>
-          </>
-        ) : (
-          <>
-            <PageCard>
-              <PageCardHeader title="Coming soon" titleAlign="center" />
-              <PageCardBody>
-                <Box height="24px" />
-                <Typography fontSize="42px" textAlign="center">
-                  <TimerIcon sx={{ fontSize: 'inherit' }} />
-                </Typography>
-                <Box height="40px" />
-              </PageCardBody>
-            </PageCard>
-          </>
-        )}
-      </PageContainer>
+      {isAdmin ? (
+        <>
+          <SellMenu />
+          <Routes>
+            <Route
+              path={ROUTES.SELL.OFFERS.RELATIVE_PATH}
+              element={<OffersPage />}
+            />
+            <Route
+              path={ROUTES.SELL.ORDERS.RELATIVE_PATH}
+              element={<OrdersPage />}
+            />
+            <Route
+              path={ROUTES.SELL.AUTOMATIONS.RELATIVE_PATH}
+              element={<AutomationsPage />}
+            />
+            <Route
+              path="/"
+              element={<Navigate to={ROUTES.SELL.OFFERS.ROOT.FULL_PATH} />}
+            />
+            <Route path="*" element={<Page404 />} />
+          </Routes>
+        </>
+      ) : (
+        <>
+          <PageCard>
+            <PageCardHeader title="Coming soon" titleAlign="center" />
+            <PageCardBody>
+              <Box height="24px" />
+              <Typography fontSize="42px" textAlign="center">
+                <TimerIcon sx={{ fontSize: 'inherit' }} />
+              </Typography>
+              <Box height="40px" />
+            </PageCardBody>
+          </PageCard>
+        </>
+      )}
     </WalletsController>
   );
 };

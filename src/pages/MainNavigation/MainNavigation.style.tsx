@@ -1,5 +1,14 @@
 import { styled } from '@mui/material';
 
+export const Container = styled('div')({
+  position: 'fixed',
+  left: '0',
+  top: '0',
+  zIndex: '1300',
+  width: '100%',
+  maxWidth: '100%',
+});
+
 export const Wrapper = styled('div')({
   padding: '16px',
   display: 'flex',
@@ -8,20 +17,10 @@ export const Wrapper = styled('div')({
   flexDirection: 'row',
   flexWrap: 'nowrap',
   gap: '10px',
-  position: 'fixed',
-  left: '0',
-  top: '0',
   backdropFilter: 'blur(12px)',
   background: 'rgba(255, 255, 255, 0.84)',
   width: '100%',
-  maxWidth: '100%',
   boxSizing: 'border-box',
-  zIndex: '1300',
-  '@media (min-width: 960px)': {
-    width: '100%',
-    top: '0',
-    maxWidth: '100%',
-  },
 });
 
 export const UserWrapper = styled('div')({
