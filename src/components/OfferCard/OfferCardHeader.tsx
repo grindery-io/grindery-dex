@@ -30,7 +30,7 @@ const OfferCardHeader = (props: OfferCardProps) => {
           lineHeight: '19px',
         }}
       >
-        {offer.providerDetails?.name || 'Provider'}
+        {offer.providerDetails?.name || 'Offer'}
       </Typography>
       {isInAdvancedMode && (
         <>
