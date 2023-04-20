@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {
+  Alert,
   Box,
   Dialog,
   DialogContent,
@@ -32,21 +33,28 @@ const Popup = (props: Props) => {
         maxWidth: '850px',
         margin: '0 auto',
 
-        '& .MuiPaper-root': {
+        '& .MuiDialog-paper': {
           boxSizing: 'border-box',
-          padding: '30px 40px',
+          padding: '72px 16px 40px',
           maxWidth: '100%',
         },
       }}
       open={showModal}
       onClose={handleModalClosed}
     >
-      <Box sx={{ position: 'absolute', top: '10px', right: '10px' }}>
+      <Box sx={{ position: 'absolute', top: '20px', right: '20px' }}>
         <IconButton sx={{ color: '#000' }} onClick={handleModalClosed}>
           <CloseIcon sx={{ fontSize: 40 }} />
         </IconButton>
       </Box>
-      <DialogTitle sx={{ textAlign: 'center' }}>
+      <DialogTitle
+        sx={{
+          textAlign: 'center',
+          fontSize: '24px',
+          fontWeight: '700',
+          paddingBottom: '24px',
+        }}
+      >
         Quickly get a bunch of BNB for BSC-testnet using Goerli-Eth!
       </DialogTitle>
       <DialogContent>
@@ -55,14 +63,39 @@ const Popup = (props: Props) => {
             width: '100%',
             maxWidth: '100%',
             height: 'auto',
-            marginBottom: '20px',
+            borderRadius: '20px',
+            display: 'block',
           }}
           src="https://www.grindery.io/hubfs/mercari-assets/promo-optimized.png"
           alt="A man tries to get BSC testnet tokens"
         />
-        <Typography variant="body2" textAlign="center" gutterBottom>
-          To trade purchase with exactly 0.001 g-eth.
-        </Typography>
+        <Box sx={{ textAlign: 'center', margin: '24px 0' }}>
+          <Alert
+            severity="warning"
+            sx={{
+              background: '#FFF1D6 !important',
+              borderRadius: '5px !important',
+              padding: '8px !important',
+              width: 'auto !important',
+              display: 'inline-flex',
+              alignItems: 'center',
+              '& .MuiAlert-icon': {
+                padding: 0,
+                marginRight: '10px',
+              },
+              '& .MuiAlert-message': {
+                padding: 0,
+                height: 'auto',
+                lineHeight: 1.5,
+                fontSize: '16px',
+                color: '#0B0D17',
+              },
+            }}
+          >
+            To trade purchase with exactly 0.001 g-eth.
+          </Alert>
+        </Box>
+
         <Typography textAlign="center">
           Something not working? Want to see live transactions?{' '}
           <a
