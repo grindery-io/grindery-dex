@@ -9,7 +9,7 @@ describe('Automations page', () => {
       )}/view-blockchains/drone-address*`
     ).as('GetBotAddress');
 
-    cy.visit('http://localhost:3000/sell/automations');
+    cy.visit('http://localhost:3000/sell/automations?popup=false');
     cy.get('#connect-button').click();
     cy.acceptMetamaskAccess({
       allAccounts: false,
@@ -89,6 +89,7 @@ describe('Automations page', () => {
     cy.resetMetamaskAccount();
     cy.wait(1000);
     cy.switchMetamaskAccount(2);
+    cy.visit('http://localhost:3000/sell/automations?popup=false');
     cy.get('#connect-button').click();
     cy.acceptMetamaskAccess({
       allAccounts: false,

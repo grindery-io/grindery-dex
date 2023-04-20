@@ -16,6 +16,10 @@ declare global {
 }
 
 export const App = () => {
+  const search = window.location.search;
+  const params = new URLSearchParams(search);
+  const popup = params.get('popup');
+
   return (
     <ThemeProvider theme={theme}>
       <AuthenticationProvider>
@@ -24,7 +28,7 @@ export const App = () => {
             <AbiController>
               <ChainsController>
                 <AppRouter />
-                <Popup />
+                {popup !== 'false' && <Popup />}
               </ChainsController>
             </AbiController>
           </UserController>

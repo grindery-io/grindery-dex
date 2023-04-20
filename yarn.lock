@@ -17066,10 +17066,10 @@ url-to-options@^1.0.1:
   resolved "https://registry.yarnpkg.com/url-to-options/-/url-to-options-1.0.1.tgz#1505a03a289a48cbd7a434efbaeec5055f5633a9"
   integrity sha512-0kQLIzG4fdk/G5NONku64rSH/x32NOA39LVQqlK8Le6lvTF6GGRJpqaQFGgU+CLwySIqBSMdwYM0sYcW9f6P4A==
 
-use-grindery-nexus@^0.4.7:
-  version "0.4.7"
-  resolved "https://registry.yarnpkg.com/use-grindery-nexus/-/use-grindery-nexus-0.4.7.tgz#c9a1e7b50153720b169e4ad83d0280ebe126558e"
-  integrity sha512-c7rB4U9AA8d//uE+AA90cQpZs02ZGdfXHQcmW7i/e6vn1IkrrcSUfWZLqXut++bNzdTeC/CF+z0iyjelk+EbmQ==
+use-grindery-nexus@^0.5.0:
+  version "0.5.0"
+  resolved "https://registry.yarnpkg.com/use-grindery-nexus/-/use-grindery-nexus-0.5.0.tgz#09b8702bdfd82aeedc8e2170fc94010ad2d681b7"
+  integrity sha512-1f1TTXci/G13SOCAllh+8Df7qwb4mv6qS5g+TBEPpGiBxtAhesf9ER+bBzM0A/UjERvc0UhrBzm5XCX7H8ViNQ==
   dependencies:
     "@onflow/fcl" "^1.2.1"
     bignumber.js "^9.0.2"

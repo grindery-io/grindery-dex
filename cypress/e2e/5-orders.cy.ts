@@ -11,7 +11,7 @@ describe('Orders page', () => {
       `${Cypress.env('CYPRESS_DELIGHT_API_URL')}/orders/complete`
     ).as('UpdateOrder');
 
-    cy.visit('http://localhost:3000/sell/orders');
+    cy.visit('http://localhost:3000/sell/orders?popup=false');
     cy.get('#connect-button').click();
     cy.acceptMetamaskAccess({
       allAccounts: false,
@@ -88,6 +88,7 @@ describe('Orders page', () => {
     cy.resetMetamaskAccount();
     cy.wait(1000);
     cy.switchMetamaskAccount(2);
+    cy.visit('http://localhost:3000/sell/orders?popup=false');
     cy.get('#connect-button').click();
     cy.acceptMetamaskAccess({
       allAccounts: false,

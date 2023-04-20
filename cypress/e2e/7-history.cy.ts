@@ -2,7 +2,7 @@
 
 describe('Orders history page', () => {
   beforeEach(() => {
-    cy.visit('http://localhost:3000/history');
+    cy.visit('http://localhost:3000/history?popup=false');
     cy.get('#connect-button').click();
     cy.acceptMetamaskAccess({
       allAccounts: false,
@@ -28,6 +28,7 @@ describe('Orders history page', () => {
     cy.resetMetamaskAccount();
     cy.wait(1000);
     cy.switchMetamaskAccount(2);
+    cy.visit('http://localhost:3000/history?popup=false');
     cy.get('#connect-button').click();
     cy.acceptMetamaskAccess({
       allAccounts: false,

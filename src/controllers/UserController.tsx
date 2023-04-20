@@ -74,10 +74,6 @@ export const UserController = ({ children }: UserControllerProps) => {
 
   const disconnectUser = () => {
     disconnect();
-    dispatch(setUserId(''));
-    dispatch(setUserAddress(''));
-    dispatch(setUserAccessToken(''));
-    window.location.href = '/';
   };
 
   const getEthers = () => {
@@ -139,15 +135,11 @@ export const UserController = ({ children }: UserControllerProps) => {
   };
 
   useEffect(() => {
-    if (user) {
-      dispatch(setUserId(user));
-    }
+    dispatch(setUserId(user || ''));
   }, [user, dispatch]);
 
   useEffect(() => {
-    if (address) {
-      dispatch(setUserAddress(address));
-    }
+    dispatch(setUserAddress(address || ''));
   }, [address, dispatch]);
 
   useEffect(() => {
@@ -159,16 +151,14 @@ export const UserController = ({ children }: UserControllerProps) => {
   }, [chain, dispatch]);
 
   useEffect(() => {
-    if (token?.access_token) {
-      dispatch(setUserAccessToken(token?.access_token || ''));
-    }
+    dispatch(setUserAccessToken(token?.access_token || ''));
   }, [token?.access_token, dispatch]);
 
   useEffect(() => {
-    if (token?.access_token) {
-      checkUserIsAdmin(token?.access_token);
+    if (userAccessToken) {
+      checkUserIsAdmin(userAccessToken);
     }
-  }, [token?.access_token, checkUserIsAdmin]);
+  }, [userAccessToken, checkUserIsAdmin]);
 
   useEffect(() => {
     if (userChainId && userAccessToken && userAddress && userChainTokenSymbol) {

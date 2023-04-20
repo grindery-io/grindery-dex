@@ -13,7 +13,7 @@ describe('Offers page', () => {
       `${Cypress.env('CYPRESS_DELIGHT_API_URL')}/offers/*`
     ).as('UpdateOffer');
 
-    cy.visit('http://localhost:3000/sell/offers');
+    cy.visit('http://localhost:3000/sell/offers?popup=false');
     cy.get('#connect-button').click();
     cy.acceptMetamaskAccess({
       allAccounts: false,
@@ -68,7 +68,7 @@ describe('Offers page', () => {
         );
         cy.get('#receive-button .MuiCardHeader-subheader').should(
           'have.text',
-          'on Goerli Testnet'
+          'on Goerli'
         );
 
         cy.get('button').contains('Create').click();
@@ -252,6 +252,7 @@ describe('Offers page', () => {
     cy.resetMetamaskAccount();
     cy.wait(1000);
     cy.importMetamaskAccount(Cypress.env('CYPRESS_NON_ADMIN_IMPORT_KEY'));
+    cy.visit('http://localhost:3000/sell/offers?popup=false');
     cy.get('#connect-button').click();
     cy.acceptMetamaskAccess({
       allAccounts: false,

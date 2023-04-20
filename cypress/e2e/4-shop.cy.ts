@@ -6,7 +6,7 @@ describe('Shop page', () => {
       'PlaceOrder'
     );
 
-    cy.visit('http://localhost:3000/buy/shop');
+    cy.visit('http://localhost:3000/buy/shop?popup=false');
     cy.get('#connect-button').click();
     cy.acceptMetamaskAccess({
       allAccounts: false,

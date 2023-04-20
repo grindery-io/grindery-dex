@@ -180,6 +180,7 @@ const MainNavigationUserMenu = (props: Props) => {
                           fontWeight: '700',
                           lineHeight: 1,
                         }}
+                        id="user-address"
                       >
                         {address.substring(0, 6) +
                           '...' +
