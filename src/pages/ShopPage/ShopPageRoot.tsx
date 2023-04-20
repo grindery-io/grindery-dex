@@ -106,7 +106,7 @@ const ShopPageRoot = (props: Props) => {
               </>
             ) : (
               <>
-                <Typography textAlign="center">Offers not found</Typography>
+                <Typography textAlign="center">No offers found</Typography>
               </>
             )}
           </>

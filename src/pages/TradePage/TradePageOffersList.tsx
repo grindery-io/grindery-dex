@@ -39,8 +39,16 @@ const TradePageOffersList = (props: Props) => {
           <NotFound
             text={
               <>
-                Offers not found. Please, try another chain, token or change the
-                amount.
+                No offers found. Try 0.001 Goerli ETH. For support{' '}
+                <a
+                  style={{ color: '#3f49e1' }}
+                  href="https://discord.gg/PCMTWg3KzE"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  visit our Discord
+                </a>
+                .
               </>
             }
           />
