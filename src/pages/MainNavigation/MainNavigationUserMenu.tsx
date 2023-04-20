@@ -83,7 +83,7 @@ const MainNavigationUserMenu = (props: Props) => {
       >
         <ListItem disablePadding>
           <ListItemButton
-            id="user-menu-button"
+            id={accessToken ? 'user-menu-button' : 'connect-button'}
             aria-expanded={open ? 'true' : undefined}
             onClick={handleClickListItemButton}
             component="button"
