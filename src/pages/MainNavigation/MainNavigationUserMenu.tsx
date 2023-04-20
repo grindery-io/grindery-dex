@@ -88,8 +88,8 @@ const MainNavigationUserMenu = (props: Props) => {
             onClick={handleClickListItemButton}
             sx={{
               borderRadius: '34px',
-              paddingTop: '8px',
-              paddingBottom: '8px',
+              paddingTop: '7px',
+              paddingBottom: '7px',
               paddingLeft: '16px',
               paddingRight: '16px',
               transition: 'border-color 0.2s ease-in-out',

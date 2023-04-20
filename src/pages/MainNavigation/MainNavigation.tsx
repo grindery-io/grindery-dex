@@ -102,10 +102,7 @@ const MainNavigation = (props: Props) => {
             sx={{
               flexDirection: { xs: 'row', sm: 'row' },
               alignItems: { xs: 'center', sm: 'center' },
-              gap: {
-                xs: '12px',
-                sm: '16px',
-              },
+              gap: '8px',
             }}
           >
             <MainNavigationWalletBalance />
