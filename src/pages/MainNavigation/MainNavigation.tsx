@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router';
 import { Box } from '@mui/system';
-import { Alert, IconButton, Stack } from '@mui/material';
+import { IconButton, Stack } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import CurrencyExchangeIcon from '@mui/icons-material/CurrencyExchange';

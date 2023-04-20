@@ -1,21 +1,13 @@
 import React from 'react';
-import { Avatar, Box, Button, Chip, Skeleton } from '@mui/material';
+import { Avatar, Box, Chip, Skeleton } from '@mui/material';
 import {
   selectChainsItems,
-  selectChainsLoading,
   selectUserAccessToken,
-  selectUserChainId,
   selectUserChainTokenBalance,
   selectUserChainTokenBalanceLoading,
-  selectUserId,
   useAppSelector,
 } from '../../store';
-import {
-  getChainById,
-  getTokenBySymbol,
-  switchMetamaskNetwork,
-} from '../../utils';
-import { ChainType } from '../../types';
+import { getTokenBySymbol } from '../../utils';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '../../config';
 import { AvatarDefault } from '../../components';

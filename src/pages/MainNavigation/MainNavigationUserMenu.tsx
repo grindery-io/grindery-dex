@@ -34,7 +34,7 @@ import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 import { Menu } from '../../components';
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import { getChainById } from '../../utils';
-import LockIcon from '@mui/icons-material/Lock';
+import { WalletIcon } from '../../icons';
 
 type Props = {};
 
@@ -88,9 +88,9 @@ const MainNavigationUserMenu = (props: Props) => {
             onClick={handleClickListItemButton}
             sx={{
               borderRadius: '34px',
-              paddingTop: '3px',
-              paddingBottom: '3px',
-              paddingLeft: '8px',
+              paddingTop: '8px',
+              paddingBottom: '8px',
+              paddingLeft: '16px',
               paddingRight: '16px',
               transition: 'border-color 0.2s ease-in-out',
               border: `1px solid ${open ? '#0b0d17' : '#dcdcdc'}`,
@@ -102,28 +102,46 @@ const MainNavigationUserMenu = (props: Props) => {
           >
             <ListItemIcon
               sx={{
-                minWidth: '36px',
+                minWidth: 'auto',
+                padding: accessToken ? '0px' : '4px',
+                marginRight: '8px',
                 '& img': {
-                  width: '28px',
-                  height: '28px',
-                  maxWidth: '28px',
+                  width: '32px',
+                  height: '32px',
+                  maxWidth: '32px',
                   display: 'block',
                 },
               }}
             >
-              {accessToken ? <img src={ICONS.METAMASK} alt="" /> : <LockIcon />}
+              {accessToken ? (
+                <img src={ICONS.METAMASK} alt="" />
+              ) : (
+                <WalletIcon sx={{ color: '#0B0D17' }} />
+              )}
             </ListItemIcon>
 
             <ListItemText
+              secondaryTypographyProps={{
+                component: 'div',
+              }}
               sx={{
                 margin: 0,
                 '& .MuiListItemText-secondary': {
-                  lineHeight: 1,
+                  lineHeight: 1.2,
                   color: '#000',
+                  marginTop: '2px',
+                  fontSize: '0.75rem',
                 },
               }}
               primary={
-                <Typography variant="body2">
+                <Typography
+                  variant="body2"
+                  sx={{
+                    fontSize: '0.75rem',
+                    lineHeight: 1.2,
+                    color: '#0B0D17',
+                  }}
+                >
                   {userChainId
                     ? `MetaMask @ ${
                         goerliChain && userChainId === '5'
@@ -134,30 +152,52 @@ const MainNavigationUserMenu = (props: Props) => {
                 </Typography>
               }
               secondary={
-                <Stack direction="row" alignItems="center" gap="8px">
+                <Stack direction="row" alignItems="center" gap="4px">
                   {accessToken ? (
                     <>
                       <Box
                         sx={{
+                          display: 'block',
                           borderRadius: '50%',
-                          width: '16px',
-                          height: '16px',
+                          width: '12px',
+                          height: '12px',
                           overflow: 'hidden',
+                          background: '#F4F5F7',
                         }}
                       >
                         <Jdenticon
-                          size="16"
+                          size="12"
                           value={encodeURIComponent(address)}
                         />
                       </Box>
-                      <Typography variant="body2">
+                      <Typography
+                        variant="body2"
+                        component="span"
+                        sx={{
+                          fontSize: 'inherit',
+                          color: '#0B0D17',
+                          fontWeight: '700',
+                          lineHeight: 1,
+                        }}
+                      >
                         {address.substring(0, 6) +
                           '...' +
                           address.substring(address.length - 4)}
                       </Typography>
                     </>
                   ) : (
-                    <Typography variant="body2">Connect Wallet</Typography>
+                    <Typography
+                      component="span"
+                      variant="body2"
+                      sx={{
+                        fontSize: 'inherit',
+                        color: '#EA5230',
+                        fontWeight: '700',
+                        lineHeight: 'inherit',
+                      }}
+                    >
+                      Connect Wallet
+                    </Typography>
                   )}
                 </Stack>
               }
