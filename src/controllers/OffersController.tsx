@@ -208,11 +208,11 @@ export const OffersController = ({ children }: OffersControllerProps) => {
       );
       return false;
     }
-    if (parseFloat(input.amountMax) <= parseFloat(input.amountMin)) {
+    if (parseFloat(input.amountMax) < parseFloat(input.amountMin)) {
       dispatch(
         setOffersError({
           type: 'amountMax',
-          text: 'Must be greater than min',
+          text: 'Must be greater than min or equal',
         })
       );
       return false;
