@@ -86,6 +86,7 @@ const MainNavigationUserMenu = (props: Props) => {
             id="user-menu-button"
             aria-expanded={open ? 'true' : undefined}
             onClick={handleClickListItemButton}
+            component="button"
             sx={{
               borderRadius: '34px',
               paddingTop: '7px',
@@ -312,7 +313,9 @@ const MainNavigationUserMenu = (props: Props) => {
             handleClose();
             disconnectUser();
           }}
+          component="button"
           id="disconnect-button"
+          sx={{ width: '100%' }}
         >
           <ListItemIcon>
             <img src={ICONS.DISCONNECT} alt="" />

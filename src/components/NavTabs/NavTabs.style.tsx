@@ -19,7 +19,7 @@ export const StyledTabs = styled((props: StyledTabsProps) => (
   borderRadius: '24px',
   '& .MuiTabs-flexContainer': {
     position: 'relative',
-    zIndex: '2',
+    zIndex: '5',
   },
   '& .MuiTabs-indicator': {
     display: 'flex',
@@ -27,7 +27,7 @@ export const StyledTabs = styled((props: StyledTabsProps) => (
     backgroundColor: 'transparent',
     height: '42.5px',
     bottom: '5px',
-    zIndex: '1',
+    zIndex: '4',
   },
   '& .MuiTabs-indicatorSpan': {
     borderRadius: '24px',

@@ -52,6 +52,7 @@ export const NavTabsWrapper = styled('div')({
   flexWrap: 'nowrap',
   gap: '24px',
   order: '3',
+  zIndex: '5',
   '@media (max-width: 1199px)': {
     display: 'none',
   },

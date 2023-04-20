@@ -105,8 +105,8 @@ const MainNavigation = (props: Props) => {
               gap: '8px',
             }}
           >
-            <MainNavigationWalletBalance />
             <MainNavigationSwitchChainButton />
+            <MainNavigationWalletBalance />
             <MainNavigationUserMenu />
           </Stack>
         </Wrapper>

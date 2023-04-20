@@ -98,6 +98,7 @@ export const selectUserAdvancedMode = (state: RootState) =>
   state.user.advancedMode;
 export const selectUserAdvancedModeAlert = (state: RootState) =>
   state.user.advancedModeAlert;
+
 export const {
   setUserId,
   setUserAddress,
