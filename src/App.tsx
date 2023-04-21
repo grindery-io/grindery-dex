@@ -7,7 +7,6 @@ import { store } from './store';
 import { UserController, ChainsController, AbiController } from './controllers';
 import { theme } from './theme';
 import AppRouter from './pages/AppRouter/AppRouter';
-import Popup from './components/Popup/Popup';
 
 declare global {
   interface Window {
@@ -16,10 +15,6 @@ declare global {
 }
 
 export const App = () => {
-  const search = window.location.search;
-  const params = new URLSearchParams(search);
-  const popup = params.get('popup');
-
   return (
     <ThemeProvider theme={theme}>
       <AuthenticationProvider>
@@ -28,7 +23,6 @@ export const App = () => {
             <AbiController>
               <ChainsController>
                 <AppRouter />
-                {popup !== 'false' && <Popup />}
               </ChainsController>
             </AbiController>
           </UserController>

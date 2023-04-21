@@ -23,6 +23,7 @@ import {
   selectChainsItems,
   setUserChainTokenBalanceLoading,
   setUserAdvancedMode,
+  setUserPopupClosed,
 } from '../store';
 import {
   getTokenBalanceRequest,
@@ -39,6 +40,7 @@ type ContextProps = {
   getProvider: () => any;
   getSigner: () => any;
   handleAdvancedModeToggleAction: (userId: string, newMode: boolean) => void;
+  handlePopupCloseAction: () => void;
 };
 
 // Context provider props
@@ -54,6 +56,7 @@ export const UserContext = createContext<ContextProps>({
   getProvider: () => {},
   getSigner: () => {},
   handleAdvancedModeToggleAction: () => {},
+  handlePopupCloseAction: () => {},
 });
 
 export const UserController = ({ children }: UserControllerProps) => {
@@ -134,6 +137,17 @@ export const UserController = ({ children }: UserControllerProps) => {
     localStorage.setItem(`${userId}_advancedMode`, newMode.toString());
   };
 
+  const handlePopupCloseAction = () => {
+    dispatch(setUserPopupClosed(true));
+    localStorage.setItem(
+      `mercari_popup_closed`,
+      JSON.stringify({
+        value: 'true',
+        expires: new Date().getTime() + 86400000,
+      })
+    );
+  };
+
   useEffect(() => {
     dispatch(setUserId(user || ''));
   }, [user, dispatch]);
@@ -184,6 +198,20 @@ export const UserController = ({ children }: UserControllerProps) => {
     dispatch(setUserAdvancedMode(savedAdvancedMode === 'true'));
   }, [user, dispatch]);
 
+  useEffect(() => {
+    const popupClosed = localStorage.getItem(`mercari_popup_closed`);
+    if (popupClosed) {
+      const popupClosedJson = JSON.parse(popupClosed);
+      const value = popupClosedJson.value;
+      const expires = popupClosedJson.expires;
+      if (value === 'true' && expires && new Date().getTime() < expires) {
+        dispatch(setUserPopupClosed(true));
+      } else {
+        localStorage.removeItem('mercari_popup_closed');
+      }
+    }
+  }, [dispatch]);
+
   return (
     <UserContext.Provider
       value={{
@@ -193,6 +221,7 @@ export const UserController = ({ children }: UserControllerProps) => {
         getProvider,
         getSigner,
         handleAdvancedModeToggleAction,
+        handlePopupCloseAction,
       }}
     >
       {children}

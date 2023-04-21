@@ -28,6 +28,7 @@ export { default as PageCardHeader } from './PageCardHeader/PageCardHeader';
 export { default as PageCardBody } from './PageCardBody/PageCardBody';
 export { default as PageCardSubmitButton } from './PageCardSubmitButton/PageCardSubmitButton';
 export { default as PageContainer } from './PageContainer/PageContainer';
+export { default as Popup } from './Popup/Popup';
 export { default as SelectChainAndTokenButton } from './SelectChainAndTokenButton/SelectChainAndTokenButton';
 export { default as SelectChainButton } from './SelectChainButton/SelectChainButton';
 export { default as SelectTokenButton } from './SelectTokenButton/SelectTokenButton';

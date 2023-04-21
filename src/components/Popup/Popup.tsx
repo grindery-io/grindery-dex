@@ -10,13 +10,21 @@ import {
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 
-type Props = {};
+type Props = {
+  onClose?: () => void;
+};
 
 const Popup = (props: Props) => {
+  const { onClose } = props;
   const [showModal, setShowModal] = useState(false);
 
   const handleModalClosed = () => {
     setShowModal(false);
+    if (onClose) {
+      setTimeout(() => {
+        onClose();
+      }, 800);
+    }
   };
 
   useEffect(() => {

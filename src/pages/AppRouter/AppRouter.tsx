@@ -7,37 +7,52 @@ import SellPage from '../SellPage/SellPage';
 import HistoryPage from '../HistoryPage/HistoryPage';
 import FaucetPage from '../FaucetPage/FaucetPage';
 import Page404 from '../Page404/Page404';
-import { PageContainer } from '../../components';
+import { PageContainer, Popup } from '../../components';
 import {
   selectUserAdvancedMode,
   selectUserAdvancedModeAlert,
+  selectUserPopupClosed,
   useAppSelector,
 } from '../../store';
+import { useUserController } from '../../controllers';
 
 type Props = {};
 
 const AppRouter = (props: Props) => {
   const advancedMode = useAppSelector(selectUserAdvancedMode);
   const advancedModeAlert = useAppSelector(selectUserAdvancedModeAlert);
+  const search = window.location.search;
+  const params = new URLSearchParams(search);
+  const popup = params.get('popup');
+  const popupClosed = useAppSelector(selectUserPopupClosed);
+  const { handlePopupCloseAction } = useUserController();
   return (
-    <PageContainer
-      topShift={advancedMode && advancedModeAlert ? '123px' : '75px'}
-    >
-      <BrowserRouter>
-        <MainNavigation />
-        <Routes>
-          <Route path={ROUTES.BUY.RELATIVE_PATH} element={<BuyPage />} />
-          <Route path={ROUTES.SELL.RELATIVE_PATH} element={<SellPage />} />
-          <Route
-            path={ROUTES.HISTORY.RELATIVE_PATH}
-            element={<HistoryPage />}
-          />
-          <Route path={ROUTES.FAUCET.RELATIVE_PATH} element={<FaucetPage />} />
-          <Route path="/" element={<Navigate to={ROUTES.BUY.FULL_PATH} />} />
-          <Route path="*" element={<Page404 />} />
-        </Routes>
-      </BrowserRouter>
-    </PageContainer>
+    <>
+      <PageContainer
+        topShift={advancedMode && advancedModeAlert ? '123px' : '75px'}
+      >
+        <BrowserRouter>
+          <MainNavigation />
+          <Routes>
+            <Route path={ROUTES.BUY.RELATIVE_PATH} element={<BuyPage />} />
+            <Route path={ROUTES.SELL.RELATIVE_PATH} element={<SellPage />} />
+            <Route
+              path={ROUTES.HISTORY.RELATIVE_PATH}
+              element={<HistoryPage />}
+            />
+            <Route
+              path={ROUTES.FAUCET.RELATIVE_PATH}
+              element={<FaucetPage />}
+            />
+            <Route path="/" element={<Navigate to={ROUTES.BUY.FULL_PATH} />} />
+            <Route path="*" element={<Page404 />} />
+          </Routes>
+        </BrowserRouter>
+      </PageContainer>
+      {popup !== 'false' && !popupClosed && (
+        <Popup onClose={handlePopupCloseAction} />
+      )}
+    </>
   );
 };
 

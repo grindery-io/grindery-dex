@@ -15,6 +15,7 @@ interface UserState {
   id: string;
   isAdmin: boolean;
   isAdminLoading: boolean;
+  popupClosed: boolean;
 }
 
 const initialState: UserState = {
@@ -31,6 +32,7 @@ const initialState: UserState = {
   id: '',
   isAdmin: false,
   isAdminLoading: true,
+  popupClosed: false,
 };
 
 const userSlice = createSlice({
@@ -74,6 +76,9 @@ const userSlice = createSlice({
     setUserAdvancedModeAlert(state, action: PayloadAction<boolean>) {
       state.advancedModeAlert = action.payload;
     },
+    setUserPopupClosed(state, action: PayloadAction<boolean>) {
+      state.popupClosed = action.payload;
+    },
   },
 });
 
@@ -98,6 +103,8 @@ export const selectUserAdvancedMode = (state: RootState) =>
   state.user.advancedMode;
 export const selectUserAdvancedModeAlert = (state: RootState) =>
   state.user.advancedModeAlert;
+export const selectUserPopupClosed = (state: RootState) =>
+  state.user.popupClosed;
 
 export const {
   setUserId,
@@ -112,5 +119,6 @@ export const {
   setUserChainTokenBalanceLoading,
   setUserAdvancedMode,
   setUserAdvancedModeAlert,
+  setUserPopupClosed,
 } = userSlice.actions;
 export default userSlice.reducer;
