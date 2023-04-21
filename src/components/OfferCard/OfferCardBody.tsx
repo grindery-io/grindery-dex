@@ -275,11 +275,9 @@ const OfferCardBody = (props: OfferCardProps) => {
                     fontWeight: '500',
                   },
                 }}
-                title={
-                  price !== '0' ? `US$${price}` : <Skeleton width="70px" />
-                }
+                title={fromAmount !== '0' ? `${fromAmount} ETH` : <Skeleton />}
                 subheader={
-                  fromAmount !== '0' ? `${fromAmount} ETH` : <Skeleton />
+                  price !== '0' ? `US$${price}` : <Skeleton width="70px" />
                 }
                 selected={true}
                 compact={false}
