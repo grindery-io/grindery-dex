@@ -43,16 +43,16 @@ const Popup = (props: Props) => {
 
         '& .MuiDialog-paper': {
           boxSizing: 'border-box',
-          padding: '72px 16px 40px',
+          padding: '24px 16px 16px',
           maxWidth: '100%',
         },
       }}
       open={showModal}
       onClose={handleModalClosed}
     >
-      <Box sx={{ position: 'absolute', top: '20px', right: '20px' }}>
+      <Box sx={{ position: 'absolute', top: '6px', right: '6px' }}>
         <IconButton sx={{ color: '#000' }} onClick={handleModalClosed}>
-          <CloseIcon sx={{ fontSize: 40 }} />
+          <CloseIcon sx={{ fontSize: 36 }} />
         </IconButton>
       </Box>
       <DialogTitle
@@ -60,7 +60,7 @@ const Popup = (props: Props) => {
           textAlign: 'center',
           fontSize: '24px',
           fontWeight: '700',
-          paddingBottom: '24px',
+          paddingBottom: '20px',
         }}
       >
         Quickly get a bunch of BNB for BSC-testnet using Goerli-Eth!
@@ -69,10 +69,11 @@ const Popup = (props: Props) => {
         <img
           style={{
             width: '100%',
-            maxWidth: '100%',
+            maxWidth: '85%',
             height: 'auto',
             borderRadius: '20px',
             display: 'block',
+            margin: '0 auto',
           }}
           src="https://www.grindery.io/hubfs/mercari-assets/promo-optimized.png"
           alt="A man tries to get BSC testnet tokens"

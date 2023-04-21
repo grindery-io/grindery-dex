@@ -4,12 +4,11 @@ import Countdown from 'react-countdown';
 import {
   Button,
   Dialog,
-  DialogActions,
   DialogContent,
   DialogTitle,
   Typography,
 } from '@mui/material';
-import { TransactionID, AlertBox, Loading, OrderCard } from '../../components';
+import { AlertBox, Loading, OrderCard } from '../../components';
 import {
   useAppDispatch,
   useAppSelector,
@@ -19,40 +18,24 @@ import {
   selectShopAccepting,
   selectShopError,
   selectShopModal,
-  selectShopOffers,
   setShopAcceptedOffer,
   setShopAcceptedOfferTx,
   setShopModal,
-  selectUserChainId,
   selectOrdersItems,
 } from '../../store';
-import { OfferType, OrderType } from '../../types';
+import { OrderType } from '../../types';
 import { getChainById } from '../../utils';
 
 type Props = {};
 
 const ShopPageOfferAccept = (props: Props) => {
   const dispatch = useAppDispatch();
-  const userChainId = useAppSelector(selectUserChainId);
-  const foundOffers = useAppSelector((state) =>
-    selectShopOffers(state, userChainId)
-  );
   const showModal = useAppSelector(selectShopModal);
   const accepting = useAppSelector(selectShopAccepting);
   const errorMessage = useAppSelector(selectShopError);
   const accepted = useAppSelector(selectShopAcceptedOffer);
   const acceptedOfferTx = useAppSelector(selectShopAcceptedOfferTx);
   const chains = useAppSelector(selectChainsItems);
-  const fromChainId = userChainId;
-  const acceptedOffer =
-    accepting && foundOffers.find((o: OfferType) => o.offerId === accepting);
-  const explorerLink = acceptedOfferTx
-    ? (
-        chains.find((c) => c.value === `eip155:${fromChainId}`)
-          ?.transactionExplorerUrl || ''
-      ).replace('{hash}', acceptedOfferTx)
-    : '';
-
   const orders = useAppSelector(selectOrdersItems);
   const createdOrder =
     acceptedOfferTx &&
