@@ -80,7 +80,7 @@ const AutomationsPageRoot = (props: Props) => {
               maxRows={3}
             />
             <TextArea
-              label="Pool ABI"
+              label="Source ABI"
               name="poolAbi"
               value={JSON.stringify(poolAbi)}
               showCopyButton
