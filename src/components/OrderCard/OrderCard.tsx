@@ -5,7 +5,7 @@ import moment from 'moment';
 import { Card } from '../Card/Card';
 import AlertBox from '../AlertBox/AlertBox';
 import TransactionID from '../TransactionID/TransactionID';
-import OfferPublic from '../Offer/OfferPublic';
+import OfferPublic from '../OfferPublic/OfferPublic';
 import { OrderType, ChainType } from '../../types';
 import {
   getOrderBuyerLink,

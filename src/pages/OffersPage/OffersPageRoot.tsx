@@ -4,7 +4,7 @@ import { Box, IconButton, Tooltip } from '@mui/material';
 import { AddCircleOutline as AddCircleOutlineIcon } from '@mui/icons-material';
 import {
   ListSubheader,
-  OfferPublic,
+  Offer,
   OfferSkeleton,
   PageCardBody,
   PageCardHeader,
@@ -85,11 +85,10 @@ function OffersPageRoot() {
                         </ListSubheader>
                         {orderOffersByActiveState(groupedOffers[key]).map(
                           (offer: OfferType) => (
-                            <OfferPublic
+                            <Offer
                               key={offer._id}
                               chains={chains}
                               compact
-                              userType="b"
                               offer={offer}
                               isActivating={isActivating}
                               onDeactivateClick={() => {
