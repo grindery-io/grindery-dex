@@ -322,7 +322,7 @@ const OfferPublic = (props: Props) => {
               ) : (
                 <>
                   {typeof amount === 'number' && (
-                    <>{amount.toFixed(6).toLocaleString()}</>
+                    <>{parseFloat(amount.toFixed(6)).toString()}</>
                   )}
 
                   {typeof amount === 'string' && <>{amount}</>}
@@ -426,7 +426,13 @@ const OfferPublic = (props: Props) => {
                 }}
                 mb={'3px'}
               >
-                {!fromAmount ? <Skeleton /> : <>{fromAmount}</>}
+                {!fromAmount ? (
+                  <Skeleton />
+                ) : (
+                  <>
+                    {parseFloat(parseFloat(fromAmount).toFixed(6)).toString()}
+                  </>
+                )}
               </Box>
             }
             subheader={

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Skeleton, Typography } from '@mui/material';
+import { Skeleton, SxProps, Typography } from '@mui/material';
 import { Box } from '@mui/system';
 import moment from 'moment';
 import { Card } from '../Card/Card';
@@ -22,10 +22,23 @@ type Props = {
   error?: string;
   chains: ChainType[];
   id?: string;
+  excludeSteps?: ('gas' | 'rate' | 'time' | 'impact')[];
+  hideStatus?: boolean;
+  containerStyle?: SxProps | React.CSSProperties;
 };
 
 const OrderCard = (props: Props) => {
-  const { order, userType, onCompleteClick, error, chains, id } = props;
+  const {
+    order,
+    userType,
+    onCompleteClick,
+    error,
+    chains,
+    id,
+    excludeSteps,
+    hideStatus,
+    containerStyle,
+  } = props;
   const offer = order.offer;
   const [loading, setLoading] = useState(false);
   const isUserA = userType === 'a';
@@ -55,10 +68,11 @@ const OrderCard = (props: Props) => {
       }`}
       id={id}
       flex={1}
-      style={{
+      sx={{
         borderRadius: '12px',
         marginBottom: '12px',
         backgroundColor: '#fff',
+        ...(containerStyle || {}),
       }}
     >
       {order.date && (
@@ -92,6 +106,7 @@ const OrderCard = (props: Props) => {
 
       {offer ? (
         <OfferPublic
+          advancedMode={false}
           key={offer._id}
           chains={chains}
           offer={offer}
@@ -107,7 +122,9 @@ const OrderCard = (props: Props) => {
           label={isUserA ? 'You receive' : 'You sell'}
           fromLabel={isUserA ? 'You pay' : 'You receive'}
           excludeSteps={
-            isUserA
+            excludeSteps && excludeSteps.length
+              ? excludeSteps
+              : isUserA
               ? order.isComplete
                 ? ['gas', 'impact', 'time']
                 : ['gas', 'impact']
@@ -138,63 +155,64 @@ const OrderCard = (props: Props) => {
           </AlertBox>
         </Box>
       )}
-
-      <Box
-        sx={{
-          padding: '0 16px 6px',
-          '& button': {
-            margin: 0,
-            fontSize: '13px',
-            padding: '8px 20px',
-            color: '#fff',
-            backgroundColor: order.isComplete
-              ? '#00B674'
-              : loading || isUserA
-              ? '#FFB930'
-              : '#FF5858',
-            '&:hover': {
+      {!hideStatus && (
+        <Box
+          sx={{
+            padding: '0 16px 6px',
+            '& button': {
+              margin: 0,
+              fontSize: '13px',
+              padding: '8px 20px',
               color: '#fff',
               backgroundColor: order.isComplete
                 ? '#00B674'
                 : loading || isUserA
                 ? '#FFB930'
                 : '#FF5858',
-              cursor: isUserA
-                ? 'default'
-                : loading
-                ? 'not-allowed'
-                : order.isComplete
-                ? 'default'
-                : 'pointer',
+              '&:hover': {
+                color: '#fff',
+                backgroundColor: order.isComplete
+                  ? '#00B674'
+                  : loading || isUserA
+                  ? '#FFB930'
+                  : '#FF5858',
+                cursor: isUserA
+                  ? 'default'
+                  : loading
+                  ? 'not-allowed'
+                  : order.isComplete
+                  ? 'default'
+                  : 'pointer',
+              },
             },
-          },
-          '& > div': {
-            marginTop: 0,
-          },
-        }}
-      >
-        <PageCardSubmitButton
-          className="OrderCard__button"
-          label={
-            order.isComplete
-              ? 'Completed'
-              : loading
-              ? 'Processing'
-              : isUserA
-              ? 'Processing'
-              : `Send ${parseFloat(order.amountTokenOffer)
-                  .toFixed(6)
-                  .toLocaleString()} ${offer ? offer.token : ''}`
-          }
-          onClick={() => {
-            if (!isUserA) {
-              if (!order.isComplete && !loading) {
-                handleCompleteClick();
-              }
-            }
+            '& > div': {
+              marginTop: 0,
+            },
           }}
-        />
-      </Box>
+        >
+          <PageCardSubmitButton
+            className="OrderCard__button"
+            label={
+              order.isComplete
+                ? 'Completed'
+                : loading
+                ? 'Processing'
+                : isUserA
+                ? 'Processing'
+                : `Send ${parseFloat(order.amountTokenOffer)
+                    .toFixed(6)
+                    .toLocaleString()} ${offer ? offer.token : ''}`
+            }
+            onClick={() => {
+              if (!isUserA) {
+                if (!order.isComplete && !loading) {
+                  handleCompleteClick();
+                }
+              }
+            }}
+          />
+        </Box>
+      )}
     </Card>
   );
 };

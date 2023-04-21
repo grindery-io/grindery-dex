@@ -7,8 +7,9 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  Typography,
 } from '@mui/material';
-import { TransactionID, AlertBox, Loading } from '../../components';
+import { TransactionID, AlertBox, Loading, OrderCard } from '../../components';
 import {
   useAppDispatch,
   useAppSelector,
@@ -23,8 +24,10 @@ import {
   setShopAcceptedOfferTx,
   setShopModal,
   selectUserChainId,
+  selectOrdersItems,
 } from '../../store';
-import { OfferType } from '../../types';
+import { OfferType, OrderType } from '../../types';
+import { getChainById } from '../../utils';
 
 type Props = {};
 
@@ -49,6 +52,11 @@ const ShopPageOfferAccept = (props: Props) => {
           ?.transactionExplorerUrl || ''
       ).replace('{hash}', acceptedOfferTx)
     : '';
+
+  const orders = useAppSelector(selectOrdersItems);
+  const createdOrder =
+    acceptedOfferTx &&
+    orders.find((order: OrderType) => order.hash === acceptedOfferTx);
 
   const handleModalClosed = () => {
     dispatch(setShopAcceptedOffer(''));
@@ -75,24 +83,35 @@ const ShopPageOfferAccept = (props: Props) => {
   return (
     <Dialog
       fullWidth
-      sx={{ width: '100%', maxWidth: '375px', margin: '0 auto' }}
+      sx={{
+        width: '100%',
+        maxWidth: '450px',
+        margin: '0 auto',
+        '& .MuiDialog-paper': {
+          background: '#fff',
+        },
+        '& .MuiDialogContent-root': {
+          paddingLeft: '8px',
+          paddingRight: '8px',
+        },
+      }}
       open={showModal}
       onClose={handleModalClosed}
     >
-      <DialogTitle sx={{ textAlign: 'center' }}>
+      <DialogTitle sx={{ textAlign: 'center', paddingBottom: '0px' }}>
         {accepting
-          ? 'Waiting transaction'
+          ? 'Waiting for order transaction'
           : errorMessage &&
             errorMessage.type === 'acceptOffer' &&
             errorMessage.text
           ? 'Error'
           : accepted
-          ? 'Success'
+          ? 'Your order has been placed!'
           : 'Transaction result'}
       </DialogTitle>
       <DialogContent sx={{ paddingBottom: '0' }}>
         {accepting && (
-          <Box sx={{ paddingBottom: '16px' }}>
+          <Box sx={{ padding: '16px 0' }}>
             <Loading />
           </Box>
         )}
@@ -104,54 +123,67 @@ const ShopPageOfferAccept = (props: Props) => {
             </AlertBox>
           )}
         {accepted && (
-          <Box
-            sx={{
-              '& .MuiPaper-root': {
-                background: 'rgb(237, 247, 237)',
-              },
-            }}
-          >
-            <AlertBox color="success" wrapperStyle={{ marginTop: '0' }}>
-              <p>
-                {acceptedOffer && acceptedOffer.estimatedTime ? (
-                  <>
-                    Your order has been placed and is expected to complete
+          <>
+            {createdOrder && (
+              <>
+                <OrderCard
+                  order={createdOrder}
+                  userType="a"
+                  chains={chains}
+                  excludeSteps={['gas', 'rate', 'time', 'impact']}
+                  hideStatus
+                  containerStyle={{
+                    border: 'none',
+                  }}
+                />
+                <Box sx={{ paddingLeft: '16px', paddingRight: '16px' }}>
+                  <Typography variant="h6" gutterBottom>
+                    What's next?
+                  </Typography>
+                  <Typography gutterBottom variant="body2">
+                    You should receive a transfer of{' '}
+                    {createdOrder.offer?.amount} {createdOrder.offer?.token} on{' '}
+                    {getChainById(createdOrder.offer?.chainId || '', chains)
+                      ?.label || ''}{' '}
+                    from{' '}
+                    {(createdOrder.offer?.provider || '').substring(0, 6) +
+                      '...' +
+                      (createdOrder.offer?.provider || '').substring(
+                        (createdOrder.offer?.provider || '').length - 4
+                      )}{' '}
                     within{' '}
                     <Countdown
                       date={
                         Date.now() +
-                        (acceptedOffer.estimatedTime
-                          ? parseInt(acceptedOffer.estimatedTime) * 1000
+                        (createdOrder.offer?.estimatedTime
+                          ? parseInt(createdOrder.offer.estimatedTime) * 1000
                           : 0)
                       }
                       renderer={countdownRenderer}
-                    />
-                    {} seconds. Hang tight.
-                  </>
-                ) : (
-                  <>
-                    Your order has been placed and is expected to complete soon.
-                    Hang tight.
-                  </>
-                )}
-              </p>
-              <TransactionID
-                containerStyle={{ marginTop: '8px' }}
-                value={acceptedOfferTx}
-                label="ID"
-                link={explorerLink}
-                startLength={6}
-                endLength={6}
-              />
-            </AlertBox>
-          </Box>
+                    />{' '}
+                    seconds.
+                  </Typography>
+                  <Typography variant="body2">
+                    If you have not received anything within 5 minutes, please{' '}
+                    <a
+                      style={{ color: '#3f49e1' }}
+                      href="https://discord.gg/PCMTWg3KzE"
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      visit our Discord
+                    </a>
+                    .
+                  </Typography>
+                </Box>
+              </>
+            )}
+          </>
         )}
-      </DialogContent>
-
-      {!accepting && (
-        <DialogActions sx={{ justifyContent: 'center' }}>
+        {!accepting && (
           <Box
             sx={{
+              margin: '16px 0',
               paddingLeft: '16px',
               paddingRight: '16px',
               flex: 1,
@@ -182,8 +214,8 @@ const ShopPageOfferAccept = (props: Props) => {
               Close
             </Button>
           </Box>
-        </DialogActions>
-      )}
+        )}
+      </DialogContent>
     </Dialog>
   );
 };

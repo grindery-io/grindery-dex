@@ -17,12 +17,15 @@ import {
   setShopLoading,
   setShopModal,
   setShopOffers,
+  setOrdersItems,
 } from '../store';
 import { useUserController } from './UserController';
 import {
   getAllOffers,
   addOrderRequest,
   getProviderWalletRequest,
+  getOrderRequest,
+  getOfferById,
 } from '../services';
 import { POOL_CONTRACT_ADDRESS } from '../config';
 import { TokenType, OfferType, LiquidityWalletType } from '../types';
@@ -92,6 +95,26 @@ export const ShopController = ({ children }: ShopControllerProps) => {
     },
     [dispatch]
   );
+
+  const fetchSingleOrder = async (accessToken: string, id: string) => {
+    let order;
+    try {
+      order = await getOrderRequest(accessToken, id);
+    } catch (error) {
+      // handle order fetching error
+    }
+    if (order) {
+      const offer = await getOfferById(accessToken, order.offerId || '').catch(
+        () => {
+          // handle offer fetching error
+        }
+      );
+      if (offer) {
+        order.offer = offer;
+      }
+      dispatch(setOrdersItems([order]));
+    }
+  };
 
   const validateAcceptOfferAction = (offer: OfferType): boolean => {
     if (!offer.offerId) {
@@ -359,6 +382,20 @@ export const ShopController = ({ children }: ShopControllerProps) => {
         );
       });
       if (order) {
+        // get created order
+        try {
+          fetchSingleOrder(accessToken, order);
+        } catch (error: any) {
+          console.error('saveOrder error', error);
+          dispatch(
+            setShopError({
+              type: 'acceptOffer',
+              text: error?.message || "Server error, order wasn't found",
+            })
+          );
+          return;
+        }
+
         dispatch(setShopApproved(false));
         dispatch(setShopAcceptedOffer(offer.offerId));
         dispatch(setShopAcceptedOfferTx(tx.hash || ''));
