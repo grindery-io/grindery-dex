@@ -129,6 +129,16 @@ export const OrdersController = ({ children }: OrdersControllerProps) => {
       return false;
     }
 
+    if (!userWalletAddress) {
+      dispatch(
+        setOrdersError({
+          type: order.orderId || '',
+          text: 'Liquidity wallet not found',
+        })
+      );
+      return false;
+    }
+
     const offerChainId = order.offer?.chainId || '';
     const offerTokenSymbol = order.offer?.token || '';
     if (!order.offer) {

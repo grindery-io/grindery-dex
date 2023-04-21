@@ -9,13 +9,15 @@ type Props = {
   disabled?: boolean;
   loading?: boolean;
   className?: string;
+  disableRipple?: boolean;
 };
 
 const PageCardSubmitButton = (props: Props) => {
-  const { label, onClick, disabled, loading, className } = props;
+  const { label, onClick, disabled, loading, className, disableRipple } = props;
   return (
     <ButtonWrapper>
       <LoadingButton
+        disableRipple={disableRipple}
         className={className}
         disabled={disabled}
         fullWidth

@@ -115,12 +115,15 @@ const ShopPageOfferAccept = (props: Props) => {
             <Loading />
           </Box>
         )}
+
         {errorMessage &&
           errorMessage.type === 'acceptOffer' &&
           errorMessage.text && (
-            <AlertBox color="error" wrapperStyle={{ marginTop: '0' }}>
-              <p>{errorMessage.text}</p>
-            </AlertBox>
+            <Box sx={{ paddingLeft: '16px', paddingRight: '16px' }}>
+              <AlertBox color="error" wrapperStyle={{ marginTop: '0' }}>
+                <p>{errorMessage.text}</p>
+              </AlertBox>
+            </Box>
           )}
         {accepted && (
           <>

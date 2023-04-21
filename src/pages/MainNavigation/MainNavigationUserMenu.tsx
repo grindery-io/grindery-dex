@@ -228,7 +228,7 @@ const MainNavigationUserMenu = (props: Props) => {
             Copy wallet address
           </Typography>
         </MenuItem>
-        {isAdmin && (
+        {advancedMode && (
           <MenuItem
             onClick={() => {
               handleClose();

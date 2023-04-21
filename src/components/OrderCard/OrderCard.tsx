@@ -158,24 +158,24 @@ const OrderCard = (props: Props) => {
       {!hideStatus && (
         <Box
           sx={{
-            padding: '0 16px 6px',
+            padding: '8px 16px 6px',
             '& button': {
               margin: 0,
               fontSize: '13px',
               padding: '8px 20px',
               color: '#fff',
               backgroundColor: order.isComplete
-                ? '#00B674'
+                ? '#00B674 !important'
                 : loading || isUserA
-                ? '#FFB930'
-                : '#FF5858',
+                ? '#FFB930 !important'
+                : '#FF5858 !important',
               '&:hover': {
                 color: '#fff',
                 backgroundColor: order.isComplete
-                  ? '#00B674'
+                  ? '#00B674 !important'
                   : loading || isUserA
-                  ? '#FFB930'
-                  : '#FF5858',
+                  ? '#FFB930 !important'
+                  : '#FF5858 !important',
                 cursor: isUserA
                   ? 'default'
                   : loading
@@ -191,6 +191,7 @@ const OrderCard = (props: Props) => {
           }}
         >
           <PageCardSubmitButton
+            disableRipple={isUserA || order.isComplete}
             className="OrderCard__button"
             label={
               order.isComplete
