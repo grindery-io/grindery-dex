@@ -1,11 +1,10 @@
 import React from 'react';
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import { Box } from '@mui/system';
-import { IconButton } from '@mui/material';
+import { IconButton, Typography } from '@mui/material';
 import Countdown from 'react-countdown';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
 import {
-  TransactionID,
   AlertBox,
   OfferPublic,
   Loading,
@@ -13,6 +12,7 @@ import {
   PageCardHeader,
   PageCardBody,
   PageCardSubmitButton,
+  OrderCard,
 } from '../../components';
 import {
   useAppDispatch,
@@ -33,8 +33,9 @@ import {
   selectPoolAbi,
   selectTokenAbi,
   selectUserAdvancedMode,
+  selectOrdersItems,
 } from '../../store';
-import { OfferType, TokenType } from '../../types';
+import { OfferType, OrderType, TokenType } from '../../types';
 import { ROUTES } from '../../config';
 import { useUserController, useTradeController } from '../../controllers';
 import { getChainById, getTokenById, getTokenBySymbol } from '../../utils';
@@ -68,20 +69,19 @@ const TradePageOfferAccept = (props: Props) => {
   const { handleAcceptOfferAction } = useTradeController();
   const offer = foundOffers.find((o: OfferType) => o.offerId === offerId);
   const offerChain = getChainById(offer?.chainId || '', chains);
-  const exchangeChain = getChainById(offer?.exchangeChainId || '', chains);
   const exchangeToken = getTokenBySymbol(
     offer?.exchangeToken || '',
     offer?.exchangeChainId || '',
     chains
   );
-  const explorerLink = accepted
-    ? (exchangeChain?.transactionExplorerUrl || '').replace('{hash}', accepted)
-    : '';
   const offerToken = getTokenById(
     offer?.tokenId || '',
     offer?.chainId || '',
     chains
   );
+  const orders = useAppSelector(selectOrdersItems);
+  const createdOrder =
+    accepted && orders.find((order: OrderType) => order.hash === accepted);
 
   const countdownRenderer = ({
     total,
@@ -102,7 +102,7 @@ const TradePageOfferAccept = (props: Props) => {
   return offer ? (
     <PageCard>
       <PageCardHeader
-        title="Review offer"
+        title={accepted ? 'Your order has been placed!' : 'Review offer'}
         titleSize={18}
         titleAlign="center"
         startAdornment={
@@ -161,9 +161,11 @@ const TradePageOfferAccept = (props: Props) => {
               <PageCardSubmitButton
                 label={
                   user
-                    ? approved ||
-                      (typeof fromToken !== 'string' &&
-                        fromToken?.address === '0x0')
+                    ? loading
+                      ? 'Waiting transaction'
+                      : approved ||
+                        (typeof fromToken !== 'string' &&
+                          fromToken?.address === '0x0')
                       ? 'Place Order'
                       : 'Approve tokens'
                     : 'Connect wallet'
@@ -193,37 +195,60 @@ const TradePageOfferAccept = (props: Props) => {
           </>
         ) : (
           <>
-            <AlertBox color="success">
-              <p>
-                {offer.estimatedTime ? (
-                  <>
-                    Your order has been placed and is expected to complete
+            {createdOrder && (
+              <>
+                <OrderCard
+                  order={createdOrder}
+                  userType="a"
+                  chains={chains}
+                  excludeSteps={['gas', 'rate', 'time', 'impact']}
+                  hideStatus
+                  containerStyle={{
+                    border: 'none',
+                  }}
+                />
+                <Box sx={{ paddingLeft: '16px', paddingRight: '16px' }}>
+                  <Typography variant="h6" gutterBottom>
+                    What's next?
+                  </Typography>
+                  <Typography gutterBottom variant="body2">
+                    You should receive a transfer of{' '}
+                    {createdOrder.offer?.amount} {createdOrder.offer?.token} on{' '}
+                    {getChainById(createdOrder.offer?.chainId || '', chains)
+                      ?.label || ''}{' '}
+                    from{' '}
+                    {(createdOrder.offer?.provider || '').substring(0, 6) +
+                      '...' +
+                      (createdOrder.offer?.provider || '').substring(
+                        (createdOrder.offer?.provider || '').length - 4
+                      )}{' '}
                     within{' '}
                     <Countdown
                       date={
                         Date.now() +
-                        (offer.estimatedTime
-                          ? parseInt(offer.estimatedTime) * 1000
+                        (createdOrder.offer?.estimatedTime
+                          ? parseInt(createdOrder.offer.estimatedTime) * 1000
                           : 0)
                       }
                       renderer={countdownRenderer}
-                    />
-                    {} seconds. Hang tight.
-                  </>
-                ) : (
-                  <>
-                    Your order has been placed and is expected to complete soon.
-                    Hang tight.
-                  </>
-                )}
-              </p>
-              <TransactionID
-                containerStyle={{ marginTop: '10px' }}
-                value={accepted}
-                label="Transaction ID"
-                link={explorerLink}
-              />
-            </AlertBox>
+                    />{' '}
+                    seconds.
+                  </Typography>
+                  <Typography variant="body2">
+                    If you have not received anything within 5 minutes, please{' '}
+                    <a
+                      style={{ color: '#3f49e1' }}
+                      href="https://discord.gg/PCMTWg3KzE"
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      visit our Discord
+                    </a>
+                    .
+                  </Typography>
+                </Box>
+              </>
+            )}
             <PageCardSubmitButton
               label="Close"
               onClick={() => {

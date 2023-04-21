@@ -21,6 +21,7 @@ import {
   setTradeOffersVisible,
   setTradePricesLoading,
   setTradeToTokenPrice,
+  setOrdersItems,
 } from '../store';
 import {
   getChainIdHex,
@@ -34,6 +35,8 @@ import {
   searchOffersRequest,
   getTokenPriceById,
   addOrderRequest,
+  getOrderRequest,
+  getOfferById,
 } from '../services';
 import { OfferType, TokenType, ChainType } from '../types';
 import { POOL_CONTRACT_ADDRESS } from '../config';
@@ -90,6 +93,26 @@ export const TradeController = ({ children }: TradeControllerProps) => {
     },
     [dispatch]
   );
+
+  const fetchSingleOrder = async (accessToken: string, id: string) => {
+    let order;
+    try {
+      order = await getOrderRequest(accessToken, id);
+    } catch (error) {
+      // handle order fetching error
+    }
+    if (order) {
+      const offer = await getOfferById(accessToken, order.offerId || '').catch(
+        () => {
+          // handle offer fetching error
+        }
+      );
+      if (offer) {
+        order.offer = offer;
+      }
+      dispatch(setOrdersItems([order]));
+    }
+  };
 
   const handleTradeFilterChange = (
     name: TradeFilterFieldName,
@@ -493,6 +516,18 @@ export const TradeController = ({ children }: TradeControllerProps) => {
         );
       });
       if (order) {
+        try {
+          fetchSingleOrder(accessToken, order);
+        } catch (error: any) {
+          console.error('saveOrder error', error);
+          dispatch(
+            setTradeError({
+              type: 'acceptOffer',
+              text: error?.message || "Server error, order wasn't found",
+            })
+          );
+          return;
+        }
         dispatch(setTradeApproved(false));
         dispatch(setTradeAcceptedOfferTx(tx.hash || ''));
       } else {

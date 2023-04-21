@@ -38,8 +38,7 @@
     "web-vitals": "^2.1.0"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "start:dev": "REACT_APP_DELIGHT_API_URL=https://delight-api.grindery.org/test react-scripts start",
+    "start": "REACT_APP_DELIGHT_API_URL=https://delight-api.grindery.org/test react-scripts start",
     "start:testing": "BROWSER=none REACT_APP_DELIGHT_API_URL=https://delight-api.grindery.org/test react-scripts start",
     "build": "react-scripts build",
     "build:env:staging": "REACT_APP_DELIGHT_API_URL=https://delight-api.grindery.org/test react-scripts build",
