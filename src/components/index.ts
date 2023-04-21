@@ -22,6 +22,7 @@ export { default as OfferPublic } from './Offer/OfferPublic';
 export { default as OfferSkeleton } from './Offer/OfferSkeleton';
 export { default as OfferCard } from './OfferCard/OfferCard';
 export { default as OrderCard } from './OrderCard/OrderCard';
+export { default as OrderHistoryCard } from './OrderHistoryCard/OrderHistoryCard';
 export { default as OrderSkeleton } from './OrderCard/OrderSkeleton';
 export { default as PageCard } from './PageCard/PageCard';
 export { default as PageCardHeader } from './PageCardHeader/PageCardHeader';

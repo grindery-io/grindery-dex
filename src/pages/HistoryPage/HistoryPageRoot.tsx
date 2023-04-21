@@ -2,11 +2,11 @@ import React from 'react';
 import { Box } from '@mui/system';
 import {
   OrderSkeleton,
-  OrderCard,
   NotFound,
   PageCardHeader,
   PageCardBody,
   PageCard,
+  OrderHistoryCard,
 } from '../../components';
 import { OrderType } from '../../types';
 import {
@@ -14,6 +14,7 @@ import {
   selectOrdersHistoryItems,
   selectOrdersHistoryLoading,
   selectChainsItems,
+  selectUserAdvancedMode,
 } from '../../store';
 import { sortOrdersByDate } from '../../utils';
 
@@ -24,6 +25,7 @@ const HistoryPageRoot = (props: Props) => {
   const isLoading = useAppSelector(selectOrdersHistoryLoading);
   const sortedOrders = sortOrdersByDate(orders);
   const chains = useAppSelector(selectChainsItems);
+  const advancedMode = useAppSelector(selectUserAdvancedMode);
 
   return (
     <PageCard>
@@ -39,11 +41,11 @@ const HistoryPageRoot = (props: Props) => {
             {sortedOrders && sortedOrders.length > 0 ? (
               <>
                 {sortedOrders.map((order: OrderType) => (
-                  <OrderCard
+                  <OrderHistoryCard
+                    advancedMode={advancedMode}
                     key={order._id}
                     chains={chains}
                     order={order}
-                    userType="a"
                   />
                 ))}
                 <Box height="10px" />
