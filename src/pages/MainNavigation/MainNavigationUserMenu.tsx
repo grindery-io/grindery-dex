@@ -228,21 +228,23 @@ const MainNavigationUserMenu = (props: Props) => {
             Copy wallet address
           </Typography>
         </MenuItem>
-        <MenuItem
-          onClick={() => {
-            handleClose();
-            navigate(ROUTES.HISTORY.ROOT.FULL_PATH);
-          }}
-        >
-          <ListItemIcon>
-            <ReceiptLongIcon
-              sx={{ width: '20px', height: '20px', color: '#000' }}
-            />
-          </ListItemIcon>
-          <Typography component="span" variant="body2">
-            Orders history
-          </Typography>
-        </MenuItem>
+        {isAdmin && (
+          <MenuItem
+            onClick={() => {
+              handleClose();
+              navigate(ROUTES.HISTORY.ROOT.FULL_PATH);
+            }}
+          >
+            <ListItemIcon>
+              <ReceiptLongIcon
+                sx={{ width: '20px', height: '20px', color: '#000' }}
+              />
+            </ListItemIcon>
+            <Typography component="span" variant="body2">
+              Orders history
+            </Typography>
+          </MenuItem>
+        )}
         <MenuItem
           onClick={() => {
             handleClose();
