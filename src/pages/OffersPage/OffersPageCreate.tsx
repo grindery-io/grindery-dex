@@ -178,7 +178,7 @@ function OffersPageCreate() {
 
             <Box display="flex" flexDirection="row" gap="16px">
               <TextInput
-                label="Min. order"
+                label={`Min ${fromToken.symbol}`}
                 onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                   handleOfferCreateInputChange('amountMin', event.target.value);
                 }}
@@ -190,7 +190,7 @@ function OffersPageCreate() {
                 sx={{ marginTop: 0 }}
               />
               <TextInput
-                label="Max. order"
+                label={`Max ${fromToken.symbol}`}
                 value={amountMax}
                 onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                   handleOfferCreateInputChange('amountMax', event.target.value);
