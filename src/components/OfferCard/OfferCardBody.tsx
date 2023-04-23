@@ -47,33 +47,69 @@ const OfferCardBody = (props: OfferCardProps) => {
             </Box>
           )}
           <Box sx={{ flex: 1, overflow: 'hidden' }}>
-            <Typography
-              sx={{
-                fontWeight: '400',
-                fontSize: '14px',
-                lineHeight: '21px',
-                margin: '0 0 8px',
-              }}
-            >
-              You get
-            </Typography>
-            {offer.title && (
-              <Typography
-                sx={{
-                  fontWeight: '700',
-                  fontSize: '18px',
-                  lineHeight: '22px',
-                  display: '-webkit-box',
-                  WebkitLineClamp: '2',
-                  WebkitBoxOrient: 'vertical',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                }}
-                title={offer.title.length > 30 ? offer.title : undefined}
-              >
-                {offer.title}
-              </Typography>
+            {offer.image && (
+              <>
+                <Typography
+                  sx={{
+                    fontWeight: '400',
+                    fontSize: '14px',
+                    lineHeight: '21px',
+                    margin: '0 0 8px',
+                  }}
+                >
+                  You get
+                </Typography>
+                {offer.title && (
+                  <Typography
+                    sx={{
+                      fontWeight: '700',
+                      fontSize: '18px',
+                      lineHeight: '22px',
+                      display: '-webkit-box',
+                      WebkitLineClamp: '2',
+                      WebkitBoxOrient: 'vertical',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                    }}
+                    title={offer.title.length > 30 ? offer.title : undefined}
+                  >
+                    {offer.title}
+                  </Typography>
+                )}
+              </>
             )}
+            {!offer.image && (
+              <>
+                {offer.title && (
+                  <Typography
+                    sx={{
+                      fontWeight: '700',
+                      fontSize: '18px',
+                      lineHeight: '22px',
+                      display: '-webkit-box',
+                      WebkitLineClamp: '2',
+                      WebkitBoxOrient: 'vertical',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      margin: '0 0 8px',
+                    }}
+                    title={offer.title.length > 30 ? offer.title : undefined}
+                  >
+                    {offer.title}
+                  </Typography>
+                )}
+                <Typography
+                  sx={{
+                    fontWeight: '400',
+                    fontSize: '14px',
+                    lineHeight: '21px',
+                  }}
+                >
+                  You get
+                </Typography>
+              </>
+            )}
+
             {chain && token ? (
               <ChainTokenBox
                 sx={{
