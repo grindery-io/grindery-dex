@@ -24,6 +24,7 @@ import {
   setUserChainTokenBalanceLoading,
   setUserAdvancedMode,
   setUserPopupClosed,
+  setUserSessionExpired,
 } from '../store';
 import {
   getTokenBalanceRequest,
@@ -75,9 +76,9 @@ export const UserController = ({ children }: UserControllerProps) => {
     connect();
   };
 
-  const disconnectUser = () => {
+  const disconnectUser = useCallback(() => {
     disconnect();
-  };
+  }, [disconnect]);
 
   const getEthers = () => {
     return ethers;
@@ -206,6 +207,18 @@ export const UserController = ({ children }: UserControllerProps) => {
       }
     }
   }, [dispatch]);
+
+  useEffect(() => {
+    const timeout = (token?.expires_in || 3600) * 1000;
+    const timer = setTimeout(() => {
+      if (token?.expires_in && typeof token?.expires_in === 'number') {
+        disconnectUser();
+        dispatch(setUserSessionExpired(true));
+      }
+    }, timeout);
+
+    return () => clearTimeout(timer);
+  }, [token?.expires_in, disconnectUser, dispatch]);
 
   return (
     <UserContext.Provider

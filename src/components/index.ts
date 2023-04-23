@@ -4,6 +4,7 @@ export * from './Card/CardTitle';
 export * from './Card/CardHeader';
 export * from './ChainTokenBox/ChainTokenBox';
 export * from './Menu/Menu';
+export * from './SessionExpiredPopup/SessionExpiredPopup';
 export { default as AlertBox } from './AlertBox/AlertBox';
 export { default as AmountInput } from './AmountInput/AmountInput';
 export { default as BuyMenu } from './BuyMenu/BuyMenu';

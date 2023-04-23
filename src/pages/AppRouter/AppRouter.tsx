@@ -7,11 +7,12 @@ import SellPage from '../SellPage/SellPage';
 import HistoryPage from '../HistoryPage/HistoryPage';
 import FaucetPage from '../FaucetPage/FaucetPage';
 import Page404 from '../Page404/Page404';
-import { PageContainer, Popup } from '../../components';
+import { PageContainer, Popup, SessionExpiredPopup } from '../../components';
 import {
   selectUserAdvancedMode,
   selectUserAdvancedModeAlert,
   selectUserPopupClosed,
+  selectUserSessionExpired,
   useAppSelector,
 } from '../../store';
 import { useUserController } from '../../controllers';
@@ -19,6 +20,7 @@ import { useUserController } from '../../controllers';
 type Props = {};
 
 const AppRouter = (props: Props) => {
+  const sessionExpired = useAppSelector(selectUserSessionExpired);
   const advancedMode = useAppSelector(selectUserAdvancedMode);
   const advancedModeAlert = useAppSelector(selectUserAdvancedModeAlert);
   const search = window.location.search;
@@ -26,6 +28,7 @@ const AppRouter = (props: Props) => {
   const popup = params.get('popup');
   const popupClosed = useAppSelector(selectUserPopupClosed);
   const { handlePopupCloseAction } = useUserController();
+
   return (
     <>
       <PageContainer
@@ -52,6 +55,7 @@ const AppRouter = (props: Props) => {
       {popup !== 'false' && !popupClosed && (
         <Popup onClose={handlePopupCloseAction} />
       )}
+      {sessionExpired && <SessionExpiredPopup />}
     </>
   );
 };
