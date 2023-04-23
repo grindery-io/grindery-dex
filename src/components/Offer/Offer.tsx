@@ -426,7 +426,7 @@ const Offer = (props: Props) => {
                 {provider ? (
                   <TransactionID
                     value={provider || ''}
-                    label="Provider"
+                    label="Merchant"
                     link={providerLink}
                   />
                 ) : (
@@ -581,7 +581,7 @@ const Offer = (props: Props) => {
               {provider ? (
                 <TransactionID
                   value={provider || ''}
-                  label="Provider"
+                  label="Merchant"
                   link={providerLink}
                   valueStyle={{ color: '#000' }}
                 />

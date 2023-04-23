@@ -167,7 +167,7 @@ export const getProviderWalletRequest = (
           if (res?.data) {
             resolve(res.data);
           } else {
-            reject('Provider not found');
+            reject('Merchant not found');
           }
         })
         .catch((err) => {
