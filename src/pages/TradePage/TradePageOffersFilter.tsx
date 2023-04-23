@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useCallback, useEffect } from 'react';
+import _ from 'lodash';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@mui/material';
 import { Box } from '@mui/system';
@@ -20,7 +21,6 @@ import {
   selectTradeFilter,
   selectTradeLoading,
   selectChainsItems,
-  selectUserChainId,
   selectUserChainTokenBalance,
   selectUserChainTokenBalanceLoading,
 } from '../../store';
@@ -56,6 +56,43 @@ const TradePageOffersFilter = (props: Props) => {
     handleFromAmountMaxClick,
     handleSearchOffersAction,
   } = useTradeController();
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const debouncedSearch = useCallback(
+    _.debounce(handleSearchOffersAction, 1000),
+    [handleSearchOffersAction]
+  );
+
+  useEffect(() => {
+    if (
+      accessToken &&
+      filter &&
+      filter.amount &&
+      filter.toChainId &&
+      filter.toTokenId &&
+      chains &&
+      userChainTokenBalance &&
+      fromChain?.chainId &&
+      fromToken?.coinmarketcapId
+    ) {
+      debouncedSearch(
+        accessToken,
+        filter,
+        chains,
+        userChainTokenBalance,
+        fromChain?.chainId,
+        fromToken?.coinmarketcapId
+      );
+    }
+  }, [
+    accessToken,
+    filter,
+    chains,
+    userChainTokenBalance,
+    fromChain?.chainId,
+    fromToken?.coinmarketcapId,
+    debouncedSearch,
+  ]);
 
   return (
     <PageCard>

@@ -131,139 +131,145 @@ export const TradeController = ({ children }: TradeControllerProps) => {
     dispatch(setTradeFilterValue({ name: 'amount', value: balance }));
   };
 
-  const validateSearchOffersAction = (
-    filter: Tradefilter,
-    fromTokenBalance: string,
-    fromChainId: string,
-    fromTokenId: string
-  ): boolean => {
-    if (!fromChainId) {
-      dispatch(
-        setTradeError({
-          type: 'amount',
-          text: 'Chain is required',
-        })
-      );
+  const validateSearchOffersAction = useCallback(
+    (
+      filter: Tradefilter,
+      fromTokenBalance: string,
+      fromChainId: string,
+      fromTokenId: string
+    ): boolean => {
+      if (!fromChainId) {
+        dispatch(
+          setTradeError({
+            type: 'amount',
+            text: 'Chain is required',
+          })
+        );
 
-      return false;
-    }
-    if (!fromTokenId) {
-      dispatch(
-        setTradeError({
-          type: 'amount',
-          text: 'Token is required',
-        })
-      );
-
-      return false;
-    }
-    if (!filter.toChainId) {
-      dispatch(
-        setTradeError({
-          type: 'toChain',
-          text: 'Chain is required',
-        })
-      );
-
-      return false;
-    }
-    if (!filter.toTokenId) {
-      dispatch(
-        setTradeError({
-          type: 'toChain',
-          text: 'Token is required',
-        })
-      );
-
-      return false;
-    }
-    if (!filter.amount) {
-      dispatch(
-        setTradeError({
-          type: 'amount',
-          text: 'Amount is required',
-        })
-      );
-
-      return false;
-    }
-    if (!isNumeric(filter.amount)) {
-      dispatch(
-        setTradeError({
-          type: 'amount',
-          text: 'Amount must be a number',
-        })
-      );
-
-      return false;
-    }
-    if (parseFloat(filter.amount) <= 0) {
-      dispatch(
-        setTradeError({
-          type: 'amount',
-          text: 'Amount must be greater than 0',
-        })
-      );
-
-      return false;
-    }
-    if (parseFloat(filter.amount) > parseFloat(fromTokenBalance)) {
-      dispatch(
-        setTradeError({
-          type: 'search',
-          text: "You don't have enough funds",
-        })
-      );
-      dispatch(setTradeOffersVisible(false));
-      return false;
-    }
-    return true;
-  };
-
-  const handleSearchOffersAction = async (
-    accessToken: string,
-    filter: Tradefilter,
-    chains: ChainType[],
-    fromTokenBalance: string,
-    fromChainId: string,
-    fromTokenId: string
-  ) => {
-    dispatch(clearTradeError());
-    if (
-      !validateSearchOffersAction(
-        filter,
-        fromTokenBalance,
-        fromChainId,
-        fromTokenId
-      )
-    ) {
-      return;
-    }
-    dispatch(setTradeLoading(true));
-    dispatch(setTradeOffersVisible(true));
-    const fromToken = getTokenById(fromTokenId, fromChainId, chains);
-    const toToken = getTokenById(filter.toTokenId, filter.toChainId, chains);
-    const query = {
-      exchangeChainId: fromChainId,
-      exchangeToken: fromToken?.symbol || '',
-      chainId: filter.toChainId,
-      token: toToken?.symbol || '',
-      depositAmount: filter.amount,
-    };
-    const queryString = new URLSearchParams(query).toString();
-    const items = await searchOffersRequest(accessToken, queryString).catch(
-      (error) => {
-        dispatch(setTradeError({ type: 'search', text: error }));
+        return false;
       }
-    );
-    if (typeof items !== 'undefined') {
-      dispatch(setTradeOffers(items));
-    } else {
-      dispatch(setTradeOffers([]));
-      dispatch(setTradeOffersVisible(false));
-    }
-    dispatch(setTradeLoading(false));
-  };
+      if (!fromTokenId) {
+        dispatch(
+          setTradeError({
+            type: 'amount',
+            text: 'Token is required',
+          })
+        );
+
+        return false;
+      }
+      if (!filter.toChainId) {
+        dispatch(
+          setTradeError({
+            type: 'toChain',
+            text: 'Chain is required',
+          })
+        );
+
+        return false;
+      }
+      if (!filter.toTokenId) {
+        dispatch(
+          setTradeError({
+            type: 'toChain',
+            text: 'Token is required',
+          })
+        );
+
+        return false;
+      }
+      if (!filter.amount) {
+        dispatch(
+          setTradeError({
+            type: 'amount',
+            text: 'Amount is required',
+          })
+        );
+
+        return false;
+      }
+      if (!isNumeric(filter.amount)) {
+        dispatch(
+          setTradeError({
+            type: 'amount',
+            text: 'Amount must be a number',
+          })
+        );
+
+        return false;
+      }
+      if (parseFloat(filter.amount) <= 0) {
+        dispatch(
+          setTradeError({
+            type: 'amount',
+            text: 'Amount must be greater than 0',
+          })
+        );
+
+        return false;
+      }
+      if (parseFloat(filter.amount) > parseFloat(fromTokenBalance)) {
+        dispatch(
+          setTradeError({
+            type: 'search',
+            text: "You don't have enough funds",
+          })
+        );
+        dispatch(setTradeOffersVisible(false));
+        return false;
+      }
+      return true;
+    },
+    [dispatch]
+  );
+
+  const handleSearchOffersAction = useCallback(
+    async (
+      accessToken: string,
+      filter: Tradefilter,
+      chains: ChainType[],
+      fromTokenBalance: string,
+      fromChainId: string,
+      fromTokenId: string
+    ) => {
+      dispatch(clearTradeError());
+      if (
+        !validateSearchOffersAction(
+          filter,
+          fromTokenBalance,
+          fromChainId,
+          fromTokenId
+        )
+      ) {
+        return;
+      }
+      dispatch(setTradeLoading(true));
+      dispatch(setTradeOffersVisible(true));
+      const fromToken = getTokenById(fromTokenId, fromChainId, chains);
+      const toToken = getTokenById(filter.toTokenId, filter.toChainId, chains);
+      const query = {
+        exchangeChainId: fromChainId,
+        exchangeToken: fromToken?.symbol || '',
+        chainId: filter.toChainId,
+        token: toToken?.symbol || '',
+        depositAmount: filter.amount,
+      };
+      const queryString = new URLSearchParams(query).toString();
+      const items = await searchOffersRequest(accessToken, queryString).catch(
+        (error) => {
+          dispatch(setTradeError({ type: 'search', text: error }));
+        }
+      );
+      if (typeof items !== 'undefined') {
+        dispatch(setTradeOffers(items));
+      } else {
+        dispatch(setTradeOffers([]));
+        dispatch(setTradeOffersVisible(false));
+      }
+      dispatch(setTradeLoading(false));
+    },
+    [dispatch, validateSearchOffersAction]
+  );
 
   const validateAcceptOfferAction = (
     offer: OfferType,
