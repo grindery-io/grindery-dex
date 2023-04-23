@@ -5,7 +5,6 @@ import {
   selectUserAdvancedMode,
   selectUserAdvancedModeAlert,
   useAppDispatch,
-  setUserAdvancedMode,
   selectUserId,
   setUserAdvancedModeAlert,
 } from '../../store';

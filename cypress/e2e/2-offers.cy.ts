@@ -166,7 +166,7 @@ describe('Offers page', () => {
         .first()
         .find('.MuiCollapse-root p.MuiTypography-body1')
         .first()
-        .should('include.text', 'Provider:');
+        .should('include.text', 'Merchant:');
       cy.get('.OfferPublic')
         .first()
         .find('.MuiCollapse-root p.MuiTypography-body1')

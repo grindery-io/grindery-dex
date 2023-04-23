@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { ElementType, useState } from 'react';
 import { IconButton, Tooltip, Typography } from '@mui/material';
 import { Stack, SxProps } from '@mui/system';
 import { formatAddress } from '../../utils';
@@ -18,6 +18,8 @@ type Props = {
   containerStyle?: SxProps | React.CSSProperties;
   valueStyle?: SxProps | React.CSSProperties;
   iconStyle?: SxProps | React.CSSProperties;
+  containerComponent?: ElementType<any>;
+  buttonStyle?: SxProps | React.CSSProperties;
 };
 
 const TransactionID = (props: Props) => {
@@ -34,10 +36,13 @@ const TransactionID = (props: Props) => {
     containerStyle,
     valueStyle,
     iconStyle,
+    containerComponent,
+    buttonStyle,
   } = props;
   const [copied, setCopied] = useState(false);
   return value ? (
     <Stack
+      component={containerComponent || 'div'}
       direction="row"
       alignItems="center"
       justifyContent="flex-start"
@@ -74,7 +79,11 @@ const TransactionID = (props: Props) => {
             >
               <IconButton
                 size="small"
-                sx={{ fontSize: '14px', color: '#3f49e1' }}
+                sx={{
+                  fontSize: '14px',
+                  color: '#3f49e1',
+                  ...(buttonStyle || {}),
+                }}
                 onClick={(event: any) => {
                   event.stopPropagation();
                   navigator.clipboard.writeText(value);
@@ -90,7 +99,11 @@ const TransactionID = (props: Props) => {
             <Tooltip title={linkTooltip}>
               <IconButton
                 size="small"
-                sx={{ fontSize: '14px', color: '#3f49e1' }}
+                sx={{
+                  fontSize: '14px',
+                  color: '#3f49e1',
+                  ...(buttonStyle || {}),
+                }}
                 onClick={(event: any) => {
                   event.stopPropagation();
                   window.open(link, '_blank');

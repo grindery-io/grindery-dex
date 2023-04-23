@@ -8,7 +8,7 @@ import {
   DialogTitle,
   Typography,
 } from '@mui/material';
-import { AlertBox, Loading, OrderCard } from '../../components';
+import { AlertBox, Loading, OrderCard, TransactionID } from '../../components';
 import {
   useAppDispatch,
   useAppSelector,
@@ -24,7 +24,11 @@ import {
   selectOrdersItems,
 } from '../../store';
 import { OrderType } from '../../types';
-import { getChainById } from '../../utils';
+import {
+  getChainById,
+  getOfferProviderLink,
+  getOrderBuyerLink,
+} from '../../utils';
 
 type Props = {};
 
@@ -41,10 +45,44 @@ const ShopPageOfferAccept = (props: Props) => {
     acceptedOfferTx &&
     orders.find((order: OrderType) => order.hash === acceptedOfferTx);
 
+  const providerLink =
+    createdOrder && createdOrder?.offer
+      ? getOfferProviderLink(createdOrder?.offer, chains)
+      : undefined;
+
+  const destAddrLink = createdOrder
+    ? getOrderBuyerLink(createdOrder, chains)
+    : undefined;
+
   const handleModalClosed = () => {
     dispatch(setShopAcceptedOffer(''));
     dispatch(setShopAcceptedOfferTx(''));
     dispatch(setShopModal(false));
+  };
+
+  const renderAddress = (value: string, link: string) => {
+    return (
+      <TransactionID
+        value={value}
+        label=""
+        link={link}
+        containerComponent="span"
+        containerStyle={{
+          display: 'inline-flex',
+          gap: '2px',
+        }}
+        valueStyle={{
+          color: '#000',
+          fontSize: '14px',
+          fontWeight: '500',
+        }}
+        startLength={6}
+        endLength={4}
+        buttonStyle={{
+          padding: '0 1px',
+        }}
+      />
+    );
   };
 
   const countdownRenderer = ({
@@ -54,12 +92,60 @@ const ShopPageOfferAccept = (props: Props) => {
     total: any;
     completed: any;
   }) => {
+    if (!createdOrder) {
+      return null;
+    }
     if (completed) {
       // Render a completed state
-      return <span>0</span>;
+      return (
+        <>
+          <Typography gutterBottom variant="body2">
+            You should have received a transfer of {createdOrder.offer?.amount}{' '}
+            {createdOrder.offer?.token} on{' '}
+            {getChainById(createdOrder.offer?.chainId || '', chains)?.label ||
+              ''}{' '}
+            from{' '}
+            {renderAddress(
+              createdOrder.offer?.provider || '',
+              providerLink || ''
+            )}{' '}
+            in your wallet{' '}
+            {renderAddress(createdOrder.destAddr || '', destAddrLink || '')}.
+            Check your wallet.
+          </Typography>
+          <Typography variant="body2">
+            If you have not received anything within the next 5 minutes, please{' '}
+            <a
+              style={{ color: '#3f49e1' }}
+              href="https://discord.gg/PCMTWg3KzE"
+              target="_blank"
+              rel="noreferrer"
+            >
+              visit our Discord
+            </a>
+            .
+          </Typography>
+        </>
+      );
     } else {
       // Render a countdown
-      return <span>{total / 1000}</span>;
+      return (
+        <>
+          <Typography variant="body2">
+            You should receive a transfer of {createdOrder.offer?.amount}{' '}
+            {createdOrder.offer?.token} on{' '}
+            {getChainById(createdOrder.offer?.chainId || '', chains)?.label ||
+              ''}{' '}
+            from{' '}
+            {renderAddress(
+              createdOrder.offer?.provider || '',
+              providerLink || ''
+            )}{' '}
+            within <span>{total / 1000}</span> seconds in your wallet{' '}
+            {renderAddress(createdOrder.destAddr || '', destAddrLink || '')}.
+          </Typography>
+        </>
+      );
     }
   };
 
@@ -126,41 +212,15 @@ const ShopPageOfferAccept = (props: Props) => {
                   <Typography variant="h6" gutterBottom>
                     What's next?
                   </Typography>
-                  <Typography gutterBottom variant="body2">
-                    You should receive a transfer of{' '}
-                    {createdOrder.offer?.amount} {createdOrder.offer?.token} on{' '}
-                    {getChainById(createdOrder.offer?.chainId || '', chains)
-                      ?.label || ''}{' '}
-                    from{' '}
-                    {(createdOrder.offer?.provider || '').substring(0, 6) +
-                      '...' +
-                      (createdOrder.offer?.provider || '').substring(
-                        (createdOrder.offer?.provider || '').length - 4
-                      )}{' '}
-                    within{' '}
-                    <Countdown
-                      date={
-                        Date.now() +
-                        (createdOrder.offer?.estimatedTime
-                          ? parseInt(createdOrder.offer.estimatedTime) * 1000
-                          : 0)
-                      }
-                      renderer={countdownRenderer}
-                    />{' '}
-                    seconds.
-                  </Typography>
-                  <Typography variant="body2">
-                    If you have not received anything within 5 minutes, please{' '}
-                    <a
-                      style={{ color: '#3f49e1' }}
-                      href="https://discord.gg/PCMTWg3KzE"
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      visit our Discord
-                    </a>
-                    .
-                  </Typography>
+                  <Countdown
+                    date={
+                      Date.now() +
+                      (createdOrder.offer?.estimatedTime
+                        ? parseInt(createdOrder.offer.estimatedTime) * 1000
+                        : 0)
+                    }
+                    renderer={countdownRenderer}
+                  />
                 </Box>
               </>
             )}
