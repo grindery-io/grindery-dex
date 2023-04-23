@@ -96,7 +96,8 @@ const ShopPageRoot = (props: Props) => {
                             fromToken,
                             tokenAbi,
                             poolAbi,
-                            userAddress
+                            userAddress,
+                            chains
                           );
                         }}
                       />

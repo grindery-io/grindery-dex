@@ -42,8 +42,7 @@ const TradePageOffersFilter = (props: Props) => {
   const { toChainId, toTokenId, amount } = filter;
   const toChain = getChainById(toChainId, chains);
   const toToken = getTokenById(toTokenId, toChainId, chains);
-  const userChainId = useAppSelector(selectUserChainId);
-  const fromChain = getChainById(userChainId, chains);
+  const fromChain = getChainById('5', chains);
   const fromToken = fromChain?.tokens?.find(
     (token: TokenType) => token.symbol === fromChain?.nativeToken
   );

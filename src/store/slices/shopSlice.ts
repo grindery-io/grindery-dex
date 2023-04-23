@@ -93,7 +93,7 @@ export const selectShopOffers = (state: RootState, fromChainId: string) =>
   state.shop.offers.filter(
     (o: OfferType) =>
       o.chainId === state.shop.filter.toChainId &&
-      o.exchangeChainId === fromChainId &&
+      o.exchangeChainId === '5' &&
       o.tokenId === state.shop.filter.toTokenId
     // TODO: add fromTokenId filter
   );

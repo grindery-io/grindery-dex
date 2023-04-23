@@ -103,7 +103,7 @@ export const UserController = ({ children }: UserControllerProps) => {
   );
 
   const fetchChainTokenPrice = useCallback(
-    async (accessToken: string, tokenSymbol: string) => {
+    async (accessToken: string) => {
       dispatch(setUserChainTokenPriceLoading(true));
       const price = await getTokenPriceById(accessToken, 'ETH');
       dispatch(setUserChainTokenPrice(price));
@@ -113,12 +113,7 @@ export const UserController = ({ children }: UserControllerProps) => {
   );
 
   const fetchChainTokenBalance = useCallback(
-    async (
-      accessToken: string,
-      chainId: string,
-      address: string,
-      tokenAddress: string
-    ) => {
+    async (accessToken: string, address: string) => {
       dispatch(setUserChainTokenBalanceLoading(true));
       const balance = await getTokenBalanceRequest(
         accessToken,
@@ -176,8 +171,8 @@ export const UserController = ({ children }: UserControllerProps) => {
 
   useEffect(() => {
     if (userChainId && userAccessToken && userAddress && userChainTokenSymbol) {
-      fetchChainTokenBalance(userAccessToken, userChainId, userAddress, '0x0');
-      fetchChainTokenPrice(userAccessToken, userChainTokenSymbol);
+      fetchChainTokenBalance(userAccessToken, userAddress);
+      fetchChainTokenPrice(userAccessToken);
     } else {
       dispatch(setUserChainTokenBalance('0'));
       dispatch(setUserChainTokenPrice(null));

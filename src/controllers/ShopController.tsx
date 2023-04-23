@@ -28,11 +28,12 @@ import {
   getOfferById,
 } from '../services';
 import { POOL_CONTRACT_ADDRESS } from '../config';
-import { TokenType, OfferType, LiquidityWalletType } from '../types';
+import { TokenType, OfferType, LiquidityWalletType, ChainType } from '../types';
 import {
   getErrorMessage,
   getOrderIdFromReceipt,
-  getChainIdHex,
+  getChainById,
+  switchMetamaskNetwork,
 } from '../utils';
 
 // Context props
@@ -45,7 +46,8 @@ type ContextProps = {
     exchangeToken: TokenType,
     tokenAbi: any,
     poolAbi: any,
-    userAddress: string
+    userAddress: string,
+    chains: ChainType[]
   ) => void;
 };
 
@@ -172,7 +174,8 @@ export const ShopController = ({ children }: ShopControllerProps) => {
     exchangeToken: TokenType,
     tokenAbi: any,
     poolAbi: any,
-    userAddress: string
+    userAddress: string,
+    chains: ChainType[]
   ) => {
     dispatch(clearShopError());
     dispatch(setShopAccepting(''));
@@ -184,20 +187,30 @@ export const ShopController = ({ children }: ShopControllerProps) => {
 
     dispatch(setShopAccepting(offer.offerId));
 
-    // switch chain if needed
-    if (!userChainId || userChainId !== offer.exchangeChainId) {
-      try {
-        await window.ethereum.request({
-          method: 'wallet_switchEthereumChain',
-          params: [
-            {
-              chainId: getChainIdHex(offer.exchangeChainId || ''),
-            },
-          ],
-        });
-      } catch (error: any) {
-        // TODO: handle chain switching error
-      }
+    const inputChain = getChainById(offer.exchangeChainId || '', chains);
+    if (!inputChain) {
+      dispatch(
+        setShopError({
+          type: 'acceptOffer',
+          text: 'Chain not found',
+        })
+      );
+      dispatch(setShopAccepting(''));
+      return;
+    }
+    const networkSwitched = await switchMetamaskNetwork(
+      userChainId,
+      inputChain
+    );
+    if (!networkSwitched) {
+      dispatch(
+        setShopError({
+          type: 'acceptOffer',
+          text: 'Network switching failed. Please, switch network in your MetaMask and try again.',
+        })
+      );
+      dispatch(setShopAccepting(''));
+      return;
     }
 
     // get signer

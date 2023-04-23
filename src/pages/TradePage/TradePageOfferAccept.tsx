@@ -62,7 +62,7 @@ const TradePageOfferAccept = (props: Props) => {
   const chains = useAppSelector(selectChainsItems);
   const filter = useAppSelector(selectTradeFilter);
   const { amount } = filter;
-  const fromChain = getChainById(userChainId, chains);
+  const fromChain = getChainById('5', chains);
   const fromToken = fromChain?.tokens?.find(
     (token: TokenType) => token.symbol === fromChain?.nativeToken
   );
@@ -182,7 +182,8 @@ const TradePageOfferAccept = (props: Props) => {
                           tokenAbi,
                           poolAbi,
                           userAddress,
-                          amount
+                          amount,
+                          chains
                         );
                       }
                     : () => {

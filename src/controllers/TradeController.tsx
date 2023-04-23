@@ -24,11 +24,12 @@ import {
   setOrdersItems,
 } from '../store';
 import {
-  getChainIdHex,
+  getChainById,
   getErrorMessage,
   getOrderIdFromReceipt,
   getTokenById,
   isNumeric,
+  switchMetamaskNetwork,
 } from '../utils';
 import { useUserController } from './UserController';
 import {
@@ -52,7 +53,8 @@ type ContextProps = {
     tokenAbi: any,
     poolAbi: any,
     userAddress: string,
-    amount: string
+    amount: string,
+    chains: ChainType[]
   ) => void;
   handleSearchOffersAction: (
     accessToken: string,
@@ -323,7 +325,8 @@ export const TradeController = ({ children }: TradeControllerProps) => {
     tokenAbi: any,
     poolAbi: any,
     userAddress: string,
-    amount: string
+    amount: string,
+    chains: ChainType[]
   ) => {
     dispatch(clearTradeError());
     dispatch(setTradeLoading(false));
@@ -334,20 +337,30 @@ export const TradeController = ({ children }: TradeControllerProps) => {
 
     dispatch(setTradeLoading(true));
 
-    // switch chain if needed
-    if (!userChainId || userChainId !== offer.exchangeChainId) {
-      try {
-        await window.ethereum.request({
-          method: 'wallet_switchEthereumChain',
-          params: [
-            {
-              chainId: getChainIdHex(offer.exchangeChainId || ''),
-            },
-          ],
-        });
-      } catch (error: any) {
-        // TODO: handle chain switching error
-      }
+    const inputChain = getChainById(offer.exchangeChainId || '', chains);
+    if (!inputChain) {
+      dispatch(
+        setTradeError({
+          type: 'acceptOffer',
+          text: 'Chain not found',
+        })
+      );
+      dispatch(setTradeLoading(false));
+      return;
+    }
+    const networkSwitched = await switchMetamaskNetwork(
+      userChainId,
+      inputChain
+    );
+    if (!networkSwitched) {
+      dispatch(
+        setTradeError({
+          type: 'acceptOffer',
+          text: 'Network switching failed. Please, switch network in your MetaMask and try again.',
+        })
+      );
+      dispatch(setTradeLoading(false));
+      return;
     }
 
     // get signer
