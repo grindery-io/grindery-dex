@@ -11,12 +11,9 @@ const BuyPage = (props: Props) => {
   return (
     <div>
       <Routes>
-        <Route path={ROUTES.BUY.TRADE.RELATIVE_PATH} element={<TradePage />} />
         <Route path={ROUTES.BUY.SHOP.RELATIVE_PATH} element={<ShopPage />} />
-        <Route
-          path="/"
-          element={<Navigate to={ROUTES.BUY.TRADE.FULL_PATH} />}
-        />
+        <Route path={ROUTES.BUY.TRADE.RELATIVE_PATH} element={<TradePage />} />
+        <Route path="/" element={<Navigate to={ROUTES.BUY.SHOP.FULL_PATH} />} />
         <Route path="*" element={<Page404 />} />
       </Routes>
     </div>

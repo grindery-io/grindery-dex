@@ -28,15 +28,15 @@ import MainNavigationAdvancedModeAlert from './MainNavigationAdvancedModeAlert';
 
 export const TABS_NAV: NavTabsItemType[] = [
   {
-    path: ROUTES.BUY.TRADE.FULL_PATH,
-    label: 'Trade',
-    icon: <CurrencyExchangeIcon />,
-    iconPosition: 'start',
-  },
-  {
     path: ROUTES.BUY.SHOP.FULL_PATH,
     label: 'Shop',
     icon: <AddShoppingCartIcon />,
+    iconPosition: 'start',
+  },
+  {
+    path: ROUTES.BUY.TRADE.FULL_PATH,
+    label: 'Trade',
+    icon: <CurrencyExchangeIcon />,
     iconPosition: 'start',
   },
 ];
