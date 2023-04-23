@@ -106,7 +106,9 @@ const MainNavigation = (props: Props) => {
             }}
           >
             <MainNavigationSwitchChainButton />
-            <MainNavigationWalletBalance />
+            <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
+              <MainNavigationWalletBalance />
+            </Box>
             <MainNavigationUserMenu />
           </Stack>
         </Wrapper>

@@ -66,18 +66,22 @@ const Popup = (props: Props) => {
         Quickly get a bunch of BNB for BSC-testnet using Goerli-Eth!
       </DialogTitle>
       <DialogContent>
-        <img
-          style={{
-            width: '100%',
-            maxWidth: '85%',
-            height: 'auto',
-            borderRadius: '20px',
-            display: 'block',
+        <Box
+          sx={{
             margin: '0 auto',
+            width: '100%',
+            maxWidth: '600px',
+            borderRadius: '20px',
+            boxSizing: 'border-box',
+            backgroundImage:
+              'url(https://www.grindery.io/hubfs/mercari-assets/promo-optimized.png)',
+            paddingBottom: '47.33%',
+            backgroundPosition: 'center center',
+            backgroundSize: 'cover',
+            backgroundRepeat: 'no-repeat',
           }}
-          src="https://www.grindery.io/hubfs/mercari-assets/promo-optimized.png"
-          alt="A man tries to get BSC testnet tokens"
         />
+
         <Box sx={{ textAlign: 'center', margin: '24px 0' }}>
           <Alert
             severity="warning"
