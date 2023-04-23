@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import {
-  Alert,
   Box,
   Dialog,
   DialogContent,
@@ -58,15 +57,25 @@ export const SessionExpiredPopup = (props: Props) => {
         </Box>
         <Typography textAlign="center">
           Please,{' '}
-          <a
-            href="#"
+          <button
+            style={{
+              fontSize: 'inherit',
+              padding: 0,
+              display: 'inline',
+              margin: 0,
+              background: 'none',
+              border: 'none',
+              boxShadow: 'none',
+              appearance: 'none',
+              textDecoration: 'underline',
+              cursor: 'pointer',
+            }}
             onClick={(event) => {
-              event.preventDefault();
               window.location.reload();
             }}
           >
             reload the page
-          </a>{' '}
+          </button>{' '}
           and connect your wallet again.
         </Typography>
       </DialogContent>
