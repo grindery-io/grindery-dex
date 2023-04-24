@@ -24,3 +24,5 @@ export const TX_EXPLORER: { [key: string]: any } = {
 };
 
 export const DISABLE_POPUP = process.env.REACT_APP_DISABLE_POPUP;
+
+export const WEBSOCKET_URL = process.env.REACT_APP_WEBSOCKET_URL;
