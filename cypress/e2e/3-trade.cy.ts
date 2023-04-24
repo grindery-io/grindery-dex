@@ -78,7 +78,7 @@ describe('Trade page', () => {
     cy.get('button').contains('max').click();
     cy.get('button').contains('Search offers').click();
     cy.get('.TradePage__box').should('have.css', 'opacity', '1');
-    cy.get('#execution-time-icon').click();
+    cy.get('.OfferPublic').first().click();
     cy.get('.PageCardHeader__typography')
       .first()
       .should('have.text', 'Review offer');
