@@ -10,7 +10,7 @@ describe('Complete testing', () => {
       `${Cypress.env('CYPRESS_DELIGHT_API_URL')}/offers/*`
     ).as('UpdateOffer');
 
-    cy.visit('http://localhost:3000/sell/offers?popup=false');
+    cy.visit('http://localhost:3000/sell/offers');
     cy.get('#connect-button').click();
     cy.acceptMetamaskAccess({
       allAccounts: false,

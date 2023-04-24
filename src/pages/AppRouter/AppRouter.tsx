@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import MainNavigation from '../MainNavigation/MainNavigation';
-import { ROUTES } from '../../config';
+import { DISABLE_POPUP, ROUTES } from '../../config';
 import BuyPage from '../BuyPage/BuyPage';
 import SellPage from '../SellPage/SellPage';
 import HistoryPage from '../HistoryPage/HistoryPage';
@@ -23,9 +23,6 @@ const AppRouter = (props: Props) => {
   const sessionExpired = useAppSelector(selectUserSessionExpired);
   const advancedMode = useAppSelector(selectUserAdvancedMode);
   const advancedModeAlert = useAppSelector(selectUserAdvancedModeAlert);
-  const search = window.location.search;
-  const params = new URLSearchParams(search);
-  const popup = params.get('popup');
   const popupClosed = useAppSelector(selectUserPopupClosed);
   const { handlePopupCloseAction } = useUserController();
 
@@ -52,7 +49,7 @@ const AppRouter = (props: Props) => {
           </Routes>
         </BrowserRouter>
       </PageContainer>
-      {popup !== 'false' && !popupClosed && (
+      {DISABLE_POPUP !== 'true' && !popupClosed && (
         <Popup onClose={handlePopupCloseAction} />
       )}
       {sessionExpired && <SessionExpiredPopup />}

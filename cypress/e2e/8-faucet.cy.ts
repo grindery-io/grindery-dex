@@ -2,7 +2,7 @@
 
 describe('Faucet page', () => {
   beforeEach(() => {
-    cy.visit('http://localhost:3000/faucet?popup=false');
+    cy.visit('http://localhost:3000/faucet');
     cy.get('#connect-button').click();
 
     cy.acceptMetamaskAccess({

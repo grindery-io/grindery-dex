@@ -12,7 +12,7 @@ describe('Trade page', () => {
       'PlaceOrder'
     );
 
-    cy.visit('http://localhost:3000/buy/trade?popup=false');
+    cy.visit('http://localhost:3000/buy/trade');
     cy.get('#connect-button').click();
     cy.acceptMetamaskAccess({
       allAccounts: false,

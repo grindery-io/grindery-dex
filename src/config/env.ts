@@ -22,3 +22,5 @@ export const TX_EXPLORER: { [key: string]: any } = {
   'eip155:97': process.env.REACT_APP_TX_EXPLORER_EIP155_97,
   'eip155:338': process.env.REACT_APP_TX_EXPLORER_EIP155_338,
 };
+
+export const DISABLE_POPUP = process.env.REACT_APP_DISABLE_POPUP;
