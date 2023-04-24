@@ -171,7 +171,7 @@ const TradePageOfferAccept = (props: Props) => {
       return (
         <>
           <Typography variant="body2">
-            You should receive a transfer of {createdOrder.offer?.amount}{' '}
+            You should receive {createdOrder.offer?.amount}{' '}
             {createdOrder.offer?.token} on{' '}
             {getChainById(createdOrder.offer?.chainId || '', chains)?.label ||
               ''}{' '}
@@ -180,8 +180,9 @@ const TradePageOfferAccept = (props: Props) => {
               createdOrder.offer?.provider || '',
               providerLink || ''
             )}{' '}
-            within <span>{total / 1000}</span> seconds in your wallet{' '}
-            {renderAddress(createdOrder.destAddr || '', destAddrLink || '')}.
+            in your wallet{' '}
+            {renderAddress(createdOrder.destAddr || '', destAddrLink || '')}{' '}
+            within <span>{total / 1000}</span> seconds.
           </Typography>
         </>
       );
