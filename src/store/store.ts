@@ -11,6 +11,7 @@ import tradeReducer from './slices/tradeSlice';
 import ordersReducer from './slices/ordersSlice';
 import ordersHistoryReducer from './slices/ordersHistorySlice';
 import walletsReducer from './slices/walletsSlice';
+import messagesReducer from './slices/messagesSlice';
 
 export const store = configureStore({
   reducer: {
@@ -18,6 +19,7 @@ export const store = configureStore({
     automations: automationsReducer,
     chains: chainsReducer,
     faucet: faucetReducer,
+    messages: messagesReducer,
     offers: offersReducer,
     orders: ordersReducer,
     ordersHistory: ordersHistoryReducer,
