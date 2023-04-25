@@ -8,7 +8,13 @@ import {
   DialogTitle,
   Typography,
 } from '@mui/material';
-import { AlertBox, Loading, OrderCard, TransactionID } from '../../components';
+import {
+  AlertBox,
+  Loading,
+  OrderCard,
+  OrderSkeleton,
+  TransactionID,
+} from '../../components';
 import {
   useAppDispatch,
   useAppSelector,
@@ -202,7 +208,7 @@ const ShopPageOfferAccept = (props: Props) => {
           )}
         {orderStatus === OrderPlacingStatusType.COMPLETED && (
           <>
-            {createdOrder && (
+            {createdOrder ? (
               <>
                 <OrderCard
                   order={createdOrder}
@@ -229,6 +235,8 @@ const ShopPageOfferAccept = (props: Props) => {
                   />
                 </Box>
               </>
+            ) : (
+              <OrderSkeleton />
             )}
           </>
         )}
