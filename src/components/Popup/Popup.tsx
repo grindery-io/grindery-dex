@@ -105,7 +105,7 @@ const Popup = (props: Props) => {
               },
             }}
           >
-            To trade purchase with exactly 0.001 g-eth.
+            To trade purchase with exactly 0.01 g-eth.
           </Alert>
         </Box>
 
