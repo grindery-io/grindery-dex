@@ -13,37 +13,36 @@ import {
   useAppDispatch,
   useAppSelector,
   selectChainsItems,
-  selectShopAcceptedOffer,
-  selectShopAcceptedOfferTx,
-  selectShopAccepting,
   selectShopError,
   selectShopModal,
-  setShopAcceptedOffer,
-  setShopAcceptedOfferTx,
   setShopModal,
   selectOrdersItems,
+  selectShopOrderStatus,
+  setShopOfferId,
+  setShopOorderTransactionId,
+  selectShopOrderTransactionId,
 } from '../../store';
-import { OrderType } from '../../types';
+import { OrderPlacingStatusType, OrderType } from '../../types';
 import {
   getChainById,
   getOfferProviderLink,
   getOrderBuyerLink,
 } from '../../utils';
+import { ICONS } from '../../config';
 
 type Props = {};
 
 const ShopPageOfferAccept = (props: Props) => {
   const dispatch = useAppDispatch();
   const showModal = useAppSelector(selectShopModal);
-  const accepting = useAppSelector(selectShopAccepting);
   const errorMessage = useAppSelector(selectShopError);
-  const accepted = useAppSelector(selectShopAcceptedOffer);
-  const acceptedOfferTx = useAppSelector(selectShopAcceptedOfferTx);
+  const orderTransactionId = useAppSelector(selectShopOrderTransactionId);
   const chains = useAppSelector(selectChainsItems);
   const orders = useAppSelector(selectOrdersItems);
+  const orderStatus = useAppSelector(selectShopOrderStatus);
   const createdOrder =
-    acceptedOfferTx &&
-    orders.find((order: OrderType) => order.hash === acceptedOfferTx);
+    orderTransactionId &&
+    orders.find((order: OrderType) => order.hash === orderTransactionId);
 
   const providerLink =
     createdOrder && createdOrder?.offer
@@ -55,8 +54,12 @@ const ShopPageOfferAccept = (props: Props) => {
     : undefined;
 
   const handleModalClosed = () => {
-    dispatch(setShopAcceptedOffer(''));
-    dispatch(setShopAcceptedOfferTx(''));
+    dispatch(setShopModal(false));
+  };
+
+  const handleModalCloseClick = () => {
+    dispatch(setShopOfferId(''));
+    dispatch(setShopOorderTransactionId(''));
     dispatch(setShopModal(false));
   };
 
@@ -169,20 +172,22 @@ const ShopPageOfferAccept = (props: Props) => {
       onClose={handleModalClosed}
     >
       <DialogTitle sx={{ textAlign: 'center', paddingBottom: '0px' }}>
-        {accepting
-          ? 'Waiting for order transaction'
-          : errorMessage &&
-            errorMessage.type === 'acceptOffer' &&
-            errorMessage.text
-          ? 'Error'
-          : accepted
-          ? 'Your order has been placed!'
-          : 'Transaction result'}
+        {orderStatus}
       </DialogTitle>
       <DialogContent sx={{ paddingBottom: '0' }}>
-        {accepting && (
+        {orderStatus === OrderPlacingStatusType.PROCESSING && (
           <Box sx={{ padding: '16px 0' }}>
             <Loading />
+          </Box>
+        )}
+        {(orderStatus === OrderPlacingStatusType.WAITING_NETOWORK_SWITCH ||
+          orderStatus === OrderPlacingStatusType.WAITING_CONFIRMATION) && (
+          <Box sx={{ padding: '16px 0', textAlign: 'center' }}>
+            <img
+              style={{ width: '100%', height: 'auto', maxWidth: '64px' }}
+              src={ICONS.METAMASK}
+              alt=""
+            />
           </Box>
         )}
 
@@ -195,7 +200,7 @@ const ShopPageOfferAccept = (props: Props) => {
               </AlertBox>
             </Box>
           )}
-        {accepted && (
+        {orderStatus === OrderPlacingStatusType.COMPLETED && (
           <>
             {createdOrder && (
               <>
@@ -227,7 +232,8 @@ const ShopPageOfferAccept = (props: Props) => {
             )}
           </>
         )}
-        {!accepting && (
+        {(orderStatus === OrderPlacingStatusType.COMPLETED ||
+          orderStatus === OrderPlacingStatusType.ERROR) && (
           <Box
             sx={{
               margin: '16px 0',
@@ -255,7 +261,7 @@ const ShopPageOfferAccept = (props: Props) => {
               size="small"
               variant="outlined"
               onClick={() => {
-                handleModalClosed();
+                handleModalCloseClick();
               }}
             >
               Close

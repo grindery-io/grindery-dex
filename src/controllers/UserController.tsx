@@ -67,8 +67,7 @@ export const UserController = ({ children }: UserControllerProps) => {
   const userAccessToken = useAppSelector(selectUserAccessToken);
   const userAddress = useAppSelector(selectUserAddress);
   const chains = useAppSelector(selectChainsItems);
-  const userChainTokenSymbol =
-    getChainById(userChainId, chains)?.nativeToken || '';
+  const userChainTokenSymbol = getChainById('5', chains)?.nativeToken || '';
 
   const dispatch = useAppDispatch();
 

@@ -6,8 +6,6 @@ import { OfferCard, Loading } from '../../components';
 import { OfferType, TokenType } from '../../types';
 import {
   useAppSelector,
-  selectShopAccepting,
-  selectShopApproved,
   selectShopLoading,
   selectShopOffers,
   selectChainsItems,
@@ -15,9 +13,9 @@ import {
   selectUserAddress,
   selectUserChainId,
   selectPoolAbi,
-  selectTokenAbi,
   selectUserChainTokenPrice,
   selectUserAdvancedMode,
+  selectShopOfferId,
 } from '../../store';
 import { getChainById } from '../../utils';
 import { useShopController } from '../../controllers';
@@ -28,20 +26,16 @@ const ShopPageRoot = (props: Props) => {
   const accessToken = useAppSelector(selectUserAccessToken);
   const userChainId = useAppSelector(selectUserChainId);
   const userAddress = useAppSelector(selectUserAddress);
-  const offers = useAppSelector((state) =>
-    selectShopOffers(state, userChainId)
-  );
+  const offers = useAppSelector(selectShopOffers);
   const loading = useAppSelector(selectShopLoading);
-  const accepting = useAppSelector(selectShopAccepting);
-  const approved = useAppSelector(selectShopApproved);
+  const offerId = useAppSelector(selectShopOfferId);
   const chains = useAppSelector(selectChainsItems);
-  const fromChain = getChainById(userChainId, chains);
+  const fromChain = getChainById('5', chains);
   const tokenPrice = useAppSelector(selectUserChainTokenPrice);
   const fromToken = fromChain?.tokens?.find(
     (token: TokenType) => token.symbol === fromChain?.nativeToken
   );
   const { handleAcceptOfferAction } = useShopController();
-  const tokenAbi = useAppSelector(selectTokenAbi);
   const poolAbi = useAppSelector(selectPoolAbi);
   const advancedMode = useAppSelector(selectUserAdvancedMode);
 
@@ -85,16 +79,14 @@ const ShopPageRoot = (props: Props) => {
                         fromChain={fromChain}
                         fromToken={fromToken}
                         chains={chains}
-                        accepting={accepting}
+                        accepting={offerId}
                         advancedMode={advancedMode}
                         onAcceptOfferClick={(offer: OfferType) => {
                           handleAcceptOfferAction(
                             offer,
                             accessToken,
                             userChainId,
-                            approved,
                             fromToken,
-                            tokenAbi,
                             poolAbi,
                             userAddress,
                             chains

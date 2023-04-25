@@ -8,3 +8,4 @@ export * from './TokenType';
 export * from './SidebarNavigationItemType';
 export * from './NavTabsItemType';
 export * from './WalletTokenType';
+export * from './OrderPlacingStatusType';
