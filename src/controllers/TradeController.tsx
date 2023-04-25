@@ -61,10 +61,8 @@ type ContextProps = {
     chains: ChainType[]
   ) => void;
   handleSearchOffersAction: (
-    accessToken: string,
     filter: Tradefilter,
     chains: ChainType[],
-    fromTokenBalance: string,
     fromChainId: string,
     fromTokenId: string
   ) => void;
@@ -138,7 +136,6 @@ export const TradeController = ({ children }: TradeControllerProps) => {
   const validateSearchOffersAction = useCallback(
     (
       filter: Tradefilter,
-      fromTokenBalance: string,
       fromChainId: string,
       fromTokenId: string
     ): boolean => {
@@ -212,16 +209,6 @@ export const TradeController = ({ children }: TradeControllerProps) => {
 
         return false;
       }
-      if (parseFloat(filter.amount) > parseFloat(fromTokenBalance)) {
-        dispatch(
-          setTradeError({
-            type: 'search',
-            text: "You don't have enough funds",
-          })
-        );
-        dispatch(setTradeOffersVisible(false));
-        return false;
-      }
       return true;
     },
     [dispatch]
@@ -229,22 +216,13 @@ export const TradeController = ({ children }: TradeControllerProps) => {
 
   const handleSearchOffersAction = useCallback(
     async (
-      accessToken: string,
       filter: Tradefilter,
       chains: ChainType[],
-      fromTokenBalance: string,
       fromChainId: string,
       fromTokenId: string
     ) => {
       dispatch(clearTradeError());
-      if (
-        !validateSearchOffersAction(
-          filter,
-          fromTokenBalance,
-          fromChainId,
-          fromTokenId
-        )
-      ) {
+      if (!validateSearchOffersAction(filter, fromChainId, fromTokenId)) {
         return;
       }
       dispatch(setTradeLoading(true));
@@ -258,11 +236,9 @@ export const TradeController = ({ children }: TradeControllerProps) => {
         depositAmount: filter.amount,
       };
       const queryString = new URLSearchParams(query).toString();
-      const items = await searchOffersRequest(accessToken, queryString).catch(
-        (error) => {
-          dispatch(setTradeError({ type: 'search', text: error }));
-        }
-      );
+      const items = await searchOffersRequest(queryString).catch((error) => {
+        dispatch(setTradeError({ type: 'search', text: error }));
+      });
       if (typeof items !== 'undefined') {
         dispatch(setTradeOffers(items));
       } else {
