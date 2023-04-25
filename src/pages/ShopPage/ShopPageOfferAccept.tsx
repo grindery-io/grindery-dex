@@ -197,7 +197,8 @@ const ShopPageOfferAccept = (props: Props) => {
           </Box>
         )}
 
-        {errorMessage &&
+        {orderStatus === OrderPlacingStatusType.ERROR &&
+          errorMessage &&
           errorMessage.type === 'acceptOffer' &&
           errorMessage.text && (
             <Box sx={{ paddingLeft: '16px', paddingRight: '16px' }}>
@@ -206,6 +207,7 @@ const ShopPageOfferAccept = (props: Props) => {
               </AlertBox>
             </Box>
           )}
+
         {orderStatus === OrderPlacingStatusType.COMPLETED && (
           <>
             {createdOrder ? (

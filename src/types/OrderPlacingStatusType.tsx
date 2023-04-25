@@ -5,4 +5,5 @@ export enum OrderPlacingStatusType {
   PROCESSING = 'Transaction processing',
   COMPLETED = 'Your order has been placed!',
   ERROR = 'Error',
+  UNAUTHENTICATED = 'Connect MetaMask wallet',
 }

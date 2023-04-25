@@ -6,8 +6,6 @@ import React, {
 } from 'react';
 import {
   useAppDispatch,
-  useAppSelector,
-  selectUserAccessToken,
   clearShopError,
   setShopError,
   setShopLoading,
@@ -63,43 +61,38 @@ type ShopControllerProps = {
 };
 
 export const ShopController = ({ children }: ShopControllerProps) => {
-  const accessToken = useAppSelector(selectUserAccessToken);
   const dispatch = useAppDispatch();
   const { getSigner, getEthers, getProvider } = useUserController();
 
-  const fetchOffers = useCallback(
-    async (accessToken: string) => {
-      dispatch(setShopLoading(true));
-      const items = await getAllOffers(accessToken);
+  const fetchOffers = useCallback(async () => {
+    dispatch(setShopLoading(true));
+    const items = await getAllOffers();
 
-      if (items) {
-        const promises = items.map(async (offer: OfferType) => {
-          const provider = await getProviderWalletRequest(
-            accessToken,
-            offer.userId || '',
-            offer.chainId
-          ).catch(() => {
-            return null;
-          });
-          return provider || null;
+    if (items) {
+      const promises = items.map(async (offer: OfferType) => {
+        const provider = await getProviderWalletRequest(
+          offer.userId || '',
+          offer.chainId
+        ).catch(() => {
+          return null;
         });
-        const providers = await Promise.all(promises);
-        const enrichedOffers = items.map((offer: OfferType) => ({
-          ...offer,
-          providerDetails:
-            providers.find(
-              (provider: LiquidityWalletType | null) =>
-                offer && provider && offer.provider === provider.walletAddress
-            ) || undefined,
-        }));
-        dispatch(setShopOffers(enrichedOffers));
-      }
+        return provider || null;
+      });
+      const providers = await Promise.all(promises);
+      const enrichedOffers = items.map((offer: OfferType) => ({
+        ...offer,
+        providerDetails:
+          providers.find(
+            (provider: LiquidityWalletType | null) =>
+              offer && provider && offer.provider === provider.walletAddress
+          ) || undefined,
+      }));
+      dispatch(setShopOffers(enrichedOffers));
+    }
 
-      //dispatch(setShopOffers(items || []));
-      dispatch(setShopLoading(false));
-    },
-    [dispatch]
-  );
+    //dispatch(setShopOffers(items || []));
+    dispatch(setShopLoading(false));
+  }, [dispatch]);
 
   const fetchSingleOrder = async (accessToken: string, id: string) => {
     let order;
@@ -380,10 +373,8 @@ export const ShopController = ({ children }: ShopControllerProps) => {
   };
 
   useEffect(() => {
-    if (accessToken) {
-      fetchOffers(accessToken);
-    }
-  }, [accessToken, fetchOffers]);
+    fetchOffers();
+  }, [fetchOffers]);
 
   return (
     <ShopContext.Provider

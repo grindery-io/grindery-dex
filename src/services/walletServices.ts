@@ -148,7 +148,6 @@ export const getWalletBalanceRequest = (
 };
 
 export const getProviderWalletRequest = (
-  accessToken: string,
   userId: string,
   chainId: string
 ): Promise<LiquidityWalletType> => {
@@ -156,12 +155,7 @@ export const getProviderWalletRequest = (
     try {
       axios
         .get(
-          `${DELIGHT_API_URL}/liquidity-wallets/single?chainId=${chainId}&userId=${userId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
-          }
+          `${DELIGHT_API_URL}/liquidity-wallets/single?chainId=${chainId}&userId=${userId}`
         )
         .then((res) => {
           if (res?.data) {

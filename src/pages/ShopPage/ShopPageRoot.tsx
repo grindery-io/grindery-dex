@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Box } from '@mui/system';
 import { Stack, Typography } from '@mui/material';
 import ShopPageOfferAccept from './ShopPageOfferAccept';
@@ -19,6 +19,7 @@ import {
 } from '../../store';
 import { getChainById } from '../../utils';
 import { useShopController } from '../../controllers';
+import ShopPageConnectWallet from './ShopPageConnectWallet';
 
 type Props = {};
 
@@ -38,9 +39,18 @@ const ShopPageRoot = (props: Props) => {
   const { handleAcceptOfferAction } = useShopController();
   const poolAbi = useAppSelector(selectPoolAbi);
   const advancedMode = useAppSelector(selectUserAdvancedMode);
+  const [showWalletModal, setShowWalletModal] = useState(false);
 
-  return accessToken ? (
+  return (
     <>
+      {!accessToken && (
+        <ShopPageConnectWallet
+          open={showWalletModal}
+          onClose={() => {
+            setShowWalletModal(false);
+          }}
+        />
+      )}
       <ShopPageOfferAccept />
       <Box
         sx={{
@@ -82,15 +92,19 @@ const ShopPageRoot = (props: Props) => {
                         accepting={offerId}
                         advancedMode={advancedMode}
                         onAcceptOfferClick={(offer: OfferType) => {
-                          handleAcceptOfferAction(
-                            offer,
-                            accessToken,
-                            userChainId,
-                            fromToken,
-                            poolAbi,
-                            userAddress,
-                            chains
-                          );
+                          if (!accessToken) {
+                            setShowWalletModal(true);
+                          } else {
+                            handleAcceptOfferAction(
+                              offer,
+                              accessToken,
+                              userChainId,
+                              fromToken,
+                              poolAbi,
+                              userAddress,
+                              chains
+                            );
+                          }
                         }}
                       />
                     ))}
@@ -106,7 +120,7 @@ const ShopPageRoot = (props: Props) => {
         )}
       </Box>
     </>
-  ) : null;
+  );
 };
 
 export default ShopPageRoot;
