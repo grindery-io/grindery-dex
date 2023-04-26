@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Box } from '@mui/system';
 import Countdown from 'react-countdown';
 import {
@@ -10,10 +10,10 @@ import {
 } from '@mui/material';
 import {
   AlertBox,
+  EmailNotificationForm,
   Loading,
   OrderCard,
   OrderSkeleton,
-  TextInput,
   TransactionID,
 } from '../../components';
 import {
@@ -31,16 +31,11 @@ import {
   selectUserAddress,
   selectUserAccessToken,
 } from '../../store';
-import {
-  ErrorMessageType,
-  OrderPlacingStatusType,
-  OrderType,
-} from '../../types';
+import { OrderPlacingStatusType, OrderType } from '../../types';
 import {
   getChainById,
   getOfferProviderLink,
   getOrderBuyerLink,
-  validateEmail,
 } from '../../utils';
 import { ICONS } from '../../config';
 import { useShopController } from '../../controllers';
@@ -70,15 +65,7 @@ const ShopPageOfferAccept = (props: Props) => {
     ? getOrderBuyerLink(createdOrder, chains)
     : undefined;
 
-  const [userEmail, setUserEmail] = useState('');
-  const [userEmailSubmitted, setUserEmailSubmitted] = useState(false);
-  const [userEmailError, setUserEmailError] = useState<ErrorMessageType>({
-    type: '',
-    text: '',
-  });
-  const [userEmailSubmitting, setUserEmailSubmitting] = useState(false);
-
-  const [now] = useState(Date.now());
+  const [now, setNow] = useState(Date.now());
 
   const { handleEmailSubmitAction } = useShopController();
 
@@ -193,6 +180,29 @@ const ShopPageOfferAccept = (props: Props) => {
     }
   };
 
+  const handleEmailSubmit = useCallback(
+    async (email: string): Promise<boolean> => {
+      if (!createdOrder) {
+        return false;
+      }
+      const res = await handleEmailSubmitAction(
+        accessToken,
+        email,
+        createdOrder.orderId,
+        userWalletAddress
+      );
+      return res;
+    },
+    [handleEmailSubmitAction, accessToken, createdOrder, userWalletAddress]
+  );
+
+  useEffect(() => {
+    if (orderStatus === OrderPlacingStatusType.COMPLETED) {
+      const nowDate = Date.now();
+      setNow(nowDate);
+    }
+  }, [orderStatus]);
+
   return (
     <Dialog
       fullWidth
@@ -269,99 +279,7 @@ const ShopPageOfferAccept = (props: Props) => {
                     }
                     renderer={countdownRenderer}
                   />
-                  {!userEmailSubmitted ? (
-                    <Box>
-                      <TextInput
-                        label="Notify me on completion"
-                        value={userEmail}
-                        onChange={(
-                          event: React.ChangeEvent<HTMLInputElement>
-                        ) => {
-                          setUserEmail(event.target.value);
-                        }}
-                        placeholder="you@domain.xzy"
-                        error={userEmailError}
-                        name="email"
-                        endAdornment={
-                          <Box>
-                            <Button
-                              disableElevation
-                              size="small"
-                              variant="contained"
-                              onClick={async () => {
-                                setUserEmailError({
-                                  type: '',
-                                  text: '',
-                                });
-                                if (!userEmail) {
-                                  setUserEmailError({
-                                    type: 'email',
-                                    text: 'Email is required',
-                                  });
-                                  return;
-                                }
-                                if (!validateEmail(userEmail)) {
-                                  setUserEmailError({
-                                    type: 'email',
-                                    text: 'Email is not valid',
-                                  });
-                                  return;
-                                }
-                                setUserEmailSubmitting(true);
-                                const res = await handleEmailSubmitAction(
-                                  accessToken,
-                                  userEmail,
-                                  createdOrder.orderId,
-                                  userWalletAddress
-                                );
-                                if (res) {
-                                  setUserEmailSubmitted(true);
-                                  setUserEmailSubmitting(false);
-                                  setUserEmail('');
-                                  setUserEmailError({
-                                    type: '',
-                                    text: '',
-                                  });
-                                } else {
-                                  setUserEmailSubmitting(false);
-                                  setUserEmailError({
-                                    type: 'email',
-                                    text: 'Server error',
-                                  });
-                                }
-                              }}
-                              sx={{
-                                fontSize: '14px',
-                                padding: '4px 8px 5px',
-                                display: 'inline-block',
-                                width: 'auto',
-                                margin: '0 4px 0 4px',
-                                background: '#3f49e1',
-                                color: '#fff',
-                                borderRadius: '8px',
-                                minWidth: 0,
-                                whiteSpace: 'nowrap',
-                                '&:hover': {
-                                  background: 'rgb(50, 58, 180)',
-                                  color: '#fff',
-                                  opacity: 1,
-                                },
-                              }}
-                            >
-                              {userEmailSubmitting ? 'Submitting' : `Enable`}
-                            </Button>
-                          </Box>
-                        }
-                      />
-                    </Box>
-                  ) : (
-                    <Box sx={{ marginTop: '16px' }}>
-                      <Typography variant="body2">
-                        You will get email notification once the order is
-                        complete.
-                      </Typography>
-                    </Box>
-                  )}
+                  <EmailNotificationForm onSubmit={handleEmailSubmit} />
                 </Box>
               </>
             ) : (
