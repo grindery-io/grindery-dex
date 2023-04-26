@@ -47,6 +47,7 @@ import {
   ErrorMessageType,
 } from '../types';
 import { POOL_CONTRACT_ADDRESS } from '../config';
+import { addGsheetRowRequest } from '../services/gsheetServices';
 
 // Context props
 type ContextProps = {
@@ -68,6 +69,12 @@ type ContextProps = {
   ) => void;
   handleTradeFilterChange: (name: TradeFilterFieldName, value: string) => void;
   handleFromAmountMaxClick: (balance: string) => void;
+  handleEmailSubmitAction: (
+    accessToken: string,
+    email: string,
+    orderId: string,
+    walletAddress: string
+  ) => Promise<boolean>;
 };
 
 export const TradeContext = createContext<ContextProps>({
@@ -75,6 +82,7 @@ export const TradeContext = createContext<ContextProps>({
   handleSearchOffersAction: () => {},
   handleTradeFilterChange: () => {},
   handleFromAmountMaxClick: () => {},
+  handleEmailSubmitAction: async () => false,
 });
 
 type TradeControllerProps = {
@@ -131,6 +139,26 @@ export const TradeController = ({ children }: TradeControllerProps) => {
     dispatch(clearTradeError());
     dispatch(setTradeOffersVisible(false));
     dispatch(setTradeFilterValue({ name: 'amount', value: balance }));
+  };
+
+  const handleEmailSubmitAction = async (
+    accessToken: string,
+    email: string,
+    orderId: string,
+    walletAddress: string
+  ): Promise<boolean> => {
+    let res;
+    try {
+      res = await addGsheetRowRequest(accessToken, {
+        email,
+        walletAddress,
+        orderId,
+      });
+    } catch (error: any) {
+      console.error('handleEmailSubmitAction error:', error);
+      return false;
+    }
+    return res;
   };
 
   const validateSearchOffersAction = useCallback(
@@ -306,7 +334,7 @@ export const TradeController = ({ children }: TradeControllerProps) => {
 
     if (userChainId !== offer.exchangeChainId) {
       dispatch(
-        setTradeOrderStatus(OrderPlacingStatusType.WAITING_NETOWORK_SWITCH)
+        setTradeOrderStatus(OrderPlacingStatusType.WAITING_NETWORK_SWITCH)
       );
     }
 
@@ -488,6 +516,7 @@ export const TradeController = ({ children }: TradeControllerProps) => {
         handleSearchOffersAction,
         handleTradeFilterChange,
         handleFromAmountMaxClick,
+        handleEmailSubmitAction,
       }}
     >
       {children}

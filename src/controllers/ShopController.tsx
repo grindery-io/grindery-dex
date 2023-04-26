@@ -38,6 +38,7 @@ import {
   getChainById,
   switchMetamaskNetwork,
 } from '../utils';
+import { addGsheetRowRequest } from '../services/gsheetServices';
 
 // Context props
 type ContextProps = {
@@ -50,10 +51,17 @@ type ContextProps = {
     userAddress: string,
     chains: ChainType[]
   ) => void;
+  handleEmailSubmitAction: (
+    accessToken: string,
+    email: string,
+    orderId: string,
+    walletAddress: string
+  ) => Promise<boolean>;
 };
 
 export const ShopContext = createContext<ContextProps>({
   handleAcceptOfferAction: () => {},
+  handleEmailSubmitAction: async () => false,
 });
 
 type ShopControllerProps = {
@@ -112,6 +120,26 @@ export const ShopController = ({ children }: ShopControllerProps) => {
       }
       dispatch(setOrdersItems([order]));
     }
+  };
+
+  const handleEmailSubmitAction = async (
+    accessToken: string,
+    email: string,
+    orderId: string,
+    walletAddress: string
+  ): Promise<boolean> => {
+    let res;
+    try {
+      res = await addGsheetRowRequest(accessToken, {
+        email,
+        walletAddress,
+        orderId,
+      });
+    } catch (error: any) {
+      console.error('handleEmailSubmitAction error:', error);
+      return false;
+    }
+    return res;
   };
 
   const validateAcceptOfferAction = (offer: OfferType): boolean => {
@@ -197,7 +225,7 @@ export const ShopController = ({ children }: ShopControllerProps) => {
     }
     if (userChainId !== offer.exchangeChainId) {
       dispatch(
-        setShopOorderStatus(OrderPlacingStatusType.WAITING_NETOWORK_SWITCH)
+        setShopOorderStatus(OrderPlacingStatusType.WAITING_NETWORK_SWITCH)
       );
     }
     const networkSwitched = await switchMetamaskNetwork(
@@ -380,6 +408,7 @@ export const ShopController = ({ children }: ShopControllerProps) => {
     <ShopContext.Provider
       value={{
         handleAcceptOfferAction,
+        handleEmailSubmitAction,
       }}
     >
       {children}

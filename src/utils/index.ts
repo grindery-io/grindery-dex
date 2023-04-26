@@ -1,6 +1,7 @@
 export * from './isNumeric';
 export * from './error';
 export * from './address';
+export * from './email';
 export * from './helpers/chainHelpers';
 export * from './helpers/offerHelpers';
 export * from './helpers/orderHelpers';

@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import { Box } from '@mui/system';
-import { IconButton, Typography } from '@mui/material';
+import { Button, IconButton, Typography } from '@mui/material';
 import Countdown from 'react-countdown';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
 import {
@@ -15,6 +15,7 @@ import {
   OrderCard,
   TransactionID,
   OrderSkeleton,
+  TextInput,
 } from '../../components';
 import {
   useAppDispatch,
@@ -37,6 +38,7 @@ import {
   setTradeOrderStatus,
 } from '../../store';
 import {
+  ErrorMessageType,
   OfferType,
   OrderPlacingStatusType,
   OrderType,
@@ -50,6 +52,7 @@ import {
   getOrderBuyerLink,
   getTokenById,
   getTokenBySymbol,
+  validateEmail,
 } from '../../utils';
 
 type Props = {};
@@ -60,6 +63,7 @@ const TradePageOfferAccept = (props: Props) => {
   const dispatch = useAppDispatch();
   const advancedMode = useAppSelector(selectUserAdvancedMode);
   const user = useAppSelector(selectUserId);
+  const userWalletAddress = useAppSelector(selectUserAddress);
   const accessToken = useAppSelector(selectUserAccessToken);
   const userChainId = useAppSelector(selectUserChainId);
   const userAddress = useAppSelector(selectUserAddress);
@@ -77,7 +81,8 @@ const TradePageOfferAccept = (props: Props) => {
   const fromToken = fromChain?.tokens?.find(
     (token: TokenType) => token.symbol === fromChain?.nativeToken
   );
-  const { handleAcceptOfferAction } = useTradeController();
+  const { handleAcceptOfferAction, handleEmailSubmitAction } =
+    useTradeController();
   const offer = foundOffers.find((o: OfferType) => o.offerId === offerId);
   const offerChain = getChainById(offer?.chainId || '', chains);
   const exchangeToken = getTokenBySymbol(
@@ -103,6 +108,15 @@ const TradePageOfferAccept = (props: Props) => {
   const destAddrLink = createdOrder
     ? getOrderBuyerLink(createdOrder, chains)
     : undefined;
+
+  const [userEmail, setUserEmail] = useState('');
+  const [userEmailSubmitted, setUserEmailSubmitted] = useState(false);
+  const [userEmailError, setUserEmailError] = useState<ErrorMessageType>({
+    type: '',
+    text: '',
+  });
+  const [userEmailSubmitting, setUserEmailSubmitting] = useState(false);
+  const [now] = useState(Date.now());
 
   const renderAddress = (value: string, link: string) => {
     return (
@@ -130,10 +144,16 @@ const TradePageOfferAccept = (props: Props) => {
   };
 
   const countdownRenderer = ({
-    total,
+    days,
+    hours,
+    minutes,
+    seconds,
     completed,
   }: {
-    total: any;
+    days: any;
+    hours: any;
+    minutes: any;
+    seconds: any;
     completed: any;
   }) => {
     if (!createdOrder) {
@@ -187,7 +207,12 @@ const TradePageOfferAccept = (props: Props) => {
             )}{' '}
             in your wallet{' '}
             {renderAddress(createdOrder.destAddr || '', destAddrLink || '')}{' '}
-            within <span>{total / 1000}</span> seconds.
+            within {days > 0 ? `${days} day${days !== 1 ? 's' : ''} ` : ''}{' '}
+            {hours > 0 ? `${hours} hour${hours !== 1 ? 's' : ''} ` : ''}
+            {minutes > 0
+              ? `${minutes} minute${minutes !== 1 ? 's' : ''} and`
+              : ''}{' '}
+            {seconds} second{seconds !== 1 ? 's' : ''}.
           </Typography>
         </>
       );
@@ -274,7 +299,7 @@ const TradePageOfferAccept = (props: Props) => {
             )}
           </>
         )}
-        {(orderStatus === OrderPlacingStatusType.WAITING_NETOWORK_SWITCH ||
+        {(orderStatus === OrderPlacingStatusType.WAITING_NETWORK_SWITCH ||
           orderStatus === OrderPlacingStatusType.WAITING_CONFIRMATION) && (
           <Box sx={{ padding: '0px 0 20px', textAlign: 'center' }}>
             <img
@@ -340,13 +365,106 @@ const TradePageOfferAccept = (props: Props) => {
                   </Typography>
                   <Countdown
                     date={
-                      Date.now() +
+                      now +
                       (createdOrder.offer?.estimatedTime
                         ? parseInt(createdOrder.offer.estimatedTime) * 1000
                         : 0)
                     }
                     renderer={countdownRenderer}
                   />
+                  {!userEmailSubmitted ? (
+                    <Box>
+                      <TextInput
+                        label="Notify me on completion"
+                        value={userEmail}
+                        onChange={(
+                          event: React.ChangeEvent<HTMLInputElement>
+                        ) => {
+                          setUserEmail(event.target.value);
+                        }}
+                        placeholder="you@domain.xzy"
+                        error={userEmailError}
+                        name="email"
+                        endAdornment={
+                          <Box>
+                            <Button
+                              disableElevation
+                              size="small"
+                              variant="contained"
+                              onClick={async () => {
+                                setUserEmailError({
+                                  type: '',
+                                  text: '',
+                                });
+                                if (!userEmail) {
+                                  setUserEmailError({
+                                    type: 'email',
+                                    text: 'Email is required',
+                                  });
+                                  return;
+                                }
+                                if (!validateEmail(userEmail)) {
+                                  setUserEmailError({
+                                    type: 'email',
+                                    text: 'Email is not valid',
+                                  });
+                                  return;
+                                }
+                                setUserEmailSubmitting(true);
+                                const res = await handleEmailSubmitAction(
+                                  accessToken,
+                                  userEmail,
+                                  createdOrder.orderId,
+                                  userWalletAddress
+                                );
+                                if (res) {
+                                  setUserEmailSubmitted(true);
+                                  setUserEmailSubmitting(false);
+                                  setUserEmail('');
+                                  setUserEmailError({
+                                    type: '',
+                                    text: '',
+                                  });
+                                } else {
+                                  setUserEmailSubmitting(false);
+                                  setUserEmailError({
+                                    type: 'email',
+                                    text: 'Server error',
+                                  });
+                                }
+                              }}
+                              sx={{
+                                fontSize: '14px',
+                                padding: '4px 8px 5px',
+                                display: 'inline-block',
+                                width: 'auto',
+                                margin: '0 4px 0 4px',
+                                background: '#3f49e1 !important',
+                                color: '#fff',
+                                borderRadius: '8px',
+                                minWidth: 0,
+                                whiteSpace: 'nowrap',
+                                '&:hover': {
+                                  background: 'rgb(50, 58, 180)',
+                                  color: '#fff',
+                                  opacity: 1,
+                                },
+                              }}
+                            >
+                              {userEmailSubmitting ? 'Submitting' : `Enable`}
+                            </Button>
+                          </Box>
+                        }
+                      />
+                    </Box>
+                  ) : (
+                    <Box sx={{ marginTop: '16px' }}>
+                      <Typography variant="body2">
+                        You will get email notification once the order is
+                        complete.
+                      </Typography>
+                    </Box>
+                  )}
                 </Box>
               </>
             ) : (
