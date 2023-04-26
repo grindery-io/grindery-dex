@@ -35,6 +35,7 @@ import {
   getOfferProviderLink,
 } from '../../utils';
 import PageCardSubmitButton from '../PageCardSubmitButton/PageCardSubmitButton';
+import moment from 'moment';
 
 export type OfferChain = {
   label: string;
@@ -533,7 +534,7 @@ const OfferPublic = (props: Props) => {
             orientation="vertical"
             activeStep={-1}
             sx={{
-              padding: '0 16px',
+              padding: '0 16px 8px',
               '& .MuiStepConnector-line': {
                 minHeight: '12px',
               },
@@ -590,22 +591,26 @@ const OfferPublic = (props: Props) => {
                 </StepLabel>
               </Step>
             )}
-            {(!excludeSteps || !excludeSteps.includes('time')) &&
-              isInAdvancedMode && (
-                <Step expanded>
-                  <StepLabel
-                    StepIconComponent={({ className }) => (
-                      <Box className={className}>
-                        <AccessTimeFilledIcon
-                          sx={{ color: 'rgba(0, 0, 0, 0.7)' }}
-                        />
-                      </Box>
-                    )}
-                  >
-                    Time to execute: <strong>{offer.estimatedTime}s</strong>
-                  </StepLabel>
-                </Step>
-              )}
+            {(!excludeSteps || !excludeSteps.includes('time')) && (
+              <Step expanded>
+                <StepLabel
+                  StepIconComponent={({ className }) => (
+                    <Box className={className}>
+                      <AccessTimeFilledIcon
+                        sx={{ color: 'rgba(0, 0, 0, 0.7)' }}
+                      />
+                    </Box>
+                  )}
+                >
+                  Time to execute:{' '}
+                  <strong>
+                    {moment
+                      .duration(parseFloat(offer.estimatedTime || '0') * 1000)
+                      .humanize()}
+                  </strong>
+                </StepLabel>
+              </Step>
+            )}
           </Stepper>
           {isInAdvancedMode && (
             <Box p="16px">

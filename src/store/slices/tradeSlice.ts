@@ -1,6 +1,10 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../store';
-import { OfferType, ErrorMessageType } from '../../types';
+import {
+  OfferType,
+  ErrorMessageType,
+  OrderPlacingStatusType,
+} from '../../types';
 
 export type TradeFilterFieldName = 'toChainId' | 'toTokenId' | 'amount';
 
@@ -9,20 +13,18 @@ export type Tradefilter = {
 };
 
 interface TradeState {
-  acceptedOfferTx: string;
-  approved: boolean;
   error: ErrorMessageType;
   filter: Tradefilter;
   isOffersVisible: boolean;
   loading: boolean;
   offers: OfferType[];
+  orderStatus: OrderPlacingStatusType;
+  orderTransactionId: string;
   pricesLoading: boolean;
   toTokenPrice: number | null;
 }
 
 const initialState: TradeState = {
-  acceptedOfferTx: '',
-  approved: false,
   error: { type: '', text: '' },
   filter: {
     toChainId: '97',
@@ -32,6 +34,8 @@ const initialState: TradeState = {
   isOffersVisible: false,
   loading: false,
   offers: [],
+  orderStatus: OrderPlacingStatusType.UNINITIALIZED,
+  orderTransactionId: '',
   pricesLoading: false,
   toTokenPrice: null,
 };
@@ -80,14 +84,14 @@ const tradeSlice = createSlice({
     setTradePricesLoading(state, action: PayloadAction<boolean>) {
       state.pricesLoading = action.payload;
     },
-    setTradeAcceptedOfferTx(state, action: PayloadAction<string>) {
-      state.acceptedOfferTx = action.payload;
-    },
-    setTradeApproved(state, action: PayloadAction<boolean>) {
-      state.approved = action.payload;
-    },
     setTradeOffersVisible(state, action: PayloadAction<boolean>) {
       state.isOffersVisible = action.payload;
+    },
+    setTradeOrderTransactionId(state, action: PayloadAction<string>) {
+      state.orderTransactionId = action.payload;
+    },
+    setTradeOrderStatus(state, action: PayloadAction<OrderPlacingStatusType>) {
+      state.orderStatus = action.payload;
     },
   },
 });
@@ -96,15 +100,16 @@ export const selectTradeOffers = (state: RootState) => state.trade.offers;
 export const selectTradeError = (state: RootState) => state.trade.error;
 export const selectTradeLoading = (state: RootState) => state.trade.loading;
 export const selectTradeFilter = (state: RootState) => state.trade.filter;
-export const selectTradeApproved = (state: RootState) => state.trade.approved;
-export const selectTradeAcceptedOfferTx = (state: RootState) =>
-  state.trade.acceptedOfferTx;
 export const selectTradeToTokenPrice = (state: RootState) =>
   state.trade.toTokenPrice;
 export const selectTradePricesLoading = (state: RootState) =>
   state.trade.pricesLoading;
 export const selectTradeOffersVisible = (state: RootState) =>
   state.trade.isOffersVisible;
+export const selectTradeOrderTransactionId = (state: RootState) =>
+  state.trade.orderTransactionId;
+export const selectTradeOrderStatus = (state: RootState) =>
+  state.trade.orderStatus;
 
 export const {
   setTradeOffers,
@@ -116,9 +121,9 @@ export const {
   clearTradeFilter,
   setTradeToTokenPrice,
   setTradePricesLoading,
-  setTradeApproved,
-  setTradeAcceptedOfferTx,
   setTradeOffersVisible,
+  setTradeOrderTransactionId,
+  setTradeOrderStatus,
 } = tradeSlice.actions;
 
 export default tradeSlice.reducer;

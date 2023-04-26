@@ -2,25 +2,15 @@ import axios from 'axios';
 import { ChainType } from '../types';
 import { DELIGHT_API_URL } from '../config';
 
-export const getChainsWithTokens = (
-  accessToken: string
-): Promise<ChainType[]> => {
+export const getChainsWithTokens = (): Promise<ChainType[]> => {
   return new Promise((resolve, reject) => {
     try {
       axios
-        .get(`${DELIGHT_API_URL}/blockchains/active`, {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        })
+        .get(`${DELIGHT_API_URL}/blockchains/active`)
         .then((res) => {
           try {
             axios
-              .get(`${DELIGHT_API_URL}/tokens/active`, {
-                headers: {
-                  Authorization: `Bearer ${accessToken}`,
-                },
-              })
+              .get(`${DELIGHT_API_URL}/tokens/active`)
               .then((res2) => {
                 // TODO: remove data formatting away from services
                 const chainsWithTokens = (res?.data || []).map(

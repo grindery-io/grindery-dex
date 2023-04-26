@@ -15,8 +15,6 @@ import {
 import { ROUTES, GRT_CONTRACT_ADDRESS } from '../../config';
 import {
   useAppSelector,
-  selectUserAccessToken,
-  selectUserId,
   selectTradeError,
   selectTradeFilter,
   selectTradeLoading,
@@ -24,7 +22,7 @@ import {
   selectUserChainTokenBalance,
   selectUserChainTokenBalanceLoading,
 } from '../../store';
-import { useUserController, useTradeController } from '../../controllers';
+import { useTradeController } from '../../controllers';
 import { getChainById, getTokenById } from '../../utils';
 import { TokenType } from '../../types';
 
@@ -32,9 +30,6 @@ type Props = {};
 
 const TradePageOffersFilter = (props: Props) => {
   let navigate = useNavigate();
-  const user = useAppSelector(selectUserId);
-  const accessToken = useAppSelector(selectUserAccessToken);
-  const { connectUser: connect } = useUserController();
   const errorMessage = useAppSelector(selectTradeError);
   const loading = useAppSelector(selectTradeLoading);
   const chains = useAppSelector(selectChainsItems);
@@ -65,30 +60,24 @@ const TradePageOffersFilter = (props: Props) => {
 
   useEffect(() => {
     if (
-      accessToken &&
       filter &&
       filter.amount &&
       filter.toChainId &&
       filter.toTokenId &&
       chains &&
-      userChainTokenBalance &&
       fromChain?.chainId &&
       fromToken?.coinmarketcapId
     ) {
       debouncedSearch(
-        accessToken,
         filter,
         chains,
-        userChainTokenBalance,
         fromChain?.chainId,
         fromToken?.coinmarketcapId
       );
     }
   }, [
-    accessToken,
     filter,
     chains,
-    userChainTokenBalance,
     fromChain?.chainId,
     fromToken?.coinmarketcapId,
     debouncedSearch,
@@ -172,24 +161,16 @@ const TradePageOffersFilter = (props: Props) => {
           )}
 
         <PageCardSubmitButton
-          label={user ? 'Search offers' : 'Connect wallet'}
-          onClick={
-            user
-              ? () => {
-                  handleSearchOffersAction(
-                    accessToken,
-                    filter,
-                    chains,
-                    userChainTokenBalance,
-                    fromChain?.chainId || '',
-                    fromToken?.coinmarketcapId || ''
-                  );
-                }
-              : () => {
-                  connect();
-                }
-          }
-          disabled={Boolean(user) && loading}
+          label={'Search offers'}
+          onClick={() => {
+            handleSearchOffersAction(
+              filter,
+              chains,
+              fromChain?.chainId || '',
+              fromToken?.coinmarketcapId || ''
+            );
+          }}
+          disabled={loading}
         />
       </PageCardBody>
     </PageCard>

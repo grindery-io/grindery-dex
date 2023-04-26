@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import { Box } from '@mui/system';
 import { IconButton, Typography } from '@mui/material';
@@ -14,6 +14,8 @@ import {
   PageCardSubmitButton,
   OrderCard,
   TransactionID,
+  OrderSkeleton,
+  EmailNotificationForm,
 } from '../../components';
 import {
   useAppDispatch,
@@ -23,21 +25,25 @@ import {
   selectUserAddress,
   selectUserChainId,
   selectUserId,
-  selectTradeAcceptedOfferTx,
-  selectTradeApproved,
   selectTradeError,
   selectTradeFilter,
   selectTradeLoading,
   selectTradeOffers,
-  setTradeAcceptedOfferTx,
-  setTradeApproved,
   selectPoolAbi,
-  selectTokenAbi,
   selectUserAdvancedMode,
   selectOrdersItems,
+  setTradeOrderTransactionId,
+  selectTradeOrderTransactionId,
+  selectTradeOrderStatus,
+  setTradeOrderStatus,
 } from '../../store';
-import { OfferType, OrderType, TokenType } from '../../types';
-import { ROUTES } from '../../config';
+import {
+  OfferType,
+  OrderPlacingStatusType,
+  OrderType,
+  TokenType,
+} from '../../types';
+import { ICONS, ROUTES } from '../../config';
 import { useUserController, useTradeController } from '../../controllers';
 import {
   getChainById,
@@ -55,16 +61,16 @@ const TradePageOfferAccept = (props: Props) => {
   const dispatch = useAppDispatch();
   const advancedMode = useAppSelector(selectUserAdvancedMode);
   const user = useAppSelector(selectUserId);
+  const userWalletAddress = useAppSelector(selectUserAddress);
   const accessToken = useAppSelector(selectUserAccessToken);
   const userChainId = useAppSelector(selectUserChainId);
   const userAddress = useAppSelector(selectUserAddress);
   const { connectUser: connect } = useUserController();
   const loading = useAppSelector(selectTradeLoading);
+  const orderStatus = useAppSelector(selectTradeOrderStatus);
   const foundOffers = useAppSelector(selectTradeOffers);
-  const tokenAbi = useAppSelector(selectTokenAbi);
   const poolAbi = useAppSelector(selectPoolAbi);
-  const accepted = useAppSelector(selectTradeAcceptedOfferTx);
-  const approved = useAppSelector(selectTradeApproved);
+  const orderTransactionId = useAppSelector(selectTradeOrderTransactionId);
   const errorMessage = useAppSelector(selectTradeError);
   const chains = useAppSelector(selectChainsItems);
   const filter = useAppSelector(selectTradeFilter);
@@ -73,7 +79,8 @@ const TradePageOfferAccept = (props: Props) => {
   const fromToken = fromChain?.tokens?.find(
     (token: TokenType) => token.symbol === fromChain?.nativeToken
   );
-  const { handleAcceptOfferAction } = useTradeController();
+  const { handleAcceptOfferAction, handleEmailSubmitAction } =
+    useTradeController();
   const offer = foundOffers.find((o: OfferType) => o.offerId === offerId);
   const offerChain = getChainById(offer?.chainId || '', chains);
   const exchangeToken = getTokenBySymbol(
@@ -88,7 +95,8 @@ const TradePageOfferAccept = (props: Props) => {
   );
   const orders = useAppSelector(selectOrdersItems);
   const createdOrder =
-    accepted && orders.find((order: OrderType) => order.hash === accepted);
+    orderTransactionId &&
+    orders.find((order: OrderType) => order.hash === orderTransactionId);
 
   const providerLink =
     createdOrder && createdOrder?.offer
@@ -98,6 +106,8 @@ const TradePageOfferAccept = (props: Props) => {
   const destAddrLink = createdOrder
     ? getOrderBuyerLink(createdOrder, chains)
     : undefined;
+
+  const [now, setNow] = useState(Date.now());
 
   const renderAddress = (value: string, link: string) => {
     return (
@@ -125,10 +135,16 @@ const TradePageOfferAccept = (props: Props) => {
   };
 
   const countdownRenderer = ({
-    total,
+    days,
+    hours,
+    minutes,
+    seconds,
     completed,
   }: {
-    total: any;
+    days: any;
+    hours: any;
+    minutes: any;
+    seconds: any;
     completed: any;
   }) => {
     if (!createdOrder) {
@@ -182,37 +198,69 @@ const TradePageOfferAccept = (props: Props) => {
             )}{' '}
             in your wallet{' '}
             {renderAddress(createdOrder.destAddr || '', destAddrLink || '')}{' '}
-            within <span>{total / 1000}</span> seconds.
+            within {days > 0 ? `${days} day${days !== 1 ? 's' : ''} ` : ''}{' '}
+            {hours > 0 ? `${hours} hour${hours !== 1 ? 's' : ''} ` : ''}
+            {minutes > 0
+              ? `${minutes} minute${minutes !== 1 ? 's' : ''} and`
+              : ''}{' '}
+            {seconds} second{seconds !== 1 ? 's' : ''}.
           </Typography>
         </>
       );
     }
   };
 
+  const handleEmailSubmit = useCallback(
+    async (email: string): Promise<boolean> => {
+      if (!createdOrder) {
+        return false;
+      }
+      const res = await handleEmailSubmitAction(
+        accessToken,
+        email,
+        createdOrder.orderId,
+        userWalletAddress
+      );
+      return res;
+    },
+    [handleEmailSubmitAction, accessToken, createdOrder, userWalletAddress]
+  );
+
+  useEffect(() => {
+    if (orderStatus === OrderPlacingStatusType.COMPLETED) {
+      const nowDate = Date.now();
+      setNow(nowDate);
+    }
+  }, [orderStatus]);
+
   return offer ? (
     <PageCard>
       <PageCardHeader
-        title={accepted ? 'Your order has been placed!' : 'Review offer'}
+        title={!orderStatus ? 'Review offer' : orderStatus}
         titleSize={18}
         titleAlign="center"
         startAdornment={
-          <IconButton
-            id="return"
-            size="medium"
-            edge="start"
-            onClick={() => {
-              dispatch(setTradeAcceptedOfferTx(''));
-              dispatch(setTradeApproved(false));
-              navigate(ROUTES.BUY.TRADE.ROOT.FULL_PATH);
-            }}
-          >
-            <ArrowBackIcon />
-          </IconButton>
+          !orderStatus ? (
+            <IconButton
+              id="return"
+              size="medium"
+              edge="start"
+              onClick={() => {
+                dispatch(setTradeOrderTransactionId(''));
+                dispatch(
+                  setTradeOrderStatus(OrderPlacingStatusType.UNINITIALIZED)
+                );
+                navigate(ROUTES.BUY.TRADE.ROOT.FULL_PATH);
+              }}
+            >
+              <ArrowBackIcon />
+            </IconButton>
+          ) : undefined
         }
-        endAdornment={<Box width={28} height={40} />}
+        endAdornment={!orderStatus ? <Box width={28} height={40} /> : undefined}
       />
       <PageCardBody maxHeight="540px">
-        {!accepted ? (
+        {!orderStatus && (
           <>
             <Box mt="0px">
               {offerChain && offerToken && (
@@ -230,32 +278,14 @@ const TradePageOfferAccept = (props: Props) => {
                 />
               )}
             </Box>
-            {approved && (
-              <AlertBox color="success">
-                <p>
-                  Tokens have been approved.
-                  <br />
-                  You can accept offer now.
-                </p>
-              </AlertBox>
-            )}
-            {loading && <Loading />}
-            {errorMessage &&
-              errorMessage.type === 'acceptOffer' &&
-              errorMessage.text && (
-                <AlertBox color="error">
-                  <p>{errorMessage.text}</p>
-                </AlertBox>
-              )}
             {exchangeToken && (
               <PageCardSubmitButton
                 label={
                   user
                     ? loading
                       ? 'Waiting transaction'
-                      : approved ||
-                        (typeof fromToken !== 'string' &&
-                          fromToken?.address === '0x0')
+                      : typeof fromToken !== 'string' &&
+                        fromToken?.address === '0x0'
                       ? 'Place Order'
                       : 'Approve tokens'
                     : 'Connect wallet'
@@ -267,9 +297,7 @@ const TradePageOfferAccept = (props: Props) => {
                           offer,
                           accessToken,
                           userChainId,
-                          approved,
                           exchangeToken,
-                          tokenAbi,
                           poolAbi,
                           userAddress,
                           amount,
@@ -284,9 +312,56 @@ const TradePageOfferAccept = (props: Props) => {
               />
             )}
           </>
-        ) : (
+        )}
+        {(orderStatus === OrderPlacingStatusType.WAITING_NETWORK_SWITCH ||
+          orderStatus === OrderPlacingStatusType.WAITING_CONFIRMATION) && (
+          <Box sx={{ padding: '0px 0 20px', textAlign: 'center' }}>
+            <img
+              style={{ width: '100%', height: 'auto', maxWidth: '64px' }}
+              src={ICONS.METAMASK}
+              alt=""
+            />
+          </Box>
+        )}
+        {orderStatus === OrderPlacingStatusType.PROCESSING && (
+          <Box sx={{ padding: '0px 0 20px', textAlign: 'center' }}>
+            <Loading />
+          </Box>
+        )}
+        {orderStatus === OrderPlacingStatusType.ERROR &&
+          errorMessage &&
+          errorMessage.type === 'acceptOffer' &&
+          errorMessage.text && (
+            <>
+              <Box
+                sx={{
+                  paddingTop: '0',
+                  paddingBottom: '0px',
+                  '& > .MuiBox-root': {
+                    marginTop: '0',
+                  },
+                }}
+              >
+                <AlertBox color="error">
+                  <p>{errorMessage.text}</p>
+                </AlertBox>
+              </Box>
+              <PageCardSubmitButton
+                label="Close"
+                onClick={() => {
+                  dispatch(setTradeOrderTransactionId(''));
+                  dispatch(
+                    setTradeOrderStatus(OrderPlacingStatusType.UNINITIALIZED)
+                  );
+                  navigate(ROUTES.BUY.TRADE.ROOT.FULL_PATH);
+                }}
+              />
+            </>
+          )}
+
+        {orderStatus === OrderPlacingStatusType.COMPLETED && (
           <>
-            {createdOrder && (
+            {createdOrder ? (
               <>
                 <OrderCard
                   order={createdOrder}
@@ -304,21 +379,26 @@ const TradePageOfferAccept = (props: Props) => {
                   </Typography>
                   <Countdown
                     date={
-                      Date.now() +
+                      now +
                       (createdOrder.offer?.estimatedTime
                         ? parseInt(createdOrder.offer.estimatedTime) * 1000
                         : 0)
                     }
                     renderer={countdownRenderer}
                   />
+                  <EmailNotificationForm onSubmit={handleEmailSubmit} />
                 </Box>
               </>
+            ) : (
+              <OrderSkeleton />
             )}
             <PageCardSubmitButton
               label="Close"
               onClick={() => {
-                dispatch(setTradeAcceptedOfferTx(''));
-                dispatch(setTradeApproved(false));
+                dispatch(setTradeOrderTransactionId(''));
+                dispatch(
+                  setTradeOrderStatus(OrderPlacingStatusType.UNINITIALIZED)
+                );
                 navigate(ROUTES.BUY.TRADE.ROOT.FULL_PATH);
               }}
             />

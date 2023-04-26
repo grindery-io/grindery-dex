@@ -85,15 +85,11 @@ export const getUserOffers = (accessToken: string): Promise<OfferType[]> => {
   });
 };
 
-export const getAllOffers = (accessToken: string): Promise<OfferType[]> => {
+export const getAllOffers = (): Promise<OfferType[]> => {
   return new Promise((resolve, reject) => {
     try {
       axios
-        .get(`${DELIGHT_API_URL}/offers`, {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        })
+        .get(`${DELIGHT_API_URL}/offers`)
         .then((res) => {
           resolve(res?.data || []);
         })
@@ -108,18 +104,11 @@ export const getAllOffers = (accessToken: string): Promise<OfferType[]> => {
   });
 };
 
-export const searchOffersRequest = (
-  accessToken: string,
-  query: string
-): Promise<OfferType[]> => {
+export const searchOffersRequest = (query: string): Promise<OfferType[]> => {
   return new Promise((resolve, reject) => {
     try {
       axios
-        .get(`${DELIGHT_API_URL}/offers/search?${query}`, {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        })
+        .get(`${DELIGHT_API_URL}/offers/search?${query}`)
         .then((res) => {
           resolve(res?.data || []);
         })

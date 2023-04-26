@@ -12,8 +12,6 @@ import {
   Tradefilter,
   clearTradeError,
   selectTradeFilter,
-  setTradeAcceptedOfferTx,
-  setTradeApproved,
   setTradeError,
   setTradeFilterValue,
   setTradeLoading,
@@ -22,6 +20,8 @@ import {
   setTradePricesLoading,
   setTradeToTokenPrice,
   setOrdersItems,
+  setTradeOrderStatus,
+  setTradeOrderTransactionId,
 } from '../store';
 import {
   getChainById,
@@ -39,8 +39,15 @@ import {
   getOrderRequest,
   getOfferById,
 } from '../services';
-import { OfferType, TokenType, ChainType } from '../types';
+import {
+  OfferType,
+  TokenType,
+  ChainType,
+  OrderPlacingStatusType,
+  ErrorMessageType,
+} from '../types';
 import { POOL_CONTRACT_ADDRESS } from '../config';
+import { addGsheetRowRequest } from '../services/gsheetServices';
 
 // Context props
 type ContextProps = {
@@ -48,24 +55,26 @@ type ContextProps = {
     offer: OfferType,
     accessToken: string,
     userChainId: string,
-    approved: boolean,
     exchangeToken: TokenType,
-    tokenAbi: any,
     poolAbi: any,
     userAddress: string,
     amount: string,
     chains: ChainType[]
   ) => void;
   handleSearchOffersAction: (
-    accessToken: string,
     filter: Tradefilter,
     chains: ChainType[],
-    fromTokenBalance: string,
     fromChainId: string,
     fromTokenId: string
   ) => void;
   handleTradeFilterChange: (name: TradeFilterFieldName, value: string) => void;
   handleFromAmountMaxClick: (balance: string) => void;
+  handleEmailSubmitAction: (
+    accessToken: string,
+    email: string,
+    orderId: string,
+    walletAddress: string
+  ) => Promise<boolean>;
 };
 
 export const TradeContext = createContext<ContextProps>({
@@ -73,6 +82,7 @@ export const TradeContext = createContext<ContextProps>({
   handleSearchOffersAction: () => {},
   handleTradeFilterChange: () => {},
   handleFromAmountMaxClick: () => {},
+  handleEmailSubmitAction: async () => false,
 });
 
 type TradeControllerProps = {
@@ -131,10 +141,29 @@ export const TradeController = ({ children }: TradeControllerProps) => {
     dispatch(setTradeFilterValue({ name: 'amount', value: balance }));
   };
 
+  const handleEmailSubmitAction = async (
+    accessToken: string,
+    email: string,
+    orderId: string,
+    walletAddress: string
+  ): Promise<boolean> => {
+    let res;
+    try {
+      res = await addGsheetRowRequest(accessToken, {
+        email,
+        walletAddress,
+        orderId,
+      });
+    } catch (error: any) {
+      console.error('handleEmailSubmitAction error:', error);
+      return false;
+    }
+    return res;
+  };
+
   const validateSearchOffersAction = useCallback(
     (
       filter: Tradefilter,
-      fromTokenBalance: string,
       fromChainId: string,
       fromTokenId: string
     ): boolean => {
@@ -208,16 +237,6 @@ export const TradeController = ({ children }: TradeControllerProps) => {
 
         return false;
       }
-      if (parseFloat(filter.amount) > parseFloat(fromTokenBalance)) {
-        dispatch(
-          setTradeError({
-            type: 'search',
-            text: "You don't have enough funds",
-          })
-        );
-        dispatch(setTradeOffersVisible(false));
-        return false;
-      }
       return true;
     },
     [dispatch]
@@ -225,41 +244,29 @@ export const TradeController = ({ children }: TradeControllerProps) => {
 
   const handleSearchOffersAction = useCallback(
     async (
-      accessToken: string,
       filter: Tradefilter,
       chains: ChainType[],
-      fromTokenBalance: string,
       fromChainId: string,
       fromTokenId: string
     ) => {
       dispatch(clearTradeError());
-      if (
-        !validateSearchOffersAction(
-          filter,
-          fromTokenBalance,
-          fromChainId,
-          fromTokenId
-        )
-      ) {
+      if (!validateSearchOffersAction(filter, fromChainId, fromTokenId)) {
         return;
       }
       dispatch(setTradeLoading(true));
       dispatch(setTradeOffersVisible(true));
-      const fromToken = getTokenById(fromTokenId, fromChainId, chains);
       const toToken = getTokenById(filter.toTokenId, filter.toChainId, chains);
       const query = {
-        exchangeChainId: fromChainId,
-        exchangeToken: fromToken?.symbol || '',
+        exchangeChainId: '5',
+        exchangeToken: 'ETH',
         chainId: filter.toChainId,
         token: toToken?.symbol || '',
         depositAmount: filter.amount,
       };
       const queryString = new URLSearchParams(query).toString();
-      const items = await searchOffersRequest(accessToken, queryString).catch(
-        (error) => {
-          dispatch(setTradeError({ type: 'search', text: error }));
-        }
-      );
+      const items = await searchOffersRequest(queryString).catch((error) => {
+        dispatch(setTradeError({ type: 'search', text: error }));
+      });
       if (typeof items !== 'undefined') {
         dispatch(setTradeOffers(items));
       } else {
@@ -274,49 +281,33 @@ export const TradeController = ({ children }: TradeControllerProps) => {
   const validateAcceptOfferAction = (
     offer: OfferType,
     amount: string
-  ): boolean => {
+  ): ErrorMessageType | true => {
     if (!offer.offerId) {
-      dispatch(
-        setTradeError({
-          type: 'acceptOffer',
-          text: 'offer id is missing',
-        })
-      );
-
-      return false;
+      return {
+        type: 'acceptOffer',
+        text: 'offer id is missing',
+      };
     }
 
     if (!amount) {
-      dispatch(
-        setTradeError({
-          type: 'acceptOffer',
-          text: 'Tokens amount is missing',
-        })
-      );
-
-      return false;
+      return {
+        type: 'acceptOffer',
+        text: 'Tokens amount is missing',
+      };
     }
 
     if (!offer.exchangeRate) {
-      dispatch(
-        setTradeError({
-          type: 'acceptOffer',
-          text: 'Exchange rate is missing',
-        })
-      );
-
-      return false;
+      return {
+        type: 'acceptOffer',
+        text: 'Exchange rate is missing',
+      };
     }
 
     if (!offer.exchangeChainId) {
-      dispatch(
-        setTradeError({
-          type: 'acceptOffer',
-          text: 'Offer exchange chain is not set',
-        })
-      );
-
-      return false;
+      return {
+        type: 'acceptOffer',
+        text: 'Offer exchange chain is not set',
+      };
     }
 
     return true;
@@ -326,22 +317,26 @@ export const TradeController = ({ children }: TradeControllerProps) => {
     offer: OfferType,
     accessToken: string,
     userChainId: string,
-    approved: boolean,
     exchangeToken: TokenType,
-    tokenAbi: any,
     poolAbi: any,
     userAddress: string,
     amount: string,
     chains: ChainType[]
   ) => {
     dispatch(clearTradeError());
-    dispatch(setTradeLoading(false));
-
-    if (!validateAcceptOfferAction(offer, amount)) {
+    dispatch(setTradeOrderStatus(OrderPlacingStatusType.UNINITIALIZED));
+    const validation = validateAcceptOfferAction(offer, amount);
+    if (!validation) {
+      dispatch(setTradeError(validation));
+      dispatch(setTradeOrderStatus(OrderPlacingStatusType.ERROR));
       return;
     }
 
-    dispatch(setTradeLoading(true));
+    if (userChainId !== offer.exchangeChainId) {
+      dispatch(
+        setTradeOrderStatus(OrderPlacingStatusType.WAITING_NETWORK_SWITCH)
+      );
+    }
 
     const inputChain = getChainById(offer.exchangeChainId || '', chains);
     if (!inputChain) {
@@ -351,7 +346,7 @@ export const TradeController = ({ children }: TradeControllerProps) => {
           text: 'Chain not found',
         })
       );
-      dispatch(setTradeLoading(false));
+      dispatch(setTradeOrderStatus(OrderPlacingStatusType.ERROR));
       return;
     }
     const networkSwitched = await switchMetamaskNetwork(
@@ -365,9 +360,11 @@ export const TradeController = ({ children }: TradeControllerProps) => {
           text: 'Network switching failed. Please, switch network in your MetaMask and try again.',
         })
       );
-      dispatch(setTradeLoading(false));
+      dispatch(setTradeOrderStatus(OrderPlacingStatusType.ERROR));
       return;
     }
+
+    dispatch(setTradeOrderStatus(OrderPlacingStatusType.WAITING_CONFIRMATION));
 
     // get signer
     const signer = getSigner();
@@ -376,188 +373,133 @@ export const TradeController = ({ children }: TradeControllerProps) => {
 
     const amountToPay = amount;
 
-    // approve tokens first
-    if (!approved && exchangeToken.address !== '0x0') {
-      // set token contract
-      const _fromTokenContract = new ethers.Contract(
-        exchangeToken.address,
-        tokenAbi,
-        signer
-      );
+    // set pool contract
+    const _poolContract = new ethers.Contract(
+      POOL_CONTRACT_ADDRESS[`eip155:${offer.exchangeChainId}`],
+      poolAbi,
+      signer
+    );
 
-      // connect signer
-      const fromTokenContract = _fromTokenContract.connect(signer);
+    // connect signer
+    const poolContract = _poolContract.connect(signer);
 
-      // approve tokens
-      const txApprove = await fromTokenContract
-        .approve(
-          POOL_CONTRACT_ADDRESS[`eip155:${offer.exchangeChainId}`],
-          ethers.utils.parseEther(amountToPay)
-        )
-        .catch((error: any) => {
-          dispatch(
-            setTradeError({
-              type: 'acceptOffer',
-              text: getErrorMessage(error.error, 'Approval transaction error'),
-            })
-          );
-          console.error('approve error', error.error);
-          dispatch(setTradeLoading(false));
-          return;
-        });
-
-      // stop executing if approval failed
-      if (!txApprove) {
-        dispatch(setTradeLoading(false));
-        return;
+    // get gas estimation
+    const gasEstimate = await poolContract.estimateGas.depositETHAndAcceptOffer(
+      offer.offerId,
+      userAddress,
+      ethers.utils.parseEther(
+        parseFloat(offer.amount || '0')
+          .toFixed(18)
+          .toString()
+      ),
+      {
+        value: ethers.utils.parseEther(amountToPay),
       }
+    );
 
-      // wait for approval transaction
-      try {
-        await txApprove.wait();
-      } catch (error: any) {
+    // create transaction
+    const tx = await poolContract
+      .depositETHAndAcceptOffer(
+        offer.offerId,
+        userAddress,
+        ethers.utils.parseEther(
+          parseFloat(offer.amount || '0')
+            .toFixed(18)
+            .toString()
+        ),
+        {
+          value: ethers.utils.parseEther(amountToPay),
+          gasLimit: gasEstimate,
+        }
+      )
+      .catch((error: any) => {
         dispatch(
           setTradeError({
             type: 'acceptOffer',
-            text: error?.message || 'Transaction error',
+            text: getErrorMessage(error.error, 'Transaction rejected'),
           })
         );
-        console.error('txApprove.wait error', error);
-        dispatch(setTradeLoading(false));
+        console.error('depositGRTWithOffer error', error);
+        dispatch(setTradeOrderStatus(OrderPlacingStatusType.ERROR));
         return;
-      }
-      dispatch(setTradeLoading(false));
-      dispatch(setTradeApproved(true));
+      });
 
-      // accept if tokens were approved
-    } else {
-      // set pool contract
-      const _poolContract = new ethers.Contract(
-        POOL_CONTRACT_ADDRESS[`eip155:${offer.exchangeChainId}`],
-        poolAbi,
-        signer
+    // stop execution if offer activation failed
+    if (!tx) {
+      dispatch(setTradeOrderStatus(OrderPlacingStatusType.ERROR));
+      return;
+    }
+
+    dispatch(setTradeOrderStatus(OrderPlacingStatusType.PROCESSING));
+
+    // wait for activation transaction
+    try {
+      await tx.wait();
+    } catch (error: any) {
+      dispatch(
+        setTradeError({
+          type: 'acceptOffer',
+          text: error?.message || 'Transaction error',
+        })
       );
+      console.error('tx.wait error', error);
+      dispatch(setTradeOrderStatus(OrderPlacingStatusType.ERROR));
+      return;
+    }
 
-      // connect signer
-      const poolContract = _poolContract.connect(signer);
+    // get receipt
+    const receipt = await provider.getTransactionReceipt(tx.hash);
 
-      // get gas estimation
-      const gasEstimate =
-        await poolContract.estimateGas.depositETHAndAcceptOffer(
-          offer.offerId,
-          userAddress,
-          ethers.utils.parseEther(
-            parseFloat(offer.amount || '0')
-              .toFixed(18)
-              .toString()
-          ),
-          {
-            value: ethers.utils.parseEther(amountToPay),
-          }
-        );
+    // get orderId
+    const orderId = getOrderIdFromReceipt(receipt);
 
-      // create transaction
-      const tx = await poolContract
-        .depositETHAndAcceptOffer(
-          offer.offerId,
-          userAddress,
-          ethers.utils.parseEther(
-            parseFloat(offer.amount || '0')
-              .toFixed(18)
-              .toString()
-          ),
-          {
-            value: ethers.utils.parseEther(amountToPay),
-            gasLimit: gasEstimate,
-          }
-        )
-        .catch((error: any) => {
-          dispatch(
-            setTradeError({
-              type: 'acceptOffer',
-              text: getErrorMessage(
-                error.error,
-                'Accepting offer transaction error'
-              ),
-            })
-          );
-          console.error('depositGRTWithOffer error', error);
-          dispatch(setTradeLoading(false));
-          return;
-        });
-
-      // stop execution if offer activation failed
-      if (!tx) {
-        dispatch(setTradeLoading(false));
-        return;
-      }
-
-      // wait for activation transaction
+    // save order to DB
+    const order = await addOrderRequest(accessToken, {
+      amountTokenDeposit: amountToPay,
+      addressTokenDeposit: exchangeToken.address,
+      chainIdTokenDeposit: offer.exchangeChainId,
+      destAddr: userAddress,
+      offerId: offer.offerId,
+      orderId,
+      amountTokenOffer: (
+        parseFloat(amount) / parseFloat(offer.exchangeRate || '1')
+      ).toString(),
+      hash: tx.hash || '',
+    }).catch((error: any) => {
+      console.error('saveOrder error', error);
+      dispatch(
+        setTradeError({
+          type: 'acceptOffer',
+          text: error?.message || 'Server error',
+        })
+      );
+      dispatch(setTradeOrderStatus(OrderPlacingStatusType.ERROR));
+    });
+    if (order) {
       try {
-        await tx.wait();
+        fetchSingleOrder(accessToken, order);
       } catch (error: any) {
-        dispatch(
-          setTradeError({
-            type: 'acceptOffer',
-            text: error?.message || 'Transaction error',
-          })
-        );
-        console.error('tx.wait error', error);
-        dispatch(setTradeLoading(false));
-        return;
-      }
-
-      // get receipt
-      const receipt = await provider.getTransactionReceipt(tx.hash);
-
-      // get orderId
-      const orderId = getOrderIdFromReceipt(receipt);
-
-      // save order to DB
-      const order = await addOrderRequest(accessToken, {
-        amountTokenDeposit: amountToPay,
-        addressTokenDeposit: exchangeToken.address,
-        chainIdTokenDeposit: offer.exchangeChainId,
-        destAddr: userAddress,
-        offerId: offer.offerId,
-        orderId,
-        amountTokenOffer: (
-          parseFloat(amount) / parseFloat(offer.exchangeRate || '1')
-        ).toString(),
-        hash: tx.hash || '',
-      }).catch((error: any) => {
         console.error('saveOrder error', error);
         dispatch(
           setTradeError({
             type: 'acceptOffer',
-            text: error?.message || 'Server error',
+            text: error?.message || "Server error, order wasn't found",
           })
         );
-      });
-      if (order) {
-        try {
-          fetchSingleOrder(accessToken, order);
-        } catch (error: any) {
-          console.error('saveOrder error', error);
-          dispatch(
-            setTradeError({
-              type: 'acceptOffer',
-              text: error?.message || "Server error, order wasn't found",
-            })
-          );
-          return;
-        }
-        dispatch(setTradeApproved(false));
-        dispatch(setTradeAcceptedOfferTx(tx.hash || ''));
-      } else {
-        dispatch(
-          setTradeError({
-            type: 'acceptOffer',
-            text: "Server error, order wasn't saved",
-          })
-        );
+        dispatch(setTradeOrderStatus(OrderPlacingStatusType.ERROR));
+        return;
       }
-      dispatch(setTradeLoading(false));
+
+      dispatch(setTradeOrderTransactionId(tx.hash || ''));
+      dispatch(setTradeOrderStatus(OrderPlacingStatusType.COMPLETED));
+    } else {
+      dispatch(
+        setTradeError({
+          type: 'acceptOffer',
+          text: "Server error, order wasn't saved",
+        })
+      );
+      dispatch(setTradeOrderStatus(OrderPlacingStatusType.ERROR));
     }
   };
 
@@ -574,6 +516,7 @@ export const TradeController = ({ children }: TradeControllerProps) => {
         handleSearchOffersAction,
         handleTradeFilterChange,
         handleFromAmountMaxClick,
+        handleEmailSubmitAction,
       }}
     >
       {children}

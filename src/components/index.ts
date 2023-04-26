@@ -11,6 +11,7 @@ export { default as BuyMenu } from './BuyMenu/BuyMenu';
 export { default as ChainsList } from './ChainsList/ChainsList';
 export { default as CheckBox } from './CheckBox/CheckBox';
 export { default as Drawer } from './Drawer/Drawer';
+export { default as EmailNotificationForm } from './EmailNotificationForm/EmailNotificationForm';
 export { default as FaucetMenu } from './FaucetMenu/FaucetMenu';
 export { default as LiquidityWallet } from './LiquidityWallet/LiquidityWallet';
 export { default as LiquidityWalletToken } from './LiquidityWalletToken/LiquidityWalletToken';

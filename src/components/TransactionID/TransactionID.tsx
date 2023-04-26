@@ -67,7 +67,12 @@ const TransactionID = (props: Props) => {
         </Typography>
       </Typography>
       {showCopyButton || Boolean(link) ? (
-        <Stack direction="row" alignItems="center" justifyContent="flex-start">
+        <Stack
+          direction="row"
+          alignItems="center"
+          justifyContent="flex-start"
+          component={containerComponent || 'div'}
+        >
           {showCopyButton && (
             <Tooltip
               title={copied ? 'Copied' : 'Copy to clipboard'}

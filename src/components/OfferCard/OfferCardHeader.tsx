@@ -6,6 +6,7 @@ import CurrencyExchangeIcon from '@mui/icons-material/CurrencyExchange';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import { getOfferProviderLink } from '../../utils';
 import { OfferCardProps } from './OfferCard';
+import moment from 'moment';
 
 const OfferCardHeader = (props: OfferCardProps) => {
   const { offer, chains, advancedMode } = props;
@@ -53,14 +54,14 @@ const OfferCardHeader = (props: OfferCardProps) => {
         </>
       )}
 
-      {isInAdvancedMode && (
-        <Stack
-          direction="row"
-          alignItems="center"
-          justifyContent="flex-start"
-          gap="24px"
-          sx={{ paddingTop: '10px' }}
-        >
+      <Stack
+        direction="row"
+        alignItems="center"
+        justifyContent="flex-start"
+        gap="24px"
+        sx={{ paddingTop: '10px' }}
+      >
+        {isInAdvancedMode && (
           <Box>
             <Tooltip title="Trades: 134">
               <Stack
@@ -88,6 +89,8 @@ const OfferCardHeader = (props: OfferCardProps) => {
               </Stack>
             </Tooltip>
           </Box>
+        )}
+        {isInAdvancedMode && (
           <Box>
             <Tooltip title="Disputes: 2">
               <Stack
@@ -115,35 +118,41 @@ const OfferCardHeader = (props: OfferCardProps) => {
               </Stack>
             </Tooltip>
           </Box>
-          <Box>
-            <Tooltip title="Avg. pay time: 120s">
-              <Stack
-                direction="row"
-                alignItems="center"
-                justifyContent="flex-start"
-                gap="4px"
+        )}
+        <Box>
+          <Tooltip
+            title={`Avg. pay time: ${moment
+              .duration(parseFloat(offer.estimatedTime || '0') * 1000)
+              .humanize()}`}
+          >
+            <Stack
+              direction="row"
+              alignItems="center"
+              justifyContent="flex-start"
+              gap="4px"
+            >
+              <AccessTimeIcon
+                sx={{
+                  fontSize: '14px',
+                  color: '#808898',
+                }}
+              />
+              <Typography
+                sx={{
+                  fontWeight: '400',
+                  fontSize: '14px',
+                  lineHeight: '14px',
+                  color: '#E3E3E8',
+                }}
               >
-                <AccessTimeIcon
-                  sx={{
-                    fontSize: '14px',
-                    color: '#808898',
-                  }}
-                />
-                <Typography
-                  sx={{
-                    fontWeight: '400',
-                    fontSize: '14px',
-                    lineHeight: '14px',
-                    color: '#E3E3E8',
-                  }}
-                >
-                  120s
-                </Typography>
-              </Stack>
-            </Tooltip>
-          </Box>
-        </Stack>
-      )}
+                {moment
+                  .duration(parseFloat(offer.estimatedTime || '0') * 1000)
+                  .humanize()}
+              </Typography>
+            </Stack>
+          </Tooltip>
+        </Box>
+      </Stack>
     </Box>
   );
 };
