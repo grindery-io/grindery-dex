@@ -4,19 +4,8 @@ describe('Faucet page', () => {
   beforeEach(() => {
     cy.visit('http://localhost:3000/faucet');
     cy.get('#connect-button').click();
-
-    cy.acceptMetamaskAccess({
-      allAccounts: false,
-      signInSignature: true,
-    });
-
+    cy.confirmMetamaskSignatureRequest();
     cy.wait(1000);
-  });
-
-  afterEach(() => {
-    cy.get('#user-menu-button').click();
-    cy.get('#disconnect-button').click();
-    cy.disconnectMetamaskWalletFromAllDapps();
   });
 
   it('Shows faucet page sidebar', () => {

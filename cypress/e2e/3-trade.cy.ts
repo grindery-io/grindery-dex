@@ -14,17 +14,8 @@ describe('Trade page', () => {
 
     cy.visit('http://localhost:3000/buy/trade');
     cy.get('#connect-button').click();
-    cy.acceptMetamaskAccess({
-      allAccounts: false,
-      signInSignature: true,
-    });
+    cy.confirmMetamaskSignatureRequest();
     cy.wait(1000);
-  });
-
-  afterEach(() => {
-    cy.get('#user-menu-button').click();
-    cy.get('#disconnect-button').click();
-    cy.disconnectMetamaskWalletFromAllDapps();
   });
 
   it('Shows BSC Testnet chain and BNB token in the receive button', () => {
@@ -56,34 +47,7 @@ describe('Trade page', () => {
     cy.get('button').contains('max').click();
     cy.get('button').contains('Search offers').click();
     cy.get('.TradePage__box').should('have.css', 'opacity', '1');
-    cy.get('.OfferPublic').first().click();
-    cy.get('.PageCardHeader__typography')
-      .first()
-      .should('have.text', 'Review offer');
-  });
-
-  it('Shows review offer page when offer is selected', () => {
-    cy.wait(['@GetFromTokenBalance']);
-    cy.get('button').contains('max').click();
-    cy.get('button').contains('Search offers').click();
-    cy.get('.TradePage__box').should('have.css', 'opacity', '1');
-    cy.get('.OfferPublic').first().click();
-    cy.get('.PageCardHeader__typography')
-      .first()
-      .should('have.text', 'Review offer');
-  });
-
-  it('Returns to offers list on back button click', () => {
-    cy.wait(['@GetFromTokenBalance']);
-    cy.get('button').contains('max').click();
-    cy.get('button').contains('Search offers').click();
-    cy.get('.TradePage__box').should('have.css', 'opacity', '1');
-    cy.get('.OfferPublic').first().click();
-    cy.get('.PageCardHeader__typography')
-      .first()
-      .should('have.text', 'Review offer');
-    cy.get('#return').click();
-    cy.get('.TradePage__box').should('have.css', 'opacity', '1');
+    cy.get('.OfferPublic').first().should('exist');
   });
 
   it('Places an order', () => {
@@ -96,10 +60,6 @@ describe('Trade page', () => {
     )
       .first()
       .click();
-    cy.get('.PageCardHeader__typography')
-      .first()
-      .should('have.text', 'Review offer');
-    cy.contains('button', 'Place Order').click();
     cy.wait(2000);
     cy.confirmMetamaskTransaction();
     cy.wait('@PlaceOrder', {

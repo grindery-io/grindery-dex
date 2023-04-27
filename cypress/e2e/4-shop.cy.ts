@@ -7,18 +7,10 @@ describe('Shop page', () => {
     );
 
     cy.visit('http://localhost:3000/buy/shop');
-    cy.get('#connect-button').click();
-    cy.acceptMetamaskAccess({
-      allAccounts: false,
-      signInSignature: true,
-    });
-    cy.wait(1000);
-  });
 
-  afterEach(() => {
-    cy.get('#user-menu-button').click();
-    cy.get('#disconnect-button').click();
-    cy.disconnectMetamaskWalletFromAllDapps();
+    cy.get('#connect-button').click();
+    cy.confirmMetamaskSignatureRequest();
+    cy.wait(1000);
   });
 
   it('Shows shop offers', () => {
