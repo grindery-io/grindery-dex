@@ -13,7 +13,7 @@ import {
   setShopOffers,
   setOrdersItems,
   setShopOfferId,
-  setShopOorderTransactionId,
+  setShopOrderTransactionId,
   setShopOorderStatus,
 } from '../store';
 import { useUserController } from './UserController';
@@ -201,11 +201,12 @@ export const ShopController = ({ children }: ShopControllerProps) => {
   ) => {
     dispatch(clearShopError());
     dispatch(setShopOfferId(''));
-    dispatch(setShopOorderTransactionId(''));
+    dispatch(setShopOrderTransactionId(''));
     dispatch(setShopOorderStatus(OrderPlacingStatusType.UNINITIALIZED));
     dispatch(setShopModal(true));
 
     if (!validateAcceptOfferAction(offer)) {
+      dispatch(setShopOorderStatus(OrderPlacingStatusType.ERROR));
       return;
     }
 
@@ -387,7 +388,7 @@ export const ShopController = ({ children }: ShopControllerProps) => {
         return;
       }
 
-      dispatch(setShopOorderTransactionId(tx.hash || ''));
+      dispatch(setShopOrderTransactionId(tx.hash || ''));
       dispatch(setShopOorderStatus(OrderPlacingStatusType.COMPLETED));
     } else {
       dispatch(

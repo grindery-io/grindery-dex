@@ -1,9 +1,13 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { Box } from '@mui/system';
 import { Stack, Typography } from '@mui/material';
-import ShopPageOfferAccept from './ShopPageOfferAccept';
-import { OfferCard, Loading } from '../../components';
-import { OfferType, TokenType } from '../../types';
+import {
+  OfferCard,
+  Loading,
+  OrderPlacingModal,
+  ConnectWalletModal,
+} from '../../components';
+import { OfferType, OrderType, TokenType } from '../../types';
 import {
   useAppSelector,
   selectShopLoading,
@@ -16,14 +20,24 @@ import {
   selectUserChainTokenPrice,
   selectUserAdvancedMode,
   selectShopOfferId,
+  selectShopModal,
+  selectShopError,
+  selectShopOrderTransactionId,
+  selectOrdersItems,
+  selectShopOrderStatus,
+  useAppDispatch,
+  setShopOfferId,
+  setShopOrderTransactionId,
+  setShopModal,
 } from '../../store';
 import { getChainById } from '../../utils';
-import { useShopController } from '../../controllers';
-import ShopPageConnectWallet from './ShopPageConnectWallet';
+import { useShopController, useUserController } from '../../controllers';
 
 type Props = {};
 
 const ShopPageRoot = (props: Props) => {
+  const dispatch = useAppDispatch();
+  const { connectUser } = useUserController();
   const accessToken = useAppSelector(selectUserAccessToken);
   const userChainId = useAppSelector(selectUserChainId);
   const userAddress = useAppSelector(selectUserAddress);
@@ -41,17 +55,62 @@ const ShopPageRoot = (props: Props) => {
   const advancedMode = useAppSelector(selectUserAdvancedMode);
   const [showWalletModal, setShowWalletModal] = useState(false);
 
+  const userWalletAddress = useAppSelector(selectUserAddress);
+  const showModal = useAppSelector(selectShopModal);
+  const errorMessage = useAppSelector(selectShopError);
+  const orderTransactionId = useAppSelector(selectShopOrderTransactionId);
+  const orders = useAppSelector(selectOrdersItems);
+  const orderStatus = useAppSelector(selectShopOrderStatus);
+  const createdOrder =
+    (orderTransactionId &&
+      orders.find((order: OrderType) => order.hash === orderTransactionId)) ||
+    undefined;
+  const { handleEmailSubmitAction } = useShopController();
+
+  const onEmailSubmit = useCallback(
+    async (email: string): Promise<boolean> => {
+      if (!createdOrder) {
+        return false;
+      }
+      const res = await handleEmailSubmitAction(
+        accessToken,
+        email,
+        createdOrder.orderId,
+        userWalletAddress
+      );
+      return res;
+    },
+    [handleEmailSubmitAction, accessToken, createdOrder, userWalletAddress]
+  );
+
+  const onModalClose = () => {
+    dispatch(setShopOfferId(''));
+    dispatch(setShopOrderTransactionId(''));
+    dispatch(setShopModal(false));
+  };
+
   return (
     <>
       {!accessToken && (
-        <ShopPageConnectWallet
+        <ConnectWalletModal
           open={showWalletModal}
           onClose={() => {
             setShowWalletModal(false);
           }}
+          onConnect={() => {
+            connectUser();
+          }}
         />
       )}
-      <ShopPageOfferAccept />
+      <OrderPlacingModal
+        open={showModal}
+        chains={chains}
+        orderStatus={orderStatus}
+        createdOrder={createdOrder}
+        errorMessage={errorMessage}
+        onEmailSubmit={onEmailSubmit}
+        onClose={onModalClose}
+      />
       <Box
         sx={{
           marginBottom: '20px',

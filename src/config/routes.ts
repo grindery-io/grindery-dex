@@ -10,10 +10,6 @@ export const ROUTES = {
         RELATIVE_PATH: '/select-to',
         FULL_PATH: '/buy/trade/select-to',
       },
-      ACCEPT_OFFER: {
-        RELATIVE_PATH: '/accept/:offerId',
-        FULL_PATH: '/buy/trade/accept/:offerId',
-      },
     },
     SHOP: {
       RELATIVE_PATH: '/shop/*',

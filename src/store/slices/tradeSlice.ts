@@ -17,6 +17,8 @@ interface TradeState {
   filter: Tradefilter;
   isOffersVisible: boolean;
   loading: boolean;
+  modal: boolean;
+  offerId: string;
   offers: OfferType[];
   orderStatus: OrderPlacingStatusType;
   orderTransactionId: string;
@@ -33,6 +35,8 @@ const initialState: TradeState = {
   },
   isOffersVisible: false,
   loading: false,
+  modal: false,
+  offerId: '',
   offers: [],
   orderStatus: OrderPlacingStatusType.UNINITIALIZED,
   orderTransactionId: '',
@@ -78,6 +82,9 @@ const tradeSlice = createSlice({
         amount: '',
       };
     },
+    setTradeModal(state, action: PayloadAction<boolean>) {
+      state.modal = action.payload;
+    },
     setTradeToTokenPrice(state, action: PayloadAction<number | null>) {
       state.toTokenPrice = action.payload;
     },
@@ -86,6 +93,9 @@ const tradeSlice = createSlice({
     },
     setTradeOffersVisible(state, action: PayloadAction<boolean>) {
       state.isOffersVisible = action.payload;
+    },
+    setTradeOfferId(state, action: PayloadAction<string>) {
+      state.offerId = action.payload;
     },
     setTradeOrderTransactionId(state, action: PayloadAction<string>) {
       state.orderTransactionId = action.payload;
@@ -110,6 +120,8 @@ export const selectTradeOrderTransactionId = (state: RootState) =>
   state.trade.orderTransactionId;
 export const selectTradeOrderStatus = (state: RootState) =>
   state.trade.orderStatus;
+export const selectTradeOfferId = (state: RootState) => state.trade.offerId;
+export const selectTradeModal = (state: RootState) => state.trade.modal;
 
 export const {
   setTradeOffers,
@@ -124,6 +136,8 @@ export const {
   setTradeOffersVisible,
   setTradeOrderTransactionId,
   setTradeOrderStatus,
+  setTradeOfferId,
+  setTradeModal,
 } = tradeSlice.actions;
 
 export default tradeSlice.reducer;

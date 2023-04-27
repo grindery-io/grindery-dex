@@ -1,6 +1,5 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box } from '@mui/system';
-import Countdown from 'react-countdown';
 import {
   Button,
   Dialog,
@@ -8,53 +7,49 @@ import {
   DialogTitle,
   Typography,
 } from '@mui/material';
+import Countdown from 'react-countdown';
 import {
   AlertBox,
-  EmailNotificationForm,
   Loading,
   OrderCard,
-  OrderSkeleton,
   TransactionID,
+  OrderSkeleton,
+  EmailNotificationForm,
 } from '../../components';
 import {
-  useAppDispatch,
-  useAppSelector,
-  selectChainsItems,
-  selectShopError,
-  selectShopModal,
-  setShopModal,
-  selectOrdersItems,
-  selectShopOrderStatus,
-  setShopOfferId,
-  setShopOorderTransactionId,
-  selectShopOrderTransactionId,
-  selectUserAddress,
-  selectUserAccessToken,
-} from '../../store';
-import { OrderPlacingStatusType, OrderType } from '../../types';
+  ChainType,
+  ErrorMessageType,
+  OrderPlacingStatusType,
+  OrderType,
+} from '../../types';
+import { ICONS } from '../../config';
 import {
   getChainById,
   getOfferProviderLink,
   getOrderBuyerLink,
 } from '../../utils';
-import { ICONS } from '../../config';
-import { useShopController } from '../../controllers';
 
-type Props = {};
+type Props = {
+  open: boolean;
+  orderStatus: OrderPlacingStatusType;
+  createdOrder?: OrderType;
+  chains: ChainType[];
+  errorMessage: ErrorMessageType;
+  onEmailSubmit: (email: string) => Promise<boolean>;
+  onClose: () => void;
+};
 
-const ShopPageOfferAccept = (props: Props) => {
-  const dispatch = useAppDispatch();
-  const accessToken = useAppSelector(selectUserAccessToken);
-  const userWalletAddress = useAppSelector(selectUserAddress);
-  const showModal = useAppSelector(selectShopModal);
-  const errorMessage = useAppSelector(selectShopError);
-  const orderTransactionId = useAppSelector(selectShopOrderTransactionId);
-  const chains = useAppSelector(selectChainsItems);
-  const orders = useAppSelector(selectOrdersItems);
-  const orderStatus = useAppSelector(selectShopOrderStatus);
-  const createdOrder =
-    orderTransactionId &&
-    orders.find((order: OrderType) => order.hash === orderTransactionId);
+const OrderPlacingModal = (props: Props) => {
+  const {
+    open,
+    orderStatus,
+    createdOrder,
+    chains,
+    errorMessage,
+    onEmailSubmit,
+    onClose,
+  } = props;
+  const showModal = open;
 
   const providerLink =
     createdOrder && createdOrder?.offer
@@ -66,18 +61,6 @@ const ShopPageOfferAccept = (props: Props) => {
     : undefined;
 
   const [now, setNow] = useState(Date.now());
-
-  const { handleEmailSubmitAction } = useShopController();
-
-  const handleModalClosed = () => {
-    dispatch(setShopModal(false));
-  };
-
-  const handleModalCloseClick = () => {
-    dispatch(setShopOfferId(''));
-    dispatch(setShopOorderTransactionId(''));
-    dispatch(setShopModal(false));
-  };
 
   const renderAddress = (value: string, link: string) => {
     return (
@@ -180,22 +163,6 @@ const ShopPageOfferAccept = (props: Props) => {
     }
   };
 
-  const handleEmailSubmit = useCallback(
-    async (email: string): Promise<boolean> => {
-      if (!createdOrder) {
-        return false;
-      }
-      const res = await handleEmailSubmitAction(
-        accessToken,
-        email,
-        createdOrder.orderId,
-        userWalletAddress
-      );
-      return res;
-    },
-    [handleEmailSubmitAction, accessToken, createdOrder, userWalletAddress]
-  );
-
   useEffect(() => {
     if (orderStatus === OrderPlacingStatusType.COMPLETED) {
       const nowDate = Date.now();
@@ -219,7 +186,6 @@ const ShopPageOfferAccept = (props: Props) => {
         },
       }}
       open={showModal}
-      onClose={handleModalClosed}
     >
       <DialogTitle sx={{ textAlign: 'center', paddingBottom: '0px' }}>
         {orderStatus}
@@ -279,7 +245,7 @@ const ShopPageOfferAccept = (props: Props) => {
                     }
                     renderer={countdownRenderer}
                   />
-                  <EmailNotificationForm onSubmit={handleEmailSubmit} />
+                  <EmailNotificationForm onSubmit={onEmailSubmit} />
                 </Box>
               </>
             ) : (
@@ -316,7 +282,7 @@ const ShopPageOfferAccept = (props: Props) => {
               size="small"
               variant="outlined"
               onClick={() => {
-                handleModalCloseClick();
+                onClose();
               }}
             >
               Close
@@ -328,4 +294,4 @@ const ShopPageOfferAccept = (props: Props) => {
   );
 };
 
-export default ShopPageOfferAccept;
+export default OrderPlacingModal;

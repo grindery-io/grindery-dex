@@ -22,6 +22,8 @@ import {
   setOrdersItems,
   setTradeOrderStatus,
   setTradeOrderTransactionId,
+  setTradeOfferId,
+  setTradeModal,
 } from '../store';
 import {
   getChainById,
@@ -324,13 +326,19 @@ export const TradeController = ({ children }: TradeControllerProps) => {
     chains: ChainType[]
   ) => {
     dispatch(clearTradeError());
+    dispatch(setTradeOfferId(''));
+    dispatch(setTradeOrderTransactionId(''));
     dispatch(setTradeOrderStatus(OrderPlacingStatusType.UNINITIALIZED));
+    dispatch(setTradeModal(true));
+
     const validation = validateAcceptOfferAction(offer, amount);
     if (!validation) {
       dispatch(setTradeError(validation));
       dispatch(setTradeOrderStatus(OrderPlacingStatusType.ERROR));
       return;
     }
+
+    dispatch(setTradeOfferId(offer.offerId));
 
     if (userChainId !== offer.exchangeChainId) {
       dispatch(
@@ -346,6 +354,7 @@ export const TradeController = ({ children }: TradeControllerProps) => {
           text: 'Chain not found',
         })
       );
+      dispatch(setTradeOfferId(''));
       dispatch(setTradeOrderStatus(OrderPlacingStatusType.ERROR));
       return;
     }
@@ -360,6 +369,7 @@ export const TradeController = ({ children }: TradeControllerProps) => {
           text: 'Network switching failed. Please, switch network in your MetaMask and try again.',
         })
       );
+      dispatch(setTradeOfferId(''));
       dispatch(setTradeOrderStatus(OrderPlacingStatusType.ERROR));
       return;
     }
@@ -384,18 +394,22 @@ export const TradeController = ({ children }: TradeControllerProps) => {
     const poolContract = _poolContract.connect(signer);
 
     // get gas estimation
-    const gasEstimate = await poolContract.estimateGas.depositETHAndAcceptOffer(
-      offer.offerId,
-      userAddress,
-      ethers.utils.parseEther(
-        parseFloat(offer.amount || '0')
-          .toFixed(18)
-          .toString()
-      ),
-      {
-        value: ethers.utils.parseEther(amountToPay),
-      }
-    );
+    const gasEstimate = await poolContract.estimateGas
+      .depositETHAndAcceptOffer(
+        offer.offerId,
+        userAddress,
+        ethers.utils.parseEther(
+          parseFloat(offer.amount || '0')
+            .toFixed(18)
+            .toString()
+        ),
+        {
+          value: ethers.utils.parseEther(amountToPay),
+        }
+      )
+      .catch((error: any) => {
+        console.log('gasEstimate error:', error);
+      });
 
     // create transaction
     const tx = await poolContract
@@ -420,6 +434,7 @@ export const TradeController = ({ children }: TradeControllerProps) => {
           })
         );
         console.error('depositGRTWithOffer error', error);
+        dispatch(setTradeOfferId(''));
         dispatch(setTradeOrderStatus(OrderPlacingStatusType.ERROR));
         return;
       });
@@ -443,6 +458,7 @@ export const TradeController = ({ children }: TradeControllerProps) => {
         })
       );
       console.error('tx.wait error', error);
+      dispatch(setTradeOfferId(''));
       dispatch(setTradeOrderStatus(OrderPlacingStatusType.ERROR));
       return;
     }
@@ -473,6 +489,7 @@ export const TradeController = ({ children }: TradeControllerProps) => {
           text: error?.message || 'Server error',
         })
       );
+      dispatch(setTradeOfferId(''));
       dispatch(setTradeOrderStatus(OrderPlacingStatusType.ERROR));
     });
     if (order) {
@@ -486,6 +503,7 @@ export const TradeController = ({ children }: TradeControllerProps) => {
             text: error?.message || "Server error, order wasn't found",
           })
         );
+        dispatch(setTradeOfferId(''));
         dispatch(setTradeOrderStatus(OrderPlacingStatusType.ERROR));
         return;
       }
@@ -501,6 +519,7 @@ export const TradeController = ({ children }: TradeControllerProps) => {
       );
       dispatch(setTradeOrderStatus(OrderPlacingStatusType.ERROR));
     }
+    dispatch(setTradeOfferId(''));
   };
 
   useEffect(() => {

@@ -1,18 +1,17 @@
 import React from 'react';
 import { Box } from '@mui/system';
 import { Dialog, DialogContent, DialogTitle } from '@mui/material';
-import { PageCardSubmitButton } from '../../components';
+import { PageCardSubmitButton } from '..';
 import { ICONS } from '../../config';
-import { useUserController } from '../../controllers';
 
 type Props = {
   open: boolean;
   onClose: () => void;
+  onConnect: () => void;
 };
 
-const ShopPageConnectWallet = (props: Props) => {
-  const { open, onClose } = props;
-  const { connectUser } = useUserController();
+const ConnectWalletModal = (props: Props) => {
+  const { open, onClose, onConnect } = props;
 
   return (
     <Dialog
@@ -44,16 +43,11 @@ const ShopPageConnectWallet = (props: Props) => {
           />
         </Box>
         <Box sx={{ paddingLeft: '16px', paddingRight: '16px' }}>
-          <PageCardSubmitButton
-            label="Connect wallet"
-            onClick={() => {
-              connectUser();
-            }}
-          />
+          <PageCardSubmitButton label="Connect wallet" onClick={onConnect} />
         </Box>
       </DialogContent>
     </Dialog>
   );
 };
 
-export default ShopPageConnectWallet;
+export default ConnectWalletModal;

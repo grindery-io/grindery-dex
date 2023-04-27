@@ -79,7 +79,7 @@ const shopSlice = createSlice({
     setShopOfferId(state, action: PayloadAction<string>) {
       state.offerId = action.payload;
     },
-    setShopOorderTransactionId(state, action: PayloadAction<string>) {
+    setShopOrderTransactionId(state, action: PayloadAction<string>) {
       state.orderTransactionId = action.payload;
     },
     setShopOorderStatus(state, action: PayloadAction<OrderPlacingStatusType>) {
@@ -115,7 +115,7 @@ export const {
   clearShopFilter,
   setShopModal,
   setShopOfferId,
-  setShopOorderTransactionId,
+  setShopOrderTransactionId,
   setShopOorderStatus,
 } = shopSlice.actions;
 
