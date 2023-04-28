@@ -24,7 +24,7 @@ import EvStationIcon from '@mui/icons-material/EvStation';
 import AccessTimeFilledIcon from '@mui/icons-material/AccessTimeFilled';
 import LayersIcon from '@mui/icons-material/Layers';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { ChainType, TokenType, OfferType } from '../../types';
+import { ChainType, TokenType, OfferType, OfferStatusType } from '../../types';
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
 import TransactionID from '../TransactionID/TransactionID';
 import SwapHorizontalCircleIcon from '@mui/icons-material/SwapHorizontalCircle';
@@ -33,6 +33,7 @@ import {
   getOfferFromToken,
   getOfferLink,
   getOfferProviderLink,
+  getOfferStatus,
 } from '../../utils';
 import PageCardSubmitButton from '../PageCardSubmitButton/PageCardSubmitButton';
 
@@ -165,7 +166,7 @@ const Offer = (props: Props) => {
             },
           }}
         >
-          {!offer.isActive && <Chip size="small" label="Inactive" />}
+          <Chip size="small" label={getOfferStatus(offer)} />
           {isInAdvancedMode && (
             <>
               <Tooltip title="Execution time">
@@ -292,7 +293,8 @@ const Offer = (props: Props) => {
             <Box
               style={{
                 whiteSpace: 'pre-wrap',
-                color: offer.isActive ? '#000' : '#aaa',
+                color:
+                  offer.status === OfferStatusType.SUCCESS ? '#000' : '#aaa',
               }}
               mb={'3px'}
             >
@@ -423,75 +425,84 @@ const Offer = (props: Props) => {
           {isInAdvancedMode && (
             <Collapse in={expanded} timeout="auto" unmountOnExit>
               <Box p="0 16px 16px">
-                {provider ? (
-                  <TransactionID
-                    value={provider || ''}
-                    label="Merchant"
-                    link={providerLink}
-                  />
-                ) : (
-                  <Stack
-                    direction="row"
-                    alignItems="center"
-                    justifyContent="flex-start"
-                    gap="4px"
-                    mb="4px"
-                    sx={{ minHeight: '24px' }}
-                  >
-                    <Skeleton width="220px" />
-                    <Skeleton width="16px" />
-                    <Skeleton width="16px" />
-                  </Stack>
+                {offer.offerId && (
+                  <>
+                    {provider ? (
+                      <TransactionID
+                        value={provider || ''}
+                        label="Merchant"
+                        link={providerLink}
+                      />
+                    ) : (
+                      <Stack
+                        direction="row"
+                        alignItems="center"
+                        justifyContent="flex-start"
+                        gap="4px"
+                        mb="4px"
+                        sx={{ minHeight: '24px' }}
+                      >
+                        <Skeleton width="220px" />
+                        <Skeleton width="16px" />
+                        <Skeleton width="16px" />
+                      </Stack>
+                    )}
+                  </>
                 )}
+
                 <TransactionID
                   value={offer.hash || ''}
                   label="Offer ID"
                   link={explorerLink}
                 />
-                {onActivateClick && onDeactivateClick && (
-                  <Box>
-                    <Box
-                      sx={{
-                        padding: '6px 0 0',
-                        '& > div': { paddingBottom: '0' },
-                        '& button': {
-                          margin: 0,
-                          fontSize: '13px',
-                          padding: '8px 20px',
-                          backgroundColor: 'transparent',
-                          border: `1px solid ${
-                            offer.isActive ? '#FF5858' : '#00B674'
-                          }`,
-                          color: offer.isActive
-                            ? '#FF5858 !important'
-                            : '#00B674 !important',
-                          '&:hover': {
-                            backgroundColor: offer.isActive
-                              ? '#FF5858'
-                              : '#00B674',
+                {onActivateClick &&
+                  onDeactivateClick &&
+                  offer.status === OfferStatusType.SUCCESS && (
+                    <Box>
+                      <Box
+                        sx={{
+                          padding: '6px 0 0',
+                          '& > div': { paddingBottom: '0' },
+                          '& button': {
+                            margin: 0,
+                            fontSize: '13px',
+                            padding: '8px 20px',
+                            backgroundColor: 'transparent',
                             border: `1px solid ${
                               offer.isActive ? '#FF5858' : '#00B674'
                             }`,
-                            color: '#ffffff !important',
+                            color: offer.isActive
+                              ? '#FF5858 !important'
+                              : '#00B674 !important',
+                            '&:hover': {
+                              backgroundColor: offer.isActive
+                                ? '#FF5858'
+                                : '#00B674',
+                              border: `1px solid ${
+                                offer.isActive ? '#FF5858' : '#00B674'
+                              }`,
+                              color: '#ffffff !important',
+                            },
                           },
-                        },
-                      }}
-                    >
-                      <PageCardSubmitButton
-                        loading={isActivating === offer.offerId}
-                        disabled={Boolean(isActivating)}
-                        label={offer.isActive ? 'Deactivate' : 'Activate'}
-                        onClick={() => {
-                          if (offer.isActive) {
-                            onDeactivateClick();
-                          } else {
-                            onActivateClick();
-                          }
                         }}
-                      />
+                      >
+                        <PageCardSubmitButton
+                          loading={Boolean(
+                            offer.offerId && isActivating === offer.offerId
+                          )}
+                          disabled={Boolean(isActivating)}
+                          label={offer.isActive ? 'Deactivate' : 'Activate'}
+                          onClick={() => {
+                            if (offer.isActive) {
+                              onDeactivateClick();
+                            } else {
+                              onActivateClick();
+                            }
+                          }}
+                        />
+                      </Box>
                     </Box>
-                  </Box>
-                )}
+                  )}
               </Box>
             </Collapse>
           )}

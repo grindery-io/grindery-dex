@@ -10,6 +10,7 @@ import {
   getOrderFromChain,
   getOrderFromToken,
   getOrderLink,
+  getOrderStatus,
 } from '../../utils';
 import PageCardSubmitButton from '../PageCardSubmitButton/PageCardSubmitButton';
 
@@ -143,7 +144,7 @@ const OrderHistoryCard = (props: Props) => {
           <PageCardSubmitButton
             disableRipple
             className="OrderCard__button"
-            label={order.isComplete ? 'Completed' : 'Processing'}
+            label={getOrderStatus(order)}
             onClick={() => {}}
           />
         </Box>

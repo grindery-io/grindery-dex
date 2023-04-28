@@ -1,4 +1,5 @@
 import { AxiosError } from 'axios';
+import { capitalizeFirstLetter } from './string';
 
 export const getErrorMessage = (error: any, defaultError?: string): string => {
   return (
@@ -32,4 +33,13 @@ export const getAxiosError = (error: AxiosError): string => {
     // Something happened in setting up the request that triggered an Error
     return error.message || 'Unexpected error';
   }
+};
+
+export const getMetaMaskErrorMessage = (
+  error: any,
+  defaultMessage?: string
+) => {
+  return capitalizeFirstLetter(
+    error.reason || defaultMessage || 'Unkown error'
+  );
 };

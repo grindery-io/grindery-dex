@@ -338,7 +338,7 @@ export const TradeController = ({ children }: TradeControllerProps) => {
       return;
     }
 
-    dispatch(setTradeOfferId(offer.offerId));
+    dispatch(setTradeOfferId(offer.offerId || ''));
 
     if (userChainId !== offer.exchangeChainId) {
       dispatch(

@@ -141,7 +141,7 @@ const ShopPageRoot = (props: Props) => {
                   >
                     {offers.map((offer: OfferType) => (
                       <OfferCard
-                        id={offer.offerId}
+                        id={offer.offerId || offer._id}
                         key={offer._id}
                         offer={offer}
                         tokenPrice={tokenPrice}

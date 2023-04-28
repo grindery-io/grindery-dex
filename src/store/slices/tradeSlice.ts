@@ -4,6 +4,7 @@ import {
   OfferType,
   ErrorMessageType,
   OrderPlacingStatusType,
+  OfferStatusType,
 } from '../../types';
 
 export type TradeFilterFieldName = 'toChainId' | 'toTokenId' | 'amount';
@@ -106,7 +107,11 @@ const tradeSlice = createSlice({
   },
 });
 
-export const selectTradeOffers = (state: RootState) => state.trade.offers;
+export const selectTradeOffers = (state: RootState) =>
+  state.trade.offers.filter(
+    (offer: OfferType) =>
+      offer && offer.offerId && offer.status === OfferStatusType.SUCCESS
+  );
 export const selectTradeError = (state: RootState) => state.trade.error;
 export const selectTradeLoading = (state: RootState) => state.trade.loading;
 export const selectTradeFilter = (state: RootState) => state.trade.filter;

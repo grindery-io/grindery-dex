@@ -24,13 +24,14 @@ import {
   getChainIdHex,
   isNumeric,
   getTokenById,
-  getErrorMessage,
-  getOfferIdFromReceipt,
   getOfferToChain,
+  getMetaMaskErrorMessage,
+  getChainById,
+  switchMetamaskNetwork,
 } from '../utils';
 import { useUserController } from './UserController';
 import { addOffer, getOffer, getUserOffers, updateOffer } from '../services';
-import { OfferType, ChainType } from '../types';
+import { OfferType, ChainType, ErrorMessageType } from '../types';
 import { ROUTES, POOL_CONTRACT_ADDRESS } from '../config';
 
 // Context props
@@ -70,7 +71,7 @@ type OffersControllerProps = {
 export const OffersController = ({ children }: OffersControllerProps) => {
   const accessToken = useAppSelector(selectUserAccessToken);
   const dispatch = useAppDispatch();
-  const { getSigner, getEthers, getProvider } = useUserController();
+  const { getSigner, getEthers } = useUserController();
   const offers = useAppSelector(selectOffersItems);
   let navigate = useNavigate();
 
@@ -135,106 +136,75 @@ export const OffersController = ({ children }: OffersControllerProps) => {
     [dispatch]
   );
 
-  const validateOfferCreateAction = (input: OffersCreateInput) => {
+  const validateOfferCreateAction = (
+    input: OffersCreateInput
+  ): ErrorMessageType | true => {
     if (!input.fromChainId || !input.fromTokenId) {
-      dispatch(
-        setOffersError({
-          type: 'chain',
-          text: 'Chain and token are required',
-        })
-      );
-      return false;
+      return {
+        type: 'chain',
+        text: 'Chain and token are required',
+      };
     }
     if (!input.toChainId || !input.toTokenId) {
-      dispatch(
-        setOffersError({
-          type: 'toChain',
-          text: 'Chain and token are required',
-        })
-      );
-      return false;
+      return {
+        type: 'toChain',
+        text: 'Chain and token are required',
+      };
     }
     if (!input.exchangeRate) {
-      dispatch(
-        setOffersError({
-          type: 'exchangeRate',
-          text: 'Exchange rate is required',
-        })
-      );
-      return false;
+      return {
+        type: 'exchangeRate',
+        text: 'Exchange rate is required',
+      };
     }
     if (!isNumeric(input.exchangeRate)) {
-      dispatch(
-        setOffersError({
-          type: 'exchangeRate',
-          text: 'Must be a number',
-        })
-      );
-      return false;
+      return {
+        type: 'exchangeRate',
+        text: 'Must be a number',
+      };
     }
     if (!input.amountMin) {
-      dispatch(
-        setOffersError({
-          type: 'amountMin',
-          text: 'Min amount is required',
-        })
-      );
-      return false;
+      return {
+        type: 'amountMin',
+        text: 'Min amount is required',
+      };
     }
     if (!isNumeric(input.amountMin)) {
-      dispatch(
-        setOffersError({
-          type: 'amountMin',
-          text: 'Must be a number',
-        })
-      );
-      return;
+      return {
+        type: 'amountMin',
+        text: 'Must be a number',
+      };
     }
     if (!input.amountMax) {
-      dispatch(
-        setOffersError({
-          type: 'amountMax',
-          text: 'Max amount is required',
-        })
-      );
-      return false;
+      return {
+        type: 'amountMax',
+        text: 'Max amount is required',
+      };
     }
     if (!isNumeric(input.amountMax)) {
-      dispatch(
-        setOffersError({
-          type: 'amountMax',
-          text: 'Must be a number',
-        })
-      );
-      return false;
+      return {
+        type: 'amountMax',
+        text: 'Must be a number',
+      };
     }
     if (parseFloat(input.amountMax) < parseFloat(input.amountMin)) {
-      dispatch(
-        setOffersError({
-          type: 'amountMax',
-          text: 'Must be greater than min or equal',
-        })
-      );
-      return false;
+      return {
+        type: 'amountMax',
+        text: 'Must be greater than min or equal',
+      };
     }
 
     if (!input.estimatedTime) {
-      dispatch(
-        setOffersError({
-          type: 'estimatedTime',
-          text: 'Execution time is required',
-        })
-      );
-      return false;
+      return {
+        type: 'estimatedTime',
+        text: 'Execution time is required',
+      };
     }
     if (!isNumeric(input.estimatedTime)) {
-      dispatch(
-        setOffersError({
-          type: 'estimatedTime',
-          text: 'Must be a number',
-        })
-      );
-      return false;
+      return {
+        type: 'estimatedTime',
+        text: 'Must be a number',
+      };
     }
     return true;
   };
@@ -251,8 +221,20 @@ export const OffersController = ({ children }: OffersControllerProps) => {
     dispatch(clearOffersError());
 
     // validate before executing
-    if (!validateOfferCreateAction(input)) {
-      return;
+    const validation = validateOfferCreateAction(input);
+    if (validation !== true) {
+      dispatch(setOffersError(validation));
+      return false;
+    }
+
+    if (!userWallet) {
+      dispatch(
+        setOffersError({
+          type: 'saveOffer',
+          text: 'Liquidity wallet is missing',
+        })
+      );
+      return false;
     }
 
     const fromToken = getTokenById(
@@ -275,25 +257,34 @@ export const OffersController = ({ children }: OffersControllerProps) => {
     // start executing
     dispatch(setOffersLoading(true));
 
-    if (input.toChainId !== userChainId || !userChainId) {
-      try {
-        await window.ethereum.request({
-          method: 'wallet_switchEthereumChain',
-          params: [
-            {
-              chainId: getChainIdHex(input.toChainId),
-            },
-          ],
-        });
-      } catch (error: any) {
-        dispatch(setOffersLoading(false));
-        return;
-      }
+    const inputChain = getChainById(input.toChainId || '', chains);
+    if (!inputChain) {
+      dispatch(
+        setOffersError({
+          type: 'saveOffer',
+          text: 'Chain not found',
+        })
+      );
+      dispatch(setOffersLoading(false));
+      return;
+    }
+    const networkSwitched = await switchMetamaskNetwork(
+      userChainId,
+      inputChain
+    );
+    if (!networkSwitched) {
+      dispatch(
+        setOffersError({
+          type: 'saveOffer',
+          text: 'Network switching failed. Please, switch network in your MetaMask and try again.',
+        })
+      );
+      dispatch(setOffersLoading(false));
+      return;
     }
 
     const ethers = getEthers();
     const signer = getSigner();
-    const provider = getProvider();
 
     // set pool contract
     const _poolContract = new ethers.Contract(
@@ -326,8 +317,9 @@ export const OffersController = ({ children }: OffersControllerProps) => {
     );
 
     // create offer transaction
-    const tx = await poolContract
-      .setOffer(
+    let tx;
+    try {
+      tx = await poolContract.setOffer(
         fromToken.address && fromToken.address !== '0x0'
           ? fromToken.address
           : ethers.constants.AddressZero,
@@ -337,52 +329,21 @@ export const OffersController = ({ children }: OffersControllerProps) => {
         {
           gasLimit: 1000000,
         }
-      )
-      .catch((error: any) => {
-        dispatch(
-          setOffersError({
-            type: 'saveOffer',
-            text: getErrorMessage(error, 'Create offer transaction error'),
-          })
-        );
-        console.error('setOffer error', error);
-        dispatch(setOffersLoading(false));
-        return;
-      });
-
-    // stop execution if offer creation failed
-    if (!tx) {
-      dispatch(
-        setOffersError({
-          type: 'saveOffer',
-          text: 'Create offer transaction error',
-        })
       );
-      dispatch(setOffersLoading(false));
-      return;
-    }
-
-    // wait for offer transaction
-    try {
-      await tx.wait();
     } catch (error: any) {
       dispatch(
         setOffersError({
           type: 'saveOffer',
-          text: error?.message || 'Transaction error',
+          text: getMetaMaskErrorMessage(
+            error,
+            'Create offer transaction error'
+          ),
         })
       );
-      console.error('tx.wait error', error);
+      console.error('setOffer error', error);
       dispatch(setOffersLoading(false));
       return;
     }
-
-    /*const abiCoder = new ethers.utils.AbiCoder();
-    const data = abiCoder.decode(['uint', 'tuple(uint256, string)'], tx.data);*/
-
-    const receipt = await provider.getTransactionReceipt(tx.hash);
-
-    const offerId = getOfferIdFromReceipt(receipt);
 
     // save offer to DB
     const newOffer = await createOffer(accessToken, {
@@ -398,8 +359,8 @@ export const OffersController = ({ children }: OffersControllerProps) => {
       exchangeChainId: input.toChainId,
       estimatedTime: input.estimatedTime || '',
       provider: userWallet || '',
-      offerId: offerId,
-      isActive: true,
+      isActive: false,
+      offerId: '',
       title: input.title,
       image: input.image,
       amount: input.amount,
@@ -434,7 +395,7 @@ export const OffersController = ({ children }: OffersControllerProps) => {
     chains: ChainType[],
     poolAbi: any
   ) => {
-    dispatch(setOffersActivating(offer.offerId));
+    dispatch(setOffersActivating(offer.offerId || ''));
 
     const offerToChain = getOfferToChain(offer, chains);
 
@@ -479,8 +440,8 @@ export const OffersController = ({ children }: OffersControllerProps) => {
       dispatch(
         setOffersError({
           type: 'checkOwner',
-          text: getErrorMessage(
-            error.error,
+          text: getMetaMaskErrorMessage(
+            error,
             'Checking offer owner transaction error'
           ),
         })
@@ -491,51 +452,30 @@ export const OffersController = ({ children }: OffersControllerProps) => {
     }
 
     // create transaction
-    const tx = await poolContract
-      .setIsActive(offerId, isActive, {
-        gasLimit: 1000000,
-      })
-      .catch((error: any) => {
-        dispatch(
-          setOffersError({
-            type: 'setIsActive',
-            text: getErrorMessage(
-              error.error,
-              'Offer activation transaction error'
-            ),
-          })
-        );
-        console.error('setIsActive error', error);
-        dispatch(setOffersActivating(''));
-        return;
-      });
-
-    // stop execution if offer deactivation failed
-    if (!tx) {
-      dispatch(setOffersActivating(''));
-      return;
-    }
-
-    // wait for deactivation transaction
     try {
-      await tx.wait();
+      await poolContract.setIsActive(offerId, isActive, {
+        gasLimit: 1000000,
+      });
     } catch (error: any) {
       dispatch(
         setOffersError({
           type: 'setIsActive',
-          text: error?.message || 'Transaction error',
+          text: getMetaMaskErrorMessage(
+            error,
+            'Offer activation transaction error'
+          ),
         })
       );
-      console.error('tx.wait error', error);
+      console.error('setIsActive error', error);
       dispatch(setOffersActivating(''));
       return;
     }
 
-    const updated = await editOffer(accessToken, { offerId, isActive }).catch(
-      (error: any) => {
-        // handle error
-      }
-    );
+    const updated = await editOffer(accessToken, {
+      offerId: offerId || '',
+      isActive,
+    });
+
     if (!updated) {
       // offer wasn't updated, stop execution
       dispatch(setOffersActivating(''));

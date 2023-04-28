@@ -9,7 +9,7 @@ export type OfferType = {
   tokenAddress: string;
   isActive: boolean;
   hash?: string;
-  offerId: string;
+  offerId?: string;
   tokenId?: string;
   exchangeRate?: string;
   estimatedTime?: string;
@@ -22,4 +22,15 @@ export type OfferType = {
   new?: boolean;
   provider?: string;
   providerDetails?: LiquidityWalletType;
+  status: OfferStatusType;
 };
+
+export enum OfferStatusType {
+  PENDING = 'pending',
+  SUCCESS = 'success',
+  FAILURE = 'failure',
+  ACTIVATION = 'activation',
+  ACTIVATION_FAILURE = 'activationFailure',
+  DEACTIVATION = 'deactivation',
+  DEACTIVATION_FAILURE = 'deactivationFailure',
+}

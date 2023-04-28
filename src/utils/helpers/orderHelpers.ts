@@ -1,4 +1,4 @@
-import { ChainType, OrderType, TokenType } from '../../types';
+import { ChainType, OrderStatusType, OrderType, TokenType } from '../../types';
 
 export const getOrderIdFromReceipt = (receipt: any): string => {
   return receipt?.logs?.[0]?.topics?.[2] || '';
@@ -54,4 +54,15 @@ export const sortOrdersByDate = (orders: OrderType[]): OrderType[] => {
   return orders.slice().sort((a: any, b: any) => {
     return new Date(b.date).getTime() - new Date(a.date).getTime();
   });
+};
+
+export const getOrderStatus = (order: OrderType): string => {
+  switch (order.status) {
+    case OrderStatusType.PENDING:
+      return 'Processing';
+    case OrderStatusType.SUCCESS:
+      return 'Completed';
+    case OrderStatusType.FAILURE:
+      return 'Failed';
+  }
 };

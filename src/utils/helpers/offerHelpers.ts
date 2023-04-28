@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { ChainType, OfferType, TokenType } from '../../types';
+import { ChainType, OfferStatusType, OfferType, TokenType } from '../../types';
 
 export const getOfferIdFromReceipt = (receipt: any): string => {
   return receipt?.logs?.[0]?.topics?.[1] || '';
@@ -118,4 +118,23 @@ export const getOfferUSDAmount = (
 
 export const orderOffersByActiveState = (offers: OfferType[]) => {
   return _.orderBy(offers, ['isActive'], ['desc']);
+};
+
+export const getOfferStatus = (offer: OfferType): string => {
+  switch (offer.status) {
+    case OfferStatusType.PENDING:
+      return 'Processing';
+    case OfferStatusType.SUCCESS:
+      return 'Active';
+    case OfferStatusType.FAILURE:
+      return 'Failed';
+    case OfferStatusType.ACTIVATION:
+      return 'Activating';
+    case OfferStatusType.ACTIVATION_FAILURE:
+      return 'Activation failed';
+    case OfferStatusType.DEACTIVATION:
+      return 'Deactivating';
+    case OfferStatusType.DEACTIVATION_FAILURE:
+      return 'Deactivation failed';
+  }
 };

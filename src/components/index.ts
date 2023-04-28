@@ -13,6 +13,7 @@ export { default as CheckBox } from './CheckBox/CheckBox';
 export { default as ConnectWalletModal } from './ConnectWalletModal/ConnectWalletModal';
 export { default as Drawer } from './Drawer/Drawer';
 export { default as EmailNotificationForm } from './EmailNotificationForm/EmailNotificationForm';
+export { default as ErrorSnackbar } from './ErrorSnackbar/ErrorSnackbar';
 export { default as FaucetMenu } from './FaucetMenu/FaucetMenu';
 export { default as LiquidityWallet } from './LiquidityWallet/LiquidityWallet';
 export { default as LiquidityWalletToken } from './LiquidityWalletToken/LiquidityWalletToken';

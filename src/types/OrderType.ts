@@ -14,4 +14,11 @@ export type OrderType = {
   userId?: string;
   hash?: string;
   offer?: OfferType;
+  status: OrderStatusType;
 };
+
+export enum OrderStatusType {
+  PENDING = 'pending',
+  SUCCESS = 'success',
+  FAILURE = 'failure',
+}

@@ -262,7 +262,7 @@ function OffersPageCreate() {
             <PageCardSubmitButton
               label={
                 loading
-                  ? 'Waiting transaction'
+                  ? 'Confirm transaction'
                   : user
                   ? 'Create'
                   : 'Connect wallet'

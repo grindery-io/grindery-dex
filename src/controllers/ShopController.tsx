@@ -32,12 +32,7 @@ import {
   ChainType,
   OrderPlacingStatusType,
 } from '../types';
-import {
-  getErrorMessage,
-  getOrderIdFromReceipt,
-  getChainById,
-  switchMetamaskNetwork,
-} from '../utils';
+import { getErrorMessage, getChainById, switchMetamaskNetwork } from '../utils';
 import { addGsheetRowRequest } from '../services/gsheetServices';
 
 // Context props
@@ -70,7 +65,7 @@ type ShopControllerProps = {
 
 export const ShopController = ({ children }: ShopControllerProps) => {
   const dispatch = useAppDispatch();
-  const { getSigner, getEthers, getProvider } = useUserController();
+  const { getSigner, getEthers } = useUserController();
 
   const fetchOffers = useCallback(async () => {
     dispatch(setShopLoading(true));
@@ -210,7 +205,7 @@ export const ShopController = ({ children }: ShopControllerProps) => {
       return;
     }
 
-    dispatch(setShopOfferId(offer.offerId));
+    dispatch(setShopOfferId(offer.offerId || ''));
 
     const inputChain = getChainById(offer.exchangeChainId || '', chains);
     if (!inputChain) {
@@ -250,7 +245,6 @@ export const ShopController = ({ children }: ShopControllerProps) => {
     // get signer
     const signer = getSigner();
     const ethers = getEthers();
-    const provider = getProvider();
 
     const amountToPay = (
       parseFloat(offer.amount || '0') * parseFloat(offer.exchangeRate || '0')
@@ -327,29 +321,6 @@ export const ShopController = ({ children }: ShopControllerProps) => {
       return;
     }
 
-    // wait for activation transaction
-    dispatch(setShopOorderStatus(OrderPlacingStatusType.PROCESSING));
-    try {
-      await tx.wait();
-    } catch (error: any) {
-      dispatch(
-        setShopError({
-          type: 'acceptOffer',
-          text: error?.message || 'Transaction error',
-        })
-      );
-      console.error('tx.wait error', error);
-      dispatch(setShopOfferId(''));
-      dispatch(setShopOorderStatus(OrderPlacingStatusType.ERROR));
-      return;
-    }
-
-    // get receipt
-    const receipt = await provider.getTransactionReceipt(tx.hash);
-
-    // get orderId
-    const orderId = getOrderIdFromReceipt(receipt);
-
     // save order to DB
     const order = await addOrderRequest(accessToken, {
       amountTokenDeposit: amountToPay,
@@ -357,7 +328,6 @@ export const ShopController = ({ children }: ShopControllerProps) => {
       chainIdTokenDeposit: offer.exchangeChainId,
       destAddr: userAddress,
       offerId: offer.offerId,
-      orderId,
       amountTokenOffer: offer.amount,
       hash: tx.hash || '',
     }).catch((error: any) => {

@@ -4,6 +4,7 @@ import {
   OfferType,
   ErrorMessageType,
   OrderPlacingStatusType,
+  OfferStatusType,
 } from '../../types';
 
 export type ShopFilterFieldName = 'toChainId' | 'toTokenId';
@@ -93,7 +94,9 @@ export const selectShopOffers = (state: RootState) =>
     (o: OfferType) =>
       o.chainId === state.shop.filter.toChainId &&
       o.exchangeChainId === '5' &&
-      o.tokenId === state.shop.filter.toTokenId
+      o.tokenId === state.shop.filter.toTokenId &&
+      o.offerId &&
+      o.status === OfferStatusType.SUCCESS
   );
 export const selectShopError = (state: RootState) => state.shop.error;
 export const selectShopLoading = (state: RootState) => state.shop.loading;
