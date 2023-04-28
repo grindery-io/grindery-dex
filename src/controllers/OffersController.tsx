@@ -400,23 +400,29 @@ export const OffersController = ({ children }: OffersControllerProps) => {
     const offerToChain = getOfferToChain(offer, chains);
 
     if (!offerToChain) {
-      // handle chain not found error
+      dispatch(
+        setOffersError({
+          type: 'setIsActive',
+          text: 'Chain not found',
+        })
+      );
+      dispatch(setOffersActivating(''));
       return;
     }
-    if (offerToChain.chainId !== userChain || !userChain) {
-      try {
-        await window.ethereum.request({
-          method: 'wallet_switchEthereumChain',
-          params: [
-            {
-              chainId: getChainIdHex(offerToChain.chainId),
-            },
-          ],
-        });
-      } catch (error: any) {
-        // handle chain switching error
-        return;
-      }
+
+    const networkSwitched = await switchMetamaskNetwork(
+      userChain,
+      offerToChain
+    );
+    if (!networkSwitched) {
+      dispatch(
+        setOffersError({
+          type: 'setIsActive',
+          text: 'Network switching failed. Please, switch network in your MetaMask and try again.',
+        })
+      );
+      dispatch(setOffersActivating(''));
+      return;
     }
 
     const signer = getSigner();
