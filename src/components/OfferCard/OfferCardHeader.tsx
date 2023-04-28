@@ -31,7 +31,7 @@ const OfferCardHeader = (props: OfferCardProps) => {
           lineHeight: '19px',
         }}
       >
-        {offer.providerDetails?.name || 'Offer'}
+        {offer.liquidityWallet?.name || 'Offer'}
       </Typography>
       {isInAdvancedMode && (
         <>

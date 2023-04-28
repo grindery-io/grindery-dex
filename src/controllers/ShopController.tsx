@@ -20,7 +20,6 @@ import { useUserController } from './UserController';
 import {
   getAllOffers,
   addOrderRequest,
-  getProviderWalletRequest,
   getOrderRequest,
   getOfferById,
 } from '../services';
@@ -28,7 +27,6 @@ import { POOL_CONTRACT_ADDRESS } from '../config';
 import {
   TokenType,
   OfferType,
-  LiquidityWalletType,
   ChainType,
   OrderPlacingStatusType,
 } from '../types';
@@ -72,25 +70,7 @@ export const ShopController = ({ children }: ShopControllerProps) => {
     const items = await getAllOffers();
 
     if (items) {
-      const promises = items.map(async (offer: OfferType) => {
-        const provider = await getProviderWalletRequest(
-          offer.userId || '',
-          offer.chainId
-        ).catch(() => {
-          return null;
-        });
-        return provider || null;
-      });
-      const providers = await Promise.all(promises);
-      const enrichedOffers = items.map((offer: OfferType) => ({
-        ...offer,
-        providerDetails:
-          providers.find(
-            (provider: LiquidityWalletType | null) =>
-              offer && provider && offer.provider === provider.walletAddress
-          ) || undefined,
-      }));
-      dispatch(setShopOffers(enrichedOffers));
+      dispatch(setShopOffers(items));
     }
 
     //dispatch(setShopOffers(items || []));

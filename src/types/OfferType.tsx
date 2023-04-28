@@ -21,8 +21,8 @@ export type OfferType = {
   title?: string;
   new?: boolean;
   provider?: string;
-  providerDetails?: LiquidityWalletType;
   status: OfferStatusType;
+  liquidityWallet?: LiquidityWalletType;
 };
 
 export enum OfferStatusType {
