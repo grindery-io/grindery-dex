@@ -12,7 +12,7 @@ export const getChainsWithTokens = (): Promise<ChainType[]> => {
             axios
               .get(`${DELIGHT_API_URL}/tokens/active`)
               .then((res2) => {
-                // TODO: remove data formatting away from services
+                // remove data formatting and enriching away from services
                 const chainsWithTokens = (res?.data || []).map(
                   (chain: any) => ({
                     ...chain,

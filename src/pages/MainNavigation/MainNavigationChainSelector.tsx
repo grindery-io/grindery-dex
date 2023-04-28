@@ -62,7 +62,7 @@ const MainNavigationChainSelector = (props: Props) => {
     try {
       await switchMetamaskNetwork(userChainId, chain);
     } catch (error) {
-      // handle error
+      console.error('switchMetamaskNetwork error: ', error);
     }
   };
 

@@ -7,7 +7,7 @@ export const FAUCET_MENU = [
   },
 ];
 
-// TODO: remove when components using this constants will be refactored
+// remove when components using this constants will be refactored
 export const ICONS: { [key: string]: string } = {
   DISCONNECT: '/images/icons/disconnect.svg',
   CHECKBOX_CHECKED: '/images/icons/checkbox-checked.svg',

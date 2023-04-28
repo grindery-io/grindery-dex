@@ -103,11 +103,7 @@ export const WalletsController = ({ children }: WalletsControllerProps) => {
   const fetchWallets = useCallback(
     async (accessToken: string) => {
       dispatch(setWalletsLoading(true));
-      const wallets = await getWalletsRequest(accessToken).catch(
-        (error: any) => {
-          // TODO handle orders fetching error
-        }
-      );
+      const wallets = await getWalletsRequest(accessToken);
       dispatch(setWalletsItems(wallets || []));
       dispatch(setWalletsLoading(false));
     },

@@ -81,9 +81,7 @@ export const StakesController = ({ children }: StakesControllerProps) => {
   );
 
   const fetchStake = async (accessToken: string, id: string) => {
-    const stake = await getStake(accessToken, id).catch((err) => {
-      // TODO: handle error
-    });
+    const stake = await getStake(accessToken, id);
     return stake;
   };
 
@@ -91,9 +89,7 @@ export const StakesController = ({ children }: StakesControllerProps) => {
     accessToken: string,
     body: { [key: string]: any }
   ): Promise<StakeType | boolean> => {
-    const newStakeId = await addStake(accessToken, body).catch((err) => {
-      // TODO: handle error
-    });
+    const newStakeId = await addStake(accessToken, body);
     if (newStakeId) {
       const stake = await fetchStake(accessToken, newStakeId);
       if (stake) {
@@ -116,11 +112,7 @@ export const StakesController = ({ children }: StakesControllerProps) => {
       amount: string;
     }
   ): Promise<boolean> => {
-    const isEdited = await updateStake(accessToken, { chainId, amount }).catch(
-      (err) => {
-        // TODO: handle error
-      }
-    );
+    const isEdited = await updateStake(accessToken, { chainId, amount });
     if (typeof isEdited === 'boolean') {
       return isEdited;
     } else {
@@ -333,8 +325,6 @@ export const StakesController = ({ children }: StakesControllerProps) => {
               ...[...stakes],
             ])
           );
-        } else {
-          // TODO: handle error
         }
       } else {
         // update existing stake if stake for the chain exists
@@ -365,8 +355,6 @@ export const StakesController = ({ children }: StakesControllerProps) => {
               })
             )
           );
-        } else {
-          // TODO: handle error
         }
       }
 
@@ -450,7 +438,7 @@ export const StakesController = ({ children }: StakesControllerProps) => {
           ],
         });
       } catch (error: any) {
-        // TODO handle change switching error
+        console.error('wallet_switchEthereumChain error', error);
       }
     }
 
@@ -534,8 +522,6 @@ export const StakesController = ({ children }: StakesControllerProps) => {
           }),
         ])
       );
-    } else {
-      // TODO handle error
     }
   };
 

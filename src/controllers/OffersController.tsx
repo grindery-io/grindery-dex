@@ -21,7 +21,6 @@ import {
   setOffersLoading,
 } from '../store';
 import {
-  getChainIdHex,
   isNumeric,
   getTokenById,
   getOfferToChain,
@@ -86,9 +85,7 @@ export const OffersController = ({ children }: OffersControllerProps) => {
   );
 
   const fetchOffer = async (accessToken: string, id: string) => {
-    const offer = await getOffer(accessToken, id).catch((err) => {
-      // TODO: handle error
-    });
+    const offer = await getOffer(accessToken, id);
     return offer;
   };
 
@@ -96,9 +93,7 @@ export const OffersController = ({ children }: OffersControllerProps) => {
     accessToken: string,
     body: { [key: string]: any }
   ): Promise<OfferType | boolean> => {
-    const newOfferId = await addOffer(accessToken, body).catch((err) => {
-      // TODO: handle error
-    });
+    const newOfferId = await addOffer(accessToken, body);
     if (newOfferId) {
       const offer = await fetchOffer(accessToken, newOfferId);
       if (offer) {
@@ -118,9 +113,7 @@ export const OffersController = ({ children }: OffersControllerProps) => {
       isActive: boolean;
     }
   ): Promise<boolean> => {
-    const isEdited = await updateOffer(accessToken, body).catch((err) => {
-      // TODO: handle error
-    });
+    const isEdited = await updateOffer(accessToken, body);
     if (typeof isEdited === 'boolean') {
       return isEdited;
     } else {

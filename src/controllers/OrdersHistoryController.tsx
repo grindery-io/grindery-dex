@@ -32,11 +32,7 @@ export const OrdersHistoryController = ({
   const fetchOrders = useCallback(
     async (accessToken: string) => {
       dispatch(setOrdersHistoryLoading(true));
-      const orders = await getBuyerOrdersRequest(accessToken).catch(
-        (error: any) => {
-          // TODO handle orders fetching error
-        }
-      );
+      const orders = await getBuyerOrdersRequest(accessToken);
       if (orders) {
         const promises = orders.map(async (order: OrderType) => {
           const offer = await getOfferById(

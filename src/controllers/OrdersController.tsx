@@ -57,11 +57,7 @@ export const OrdersController = ({ children }: OrdersControllerProps) => {
   const fetchOrders = useCallback(
     async (accessToken: string) => {
       dispatch(setOrdersLoading(true));
-      const orders = await getSellerOrdersRequest(accessToken).catch(
-        (error: any) => {
-          // TODO handle orders fetching error
-        }
-      );
+      const orders = await getSellerOrdersRequest(accessToken);
       if (orders) {
         const promises = orders.map(async (order: OrderType) => {
           const offer = await getOfferById(
