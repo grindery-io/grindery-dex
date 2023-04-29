@@ -30,7 +30,7 @@ const ErrorSnackbar = (props: Props) => {
       autoHideDuration={6000}
       onClose={handleClose}
       anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-      sx={{ top: '75px !important', maxWidth: '300px' }}
+      sx={{ transform: 'translateY(50px)', maxWidth: '300px' }}
     >
       <Alert onClose={handleClose} severity="error" sx={{ width: '100%' }}>
         {message}
