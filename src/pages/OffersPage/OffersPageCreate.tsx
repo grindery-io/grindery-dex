@@ -17,35 +17,27 @@ import {
 import {
   useAppDispatch,
   useAppSelector,
-  selectUserAccessToken,
-  selectUserChainId,
   selectUserId,
   clearOffersCreateInput,
   selectOffersCreateInput,
   selectOffersError,
   selectOffersLoading,
   selectChainsItems,
-  selectPoolAbi,
-  selectWalletsItems,
 } from '../../store';
 import { ROUTES } from '../../config';
 import { useUserController, useOffersController } from '../../controllers';
 import { getChainById, getTokenById } from '../../utils';
-import { LiquidityWalletType } from '../../types';
 
 function OffersPageCreate() {
   let navigate = useNavigate();
   const dispatch = useAppDispatch();
   const user = useAppSelector(selectUserId);
   const { connectUser: connect } = useUserController();
-  const accessToken = useAppSelector(selectUserAccessToken);
-  const userChainId = useAppSelector(selectUserChainId);
   const loading = useAppSelector(selectOffersLoading);
-  const errorMessage = useAppSelector(selectOffersError);
+  const error = useAppSelector(selectOffersError);
   const input = useAppSelector(selectOffersCreateInput);
   const { handleOfferCreateInputChange, handleOfferCreateAction } =
     useOffersController();
-  const poolAbi = useAppSelector(selectPoolAbi);
   const {
     amountMin,
     amountMax,
@@ -59,10 +51,6 @@ function OffersPageCreate() {
     toChainId,
     toTokenId,
   } = input;
-  const wallets = useAppSelector(selectWalletsItems);
-  const wallet = wallets.find(
-    (w: LiquidityWalletType) => w.chainId === fromChainId
-  );
   const chains = useAppSelector(selectChainsItems);
   const fromChain = getChainById(fromChainId, chains);
   const fromToken = getTokenById(fromTokenId, fromChainId, chains);
@@ -104,7 +92,7 @@ function OffersPageCreate() {
             title="You sell"
             chain={fromChain}
             token={fromToken || ''}
-            error={errorMessage}
+            error={error}
             id="sell-button"
           />
           <SelectChainAndTokenButton
@@ -114,7 +102,7 @@ function OffersPageCreate() {
             title="You receive"
             chain={toChain}
             token={toToken || ''}
-            error={errorMessage}
+            error={error}
             name="toChain"
             id="receive-button"
           />
@@ -160,7 +148,7 @@ function OffersPageCreate() {
                 name="exchangeRate"
                 placeholder="1"
                 disabled={false}
-                error={errorMessage}
+                error={error}
                 sx={{ marginTop: 0 }}
               />
             </Stack>
@@ -186,7 +174,7 @@ function OffersPageCreate() {
                 placeholder="0.1"
                 disabled={false}
                 value={amountMin}
-                error={errorMessage}
+                error={error}
                 sx={{ marginTop: 0 }}
               />
               <TextInput
@@ -198,7 +186,7 @@ function OffersPageCreate() {
                 name="amountMax"
                 placeholder="10"
                 disabled={false}
-                error={errorMessage}
+                error={error}
                 sx={{ marginTop: 0 }}
               />
             </Box>
@@ -211,7 +199,7 @@ function OffersPageCreate() {
               name="amount"
               placeholder="1"
               disabled={false}
-              error={errorMessage}
+              error={error}
               helpText="Optional"
             />
             <TextInput
@@ -226,7 +214,7 @@ function OffersPageCreate() {
               name="estimatedTime"
               placeholder="60"
               disabled={false}
-              error={errorMessage}
+              error={error}
               helpText="Seconds"
             />
             <TextInput
@@ -238,7 +226,7 @@ function OffersPageCreate() {
               name="title"
               placeholder="Describe your offer"
               disabled={false}
-              error={errorMessage}
+              error={error}
               helpText="Optional"
             />
 
@@ -251,13 +239,11 @@ function OffersPageCreate() {
               name="image"
               helpText="Optimal image size 167x174px"
             />
-            {errorMessage &&
-              errorMessage.type === 'saveOffer' &&
-              errorMessage.text && (
-                <AlertBox color="error">
-                  <p>{errorMessage.text}</p>
-                </AlertBox>
-              )}
+            {error && error.type === 'saveOffer' && error.text && (
+              <AlertBox color="error">
+                <p>{error.text}</p>
+              </AlertBox>
+            )}
             {loading && <Loading />}
             <PageCardSubmitButton
               label={
@@ -270,14 +256,7 @@ function OffersPageCreate() {
               onClick={
                 user
                   ? () => {
-                      handleOfferCreateAction(
-                        input,
-                        accessToken,
-                        userChainId,
-                        wallet?.walletAddress || '',
-                        poolAbi,
-                        chains
-                      );
+                      handleOfferCreateAction();
                     }
                   : () => {
                       connect();

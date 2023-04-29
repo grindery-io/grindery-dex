@@ -16,10 +16,7 @@ import {
   selectOffersActivating,
   selectOffersItems,
   selectOffersLoading,
-  selectUserAccessToken,
-  selectUserChainId,
   selectUserId,
-  selectPoolAbi,
 } from '../../store';
 import { useUserController, useOffersController } from '../../controllers';
 import { ROUTES } from '../../config';
@@ -33,15 +30,12 @@ import {
 function OffersPageRoot() {
   const user = useAppSelector(selectUserId);
   const { connectUser: connect } = useUserController();
-  const accessToken = useAppSelector(selectUserAccessToken);
-  const userChain = useAppSelector(selectUserChainId);
   const isActivating = useAppSelector(selectOffersActivating);
   const { handleActivationAction } = useOffersController();
   let navigate = useNavigate();
   const chains = useAppSelector(selectChainsItems);
   const offers = useAppSelector(selectOffersItems);
   const offersIsLoading = useAppSelector(selectOffersLoading);
-  const poolAbi = useAppSelector(selectPoolAbi);
   const groupedOffers = groupOffersByChainId(offers);
 
   return (
@@ -92,24 +86,10 @@ function OffersPageRoot() {
                               offer={offer}
                               isActivating={isActivating}
                               onDeactivateClick={() => {
-                                handleActivationAction(
-                                  accessToken,
-                                  offer,
-                                  false,
-                                  userChain,
-                                  chains,
-                                  poolAbi
-                                );
+                                handleActivationAction(offer, false);
                               }}
                               onActivateClick={() => {
-                                handleActivationAction(
-                                  accessToken,
-                                  offer,
-                                  true,
-                                  userChain,
-                                  chains,
-                                  poolAbi
-                                );
+                                handleActivationAction(offer, true);
                               }}
                             />
                           )

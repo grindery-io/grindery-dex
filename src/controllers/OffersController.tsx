@@ -9,7 +9,6 @@ import {
   useAppDispatch,
   useAppSelector,
   selectUserAccessToken,
-  OffersCreateInput,
   OffersCreateInputInputFieldName,
   clearOffersCreateInput,
   clearOffersError,
@@ -19,42 +18,33 @@ import {
   setOffersError,
   setOffersItems,
   setOffersLoading,
+  selectPoolAbi,
+  selectChainsItems,
+  selectWalletsItems,
+  selectUserChainId,
+  selectOffersCreateInput,
 } from '../store';
 import {
-  isNumeric,
   getTokenById,
   getOfferToChain,
   getMetaMaskErrorMessage,
   getChainById,
   switchMetamaskNetwork,
+  validateOfferCreateAction,
 } from '../utils';
 import { useUserController } from './UserController';
 import { addOffer, getOffer, getUserOffers, updateOffer } from '../services';
-import { OfferType, ChainType, ErrorMessageType } from '../types';
+import { OfferType, LiquidityWalletType } from '../types';
 import { ROUTES, POOL_CONTRACT_ADDRESS } from '../config';
 
 // Context props
 type ContextProps = {
-  handleOfferCreateAction: (
-    input: OffersCreateInput,
-    accessToken: string,
-    userChainId: string,
-    userWallet: string,
-    poolAbi: any,
-    chains: ChainType[]
-  ) => void;
+  handleOfferCreateAction: () => void;
   handleOfferCreateInputChange: (
     name: OffersCreateInputInputFieldName,
     value: string
   ) => void;
-  handleActivationAction: (
-    accessToken: string,
-    offer: OfferType,
-    isActive: boolean,
-    userChain: string,
-    chains: ChainType[],
-    poolAbi: any
-  ) => void;
+  handleActivationAction: (offer: OfferType, isActive: boolean) => void;
 };
 
 export const OffersContext = createContext<ContextProps>({
@@ -72,6 +62,11 @@ export const OffersController = ({ children }: OffersControllerProps) => {
   const dispatch = useAppDispatch();
   const { getSigner, getEthers } = useUserController();
   const offers = useAppSelector(selectOffersItems);
+  const wallets = useAppSelector(selectWalletsItems);
+  const userChainId = useAppSelector(selectUserChainId);
+  const poolAbi = useAppSelector(selectPoolAbi);
+  const chains = useAppSelector(selectChainsItems);
+  const input = useAppSelector(selectOffersCreateInput);
   let navigate = useNavigate();
 
   const fetchOffers = useCallback(
@@ -89,22 +84,25 @@ export const OffersController = ({ children }: OffersControllerProps) => {
     return offer;
   };
 
-  const createOffer = async (
-    accessToken: string,
-    body: { [key: string]: any }
-  ): Promise<OfferType | boolean> => {
-    const newOfferId = await addOffer(accessToken, body);
-    if (newOfferId) {
-      const offer = await fetchOffer(accessToken, newOfferId);
-      if (offer) {
-        return offer;
+  const createOffer = useCallback(
+    async (
+      accessToken: string,
+      body: { [key: string]: any }
+    ): Promise<OfferType | boolean> => {
+      const newOfferId = await addOffer(accessToken, body);
+      if (newOfferId) {
+        const offer = await fetchOffer(accessToken, newOfferId);
+        if (offer) {
+          return offer;
+        } else {
+          return false;
+        }
       } else {
         return false;
       }
-    } else {
-      return false;
-    }
-  };
+    },
+    []
+  );
 
   const editOffer = async (
     accessToken: string,
@@ -129,87 +127,7 @@ export const OffersController = ({ children }: OffersControllerProps) => {
     [dispatch]
   );
 
-  const validateOfferCreateAction = (
-    input: OffersCreateInput
-  ): ErrorMessageType | true => {
-    if (!input.fromChainId || !input.fromTokenId) {
-      return {
-        type: 'chain',
-        text: 'Chain and token are required',
-      };
-    }
-    if (!input.toChainId || !input.toTokenId) {
-      return {
-        type: 'toChain',
-        text: 'Chain and token are required',
-      };
-    }
-    if (!input.exchangeRate) {
-      return {
-        type: 'exchangeRate',
-        text: 'Exchange rate is required',
-      };
-    }
-    if (!isNumeric(input.exchangeRate)) {
-      return {
-        type: 'exchangeRate',
-        text: 'Must be a number',
-      };
-    }
-    if (!input.amountMin) {
-      return {
-        type: 'amountMin',
-        text: 'Min amount is required',
-      };
-    }
-    if (!isNumeric(input.amountMin)) {
-      return {
-        type: 'amountMin',
-        text: 'Must be a number',
-      };
-    }
-    if (!input.amountMax) {
-      return {
-        type: 'amountMax',
-        text: 'Max amount is required',
-      };
-    }
-    if (!isNumeric(input.amountMax)) {
-      return {
-        type: 'amountMax',
-        text: 'Must be a number',
-      };
-    }
-    if (parseFloat(input.amountMax) < parseFloat(input.amountMin)) {
-      return {
-        type: 'amountMax',
-        text: 'Must be greater than min or equal',
-      };
-    }
-
-    if (!input.estimatedTime) {
-      return {
-        type: 'estimatedTime',
-        text: 'Execution time is required',
-      };
-    }
-    if (!isNumeric(input.estimatedTime)) {
-      return {
-        type: 'estimatedTime',
-        text: 'Must be a number',
-      };
-    }
-    return true;
-  };
-
-  const handleOfferCreateAction = async (
-    input: OffersCreateInput,
-    accessToken: string,
-    userChainId: string,
-    userWallet: string,
-    poolAbi: any,
-    chains: ChainType[]
-  ) => {
+  const handleOfferCreateAction = useCallback(async () => {
     // clear error message
     dispatch(clearOffersError());
 
@@ -219,6 +137,10 @@ export const OffersController = ({ children }: OffersControllerProps) => {
       dispatch(setOffersError(validation));
       return false;
     }
+
+    const userWallet = wallets.find(
+      (w: LiquidityWalletType) => w.chainId === input.fromChainId
+    )?.walletAddress;
 
     if (!userWallet) {
       dispatch(
@@ -378,118 +300,136 @@ export const OffersController = ({ children }: OffersControllerProps) => {
 
     // complete execution
     dispatch(setOffersLoading(false));
-  };
+  }, [
+    accessToken,
+    poolAbi,
+    chains,
+    wallets,
+    userChainId,
+    input,
+    offers,
+    createOffer,
+    dispatch,
+    getEthers,
+    getSigner,
+    navigate,
+  ]);
 
-  const handleActivationAction = async (
-    accessToken: string,
-    offer: OfferType,
-    isActive: boolean,
-    userChain: string,
-    chains: ChainType[],
-    poolAbi: any
-  ) => {
-    dispatch(setOffersActivating(offer.offerId || ''));
+  const handleActivationAction = useCallback(
+    async (offer: OfferType, isActive: boolean) => {
+      dispatch(setOffersActivating(offer.offerId || ''));
 
-    const offerToChain = getOfferToChain(offer, chains);
+      const offerToChain = getOfferToChain(offer, chains);
 
-    if (!offerToChain) {
-      dispatch(
-        setOffersError({
-          type: 'setIsActive',
-          text: 'Chain not found',
-        })
+      if (!offerToChain) {
+        dispatch(
+          setOffersError({
+            type: 'setIsActive',
+            text: 'Chain not found',
+          })
+        );
+        dispatch(setOffersActivating(''));
+        return;
+      }
+
+      const networkSwitched = await switchMetamaskNetwork(
+        userChainId,
+        offerToChain
       );
-      dispatch(setOffersActivating(''));
-      return;
-    }
+      if (!networkSwitched) {
+        dispatch(
+          setOffersError({
+            type: 'setIsActive',
+            text: 'Network switching failed. Please, switch network in your MetaMask and try again.',
+          })
+        );
+        dispatch(setOffersActivating(''));
+        return;
+      }
 
-    const networkSwitched = await switchMetamaskNetwork(
-      userChain,
-      offerToChain
-    );
-    if (!networkSwitched) {
-      dispatch(
-        setOffersError({
-          type: 'setIsActive',
-          text: 'Network switching failed. Please, switch network in your MetaMask and try again.',
-        })
+      const signer = getSigner();
+      const ethers = getEthers();
+
+      // set pool contract
+      const _poolContract = new ethers.Contract(
+        POOL_CONTRACT_ADDRESS['eip155:5'],
+        poolAbi,
+        signer
       );
-      dispatch(setOffersActivating(''));
-      return;
-    }
 
-    const signer = getSigner();
-    const ethers = getEthers();
+      // connect signer
+      const poolContract = _poolContract.connect(signer);
 
-    // set pool contract
-    const _poolContract = new ethers.Contract(
-      POOL_CONTRACT_ADDRESS['eip155:5'],
-      poolAbi,
-      signer
-    );
+      const offerId = offer.offerId;
 
-    // connect signer
-    const poolContract = _poolContract.connect(signer);
+      try {
+        await poolContract.getOfferer(offerId);
+      } catch (error: any) {
+        dispatch(
+          setOffersError({
+            type: 'checkOwner',
+            text: getMetaMaskErrorMessage(
+              error,
+              'Checking offer owner transaction error'
+            ),
+          })
+        );
+        console.error('checkOwner error', error);
+        dispatch(setOffersActivating(''));
+        return;
+      }
 
-    const offerId = offer.offerId;
+      // create transaction
+      try {
+        await poolContract.setIsActive(offerId, isActive, {
+          gasLimit: 1000000,
+        });
+      } catch (error: any) {
+        dispatch(
+          setOffersError({
+            type: 'setIsActive',
+            text: getMetaMaskErrorMessage(
+              error,
+              'Offer activation transaction error'
+            ),
+          })
+        );
+        console.error('setIsActive error', error);
+        dispatch(setOffersActivating(''));
+        return;
+      }
 
-    try {
-      await poolContract.getOfferer(offerId);
-    } catch (error: any) {
-      dispatch(
-        setOffersError({
-          type: 'checkOwner',
-          text: getMetaMaskErrorMessage(
-            error,
-            'Checking offer owner transaction error'
-          ),
-        })
-      );
-      console.error('checkOwner error', error);
-      dispatch(setOffersActivating(''));
-      return;
-    }
-
-    // create transaction
-    try {
-      await poolContract.setIsActive(offerId, isActive, {
-        gasLimit: 1000000,
+      const updated = await editOffer(accessToken, {
+        offerId: offerId || '',
+        isActive,
       });
-    } catch (error: any) {
+
+      if (!updated) {
+        // offer wasn't updated, stop execution
+        dispatch(setOffersActivating(''));
+        return;
+      }
       dispatch(
-        setOffersError({
-          type: 'setIsActive',
-          text: getMetaMaskErrorMessage(
-            error,
-            'Offer activation transaction error'
-          ),
-        })
+        setOffersItems([
+          ...offers.map((offer) => ({
+            ...offer,
+            isActive: offerId === offer.offerId ? isActive : offer.isActive,
+          })),
+        ])
       );
-      console.error('setIsActive error', error);
       dispatch(setOffersActivating(''));
-      return;
-    }
-
-    const updated = await editOffer(accessToken, {
-      offerId: offerId || '',
-      isActive,
-    });
-
-    if (!updated) {
-      // offer wasn't updated, stop execution
-      dispatch(setOffersActivating(''));
-      return;
-    }
-    dispatch(
-      setOffersItems([
-        ...offers.map((offer) => ({
-          ...offer,
-          isActive: offerId === offer.offerId ? isActive : offer.isActive,
-        })),
-      ])
-    );
-    dispatch(setOffersActivating(''));
-  };
+    },
+    [
+      accessToken,
+      userChainId,
+      chains,
+      poolAbi,
+      offers,
+      dispatch,
+      getEthers,
+      getSigner,
+    ]
+  );
 
   useEffect(() => {
     if (accessToken) {

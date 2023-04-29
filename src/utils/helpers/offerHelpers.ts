@@ -1,5 +1,13 @@
 import _ from 'lodash';
-import { ChainType, OfferStatusType, OfferType, TokenType } from '../../types';
+import {
+  ChainType,
+  ErrorMessageType,
+  OfferStatusType,
+  OfferType,
+  TokenType,
+} from '../../types';
+import { OffersCreateInput } from '../../store';
+import { isNumeric } from '../isNumeric';
 
 export const getOfferIdFromReceipt = (receipt: any): string => {
   return receipt?.logs?.[0]?.topics?.[1] || '';
@@ -137,4 +145,77 @@ export const getOfferStatus = (offer: OfferType): string => {
     case OfferStatusType.DEACTIVATION_FAILURE:
       return 'Deactivation failed';
   }
+};
+
+export const validateOfferCreateAction = (
+  input: OffersCreateInput
+): ErrorMessageType | true => {
+  if (!input.fromChainId || !input.fromTokenId) {
+    return {
+      type: 'chain',
+      text: 'Chain and token are required',
+    };
+  }
+  if (!input.toChainId || !input.toTokenId) {
+    return {
+      type: 'toChain',
+      text: 'Chain and token are required',
+    };
+  }
+  if (!input.exchangeRate) {
+    return {
+      type: 'exchangeRate',
+      text: 'Exchange rate is required',
+    };
+  }
+  if (!isNumeric(input.exchangeRate)) {
+    return {
+      type: 'exchangeRate',
+      text: 'Must be a number',
+    };
+  }
+  if (!input.amountMin) {
+    return {
+      type: 'amountMin',
+      text: 'Min amount is required',
+    };
+  }
+  if (!isNumeric(input.amountMin)) {
+    return {
+      type: 'amountMin',
+      text: 'Must be a number',
+    };
+  }
+  if (!input.amountMax) {
+    return {
+      type: 'amountMax',
+      text: 'Max amount is required',
+    };
+  }
+  if (!isNumeric(input.amountMax)) {
+    return {
+      type: 'amountMax',
+      text: 'Must be a number',
+    };
+  }
+  if (parseFloat(input.amountMax) < parseFloat(input.amountMin)) {
+    return {
+      type: 'amountMax',
+      text: 'Must be greater than min or equal',
+    };
+  }
+
+  if (!input.estimatedTime) {
+    return {
+      type: 'estimatedTime',
+      text: 'Execution time is required',
+    };
+  }
+  if (!isNumeric(input.estimatedTime)) {
+    return {
+      type: 'estimatedTime',
+      text: 'Must be a number',
+    };
+  }
+  return true;
 };
