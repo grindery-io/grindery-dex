@@ -3,6 +3,7 @@ import React, {
   useCallback,
   useContext,
   useEffect,
+  useState,
 } from 'react';
 import {
   useAppDispatch,
@@ -10,14 +11,19 @@ import {
   setOrdersHistoryItems,
   setOrdersHistoryLoading,
   selectUserAccessToken,
+  addOrdersHistoryItems,
+  setOrdersHistoryTotal,
 } from '../store';
-import { getBuyerOrdersRequest, getOfferById } from '../services';
-import { OrderType, OfferType } from '../types';
+import { getBuyerOrdersRequest } from '../services';
 
 // Context props
-type ContextProps = {};
+type ContextProps = {
+  handleFetchMoreOrdersAction: () => void;
+};
 
-export const OrdersHistoryContext = createContext<ContextProps>({});
+export const OrdersHistoryContext = createContext<ContextProps>({
+  handleFetchMoreOrdersAction: () => {},
+});
 
 type OrdersHistoryControllerProps = {
   children: React.ReactNode;
@@ -28,37 +34,25 @@ export const OrdersHistoryController = ({
 }: OrdersHistoryControllerProps) => {
   const dispatch = useAppDispatch();
   const accessToken = useAppSelector(selectUserAccessToken);
+  const limit = 5;
+  const [offset, setOffset] = useState(limit);
 
   const fetchOrders = useCallback(
     async (accessToken: string) => {
       dispatch(setOrdersHistoryLoading(true));
-      const orders = await getBuyerOrdersRequest(accessToken);
-      if (orders) {
-        const promises = orders.map(async (order: OrderType) => {
-          const offer = await getOfferById(
-            accessToken,
-            order.offerId || ''
-          ).catch(() => {
-            return null;
-          });
-          return offer || null;
-        });
-        const offers = await Promise.all(promises);
-
-        const enrichedOrders = orders.map((order: OrderType) => ({
-          ...order,
-          offer:
-            offers.find(
-              (offer: OfferType | null) =>
-                offer && offer.offerId === order.offerId
-            ) || undefined,
-        }));
-        dispatch(setOrdersHistoryItems(enrichedOrders));
-      }
+      const res = await getBuyerOrdersRequest(accessToken, limit, 0);
+      dispatch(setOrdersHistoryItems(res?.items || []));
+      dispatch(setOrdersHistoryTotal(res?.total || 0));
       dispatch(setOrdersHistoryLoading(false));
     },
     [dispatch]
   );
+
+  const handleFetchMoreOrdersAction = useCallback(async () => {
+    const res = await getBuyerOrdersRequest(accessToken, limit, offset);
+    setOffset(offset + limit);
+    dispatch(addOrdersHistoryItems(res?.items || []));
+  }, [accessToken, offset, dispatch]);
 
   useEffect(() => {
     if (accessToken) {
@@ -67,7 +61,11 @@ export const OrdersHistoryController = ({
   }, [accessToken, fetchOrders]);
 
   return (
-    <OrdersHistoryContext.Provider value={{}}>
+    <OrdersHistoryContext.Provider
+      value={{
+        handleFetchMoreOrdersAction,
+      }}
+    >
       {children}
     </OrdersHistoryContext.Provider>
   );

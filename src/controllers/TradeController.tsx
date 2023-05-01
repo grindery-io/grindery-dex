@@ -39,7 +39,6 @@ import {
   getTokenPriceById,
   addOrderRequest,
   getOrderRequest,
-  getOfferById,
 } from '../services';
 import {
   OfferType,
@@ -112,18 +111,8 @@ export const TradeController = ({ children }: TradeControllerProps) => {
     let order;
     try {
       order = await getOrderRequest(accessToken, id);
-    } catch (error) {
-      // handle order fetching error
-    }
+    } catch (error) {}
     if (order) {
-      const offer = await getOfferById(accessToken, order.offerId || '').catch(
-        () => {
-          // handle offer fetching error
-        }
-      );
-      if (offer) {
-        order.offer = offer;
-      }
       dispatch(setOrdersItems([order]));
     }
   };

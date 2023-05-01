@@ -5,12 +5,14 @@ type Props = {
   children: React.ReactNode;
   maxHeight?: string;
   sx?: SxProps | React.CSSProperties;
+  id?: string;
 };
 
 const PageCardBody = (props: Props) => {
-  const { children, maxHeight, sx } = props;
+  const { children, maxHeight, sx, id } = props;
   return (
     <Box
+      id={id}
       sx={{
         maxHeight: maxHeight || 'auto',
         overflow: maxHeight ? 'auto' : 'initial',

@@ -17,12 +17,7 @@ import {
   setShopOorderStatus,
 } from '../store';
 import { useUserController } from './UserController';
-import {
-  getAllOffers,
-  addOrderRequest,
-  getOrderRequest,
-  getOfferById,
-} from '../services';
+import { getAllOffers, addOrderRequest, getOrderRequest } from '../services';
 import { POOL_CONTRACT_ADDRESS } from '../config';
 import {
   TokenType,
@@ -69,11 +64,7 @@ export const ShopController = ({ children }: ShopControllerProps) => {
     dispatch(setShopLoading(true));
     const items = await getAllOffers();
 
-    if (items) {
-      dispatch(setShopOffers(items));
-    }
-
-    //dispatch(setShopOffers(items || []));
+    dispatch(setShopOffers(items || []));
     dispatch(setShopLoading(false));
   }, [dispatch]);
 
@@ -81,18 +72,8 @@ export const ShopController = ({ children }: ShopControllerProps) => {
     let order;
     try {
       order = await getOrderRequest(accessToken, id);
-    } catch (error) {
-      // handle order fetching error
-    }
+    } catch (error) {}
     if (order) {
-      const offer = await getOfferById(accessToken, order.offerId || '').catch(
-        () => {
-          // handle offer fetching error
-        }
-      );
-      if (offer) {
-        order.offer = offer;
-      }
       dispatch(setOrdersItems([order]));
     }
   };

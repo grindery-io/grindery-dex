@@ -6,12 +6,14 @@ interface OrdersState {
   error: ErrorMessageType;
   items: OrderType[];
   loading: boolean;
+  total: number;
 }
 
 const initialState: OrdersState = {
   error: { type: '', text: '' },
   items: [],
   loading: true,
+  total: 0,
 };
 
 const ordersSlice = createSlice({
@@ -20,6 +22,12 @@ const ordersSlice = createSlice({
   reducers: {
     setOrdersItems(state, action: PayloadAction<OrderType[]>) {
       state.items = action.payload;
+    },
+    addOrdersItems(state, action: PayloadAction<OrderType[]>) {
+      state.items = [...state.items, ...action.payload];
+    },
+    setOrdersTotal(state, action: PayloadAction<number>) {
+      state.total = action.payload;
     },
     setOrdersLoading(state, action: PayloadAction<boolean>) {
       state.loading = action.payload;
@@ -39,12 +47,16 @@ const ordersSlice = createSlice({
 export const selectOrdersItems = (state: RootState) => state.orders.items;
 export const selectOrdersError = (state: RootState) => state.orders.error;
 export const selectOrdersLoading = (state: RootState) => state.orders.loading;
+export const selectOrdersHasMore = (state: RootState) =>
+  Boolean(state.orders.items.length < state.orders.total);
 
 export const {
   setOrdersItems,
   setOrdersLoading,
   setOrdersError,
   clearOrdersError,
+  addOrdersItems,
+  setOrdersTotal,
 } = ordersSlice.actions;
 
 export default ordersSlice.reducer;

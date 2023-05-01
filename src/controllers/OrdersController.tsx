@@ -4,7 +4,7 @@ import React, {
   useContext,
   useEffect,
 } from 'react';
-import { OrderType, OfferType, ChainType } from '../types';
+import { OrderType, ChainType } from '../types';
 import {
   useAppDispatch,
   useAppSelector,
@@ -23,7 +23,6 @@ import { useUserController } from './UserController';
 import {
   completeSellerOrderRequest,
   getSellerOrdersRequest,
-  getOfferById,
   getWalletBalanceRequest,
   updateWalletRequest,
 } from '../services';
@@ -58,27 +57,7 @@ export const OrdersController = ({ children }: OrdersControllerProps) => {
     async (accessToken: string) => {
       dispatch(setOrdersLoading(true));
       const orders = await getSellerOrdersRequest(accessToken);
-      if (orders) {
-        const promises = orders.map(async (order: OrderType) => {
-          const offer = await getOfferById(
-            accessToken,
-            order.offerId || ''
-          ).catch(() => {
-            return null;
-          });
-          return offer || null;
-        });
-        const offers = await Promise.all(promises);
-        const enrichedOrders = orders.map((order: OrderType) => ({
-          ...order,
-          offer:
-            offers.find(
-              (offer: OfferType | null) =>
-                offer && offer.offerId === order.offerId
-            ) || undefined,
-        }));
-        dispatch(setOrdersItems(enrichedOrders));
-      }
+      dispatch(setOrdersItems(orders || []));
       dispatch(setOrdersLoading(false));
     },
     [dispatch]

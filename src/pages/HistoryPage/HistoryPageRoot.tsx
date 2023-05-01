@@ -1,62 +1,64 @@
 import React from 'react';
-import { Box } from '@mui/system';
+import InfiniteScroll from 'react-infinite-scroll-component';
 import {
-  OrderSkeleton,
-  NotFound,
   PageCardHeader,
   PageCardBody,
   PageCard,
   OrderHistoryCard,
+  OrderSkeleton,
 } from '../../components';
 import { OrderType } from '../../types';
 import {
   useAppSelector,
   selectOrdersHistoryItems,
-  selectOrdersHistoryLoading,
   selectChainsItems,
   selectUserAdvancedMode,
+  selectUserAccessToken,
+  selectOrdersHistoryHasMore,
+  selectOrdersHistoryLoading,
 } from '../../store';
-import { sortOrdersByDate } from '../../utils';
+import { useOrdersHistoryController } from '../../controllers';
+import Page404 from '../Page404/Page404';
 
 type Props = {};
 
 const HistoryPageRoot = (props: Props) => {
   const orders = useAppSelector(selectOrdersHistoryItems);
-  const isLoading = useAppSelector(selectOrdersHistoryLoading);
-  const sortedOrders = sortOrdersByDate(orders);
+  const accessToken = useAppSelector(selectUserAccessToken);
   const chains = useAppSelector(selectChainsItems);
   const advancedMode = useAppSelector(selectUserAdvancedMode);
+  const { handleFetchMoreOrdersAction } = useOrdersHistoryController();
+  const hasMore = useAppSelector(selectOrdersHistoryHasMore);
+  const loading = useAppSelector(selectOrdersHistoryLoading);
 
-  return (
+  return accessToken ? (
     <PageCard>
       <PageCardHeader title="Orders history" />
-      <PageCardBody maxHeight="540px">
-        {orders.length < 1 && isLoading ? (
-          <>
-            <OrderSkeleton />
-            <OrderSkeleton />
-          </>
+      <PageCardBody maxHeight="540px" id="history-orders-list">
+        {loading ? (
+          <OrderSkeleton />
         ) : (
-          <>
-            {sortedOrders && sortedOrders.length > 0 ? (
-              <>
-                {sortedOrders.map((order: OrderType) => (
-                  <OrderHistoryCard
-                    advancedMode={advancedMode}
-                    key={order._id}
-                    chains={chains}
-                    order={order}
-                  />
-                ))}
-                <Box height="10px" />
-              </>
-            ) : (
-              <NotFound text="No orders found" />
-            )}
-          </>
+          <InfiniteScroll
+            dataLength={orders.length}
+            next={handleFetchMoreOrdersAction}
+            hasMore={hasMore}
+            loader={<OrderSkeleton />}
+            scrollableTarget="history-orders-list"
+          >
+            {orders.map((order: OrderType) => (
+              <OrderHistoryCard
+                advancedMode={advancedMode}
+                key={order._id}
+                chains={chains}
+                order={order}
+              />
+            ))}
+          </InfiniteScroll>
         )}
       </PageCardBody>
     </PageCard>
+  ) : (
+    <Page404 />
   );
 };
 
