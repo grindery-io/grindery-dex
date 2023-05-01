@@ -28,7 +28,6 @@ import {
 import {
   getChainById,
   getErrorMessage,
-  getOrderIdFromReceipt,
   getTokenById,
   isNumeric,
   switchMetamaskNetwork,
@@ -95,7 +94,7 @@ export const TradeController = ({ children }: TradeControllerProps) => {
   const dispatch = useAppDispatch();
   const filter = useAppSelector(selectTradeFilter);
   const { toTokenId } = filter;
-  const { getSigner, getEthers, getProvider } = useUserController();
+  const { getSigner, getEthers } = useUserController();
 
   const fetchTokenPrice = useCallback(
     async (accessToken: string, toTokenId: string) => {
@@ -157,80 +156,52 @@ export const TradeController = ({ children }: TradeControllerProps) => {
       filter: Tradefilter,
       fromChainId: string,
       fromTokenId: string
-    ): boolean => {
+    ): ErrorMessageType | true => {
       if (!fromChainId) {
-        dispatch(
-          setTradeError({
-            type: 'amount',
-            text: 'Chain is required',
-          })
-        );
-
-        return false;
+        return {
+          type: 'amount',
+          text: 'Chain is required',
+        };
       }
       if (!fromTokenId) {
-        dispatch(
-          setTradeError({
-            type: 'amount',
-            text: 'Token is required',
-          })
-        );
-
-        return false;
+        return {
+          type: 'amount',
+          text: 'Token is required',
+        };
       }
       if (!filter.toChainId) {
-        dispatch(
-          setTradeError({
-            type: 'toChain',
-            text: 'Chain is required',
-          })
-        );
-
-        return false;
+        return {
+          type: 'toChain',
+          text: 'Chain is required',
+        };
       }
       if (!filter.toTokenId) {
-        dispatch(
-          setTradeError({
-            type: 'toChain',
-            text: 'Token is required',
-          })
-        );
-
-        return false;
+        return {
+          type: 'toChain',
+          text: 'Token is required',
+        };
       }
       if (!filter.amount) {
-        dispatch(
-          setTradeError({
-            type: 'amount',
-            text: 'Amount is required',
-          })
-        );
-
-        return false;
+        return {
+          type: 'amount',
+          text: 'Amount is required',
+        };
       }
       if (!isNumeric(filter.amount)) {
-        dispatch(
-          setTradeError({
-            type: 'amount',
-            text: 'Amount must be a number',
-          })
-        );
-
-        return false;
+        return {
+          type: 'amount',
+          text: 'Amount must be a number',
+        };
       }
       if (parseFloat(filter.amount) <= 0) {
-        dispatch(
-          setTradeError({
-            type: 'amount',
-            text: 'Amount must be greater than 0',
-          })
-        );
-
-        return false;
+        return {
+          type: 'amount',
+          text: 'Amount must be greater than 0',
+        };
       }
       return true;
     },
-    [dispatch]
+    []
   );
 
   const handleSearchOffersAction = useCallback(
@@ -241,7 +212,13 @@ export const TradeController = ({ children }: TradeControllerProps) => {
       fromTokenId: string
     ) => {
       dispatch(clearTradeError());
-      if (!validateSearchOffersAction(filter, fromChainId, fromTokenId)) {
+      const validation = validateSearchOffersAction(
+        filter,
+        fromChainId,
+        fromTokenId
+      );
+      if (validation !== true) {
+        dispatch(setTradeError(validation));
         return;
       }
       dispatch(setTradeLoading(true));
@@ -368,7 +345,6 @@ export const TradeController = ({ children }: TradeControllerProps) => {
     // get signer
     const signer = getSigner();
     const ethers = getEthers();
-    const provider = getProvider();
 
     const amountToPay = amount;
 
@@ -401,8 +377,9 @@ export const TradeController = ({ children }: TradeControllerProps) => {
       });
 
     // create transaction
-    const tx = await poolContract
-      .depositETHAndAcceptOffer(
+    let tx;
+    try {
+      tx = await poolContract.depositETHAndAcceptOffer(
         offer.offerId,
         userAddress,
         ethers.utils.parseEther(
@@ -414,49 +391,19 @@ export const TradeController = ({ children }: TradeControllerProps) => {
           value: ethers.utils.parseEther(amountToPay),
           gasLimit: gasEstimate,
         }
-      )
-      .catch((error: any) => {
-        dispatch(
-          setTradeError({
-            type: 'acceptOffer',
-            text: getErrorMessage(error.error, 'Transaction rejected'),
-          })
-        );
-        console.error('depositGRTWithOffer error', error);
-        dispatch(setTradeOfferId(''));
-        dispatch(setTradeOrderStatus(OrderPlacingStatusType.ERROR));
-        return;
-      });
-
-    // stop execution if offer activation failed
-    if (!tx) {
-      dispatch(setTradeOrderStatus(OrderPlacingStatusType.ERROR));
-      return;
-    }
-
-    dispatch(setTradeOrderStatus(OrderPlacingStatusType.PROCESSING));
-
-    // wait for activation transaction
-    try {
-      await tx.wait();
+      );
     } catch (error: any) {
       dispatch(
         setTradeError({
           type: 'acceptOffer',
-          text: error?.message || 'Transaction error',
+          text: getErrorMessage(error.error, 'Transaction rejected'),
         })
       );
-      console.error('tx.wait error', error);
+      console.error('depositGRTWithOffer error', error);
       dispatch(setTradeOfferId(''));
       dispatch(setTradeOrderStatus(OrderPlacingStatusType.ERROR));
       return;
     }
-
-    // get receipt
-    const receipt = await provider.getTransactionReceipt(tx.hash);
-
-    // get orderId
-    const orderId = getOrderIdFromReceipt(receipt);
 
     // save order to DB
     const order = await addOrderRequest(accessToken, {
@@ -465,7 +412,7 @@ export const TradeController = ({ children }: TradeControllerProps) => {
       chainIdTokenDeposit: offer.exchangeChainId,
       destAddr: userAddress,
       offerId: offer.offerId,
-      orderId,
+      orderId: '',
       amountTokenOffer: (
         parseFloat(amount) / parseFloat(offer.exchangeRate || '1')
       ).toString(),

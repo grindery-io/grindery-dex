@@ -24,6 +24,7 @@ import {
   OfferType,
   ChainType,
   OrderPlacingStatusType,
+  ErrorMessageType,
 } from '../types';
 import { getErrorMessage, getChainById, switchMetamaskNetwork } from '../utils';
 import { addGsheetRowRequest } from '../services/gsheetServices';
@@ -98,49 +99,35 @@ export const ShopController = ({ children }: ShopControllerProps) => {
     return res;
   };
 
-  const validateAcceptOfferAction = (offer: OfferType): boolean => {
+  const validateAcceptOfferAction = (
+    offer: OfferType
+  ): ErrorMessageType | true => {
     if (!offer.offerId) {
-      dispatch(
-        setShopError({
-          type: 'acceptOffer',
-          text: 'offer id is missing',
-        })
-      );
-
-      return false;
+      return {
+        type: 'acceptOffer',
+        text: 'offer id is missing',
+      };
     }
 
     if (!offer.amount) {
-      dispatch(
-        setShopError({
-          type: 'acceptOffer',
-          text: 'Tokens amount is missing',
-        })
-      );
-
-      return false;
+      return {
+        type: 'acceptOffer',
+        text: 'Tokens amount is missing',
+      };
     }
 
     if (!offer.exchangeRate) {
-      dispatch(
-        setShopError({
-          type: 'acceptOffer',
-          text: 'Exchange rate is missing',
-        })
-      );
-
-      return false;
+      return {
+        type: 'acceptOffer',
+        text: 'Exchange rate is missing',
+      };
     }
 
     if (!offer.exchangeChainId) {
-      dispatch(
-        setShopError({
-          type: 'acceptOffer',
-          text: 'Offer exchange chain is not set',
-        })
-      );
-
-      return false;
+      return {
+        type: 'acceptOffer',
+        text: 'Offer exchange chain is not set',
+      };
     }
 
     return true;
@@ -161,7 +148,9 @@ export const ShopController = ({ children }: ShopControllerProps) => {
     dispatch(setShopOorderStatus(OrderPlacingStatusType.UNINITIALIZED));
     dispatch(setShopModal(true));
 
-    if (!validateAcceptOfferAction(offer)) {
+    const validation = validateAcceptOfferAction(offer);
+    if (validation !== true) {
+      dispatch(setShopError(validation));
       dispatch(setShopOorderStatus(OrderPlacingStatusType.ERROR));
       return;
     }
@@ -248,8 +237,9 @@ export const ShopController = ({ children }: ShopControllerProps) => {
       });
 
     // create transaction
-    const tx = await poolContract
-      .depositETHAndAcceptOffer(
+    let tx;
+    try {
+      tx = await poolContract.depositETHAndAcceptOffer(
         offer.offerId,
         userAddress,
         ethers.utils.parseEther(
@@ -261,22 +251,15 @@ export const ShopController = ({ children }: ShopControllerProps) => {
           value: ethers.utils.parseEther(amountToPay),
           gasLimit: gasEstimate,
         }
-      )
-      .catch((error: any) => {
-        dispatch(
-          setShopError({
-            type: 'acceptOffer',
-            text: getErrorMessage(error.error, 'Transaction rejected'),
-          })
-        );
-        console.error('depositGRTWithOffer error', error);
-        dispatch(setShopOfferId(''));
-        dispatch(setShopOorderStatus(OrderPlacingStatusType.ERROR));
-        return;
-      });
-
-    // stop execution if offer activation failed
-    if (!tx) {
+      );
+    } catch (error: any) {
+      dispatch(
+        setShopError({
+          type: 'acceptOffer',
+          text: getErrorMessage(error.error, 'Transaction rejected'),
+        })
+      );
+      console.error('depositGRTWithOffer error', error);
       dispatch(setShopOfferId(''));
       dispatch(setShopOorderStatus(OrderPlacingStatusType.ERROR));
       return;
@@ -289,6 +272,7 @@ export const ShopController = ({ children }: ShopControllerProps) => {
       chainIdTokenDeposit: offer.exchangeChainId,
       destAddr: userAddress,
       offerId: offer.offerId,
+      orderId: '',
       amountTokenOffer: offer.amount,
       hash: tx.hash || '',
     }).catch((error: any) => {
