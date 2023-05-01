@@ -7,7 +7,7 @@ import { store } from './store';
 import { UserController, ChainsController, AbiController } from './controllers';
 import { theme } from './theme';
 import AppRouter from './pages/AppRouter/AppRouter';
-import WebscoketController from './controllers/WebscoketController';
+import WebsocketController from './controllers/WebsocketController';
 
 declare global {
   interface Window {
@@ -21,13 +21,13 @@ export const App = () => {
       <AuthenticationProvider>
         <StoreProvider store={store}>
           <UserController>
-            <WebscoketController>
+            <WebsocketController>
               <AbiController>
                 <ChainsController>
                   <AppRouter />
                 </ChainsController>
               </AbiController>
-            </WebscoketController>
+            </WebsocketController>
           </UserController>
         </StoreProvider>
       </AuthenticationProvider>

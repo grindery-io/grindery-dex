@@ -1,20 +1,30 @@
 import React, { useEffect } from 'react';
 import useWebSocket, { ReadyState } from 'react-use-websocket';
 import { WEBSOCKET_URL } from '../config';
-import { useAppDispatch } from '../store';
+import {
+  selectUserAccessToken,
+  useAppDispatch,
+  useAppSelector,
+} from '../store';
 import {
   setMessagesItem,
   setMessagesStatus,
 } from '../store/slices/messagesSlice';
 
-type WebscoketControllerProps = {
+type WebsocketControllerProps = {
   children: React.ReactNode;
 };
 
-export const WebscoketController = ({ children }: WebscoketControllerProps) => {
+export const WebsocketController = ({ children }: WebsocketControllerProps) => {
   const dispatch = useAppDispatch();
+  const accessToken = useAppSelector(selectUserAccessToken);
   const { sendMessage, lastMessage, readyState } = useWebSocket(
-    WEBSOCKET_URL || null
+    accessToken ? WEBSOCKET_URL || null : null,
+    {
+      onError: (event: WebSocketEventMap['error']) => {
+        console.log('webscoket error: ', event);
+      },
+    }
   );
 
   const connectionStatus = {
@@ -42,12 +52,21 @@ export const WebscoketController = ({ children }: WebscoketControllerProps) => {
   }, [lastMessage, dispatch]);
 
   useEffect(() => {
-    if (connectionStatus === 'Open') {
-      sendMessage('Test');
+    if (connectionStatus === 'Open' && accessToken) {
+      sendMessage(
+        JSON.stringify({
+          jsonrpc: '2.0',
+          method: 'authenticated',
+          params: {
+            access_token: accessToken,
+          },
+          id: new Date().toString(),
+        })
+      );
     }
-  }, [connectionStatus, sendMessage]);
+  }, [connectionStatus, sendMessage, accessToken]);
 
   return <>{children}</>;
 };
 
-export default WebscoketController;
+export default WebsocketController;
