@@ -4,7 +4,6 @@ import {
   OfferType,
   ErrorMessageType,
   OrderPlacingStatusType,
-  OfferStatusType,
 } from '../../types';
 
 export type ShopFilterFieldName = 'toChainId' | 'toTokenId';
@@ -45,15 +44,10 @@ const shopSlice = createSlice({
   initialState,
   reducers: {
     setShopOffers(state, action: PayloadAction<OfferType[]>) {
-      state.offers = action.payload.filter(
-        (o: OfferType) => o.isActive && o.amount
-      );
+      state.offers = action.payload;
     },
     addShopOffers(state, action: PayloadAction<OfferType[]>) {
-      state.offers = [
-        ...state.offers,
-        ...action.payload.filter((o: OfferType) => o.isActive && o.amount),
-      ];
+      state.offers = [...state.offers, ...action.payload];
     },
     setShopOffersTotal(state, action: PayloadAction<number>) {
       state.total = action.payload;
@@ -100,15 +94,7 @@ const shopSlice = createSlice({
   },
 });
 
-export const selectShopOffers = (state: RootState) =>
-  state.shop.offers.filter(
-    (o: OfferType) =>
-      o.chainId === state.shop.filter.toChainId &&
-      o.exchangeChainId === '5' &&
-      o.tokenId === state.shop.filter.toTokenId &&
-      o.offerId &&
-      o.status === OfferStatusType.SUCCESS
-  );
+export const selectShopOffers = (state: RootState) => state.shop.offers;
 export const selectShopError = (state: RootState) => state.shop.error;
 export const selectShopLoading = (state: RootState) => state.shop.loading;
 export const selectShopFilter = (state: RootState) => state.shop.filter;

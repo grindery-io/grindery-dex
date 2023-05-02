@@ -3,6 +3,7 @@ import React, {
   useCallback,
   useContext,
   useEffect,
+  useState,
 } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -23,6 +24,8 @@ import {
   selectWalletsItems,
   selectUserChainId,
   selectOffersCreateInput,
+  addOffersItems,
+  setOffersTotal,
 } from '../store';
 import {
   getTokenById,
@@ -45,12 +48,14 @@ type ContextProps = {
     value: string
   ) => void;
   handleActivationAction: (offer: OfferType, isActive: boolean) => void;
+  handleFetchMoreOffersAction: () => void;
 };
 
 export const OffersContext = createContext<ContextProps>({
   handleOfferCreateAction: () => {},
   handleOfferCreateInputChange: () => {},
   handleActivationAction: () => {},
+  handleFetchMoreOffersAction: () => {},
 });
 
 type OffersControllerProps = {
@@ -58,6 +63,7 @@ type OffersControllerProps = {
 };
 
 export const OffersController = ({ children }: OffersControllerProps) => {
+  let navigate = useNavigate();
   const accessToken = useAppSelector(selectUserAccessToken);
   const dispatch = useAppDispatch();
   const { getSigner, getEthers } = useUserController();
@@ -67,17 +73,22 @@ export const OffersController = ({ children }: OffersControllerProps) => {
   const poolAbi = useAppSelector(selectPoolAbi);
   const chains = useAppSelector(selectChainsItems);
   const input = useAppSelector(selectOffersCreateInput);
-  let navigate = useNavigate();
+  const limit = 5;
+  const [offset, setOffset] = useState(limit);
 
-  const fetchOffers = useCallback(
-    async (accessToken: string) => {
-      dispatch(setOffersLoading(true));
-      const items = await getUserOffers(accessToken);
-      dispatch(setOffersItems(items || []));
-      dispatch(setOffersLoading(false));
-    },
-    [dispatch]
-  );
+  const fetchOffers = useCallback(async () => {
+    dispatch(setOffersLoading(true));
+    const res = await getUserOffers(accessToken, limit);
+    dispatch(setOffersItems(res?.items || []));
+    dispatch(setOffersTotal(res?.total || 0));
+    dispatch(setOffersLoading(false));
+  }, [dispatch, accessToken]);
+
+  const handleFetchMoreOffersAction = useCallback(async () => {
+    const res = await getUserOffers(accessToken, limit, offset);
+    dispatch(addOffersItems(res?.items || []));
+    setOffset(offset + limit);
+  }, [dispatch, accessToken, offset]);
 
   const fetchOffer = async (accessToken: string, id: string) => {
     const offer = await getOffer(accessToken, id);
@@ -433,7 +444,7 @@ export const OffersController = ({ children }: OffersControllerProps) => {
 
   useEffect(() => {
     if (accessToken) {
-      fetchOffers(accessToken);
+      fetchOffers();
     }
   }, [accessToken, fetchOffers]);
 
@@ -450,6 +461,7 @@ export const OffersController = ({ children }: OffersControllerProps) => {
         handleOfferCreateAction,
         handleOfferCreateInputChange,
         handleActivationAction,
+        handleFetchMoreOffersAction,
       }}
     >
       {children}

@@ -4,7 +4,6 @@ import { Box } from '@mui/system';
 import { Stack, Typography } from '@mui/material';
 import {
   OfferCard,
-  Loading,
   OrderPlacingModal,
   ConnectWalletModal,
   OfferCardSkeleton,

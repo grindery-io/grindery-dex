@@ -62,17 +62,29 @@ export const getOfferById = (
   });
 };
 
-export const getUserOffers = (accessToken: string): Promise<OfferType[]> => {
+export const getUserOffers = (
+  accessToken: string,
+  limit?: number,
+  offset?: number
+): Promise<{ items: OfferType[]; total: number }> => {
   return new Promise((resolve, reject) => {
     try {
       axios
-        .get(`${DELIGHT_API_URL}/offers/user`, {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        })
+        .get(
+          `${DELIGHT_API_URL}/offers/user?${
+            typeof limit !== 'undefined' ? 'limit=' + limit + '&' : ''
+          }${typeof offset !== 'undefined' ? 'offset=' + offset : ''}`,
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        )
         .then((res) => {
-          resolve(res?.data || []);
+          resolve({
+            items: res?.data?.offers || [],
+            total: res?.data?.totalCount || 0,
+          });
         })
         .catch((err) => {
           console.error('getUserOffers > axios err=', err);

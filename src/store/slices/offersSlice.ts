@@ -25,6 +25,7 @@ interface OffersState {
   input: OffersCreateInput;
   items: OfferType[];
   loading: boolean;
+  total: number;
 }
 
 const initialState: OffersState = {
@@ -45,6 +46,7 @@ const initialState: OffersState = {
   },
   items: [],
   loading: true,
+  total: 0,
 };
 
 const offersSlice = createSlice({
@@ -53,6 +55,12 @@ const offersSlice = createSlice({
   reducers: {
     setOffersItems(state, action: PayloadAction<OfferType[]>) {
       state.items = action.payload;
+    },
+    addOffersItems(state, action: PayloadAction<OfferType[]>) {
+      state.items = [...state.items, ...action.payload];
+    },
+    setOffersTotal(state, action: PayloadAction<number>) {
+      state.total = action.payload;
     },
     setOffersLoading(state, action: PayloadAction<boolean>) {
       state.loading = action.payload;
@@ -102,6 +110,8 @@ export const selectOffersLoading = (state: RootState) => state.offers.loading;
 export const selectOffersCreateInput = (state: RootState) => state.offers.input;
 export const selectOffersActivating = (state: RootState) =>
   state.offers.activating;
+export const selectOffersHasMore = (state: RootState) =>
+  Boolean(state.offers.items.length < state.offers.total);
 
 export const {
   setOffersItems,
@@ -112,6 +122,8 @@ export const {
   setOfferCreateInputValue,
   clearOffersCreateInput,
   setOffersActivating,
+  addOffersItems,
+  setOffersTotal,
 } = offersSlice.actions;
 
 export default offersSlice.reducer;

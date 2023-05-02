@@ -1,9 +1,10 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import InfiniteScroll from 'react-infinite-scroll-component';
 import { Box, IconButton, Tooltip } from '@mui/material';
 import { AddCircleOutline as AddCircleOutlineIcon } from '@mui/icons-material';
 import {
-  ListSubheader,
+  NotFound,
   Offer,
   OfferSkeleton,
   PageCardBody,
@@ -17,26 +18,23 @@ import {
   selectOffersItems,
   selectOffersLoading,
   selectUserId,
+  selectOffersHasMore,
 } from '../../store';
 import { useUserController, useOffersController } from '../../controllers';
 import { ROUTES } from '../../config';
 import { OfferType } from '../../types';
-import {
-  groupOffersByChainId,
-  orderOffersByActiveState,
-  getChainById,
-} from '../../utils';
 
 function OffersPageRoot() {
   const user = useAppSelector(selectUserId);
   const { connectUser: connect } = useUserController();
   const isActivating = useAppSelector(selectOffersActivating);
-  const { handleActivationAction } = useOffersController();
+  const { handleActivationAction, handleFetchMoreOffersAction } =
+    useOffersController();
   let navigate = useNavigate();
   const chains = useAppSelector(selectChainsItems);
   const offers = useAppSelector(selectOffersItems);
   const offersIsLoading = useAppSelector(selectOffersLoading);
-  const groupedOffers = groupOffersByChainId(offers);
+  const hasMore = useAppSelector(selectOffersHasMore);
 
   return (
     <>
@@ -59,49 +57,39 @@ function OffersPageRoot() {
         }
       />
 
-      <PageCardBody maxHeight="540px">
-        {user && (
-          <>
-            {offers.length < 1 && offersIsLoading ? (
-              <>
-                {[0, 1].map((i: number) => (
-                  <OfferSkeleton key={i} />
-                ))}
-              </>
-            ) : (
-              <>
-                <Box className="offers-list">
-                  {offers.length > 0 &&
-                    Object.keys(groupedOffers).map((key: any) => (
-                      <Box key={key}>
-                        <ListSubheader>
-                          {getChainById(key, chains)?.label || ''}
-                        </ListSubheader>
-                        {orderOffersByActiveState(groupedOffers[key]).map(
-                          (offer: OfferType) => (
-                            <Offer
-                              key={offer._id}
-                              chains={chains}
-                              compact
-                              offer={offer}
-                              isActivating={isActivating}
-                              onDeactivateClick={() => {
-                                handleActivationAction(offer, false);
-                              }}
-                              onActivateClick={() => {
-                                handleActivationAction(offer, true);
-                              }}
-                            />
-                          )
-                        )}
-                      </Box>
-                    ))}
-                </Box>
-              </>
-            )}
-          </>
+      <PageCardBody maxHeight="540px" id="offers-list">
+        {!offersIsLoading && offers.length < 1 && (
+          <NotFound text="No offers found" />
         )}
-
+        {offersIsLoading ? (
+          <OfferSkeleton />
+        ) : (
+          <InfiniteScroll
+            dataLength={offers.length}
+            next={handleFetchMoreOffersAction}
+            hasMore={hasMore}
+            loader={<OfferSkeleton />}
+            scrollableTarget="offers-list"
+          >
+            <Box className="offers-list">
+              {offers.map((offer: OfferType) => (
+                <Offer
+                  key={offer._id}
+                  chains={chains}
+                  compact
+                  offer={offer}
+                  isActivating={isActivating}
+                  onDeactivateClick={() => {
+                    handleActivationAction(offer, false);
+                  }}
+                  onActivateClick={() => {
+                    handleActivationAction(offer, true);
+                  }}
+                />
+              ))}
+            </Box>
+          </InfiniteScroll>
+        )}
         <PageCardSubmitButton
           label={user ? 'Create offer' : 'Connect wallet'}
           onClick={

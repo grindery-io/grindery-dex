@@ -4,7 +4,6 @@ import {
   OfferType,
   ErrorMessageType,
   OrderPlacingStatusType,
-  OfferStatusType,
 } from '../../types';
 
 export type TradeFilterFieldName = 'toChainId' | 'toTokenId' | 'amount';
@@ -52,13 +51,10 @@ const tradeSlice = createSlice({
   initialState,
   reducers: {
     setTradeOffers(state, action: PayloadAction<OfferType[]>) {
-      state.offers = action.payload.filter((o: OfferType) => o.isActive);
+      state.offers = action.payload;
     },
     addTradeOffers(state, action: PayloadAction<OfferType[]>) {
-      state.offers = [
-        ...state.offers,
-        ...action.payload.filter((o: OfferType) => o.isActive),
-      ];
+      state.offers = [...state.offers, ...action.payload];
     },
     setTradeOffersTotal(state, action: PayloadAction<number>) {
       state.total = action.payload;
@@ -119,11 +115,7 @@ const tradeSlice = createSlice({
   },
 });
 
-export const selectTradeOffers = (state: RootState) =>
-  state.trade.offers.filter(
-    (offer: OfferType) =>
-      offer && offer.offerId && offer.status === OfferStatusType.SUCCESS
-  );
+export const selectTradeOffers = (state: RootState) => state.trade.offers;
 export const selectTradeError = (state: RootState) => state.trade.error;
 export const selectTradeLoading = (state: RootState) => state.trade.loading;
 export const selectTradeFilter = (state: RootState) => state.trade.filter;
