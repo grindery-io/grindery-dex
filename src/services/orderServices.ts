@@ -99,18 +99,28 @@ export const getBuyerOrdersRequest = (
 };
 
 export const getSellerOrdersRequest = (
-  accessToken: string
-): Promise<OrderType[]> => {
+  accessToken: string,
+  limit?: number,
+  offset?: number
+): Promise<{ items: OrderType[]; total: number }> => {
   return new Promise((resolve, reject) => {
     try {
       axios
-        .get(`${DELIGHT_API_URL}/orders/liquidity-provider`, {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        })
+        .get(
+          `${DELIGHT_API_URL}/orders/liquidity-provider?${
+            typeof limit !== 'undefined' ? 'limit=' + limit + '&' : ''
+          }${typeof offset !== 'undefined' ? 'offset=' + offset : ''}`,
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        )
         .then((res) => {
-          resolve(res?.data || []);
+          resolve({
+            items: res?.data?.orders || [],
+            total: res?.data?.totalCount || 0,
+          });
         })
         .catch((err) => {
           console.error('getSellerOrdersRequest > axios err=', err);

@@ -1,8 +1,7 @@
 import React from 'react';
-import { Box } from '@mui/system';
+import InfiniteScroll from 'react-infinite-scroll-component';
 import {
   OrderCard,
-  NotFound,
   OrderSkeleton,
   PageCardHeader,
   PageCardBody,
@@ -19,8 +18,8 @@ import {
   selectLiquidityWalletAbi,
   selectChainsItems,
   selectWalletsItems,
+  selectOrdersHasMore,
 } from '../../store';
-import { sortOrdersByDate } from '../../utils';
 import { useOrdersController } from '../../controllers';
 
 function OrdersPageRoot() {
@@ -28,61 +27,58 @@ function OrdersPageRoot() {
   const userChainId = useAppSelector(selectUserChainId);
   const liquidityWalletAbi = useAppSelector(selectLiquidityWalletAbi);
   const orders = useAppSelector(selectOrdersItems);
-  const isLoading = useAppSelector(selectOrdersLoading);
   const error = useAppSelector(selectOrdersError);
-  const sortedOrders = sortOrdersByDate(orders);
   const { handleOrderCompleteAction } = useOrdersController();
   const wallets = useAppSelector(selectWalletsItems);
   const chains = useAppSelector(selectChainsItems);
+  const hasMore = useAppSelector(selectOrdersHasMore);
+  const loading = useAppSelector(selectOrdersLoading);
+  const { handleFetchMoreOrdersAction } = useOrdersController();
 
   return (
     <PageCard>
       <PageCardHeader title="Orders" />
-      <PageCardBody maxHeight="540px">
-        {orders.length < 1 && isLoading ? (
-          <>
-            <OrderSkeleton />
-            <OrderSkeleton />
-          </>
+      <PageCardBody maxHeight="540px" id="orders-list">
+        {loading ? (
+          <OrderSkeleton />
         ) : (
-          <Box className="orders-list">
-            {sortedOrders && sortedOrders.length > 0 ? (
-              <>
-                {sortedOrders.map((order: OrderType) => (
-                  <OrderCard
-                    key={order._id}
-                    id={order.orderId}
-                    order={order}
-                    userType="b"
-                    chains={chains}
-                    onCompleteClick={async (order: OrderType) => {
-                      const wallet = wallets.find(
-                        (w: LiquidityWalletType) =>
-                          w.chainId === order.offer?.chainId || ''
-                      );
-                      return await handleOrderCompleteAction(
-                        order,
-                        accessToken,
-                        wallet?.walletAddress || '',
-                        userChainId,
-                        liquidityWalletAbi,
-                        orders,
-                        chains
-                      );
-                    }}
-                    error={
-                      error.type && error.type === order.orderId && error.text
-                        ? error.text
-                        : ''
-                    }
-                  />
-                ))}
-                <Box height="10px" />
-              </>
-            ) : (
-              <NotFound text="No orders found" />
-            )}
-          </Box>
+          <InfiniteScroll
+            dataLength={orders.length}
+            next={handleFetchMoreOrdersAction}
+            hasMore={hasMore}
+            loader={<OrderSkeleton />}
+            scrollableTarget="orders-list"
+          >
+            {orders.map((order: OrderType) => (
+              <OrderCard
+                key={order._id}
+                id={order.orderId}
+                order={order}
+                userType="b"
+                chains={chains}
+                onCompleteClick={async (order: OrderType) => {
+                  const wallet = wallets.find(
+                    (w: LiquidityWalletType) =>
+                      w.chainId === order.offer?.chainId || ''
+                  );
+                  return await handleOrderCompleteAction(
+                    order,
+                    accessToken,
+                    wallet?.walletAddress || '',
+                    userChainId,
+                    liquidityWalletAbi,
+                    orders,
+                    chains
+                  );
+                }}
+                error={
+                  error.type && error.type === order.orderId && error.text
+                    ? error.text
+                    : ''
+                }
+              />
+            ))}
+          </InfiniteScroll>
         )}
       </PageCardBody>
     </PageCard>

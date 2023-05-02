@@ -3,6 +3,7 @@ import React, {
   useCallback,
   useContext,
   useEffect,
+  useState,
 } from 'react';
 import { OrderType, ChainType } from '../types';
 import {
@@ -13,6 +14,8 @@ import {
   setOrdersItems,
   setOrdersLoading,
   selectUserAccessToken,
+  addOrdersItems,
+  setOrdersTotal,
 } from '../store';
 import {
   getErrorMessage,
@@ -38,10 +41,12 @@ type ContextProps = {
     orders: OrderType[],
     chains: ChainType[]
   ) => Promise<boolean>;
+  handleFetchMoreOrdersAction: () => void;
 };
 
 export const OrdersContext = createContext<ContextProps>({
   handleOrderCompleteAction: async () => false,
+  handleFetchMoreOrdersAction: () => {},
 });
 
 type OrdersControllerProps = {
@@ -52,16 +57,25 @@ export const OrdersController = ({ children }: OrdersControllerProps) => {
   const dispatch = useAppDispatch();
   const accessToken = useAppSelector(selectUserAccessToken);
   const { getSigner, getEthers } = useUserController();
+  const limit = 5;
+  const [offset, setOffset] = useState(limit);
 
   const fetchOrders = useCallback(
     async (accessToken: string) => {
       dispatch(setOrdersLoading(true));
-      const orders = await getSellerOrdersRequest(accessToken);
-      dispatch(setOrdersItems(orders || []));
+      const res = await getSellerOrdersRequest(accessToken, limit, 0);
+      dispatch(setOrdersItems(res?.items || []));
+      dispatch(setOrdersTotal(res?.total || 0));
       dispatch(setOrdersLoading(false));
     },
     [dispatch]
   );
+
+  const handleFetchMoreOrdersAction = useCallback(async () => {
+    const res = await getSellerOrdersRequest(accessToken, limit, offset);
+    setOffset(offset + limit);
+    dispatch(addOrdersItems(res?.items || []));
+  }, [dispatch, offset, accessToken]);
 
   const validateOrderCompleteAction = (order: OrderType): boolean => {
     if (!order.offer) {
@@ -300,6 +314,7 @@ export const OrdersController = ({ children }: OrdersControllerProps) => {
     <OrdersContext.Provider
       value={{
         handleOrderCompleteAction,
+        handleFetchMoreOrdersAction,
       }}
     >
       {children}
