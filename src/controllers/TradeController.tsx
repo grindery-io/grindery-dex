@@ -27,6 +27,7 @@ import {
   setTradeModal,
   selectChainsItems,
   addTradeOffers,
+  setTradeOffersTotal,
 } from '../store';
 import {
   getChainById,
@@ -256,10 +257,11 @@ export const TradeController = ({ children }: TradeControllerProps) => {
         dispatch(setTradeOffers([]));
         dispatch(setTradeOffersVisible(false));
       }
+      dispatch(setTradeOffersTotal(res?.total || 0));
       dispatch(setTradeLoading(false));
       setOffset(limit);
     },
-    [dispatch, validateSearchOffersAction, offset]
+    [dispatch, validateSearchOffersAction]
   );
 
   const handleSearchMoreOffersAction = useCallback(async () => {
@@ -285,15 +287,8 @@ export const TradeController = ({ children }: TradeControllerProps) => {
       offset: offset.toString(),
     };
     const queryString = new URLSearchParams(query).toString();
-    const res = await searchOffersRequest(queryString).catch((error) => {
-      dispatch(setTradeError({ type: 'search', text: error }));
-    });
-    if (typeof res?.items !== 'undefined') {
-      dispatch(addTradeOffers(res.items));
-    } else {
-      dispatch(addTradeOffers([]));
-      dispatch(setTradeOffersVisible(false));
-    }
+    const res = await searchOffersRequest(queryString);
+    dispatch(addTradeOffers(res?.items || []));
     setOffset(offset + limit);
   }, [
     dispatch,
