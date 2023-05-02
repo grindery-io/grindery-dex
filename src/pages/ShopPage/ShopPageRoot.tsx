@@ -1,4 +1,5 @@
 import React, { useCallback, useState } from 'react';
+import InfiniteScroll from 'react-infinite-scroll-component';
 import { Box } from '@mui/system';
 import { Stack, Typography } from '@mui/material';
 import {
@@ -6,6 +7,7 @@ import {
   Loading,
   OrderPlacingModal,
   ConnectWalletModal,
+  OfferCardSkeleton,
 } from '../../components';
 import { OfferType, OrderType, TokenType } from '../../types';
 import {
@@ -29,6 +31,7 @@ import {
   setShopOfferId,
   setShopOrderTransactionId,
   setShopModal,
+  selectShopOffersHasMore,
 } from '../../store';
 import { getChainById } from '../../utils';
 import { useShopController, useUserController } from '../../controllers';
@@ -65,7 +68,9 @@ const ShopPageRoot = (props: Props) => {
     (orderTransactionId &&
       orders.find((order: OrderType) => order.hash === orderTransactionId)) ||
     undefined;
-  const { handleEmailSubmitAction } = useShopController();
+  const { handleEmailSubmitAction, handleFetchMoreOffersAction } =
+    useShopController();
+  const hasMore = useAppSelector(selectShopOffersHasMore);
 
   const onEmailSubmit = useCallback(
     async (email: string): Promise<boolean> => {
@@ -120,62 +125,93 @@ const ShopPageRoot = (props: Props) => {
         flex="1"
         className="ShopPageRoot__box"
       >
-        {loading && offers.length < 1 ? (
-          <Loading />
+        {!loading && offers.length < 1 && (
+          <Typography textAlign="center">No offers found</Typography>
+        )}
+        {loading || !fromChain || !fromToken ? (
+          <Stack
+            flexWrap="wrap"
+            alignItems="stretch"
+            direction="row"
+            gap="24px"
+            sx={{
+              width: '100%',
+              maxWidth: '1053px',
+              margin: '24px auto 0',
+              justifyContent: { xs: 'center', lg: 'flex-start' },
+            }}
+          >
+            {[0, 1, 2].map((i: number) => (
+              <OfferCardSkeleton key={i} />
+            ))}
+          </Stack>
         ) : (
-          <>
-            {offers.length > 0 ? (
-              <>
-                {fromChain && fromToken ? (
-                  <Stack
-                    flexWrap="wrap"
-                    alignItems="stretch"
-                    direction="row"
-                    gap="24px"
-                    sx={{
-                      width: '100%',
-                      maxWidth: '1053px',
-                      margin: '0 auto',
-                      justifyContent: { xs: 'center', lg: 'flex-start' },
-                    }}
-                  >
-                    {offers.map((offer: OfferType) => (
-                      <OfferCard
-                        id={offer.offerId || offer._id}
-                        key={offer._id}
-                        offer={offer}
-                        tokenPrice={tokenPrice}
-                        fromChain={fromChain}
-                        fromToken={fromToken}
-                        chains={chains}
-                        accepting={offerId}
-                        advancedMode={advancedMode}
-                        onAcceptOfferClick={(offer: OfferType) => {
-                          if (!accessToken) {
-                            setShowWalletModal(true);
-                          } else {
-                            handleAcceptOfferAction(
-                              offer,
-                              accessToken,
-                              userChainId,
-                              fromToken,
-                              poolAbi,
-                              userAddress,
-                              chains
-                            );
-                          }
-                        }}
-                      />
-                    ))}
-                  </Stack>
-                ) : null}
-              </>
-            ) : (
-              <>
-                <Typography textAlign="center">No offers found</Typography>
-              </>
-            )}
-          </>
+          <InfiniteScroll
+            dataLength={offers.length}
+            next={handleFetchMoreOffersAction}
+            hasMore={hasMore}
+            loader={
+              <Stack
+                flexWrap="wrap"
+                alignItems="stretch"
+                direction="row"
+                gap="24px"
+                sx={{
+                  width: '100%',
+                  maxWidth: '1053px',
+                  margin: '24px auto 0',
+                  justifyContent: { xs: 'center', lg: 'flex-start' },
+                }}
+              >
+                {[0, 1, 2].map((i: number) => (
+                  <OfferCardSkeleton key={i} />
+                ))}
+              </Stack>
+            }
+            style={{ paddingBottom: '30px' }}
+          >
+            <Stack
+              flexWrap="wrap"
+              alignItems="stretch"
+              direction="row"
+              gap="24px"
+              sx={{
+                width: '100%',
+                maxWidth: '1053px',
+                margin: '0 auto',
+                justifyContent: { xs: 'center', lg: 'flex-start' },
+              }}
+            >
+              {offers.map((offer: OfferType) => (
+                <OfferCard
+                  id={offer.offerId || offer._id}
+                  key={offer._id}
+                  offer={offer}
+                  tokenPrice={tokenPrice}
+                  fromChain={fromChain}
+                  fromToken={fromToken}
+                  chains={chains}
+                  accepting={offerId}
+                  advancedMode={advancedMode}
+                  onAcceptOfferClick={(offer: OfferType) => {
+                    if (!accessToken) {
+                      setShowWalletModal(true);
+                    } else {
+                      handleAcceptOfferAction(
+                        offer,
+                        accessToken,
+                        userChainId,
+                        fromToken,
+                        poolAbi,
+                        userAddress,
+                        chains
+                      );
+                    }
+                  }}
+                />
+              ))}
+            </Stack>
+          </InfiniteScroll>
         )}
       </Box>
     </>

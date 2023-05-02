@@ -6,6 +6,7 @@ import {
   PageCard,
   OrderHistoryCard,
   OrderSkeleton,
+  NotFound,
 } from '../../components';
 import { OrderType } from '../../types';
 import {
@@ -35,6 +36,7 @@ const HistoryPageRoot = (props: Props) => {
     <PageCard>
       <PageCardHeader title="Orders history" />
       <PageCardBody maxHeight="540px" id="history-orders-list">
+        {!loading && orders.length < 1 && <NotFound text="No orders found" />}
         {loading ? (
           <OrderSkeleton />
         ) : (

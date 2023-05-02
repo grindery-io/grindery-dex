@@ -74,7 +74,6 @@ type ContextProps = {
   handleTradeFilterChange: (name: TradeFilterFieldName, value: string) => void;
   handleFromAmountMaxClick: (balance: string) => void;
   handleEmailSubmitAction: (
-    accessToken: string,
     email: string,
     orderId: string,
     walletAddress: string
@@ -146,25 +145,27 @@ export const TradeController = ({ children }: TradeControllerProps) => {
     dispatch(setTradeFilterValue({ name: 'amount', value: balance }));
   };
 
-  const handleEmailSubmitAction = async (
-    accessToken: string,
-    email: string,
-    orderId: string,
-    walletAddress: string
-  ): Promise<boolean> => {
-    let res;
-    try {
-      res = await addGsheetRowRequest(accessToken, {
-        email,
-        walletAddress,
-        orderId,
-      });
-    } catch (error: any) {
-      console.error('handleEmailSubmitAction error:', error);
-      return false;
-    }
-    return res;
-  };
+  const handleEmailSubmitAction = useCallback(
+    async (
+      email: string,
+      orderId: string,
+      walletAddress: string
+    ): Promise<boolean> => {
+      let res;
+      try {
+        res = await addGsheetRowRequest(accessToken, {
+          email,
+          walletAddress,
+          orderId,
+        });
+      } catch (error: any) {
+        console.error('handleEmailSubmitAction error:', error);
+        return false;
+      }
+      return res;
+    },
+    [accessToken]
+  );
 
   const validateSearchOffersAction = useCallback(
     (

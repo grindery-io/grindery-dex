@@ -26,6 +26,7 @@ export { default as Offer } from './Offer/Offer';
 export { default as OfferPublic } from './OfferPublic/OfferPublic';
 export { default as OfferSkeleton } from './Offer/OfferSkeleton';
 export { default as OfferCard } from './OfferCard/OfferCard';
+export { default as OfferCardSkeleton } from './OfferCardSkeleton/OfferCardSkeleton';
 export { default as OrderCard } from './OrderCard/OrderCard';
 export { default as OrderHistoryCard } from './OrderHistoryCard/OrderHistoryCard';
 export { default as OrderPlacingModal } from './OrderPlacingModal/OrderPlacingModal';

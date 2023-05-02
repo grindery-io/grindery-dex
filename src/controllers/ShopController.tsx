@@ -3,6 +3,7 @@ import React, {
   useCallback,
   useContext,
   useEffect,
+  useState,
 } from 'react';
 import {
   useAppDispatch,
@@ -15,6 +16,8 @@ import {
   setShopOfferId,
   setShopOrderTransactionId,
   setShopOorderStatus,
+  setShopOffersTotal,
+  addShopOffers,
 } from '../store';
 import { useUserController } from './UserController';
 import { getAllOffers, addOrderRequest, getOrderRequest } from '../services';
@@ -46,11 +49,13 @@ type ContextProps = {
     orderId: string,
     walletAddress: string
   ) => Promise<boolean>;
+  handleFetchMoreOffersAction: () => void;
 };
 
 export const ShopContext = createContext<ContextProps>({
   handleAcceptOfferAction: () => {},
   handleEmailSubmitAction: async () => false,
+  handleFetchMoreOffersAction: () => {},
 });
 
 type ShopControllerProps = {
@@ -60,14 +65,23 @@ type ShopControllerProps = {
 export const ShopController = ({ children }: ShopControllerProps) => {
   const dispatch = useAppDispatch();
   const { getSigner, getEthers } = useUserController();
+  const limit = 9;
+  const [offset, setOffset] = useState(limit);
 
   const fetchOffers = useCallback(async () => {
     dispatch(setShopLoading(true));
-    const items = await getAllOffers();
+    const res = await getAllOffers(limit);
 
-    dispatch(setShopOffers(items || []));
+    dispatch(setShopOffers(res?.items || []));
+    dispatch(setShopOffersTotal(res?.total || 0));
     dispatch(setShopLoading(false));
   }, [dispatch]);
+
+  const handleFetchMoreOffersAction = useCallback(async () => {
+    const res = await getAllOffers(limit, offset);
+    dispatch(addShopOffers(res?.items || []));
+    setOffset(offset + limit);
+  }, [dispatch, offset]);
 
   const fetchSingleOrder = async (accessToken: string, id: string) => {
     let order;
@@ -325,6 +339,7 @@ export const ShopController = ({ children }: ShopControllerProps) => {
       value={{
         handleAcceptOfferAction,
         handleEmailSubmitAction,
+        handleFetchMoreOffersAction,
       }}
     >
       {children}

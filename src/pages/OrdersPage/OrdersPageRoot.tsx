@@ -6,6 +6,7 @@ import {
   PageCardHeader,
   PageCardBody,
   PageCard,
+  NotFound,
 } from '../../components';
 import { OrderType, LiquidityWalletType } from '../../types';
 import {
@@ -39,6 +40,7 @@ function OrdersPageRoot() {
     <PageCard>
       <PageCardHeader title="Orders" />
       <PageCardBody maxHeight="540px" id="orders-list">
+        {!loading && orders.length < 1 && <NotFound text="No orders found" />}
         {loading ? (
           <OrderSkeleton />
         ) : (

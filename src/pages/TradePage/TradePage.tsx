@@ -16,7 +16,6 @@ import {
   selectOrdersItems,
   selectTradeError,
   selectUserAddress,
-  selectUserAccessToken,
   useAppDispatch,
   setTradeOfferId,
   setTradeOrderTransactionId,
@@ -48,7 +47,6 @@ const TradePage = (props: Props) => {
     undefined;
   const errorMessage = useAppSelector(selectTradeError);
   const userWalletAddress = useAppSelector(selectUserAddress);
-  const accessToken = useAppSelector(selectUserAccessToken);
   const { handleEmailSubmitAction } = useTradeController();
 
   const onEmailSubmit = useCallback(
@@ -57,14 +55,13 @@ const TradePage = (props: Props) => {
         return false;
       }
       const res = await handleEmailSubmitAction(
-        accessToken,
         email,
         createdOrder.orderId,
         userWalletAddress
       );
       return res;
     },
-    [handleEmailSubmitAction, accessToken, createdOrder, userWalletAddress]
+    [handleEmailSubmitAction, createdOrder, userWalletAddress]
   );
 
   const onModalClose = () => {

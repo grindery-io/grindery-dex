@@ -22,6 +22,7 @@ interface ShopState {
   offers: OfferType[];
   orderStatus: OrderPlacingStatusType;
   orderTransactionId: string;
+  total: number;
 }
 
 const initialState: ShopState = {
@@ -36,6 +37,7 @@ const initialState: ShopState = {
   offers: [],
   orderStatus: OrderPlacingStatusType.UNINITIALIZED,
   orderTransactionId: '',
+  total: 0,
 };
 
 const shopSlice = createSlice({
@@ -46,6 +48,15 @@ const shopSlice = createSlice({
       state.offers = action.payload.filter(
         (o: OfferType) => o.isActive && o.amount
       );
+    },
+    addShopOffers(state, action: PayloadAction<OfferType[]>) {
+      state.offers = [
+        ...state.offers,
+        ...action.payload.filter((o: OfferType) => o.isActive && o.amount),
+      ];
+    },
+    setShopOffersTotal(state, action: PayloadAction<number>) {
+      state.total = action.payload;
     },
     setShopLoading(state, action: PayloadAction<boolean>) {
       state.loading = action.payload;
@@ -107,6 +118,8 @@ export const selectShopOrderTransactionId = (state: RootState) =>
   state.shop.orderTransactionId;
 export const selectShopOrderStatus = (state: RootState) =>
   state.shop.orderStatus;
+export const selectShopOffersHasMore = (state: RootState) =>
+  Boolean(state.shop.offers.length < state.shop.total);
 
 export const {
   setShopOffers,
@@ -120,6 +133,8 @@ export const {
   setShopOfferId,
   setShopOrderTransactionId,
   setShopOorderStatus,
+  addShopOffers,
+  setShopOffersTotal,
 } = shopSlice.actions;
 
 export default shopSlice.reducer;
