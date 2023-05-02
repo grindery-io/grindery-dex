@@ -6,8 +6,9 @@ import { Card } from '../Card/Card';
 import AlertBox from '../AlertBox/AlertBox';
 import TransactionID from '../TransactionID/TransactionID';
 import OfferPublic from '../OfferPublic/OfferPublic';
-import { OrderType, ChainType } from '../../types';
+import { OrderType, ChainType, OrderStatusType } from '../../types';
 import {
+  getOrderButtonLabel,
   getOrderBuyerLink,
   getOrderFromChain,
   getOrderFromToken,
@@ -166,19 +167,21 @@ const OrderCard = (props: Props) => {
               color: '#fff',
               backgroundColor: order.isComplete
                 ? '#00B674 !important'
-                : loading || isUserA
+                : loading || isUserA || order.status !== OrderStatusType.SUCCESS
                 ? '#FFB930 !important'
                 : '#FF5858 !important',
               '&:hover': {
                 color: '#fff',
                 backgroundColor: order.isComplete
                   ? '#00B674 !important'
-                  : loading || isUserA
+                  : loading ||
+                    isUserA ||
+                    order.status !== OrderStatusType.SUCCESS
                   ? '#FFB930 !important'
                   : '#FF5858 !important',
                 cursor: isUserA
                   ? 'default'
-                  : loading
+                  : loading || order.status !== OrderStatusType.SUCCESS
                   ? 'not-allowed'
                   : order.isComplete
                   ? 'default'
@@ -191,22 +194,20 @@ const OrderCard = (props: Props) => {
           }}
         >
           <PageCardSubmitButton
-            disableRipple={isUserA || order.isComplete}
-            className="OrderCard__button"
-            label={
+            disableRipple={
+              isUserA ||
+              order.status !== OrderStatusType.SUCCESS ||
               order.isComplete
-                ? 'Completed'
-                : loading
-                ? 'Processing'
-                : isUserA
-                ? 'Processing'
-                : `Send ${parseFloat(order.amountTokenOffer)
-                    .toFixed(6)
-                    .toLocaleString()} ${offer ? offer.token : ''}`
             }
+            className="OrderCard__button"
+            label={getOrderButtonLabel(order, loading, isUserA)}
             onClick={() => {
               if (!isUserA) {
-                if (!order.isComplete && !loading) {
+                if (
+                  !order.isComplete &&
+                  !loading &&
+                  order.status === OrderStatusType.SUCCESS
+                ) {
                   handleCompleteClick();
                 }
               }

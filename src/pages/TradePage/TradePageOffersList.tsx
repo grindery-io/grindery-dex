@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import InfiniteScroll from 'react-infinite-scroll-component';
 import { Box } from '@mui/system';
 import {
   OfferSkeleton,
@@ -18,14 +19,9 @@ import {
   selectChainsItems,
   selectUserAdvancedMode,
   selectUserAccessToken,
-  selectUserChainId,
-  selectUserAddress,
-  selectPoolAbi,
   selectTradeOffersHasMore,
 } from '../../store';
 import { useTradeController, useUserController } from '../../controllers';
-import { getTokenBySymbol } from '../../utils';
-import InfiniteScroll from 'react-infinite-scroll-component';
 
 type Props = {};
 
@@ -38,9 +34,6 @@ const TradePageOffersList = (props: Props) => {
   const chains = useAppSelector(selectChainsItems);
   const advancedMode = useAppSelector(selectUserAdvancedMode);
   const [showWalletModal, setShowWalletModal] = useState(false);
-  const userChainId = useAppSelector(selectUserChainId);
-  const userAddress = useAppSelector(selectUserAddress);
-  const poolAbi = useAppSelector(selectPoolAbi);
   const { handleAcceptOfferAction, handleSearchMoreOffersAction } =
     useTradeController();
   const hasMore = useAppSelector(selectTradeOffersHasMore);
@@ -97,27 +90,11 @@ const TradePageOffersList = (props: Props) => {
                   offer={offer}
                   fromAmount={amount}
                   advancedMode={advancedMode}
-                  onClick={(o: OfferType) => {
+                  onClick={(_offer: OfferType) => {
                     if (!accessToken) {
                       setShowWalletModal(true);
                     } else {
-                      const exchangeToken = getTokenBySymbol(
-                        offer?.exchangeToken || '',
-                        offer?.exchangeChainId || '',
-                        chains
-                      );
-                      if (exchangeToken) {
-                        handleAcceptOfferAction(
-                          offer,
-                          accessToken,
-                          userChainId,
-                          exchangeToken,
-                          poolAbi,
-                          userAddress,
-                          amount,
-                          chains
-                        );
-                      }
+                      handleAcceptOfferAction(_offer);
                     }
                   }}
                 />

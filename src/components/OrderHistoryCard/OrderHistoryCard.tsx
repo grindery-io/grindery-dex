@@ -144,7 +144,7 @@ const OrderHistoryCard = (props: Props) => {
           <PageCardSubmitButton
             disableRipple
             className="OrderCard__button"
-            label={getOrderStatus(order)}
+            label={order.isComplete ? 'Completed' : getOrderStatus(order)}
             onClick={() => {}}
           />
         </Box>

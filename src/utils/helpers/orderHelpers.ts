@@ -59,10 +59,26 @@ export const sortOrdersByDate = (orders: OrderType[]): OrderType[] => {
 export const getOrderStatus = (order: OrderType): string => {
   switch (order.status) {
     case OrderStatusType.PENDING:
-      return 'Processing';
+      return 'Waiting transaction confirmation';
     case OrderStatusType.SUCCESS:
-      return 'Completed';
+      return 'Processing';
     case OrderStatusType.FAILURE:
       return 'Failed';
   }
+};
+
+export const getOrderButtonLabel = (
+  order: OrderType,
+  loading: boolean,
+  isUserA: boolean
+) => {
+  return order.isComplete
+    ? 'Completed'
+    : loading || order.status !== OrderStatusType.SUCCESS
+    ? 'Processing'
+    : isUserA
+    ? 'Processing'
+    : `Send ${parseFloat(order.amountTokenOffer).toFixed(6).toLocaleString()} ${
+        order.offer ? order.offer.token : ''
+      }`;
 };

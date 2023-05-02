@@ -16,8 +16,6 @@ import {
   selectChainsItems,
   selectUserAccessToken,
   selectUserAddress,
-  selectUserChainId,
-  selectPoolAbi,
   selectUserChainTokenPrice,
   selectUserAdvancedMode,
   selectShopOfferId,
@@ -41,8 +39,6 @@ const ShopPageRoot = (props: Props) => {
   const dispatch = useAppDispatch();
   const { connectUser } = useUserController();
   const accessToken = useAppSelector(selectUserAccessToken);
-  const userChainId = useAppSelector(selectUserChainId);
-  const userAddress = useAppSelector(selectUserAddress);
   const offers = useAppSelector(selectShopOffers);
   const loading = useAppSelector(selectShopLoading);
   const offerId = useAppSelector(selectShopOfferId);
@@ -53,7 +49,6 @@ const ShopPageRoot = (props: Props) => {
     (token: TokenType) => token.symbol === fromChain?.nativeToken
   );
   const { handleAcceptOfferAction } = useShopController();
-  const poolAbi = useAppSelector(selectPoolAbi);
   const advancedMode = useAppSelector(selectUserAdvancedMode);
   const [showWalletModal, setShowWalletModal] = useState(false);
 
@@ -77,14 +72,13 @@ const ShopPageRoot = (props: Props) => {
         return false;
       }
       const res = await handleEmailSubmitAction(
-        accessToken,
         email,
         createdOrder.orderId,
         userWalletAddress
       );
       return res;
     },
-    [handleEmailSubmitAction, accessToken, createdOrder, userWalletAddress]
+    [handleEmailSubmitAction, createdOrder, userWalletAddress]
   );
 
   const onModalClose = () => {
@@ -196,15 +190,7 @@ const ShopPageRoot = (props: Props) => {
                     if (!accessToken) {
                       setShowWalletModal(true);
                     } else {
-                      handleAcceptOfferAction(
-                        offer,
-                        accessToken,
-                        userChainId,
-                        fromToken,
-                        poolAbi,
-                        userAddress,
-                        chains
-                      );
+                      handleAcceptOfferAction(offer);
                     }
                   }}
                 />
