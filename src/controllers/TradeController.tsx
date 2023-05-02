@@ -3,6 +3,7 @@ import React, {
   useCallback,
   useContext,
   useEffect,
+  useState,
 } from 'react';
 import {
   useAppDispatch,
@@ -24,6 +25,8 @@ import {
   setTradeOrderTransactionId,
   setTradeOfferId,
   setTradeModal,
+  selectChainsItems,
+  addTradeOffers,
 } from '../store';
 import {
   getChainById,
@@ -75,6 +78,7 @@ type ContextProps = {
     orderId: string,
     walletAddress: string
   ) => Promise<boolean>;
+  handleSearchMoreOffersAction: () => void;
 };
 
 export const TradeContext = createContext<ContextProps>({
@@ -83,6 +87,7 @@ export const TradeContext = createContext<ContextProps>({
   handleTradeFilterChange: () => {},
   handleFromAmountMaxClick: () => {},
   handleEmailSubmitAction: async () => false,
+  handleSearchMoreOffersAction: () => {},
 });
 
 type TradeControllerProps = {
@@ -95,6 +100,15 @@ export const TradeController = ({ children }: TradeControllerProps) => {
   const filter = useAppSelector(selectTradeFilter);
   const { toTokenId } = filter;
   const { getSigner, getEthers } = useUserController();
+  const limit = 5;
+  const [offset, setOffset] = useState(limit);
+  const chains = useAppSelector(selectChainsItems);
+  const fromChain = getChainById('5', chains);
+  const fromToken = fromChain?.tokens?.find(
+    (token: TokenType) => token.symbol === fromChain?.nativeToken
+  );
+  const fromChainId = fromChain?.chainId;
+  const fromTokenId = fromToken?.coinmarketcapId;
 
   const fetchTokenPrice = useCallback(
     async (accessToken: string, toTokenId: string) => {
@@ -230,21 +244,66 @@ export const TradeController = ({ children }: TradeControllerProps) => {
         chainId: filter.toChainId,
         token: toToken?.symbol || '',
         depositAmount: filter.amount,
+        limit: limit.toString(),
       };
       const queryString = new URLSearchParams(query).toString();
-      const items = await searchOffersRequest(queryString).catch((error) => {
+      const res = await searchOffersRequest(queryString).catch((error) => {
         dispatch(setTradeError({ type: 'search', text: error }));
       });
-      if (typeof items !== 'undefined') {
-        dispatch(setTradeOffers(items));
+      if (typeof res?.items !== 'undefined') {
+        dispatch(setTradeOffers(res.items));
       } else {
         dispatch(setTradeOffers([]));
         dispatch(setTradeOffersVisible(false));
       }
       dispatch(setTradeLoading(false));
+      setOffset(limit);
     },
-    [dispatch, validateSearchOffersAction]
+    [dispatch, validateSearchOffersAction, offset]
   );
+
+  const handleSearchMoreOffersAction = useCallback(async () => {
+    dispatch(clearTradeError());
+    const validation = validateSearchOffersAction(
+      filter,
+      fromChainId || '',
+      fromTokenId || ''
+    );
+    if (validation !== true) {
+      dispatch(setTradeError(validation));
+      return;
+    }
+    dispatch(setTradeOffersVisible(true));
+    const toToken = getTokenById(filter.toTokenId, filter.toChainId, chains);
+    const query = {
+      exchangeChainId: '5',
+      exchangeToken: 'ETH',
+      chainId: filter.toChainId,
+      token: toToken?.symbol || '',
+      depositAmount: filter.amount,
+      limit: limit.toString(),
+      offset: offset.toString(),
+    };
+    const queryString = new URLSearchParams(query).toString();
+    const res = await searchOffersRequest(queryString).catch((error) => {
+      dispatch(setTradeError({ type: 'search', text: error }));
+    });
+    if (typeof res?.items !== 'undefined') {
+      dispatch(addTradeOffers(res.items));
+    } else {
+      dispatch(addTradeOffers([]));
+      dispatch(setTradeOffersVisible(false));
+    }
+    setOffset(offset + limit);
+  }, [
+    dispatch,
+    validateSearchOffersAction,
+    offset,
+    filter,
+    chains,
+    fromChainId,
+    fromTokenId,
+  ]);
 
   const validateAcceptOfferAction = (
     offer: OfferType,
@@ -472,6 +531,7 @@ export const TradeController = ({ children }: TradeControllerProps) => {
         handleTradeFilterChange,
         handleFromAmountMaxClick,
         handleEmailSubmitAction,
+        handleSearchMoreOffersAction,
       }}
     >
       {children}

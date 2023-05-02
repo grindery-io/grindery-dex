@@ -24,6 +24,7 @@ interface TradeState {
   orderStatus: OrderPlacingStatusType;
   orderTransactionId: string;
   pricesLoading: boolean;
+  total: number;
   toTokenPrice: number | null;
 }
 
@@ -42,6 +43,7 @@ const initialState: TradeState = {
   orderStatus: OrderPlacingStatusType.UNINITIALIZED,
   orderTransactionId: '',
   pricesLoading: false,
+  total: 0,
   toTokenPrice: null,
 };
 
@@ -52,6 +54,16 @@ const tradeSlice = createSlice({
     setTradeOffers(state, action: PayloadAction<OfferType[]>) {
       state.offers = action.payload.filter((o: OfferType) => o.isActive);
     },
+    addTradeOffers(state, action: PayloadAction<OfferType[]>) {
+      state.offers = [
+        ...state.offers,
+        ...action.payload.filter((o: OfferType) => o.isActive),
+      ];
+    },
+    setTradeOffersTotal(state, action: PayloadAction<number>) {
+      state.total = action.payload;
+    },
+
     setTradeLoading(state, action: PayloadAction<boolean>) {
       state.loading = action.payload;
     },
@@ -127,6 +139,8 @@ export const selectTradeOrderStatus = (state: RootState) =>
   state.trade.orderStatus;
 export const selectTradeOfferId = (state: RootState) => state.trade.offerId;
 export const selectTradeModal = (state: RootState) => state.trade.modal;
+export const selectTradeOffersHasMore = (state: RootState) =>
+  Boolean(state.trade.offers.length < state.trade.total);
 
 export const {
   setTradeOffers,
@@ -143,6 +157,8 @@ export const {
   setTradeOrderStatus,
   setTradeOfferId,
   setTradeModal,
+  setTradeOffersTotal,
+  addTradeOffers,
 } = tradeSlice.actions;
 
 export default tradeSlice.reducer;

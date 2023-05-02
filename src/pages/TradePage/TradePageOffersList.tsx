@@ -21,9 +21,11 @@ import {
   selectUserChainId,
   selectUserAddress,
   selectPoolAbi,
+  selectTradeOffersHasMore,
 } from '../../store';
 import { useTradeController, useUserController } from '../../controllers';
 import { getTokenBySymbol } from '../../utils';
+import InfiniteScroll from 'react-infinite-scroll-component';
 
 type Props = {};
 
@@ -39,7 +41,9 @@ const TradePageOffersList = (props: Props) => {
   const userChainId = useAppSelector(selectUserChainId);
   const userAddress = useAppSelector(selectUserAddress);
   const poolAbi = useAppSelector(selectPoolAbi);
-  const { handleAcceptOfferAction } = useTradeController();
+  const { handleAcceptOfferAction, handleSearchMoreOffersAction } =
+    useTradeController();
+  const hasMore = useAppSelector(selectTradeOffersHasMore);
 
   return (
     <>
@@ -56,8 +60,7 @@ const TradePageOffersList = (props: Props) => {
       )}
       <PageCard>
         <PageCardHeader title="Offers" />
-        <PageCardBody maxHeight="540px">
-          {loading && [1, 2, 3].map((i: number) => <OfferSkeleton key={i} />)}
+        <PageCardBody maxHeight="540px" id="offers-list">
           {!loading && foundOffers.length < 1 && (
             <NotFound
               text={
@@ -76,42 +79,51 @@ const TradePageOffersList = (props: Props) => {
               }
             />
           )}
-          {!loading &&
-            foundOffers.length > 0 &&
-            foundOffers.map((offer: OfferType) => (
-              <OfferPublic
-                key={offer._id}
-                chains={chains}
-                compact
-                offer={offer}
-                fromAmount={amount}
-                advancedMode={advancedMode}
-                onClick={(o: OfferType) => {
-                  if (!accessToken) {
-                    setShowWalletModal(true);
-                  } else {
-                    const exchangeToken = getTokenBySymbol(
-                      offer?.exchangeToken || '',
-                      offer?.exchangeChainId || '',
-                      chains
-                    );
-                    if (exchangeToken) {
-                      handleAcceptOfferAction(
-                        offer,
-                        accessToken,
-                        userChainId,
-                        exchangeToken,
-                        poolAbi,
-                        userAddress,
-                        amount,
+          {loading ? (
+            <OfferSkeleton />
+          ) : (
+            <InfiniteScroll
+              dataLength={foundOffers.length}
+              next={handleSearchMoreOffersAction}
+              hasMore={hasMore}
+              loader={<OfferSkeleton />}
+              scrollableTarget="offers-list"
+            >
+              {foundOffers.map((offer: OfferType) => (
+                <OfferPublic
+                  key={offer._id}
+                  chains={chains}
+                  compact
+                  offer={offer}
+                  fromAmount={amount}
+                  advancedMode={advancedMode}
+                  onClick={(o: OfferType) => {
+                    if (!accessToken) {
+                      setShowWalletModal(true);
+                    } else {
+                      const exchangeToken = getTokenBySymbol(
+                        offer?.exchangeToken || '',
+                        offer?.exchangeChainId || '',
                         chains
                       );
+                      if (exchangeToken) {
+                        handleAcceptOfferAction(
+                          offer,
+                          accessToken,
+                          userChainId,
+                          exchangeToken,
+                          poolAbi,
+                          userAddress,
+                          amount,
+                          chains
+                        );
+                      }
                     }
-                  }
-                }}
-              />
-            ))}
-
+                  }}
+                />
+              ))}
+            </InfiniteScroll>
+          )}
           <Box height="10px" />
         </PageCardBody>
       </PageCard>

@@ -104,13 +104,18 @@ export const getAllOffers = (): Promise<OfferType[]> => {
   });
 };
 
-export const searchOffersRequest = (query: string): Promise<OfferType[]> => {
+export const searchOffersRequest = (
+  query: string
+): Promise<{ items: OfferType[]; total: number }> => {
   return new Promise((resolve, reject) => {
     try {
       axios
         .get(`${DELIGHT_API_URL}/offers/search?${query}`)
         .then((res) => {
-          resolve(res?.data || []);
+          resolve({
+            items: res?.data?.offers || [],
+            total: res?.data?.totalCount || 0,
+          });
         })
         .catch((err: any) => {
           console.error('searchOffersRequest > axios err=', err);
