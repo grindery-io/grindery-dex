@@ -27,6 +27,7 @@ import {
   addOffersItems,
   setOffersTotal,
   selectOffersError,
+  updateOfferItem,
 } from '../store';
 import {
   getTokenById,
@@ -35,12 +36,14 @@ import {
   getChainById,
   switchMetamaskNetwork,
   validateOfferCreateAction,
+  getNotificationObject,
 } from '../utils';
 import { useUserController } from './UserController';
 import { addOffer, getOffer, getUserOffers, updateOffer } from '../services';
-import { OfferType, LiquidityWalletType } from '../types';
+import { OfferType, LiquidityWalletType, JSONRPCRequestType } from '../types';
 import { ROUTES, POOL_CONTRACT_ADDRESS } from '../config';
 import { enqueueSnackbar } from 'notistack';
+import { selectMessagesItems } from '../store/slices/messagesSlice';
 
 // Context props
 type ContextProps = {
@@ -78,6 +81,7 @@ export const OffersController = ({ children }: OffersControllerProps) => {
   const limit = 5;
   const [offset, setOffset] = useState(limit);
   const error = useAppSelector(selectOffersError);
+  const messages = useAppSelector(selectMessagesItems);
 
   const fetchOffers = useCallback(async () => {
     dispatch(setOffersLoading(true));
@@ -93,10 +97,13 @@ export const OffersController = ({ children }: OffersControllerProps) => {
     setOffset(offset + limit);
   }, [dispatch, accessToken, offset]);
 
-  const fetchOffer = async (accessToken: string, id: string) => {
-    const offer = await getOffer(accessToken, id);
-    return offer;
-  };
+  const fetchOffer = useCallback(
+    async (id: string) => {
+      const offer = await getOffer(accessToken, id);
+      return offer;
+    },
+    [accessToken]
+  );
 
   const createOffer = useCallback(
     async (
@@ -105,7 +112,7 @@ export const OffersController = ({ children }: OffersControllerProps) => {
     ): Promise<OfferType | boolean> => {
       const newOfferId = await addOffer(accessToken, body);
       if (newOfferId) {
-        const offer = await fetchOffer(accessToken, newOfferId);
+        const offer = await fetchOffer(newOfferId);
         if (offer) {
           return offer;
         } else {
@@ -115,7 +122,7 @@ export const OffersController = ({ children }: OffersControllerProps) => {
         return false;
       }
     },
-    []
+    [fetchOffer]
   );
 
   const editOffer = async (
@@ -445,6 +452,22 @@ export const OffersController = ({ children }: OffersControllerProps) => {
     ]
   );
 
+  const refreshOffer = useCallback(
+    async (event: JSONRPCRequestType) => {
+      if (event?.params?.type === 'offer' && event?.params?.id) {
+        const offer = await fetchOffer(event.params.id);
+        if (offer) {
+          dispatch(updateOfferItem(offer));
+          const notification = getNotificationObject(event);
+          if (notification) {
+            enqueueSnackbar(notification.text, notification.props);
+          }
+        }
+      }
+    },
+    [fetchOffer, dispatch]
+  );
+
   useEffect(() => {
     if (accessToken) {
       fetchOffers();
@@ -465,6 +488,12 @@ export const OffersController = ({ children }: OffersControllerProps) => {
       });
     }
   }, [error]);
+
+  useEffect(() => {
+    const allMessages = [...messages];
+    const lastMessage = allMessages.pop();
+    refreshOffer(lastMessage);
+  }, [messages, refreshOffer]);
 
   return (
     <OffersContext.Provider

@@ -59,6 +59,23 @@ const offersSlice = createSlice({
     addOffersItems(state, action: PayloadAction<OfferType[]>) {
       state.items = [...state.items, ...action.payload];
     },
+    updateOfferItem(state, action: PayloadAction<OfferType>) {
+      if (
+        state.items.find((item: OfferType) => item._id === action.payload._id)
+      ) {
+        state.items = [
+          ...state.items.map((item: OfferType) => {
+            if (item._id === action.payload._id) {
+              return action.payload;
+            } else {
+              return item;
+            }
+          }),
+        ];
+      } else {
+        state.items = [...state.items, action.payload];
+      }
+    },
     setOffersTotal(state, action: PayloadAction<number>) {
       state.total = action.payload;
     },
@@ -124,6 +141,7 @@ export const {
   setOffersActivating,
   addOffersItems,
   setOffersTotal,
+  updateOfferItem,
 } = offersSlice.actions;
 
 export default offersSlice.reducer;
