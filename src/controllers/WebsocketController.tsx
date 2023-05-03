@@ -22,7 +22,7 @@ export const WebsocketController = ({ children }: WebsocketControllerProps) => {
     accessToken ? WEBSOCKET_URL || null : null,
     {
       onError: (event: WebSocketEventMap['error']) => {
-        console.log('webscoket error: ', event);
+        console.log('websocket error: ', event);
       },
     }
   );
