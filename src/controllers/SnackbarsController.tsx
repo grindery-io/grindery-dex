@@ -37,31 +37,6 @@ const SnackbarsController = (props: Props) => {
     }
   }, [messages]);
 
-  useEffect(() => {
-    setTimeout(() => {
-      dispatch(
-        setMessagesItem({
-          method: 'success',
-          params: {
-            type: 'offer',
-            id: '1111',
-          },
-        })
-      );
-    }, 1000);
-    setTimeout(() => {
-      dispatch(
-        setMessagesItem({
-          method: 'failure',
-          params: {
-            type: 'order',
-            id: '2222',
-          },
-        })
-      );
-    }, 2000);
-  }, [dispatch]);
-
   return (
     <>
       <SnackbarProvider
