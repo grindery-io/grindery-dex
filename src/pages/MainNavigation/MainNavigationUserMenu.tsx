@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import Jdenticon from 'react-jdenticon';
 import { ICONS, ROUTES } from '../../config';
 import {
-  Alert,
   Box,
   List,
   ListItem,
@@ -10,7 +9,6 @@ import {
   ListItemIcon,
   ListItemText,
   MenuItem,
-  Snackbar,
   Stack,
   Switch,
   Typography,
@@ -35,15 +33,15 @@ import { Menu } from '../../components';
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import { getChainById } from '../../utils';
 import { WalletIcon } from '../../icons';
+import { enqueueSnackbar } from 'notistack';
 
 type Props = {};
 
 const MainNavigationUserMenu = (props: Props) => {
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const { disconnectUser, connectUser, handleAdvancedModeToggleAction } =
     useUserController();
-  const [copied, setCopied] = useState(false);
   let navigate = useNavigate();
   const userId = useAppSelector(selectUserId);
   const accessToken = useAppSelector(selectUserAccessToken);
@@ -218,7 +216,9 @@ const MainNavigationUserMenu = (props: Props) => {
           onClick={() => {
             handleClose();
             navigator.clipboard.writeText(address);
-            setCopied(true);
+            enqueueSnackbar(`Wallet address copied!`, {
+              variant: 'success',
+            });
           }}
         >
           <ListItemIcon>
@@ -328,17 +328,6 @@ const MainNavigationUserMenu = (props: Props) => {
           </Typography>
         </MenuItem>
       </Menu>
-
-      <Snackbar
-        open={copied}
-        onClose={() => {
-          setCopied(false);
-        }}
-        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-        autoHideDuration={2000}
-      >
-        <Alert severity="success">Wallet address copied!</Alert>
-      </Snackbar>
     </Box>
   );
 };

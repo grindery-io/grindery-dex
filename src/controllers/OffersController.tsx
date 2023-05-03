@@ -26,6 +26,7 @@ import {
   selectOffersCreateInput,
   addOffersItems,
   setOffersTotal,
+  selectOffersError,
 } from '../store';
 import {
   getTokenById,
@@ -39,6 +40,7 @@ import { useUserController } from './UserController';
 import { addOffer, getOffer, getUserOffers, updateOffer } from '../services';
 import { OfferType, LiquidityWalletType } from '../types';
 import { ROUTES, POOL_CONTRACT_ADDRESS } from '../config';
+import { enqueueSnackbar } from 'notistack';
 
 // Context props
 type ContextProps = {
@@ -75,6 +77,7 @@ export const OffersController = ({ children }: OffersControllerProps) => {
   const input = useAppSelector(selectOffersCreateInput);
   const limit = 5;
   const [offset, setOffset] = useState(limit);
+  const error = useAppSelector(selectOffersError);
 
   const fetchOffers = useCallback(async () => {
     dispatch(setOffersLoading(true));
@@ -454,6 +457,14 @@ export const OffersController = ({ children }: OffersControllerProps) => {
     handleOfferCreateInputChange('fromTokenId', '1839');
     handleOfferCreateInputChange('toTokenId', '1027');
   }, [handleOfferCreateInputChange]);
+
+  useEffect(() => {
+    if (error && error.text) {
+      enqueueSnackbar(error.text, {
+        variant: 'error',
+      });
+    }
+  }, [error]);
 
   return (
     <OffersContext.Provider

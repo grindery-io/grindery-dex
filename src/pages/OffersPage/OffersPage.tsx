@@ -1,5 +1,5 @@
 import React from 'react';
-import { ErrorSnackbar, PageCard } from '../../components';
+import { PageCard } from '../../components';
 import { Route, Routes } from 'react-router-dom';
 import OffersPageRoot from './OffersPageRoot';
 import OffersPageCreate from './OffersPageCreate';
@@ -8,13 +8,10 @@ import OffersPageSelectToChain from './OffersPageSelectToChain';
 import { OffersController } from '../../controllers';
 import { ROUTES } from '../../config';
 import Page404 from '../Page404/Page404';
-import { selectOffersError, useAppSelector } from '../../store';
 
 function OffersPage() {
-  const error = useAppSelector(selectOffersError);
   return (
     <OffersController>
-      <ErrorSnackbar message={error.text || ''} />
       <PageCard>
         <Routes>
           <Route
