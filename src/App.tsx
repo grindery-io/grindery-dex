@@ -8,6 +8,7 @@ import { UserController, ChainsController, AbiController } from './controllers';
 import { theme } from './theme';
 import AppRouter from './pages/AppRouter/AppRouter';
 import WebsocketController from './controllers/WebsocketController';
+import SnackbarsController from './controllers/SnackbarsController';
 
 declare global {
   interface Window {
@@ -20,15 +21,17 @@ export const App = () => {
     <ThemeProvider theme={theme}>
       <AuthenticationProvider>
         <StoreProvider store={store}>
-          <UserController>
-            <WebsocketController>
-              <AbiController>
-                <ChainsController>
-                  <AppRouter />
-                </ChainsController>
-              </AbiController>
-            </WebsocketController>
-          </UserController>
+          <SnackbarsController>
+            <UserController>
+              <WebsocketController>
+                <AbiController>
+                  <ChainsController>
+                    <AppRouter />
+                  </ChainsController>
+                </AbiController>
+              </WebsocketController>
+            </UserController>
+          </SnackbarsController>
         </StoreProvider>
       </AuthenticationProvider>
     </ThemeProvider>
