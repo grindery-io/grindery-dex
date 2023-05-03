@@ -24,6 +24,12 @@ export const WebsocketController = ({ children }: WebsocketControllerProps) => {
       onError: (event: WebSocketEventMap['error']) => {
         console.log('websocket error: ', event);
       },
+      onClose: (event: WebSocketEventMap['close']) => {
+        console.log('websocket connection closed: ', event);
+      },
+      shouldReconnect: () => true,
+      reconnectAttempts: 10,
+      reconnectInterval: 3000,
     }
   );
 
