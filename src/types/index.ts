@@ -10,3 +10,4 @@ export * from './NavTabsItemType';
 export * from './WalletTokenType';
 export * from './OrderPlacingStatusType';
 export * from './JSONRPCRequestType';
+export * from './NotificationType';
