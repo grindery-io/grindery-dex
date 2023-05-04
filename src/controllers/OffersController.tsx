@@ -149,10 +149,8 @@ export const OffersController = ({ children }: OffersControllerProps) => {
   );
 
   const handleOfferCreateAction = useCallback(async () => {
-    // clear error message
     dispatch(clearOffersError());
 
-    // validate before executing
     const validation = validateOfferCreateAction(input);
     if (validation !== true) {
       dispatch(setOffersError(validation));
@@ -179,7 +177,6 @@ export const OffersController = ({ children }: OffersControllerProps) => {
         throw new Error('Tokens not found');
       }
 
-      // start executing
       dispatch(setOffersLoading(true));
 
       const inputChain = getChainById(input.toChainId || '', chains);
@@ -200,17 +197,14 @@ export const OffersController = ({ children }: OffersControllerProps) => {
       const ethers = getEthers();
       const signer = getSigner();
 
-      // set pool contract
       const _poolContract = new ethers.Contract(
         POOL_CONTRACT_ADDRESS[`eip155:${input.toChainId}`],
         poolAbi,
         signer
       );
 
-      // connect signer
       const poolContract = _poolContract.connect(signer);
 
-      // Format min and max limits
       const upperLimitOffer = ethers.utils.defaultAbiCoder.encode(
         ['string', 'string'],
         [
@@ -230,7 +224,6 @@ export const OffersController = ({ children }: OffersControllerProps) => {
         ]
       );
 
-      // create offer transaction
       const tx = await poolContract.setOffer(
         fromToken.address && fromToken.address !== '0x0'
           ? fromToken.address
@@ -243,7 +236,6 @@ export const OffersController = ({ children }: OffersControllerProps) => {
         }
       );
 
-      // save offer to DB
       const newOffer = await createOffer(accessToken, {
         chainId: input.fromChainId,
         min: input.amountMin,
@@ -265,12 +257,8 @@ export const OffersController = ({ children }: OffersControllerProps) => {
       });
 
       if (newOffer && typeof newOffer !== 'boolean') {
-        // update offer state
         dispatch(setOffersItems([newOffer, ...offers]));
-
-        // clear input fields
         dispatch(clearOffersCreateInput());
-
         navigate(ROUTES.SELL.OFFERS.ROOT.FULL_PATH);
       } else {
         dispatch(
@@ -292,7 +280,6 @@ export const OffersController = ({ children }: OffersControllerProps) => {
       );
     }
 
-    // complete execution
     dispatch(setOffersLoading(false));
   }, [
     accessToken,
@@ -313,104 +300,66 @@ export const OffersController = ({ children }: OffersControllerProps) => {
     async (offer: OfferType, isActive: boolean) => {
       dispatch(setOffersActivating(offer.offerId || ''));
 
-      const offerToChain = getOfferToChain(offer, chains);
-
-      if (!offerToChain) {
-        dispatch(
-          setOffersError({
-            type: 'setIsActive',
-            text: 'Chain not found',
-          })
-        );
-        dispatch(setOffersActivating(''));
-        return;
-      }
-
-      const networkSwitched = await switchMetamaskNetwork(
-        userChainId,
-        offerToChain
-      );
-      if (!networkSwitched) {
-        dispatch(
-          setOffersError({
-            type: 'setIsActive',
-            text: 'Network switching failed. Please, switch network in your MetaMask and try again.',
-          })
-        );
-        dispatch(setOffersActivating(''));
-        return;
-      }
-
-      const signer = getSigner();
-      const ethers = getEthers();
-
-      // set pool contract
-      const _poolContract = new ethers.Contract(
-        POOL_CONTRACT_ADDRESS['eip155:5'],
-        poolAbi,
-        signer
-      );
-
-      // connect signer
-      const poolContract = _poolContract.connect(signer);
-
-      const offerId = offer.offerId;
-
       try {
+        const offerToChain = getOfferToChain(offer, chains);
+        if (!offerToChain) {
+          throw new Error('Chain not found.');
+        }
+
+        const networkSwitched = await switchMetamaskNetwork(
+          userChainId,
+          offerToChain
+        );
+        if (!networkSwitched) {
+          throw new Error(
+            'Network switching failed. Please, switch network in your MetaMask and try again.'
+          );
+        }
+
+        const signer = getSigner();
+        const ethers = getEthers();
+
+        const _poolContract = new ethers.Contract(
+          POOL_CONTRACT_ADDRESS['eip155:5'],
+          poolAbi,
+          signer
+        );
+
+        const poolContract = _poolContract.connect(signer);
+
+        const offerId = offer.offerId;
+
         await poolContract.getOfferer(offerId);
-      } catch (error: any) {
-        dispatch(
-          setOffersError({
-            type: 'checkOwner',
-            text: getMetaMaskErrorMessage(
-              error,
-              'Checking offer owner transaction error'
-            ),
-          })
-        );
-        console.error('checkOwner error', error);
-        dispatch(setOffersActivating(''));
-        return;
-      }
 
-      // create transaction
-      try {
         await poolContract.setIsActive(offerId, isActive, {
           gasLimit: 1000000,
         });
+
+        const updated = await editOffer(accessToken, {
+          offerId: offerId || '',
+          isActive,
+        });
+
+        if (!updated) {
+          dispatch(setOffersActivating(''));
+          return;
+        }
+        dispatch(
+          setOffersItems([
+            ...offers.map((offer) => ({
+              ...offer,
+              isActive: offerId === offer.offerId ? isActive : offer.isActive,
+            })),
+          ])
+        );
       } catch (error: any) {
         dispatch(
           setOffersError({
             type: 'setIsActive',
-            text: getMetaMaskErrorMessage(
-              error,
-              'Offer activation transaction error'
-            ),
+            text: getMetaMaskErrorMessage(error, 'Offer activation error'),
           })
         );
-        console.error('setIsActive error', error);
-        dispatch(setOffersActivating(''));
-        return;
       }
-
-      const updated = await editOffer(accessToken, {
-        offerId: offerId || '',
-        isActive,
-      });
-
-      if (!updated) {
-        // offer wasn't updated, stop execution
-        dispatch(setOffersActivating(''));
-        return;
-      }
-      dispatch(
-        setOffersItems([
-          ...offers.map((offer) => ({
-            ...offer,
-            isActive: offerId === offer.offerId ? isActive : offer.isActive,
-          })),
-        ])
-      );
       dispatch(setOffersActivating(''));
     },
     [
