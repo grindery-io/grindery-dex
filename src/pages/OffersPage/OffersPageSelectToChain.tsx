@@ -60,7 +60,8 @@ function OffersPageSelectToChain() {
         <ChainsList
           chain={toChainId}
           chains={chains.filter(
-            (c: ChainType) => c.chainId === '5' || c.chainId === '1'
+            (c: ChainType) =>
+              c.chainId === '5' || c.chainId === '1' || c.chainId === '56'
           )}
           onClick={(blockchain: ChainType) => {
             handleOfferCreateInputChange('toChainId', blockchain.chainId);

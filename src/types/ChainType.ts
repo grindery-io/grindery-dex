@@ -17,4 +17,5 @@ export type ChainType = {
   idHex?: string;
   transactionExplorerUrl?: string;
   addressExplorerUrl?: string;
+  order: number;
 };

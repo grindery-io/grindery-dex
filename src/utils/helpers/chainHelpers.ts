@@ -8,3 +8,9 @@ export const getChainIdHex = (chain: ChainType | string) => {
 export const getChainById = (chainId: string, chains: ChainType[]) => {
   return chains.find((c: ChainType) => c.chainId === chainId);
 };
+
+export const sortChains = (chains: ChainType[]) => {
+  return chains.sort((a, b) => {
+    return a.order - b.order;
+  });
+};

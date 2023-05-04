@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect } from 'react';
 import { useAppDispatch, setChainsItems, setChainsLoading } from '../store';
 import { getChainsWithTokens } from '../services';
+import { sortChains } from '../utils';
 
 type ChainsProviderProps = {
   children: React.ReactNode;
@@ -12,7 +13,7 @@ export const ChainsProvider = ({ children }: ChainsProviderProps) => {
   const getChains = useCallback(async () => {
     dispatch(setChainsLoading(true));
     const chains = await getChainsWithTokens();
-    dispatch(setChainsItems(chains || []));
+    dispatch(setChainsItems(sortChains(chains || [])));
     dispatch(setChainsLoading(false));
   }, [dispatch]);
 

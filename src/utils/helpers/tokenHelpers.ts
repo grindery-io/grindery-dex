@@ -27,3 +27,9 @@ export const getTokenBySymbol = (
       ?.tokens?.find((t: TokenType) => t.symbol === tokenSymbol) || null
   );
 };
+
+export const sortTokens = (tokens: TokenType[]) => {
+  return tokens.sort((a, b) => {
+    return a.order - b.order;
+  });
+};

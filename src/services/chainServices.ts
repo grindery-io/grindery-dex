@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { ChainType } from '../types';
 import { DELIGHT_API_URL } from '../config';
+import { sortTokens } from '../utils';
 
 export const getChainsWithTokens = (): Promise<ChainType[]> => {
   return new Promise((resolve, reject) => {
@@ -18,8 +19,10 @@ export const getChainsWithTokens = (): Promise<ChainType[]> => {
                     ...chain,
                     value: chain.caipId,
                     nativeToken: chain.nativeTokenSymbol || '',
-                    tokens: (res2?.data || []).filter(
-                      (token: any) => token.chainId === chain.chainId
+                    tokens: sortTokens(
+                      (res2?.data || []).filter(
+                        (token: any) => token.chainId === chain.chainId
+                      )
                     ),
                   })
                 );

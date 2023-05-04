@@ -7,4 +7,5 @@ export type TokenType = {
   coinmarketcapId?: string;
   isActive?: boolean;
   isNative?: boolean;
+  order: number;
 };
