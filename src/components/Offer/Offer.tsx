@@ -36,6 +36,7 @@ import {
   getOfferStatus,
 } from '../../utils';
 import PageCardSubmitButton from '../PageCardSubmitButton/PageCardSubmitButton';
+import moment from 'moment';
 
 export type OfferChain = {
   label: string;
@@ -182,7 +183,9 @@ const Offer = (props: Props) => {
                     sx={{ marginTop: '-2px', color: 'rgba(0, 0, 0, 0.24)' }}
                   />
                   <p style={{ color: offer.isActive ? '#000' : '#aaa' }}>
-                    {offer.estimatedTime}s
+                    {moment
+                      .duration(parseFloat(offer.estimatedTime || '0') * 1000)
+                      .humanize()}
                   </p>
                 </Stack>
               </Tooltip>

@@ -133,17 +133,17 @@ export const getOfferStatus = (offer: OfferType): string => {
     case OfferStatusType.PENDING:
       return 'Processing';
     case OfferStatusType.SUCCESS:
-      return 'Active';
+      return offer.isActive ? 'Active' : 'Inactive';
     case OfferStatusType.FAILURE:
-      return 'Failed';
+      return offer.isActive ? 'Active' : 'Inactive';
     case OfferStatusType.ACTIVATION:
       return 'Activating';
     case OfferStatusType.ACTIVATION_FAILURE:
-      return 'Activation failed';
+      return offer.isActive ? 'Active' : 'Inactive';
     case OfferStatusType.DEACTIVATION:
       return 'Deactivating';
     case OfferStatusType.DEACTIVATION_FAILURE:
-      return 'Deactivation failed';
+      return offer.isActive ? 'Active' : 'Inactive';
   }
 };
 
