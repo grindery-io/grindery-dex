@@ -219,102 +219,114 @@ export const OffersController = ({ children }: OffersControllerProps) => {
       return;
     }
 
-    const ethers = getEthers();
-    const signer = getSigner();
-
-    // set pool contract
-    const _poolContract = new ethers.Contract(
-      POOL_CONTRACT_ADDRESS[`eip155:${input.toChainId}`],
-      poolAbi,
-      signer
-    );
-
-    // connect signer
-    const poolContract = _poolContract.connect(signer);
-
-    // Format min and max limits
-    const upperLimitOffer = ethers.utils.defaultAbiCoder.encode(
-      ['string', 'string'],
-      [
-        `https://api.coingecko.com/api/v3/coins/${
-          fromToken?.symbol || input.fromTokenId
-        }`,
-        ethers.utils.parseEther(input.amountMax).toString(),
-      ]
-    );
-    const lowerLimitOffer = ethers.utils.defaultAbiCoder.encode(
-      ['string', 'string'],
-      [
-        `https://api.coingecko.com/api/v3/coins/${
-          fromToken?.symbol || input.fromTokenId
-        }`,
-        ethers.utils.parseEther(input.amountMin).toString(),
-      ]
-    );
-
-    // create offer transaction
-    let tx;
     try {
-      tx = await poolContract.setOffer(
-        fromToken.address && fromToken.address !== '0x0'
-          ? fromToken.address
-          : ethers.constants.AddressZero,
-        parseFloat(input.fromChainId),
-        upperLimitOffer,
-        lowerLimitOffer,
-        {
-          gasLimit: 1000000,
-        }
+      const ethers = getEthers();
+      const signer = getSigner();
+
+      // set pool contract
+      const _poolContract = new ethers.Contract(
+        POOL_CONTRACT_ADDRESS[`eip155:${input.toChainId}`],
+        poolAbi,
+        signer
       );
+
+      // connect signer
+      const poolContract = _poolContract.connect(signer);
+
+      // Format min and max limits
+      const upperLimitOffer = ethers.utils.defaultAbiCoder.encode(
+        ['string', 'string'],
+        [
+          `https://api.coingecko.com/api/v3/coins/${
+            fromToken?.symbol || input.fromTokenId
+          }`,
+          ethers.utils.parseEther(input.amountMax).toString(),
+        ]
+      );
+      const lowerLimitOffer = ethers.utils.defaultAbiCoder.encode(
+        ['string', 'string'],
+        [
+          `https://api.coingecko.com/api/v3/coins/${
+            fromToken?.symbol || input.fromTokenId
+          }`,
+          ethers.utils.parseEther(input.amountMin).toString(),
+        ]
+      );
+
+      // create offer transaction
+      let tx;
+      try {
+        tx = await poolContract.setOffer(
+          fromToken.address && fromToken.address !== '0x0'
+            ? fromToken.address
+            : ethers.constants.AddressZero,
+          parseFloat(input.fromChainId),
+          upperLimitOffer,
+          lowerLimitOffer,
+          {
+            gasLimit: 1000000,
+          }
+        );
+      } catch (error: any) {
+        dispatch(
+          setOffersError({
+            type: 'saveOffer',
+            text: getMetaMaskErrorMessage(
+              error,
+              'Create offer transaction error'
+            ),
+          })
+        );
+        console.error('setOffer error', error);
+        dispatch(setOffersLoading(false));
+        return;
+      }
+
+      // save offer to DB
+      const newOffer = await createOffer(accessToken, {
+        chainId: input.fromChainId,
+        min: input.amountMin,
+        max: input.amountMax,
+        tokenId: fromToken.coinmarketcapId,
+        token: fromToken.symbol || '',
+        tokenAddress: fromToken.address || '',
+        hash: tx.hash || '',
+        exchangeRate: input.exchangeRate || '',
+        exchangeToken: toToken.symbol || 'ETH',
+        exchangeChainId: input.toChainId,
+        estimatedTime: input.estimatedTime || '',
+        provider: userWallet || '',
+        isActive: false,
+        offerId: '',
+        title: input.title,
+        image: input.image,
+        amount: input.amount,
+      });
+
+      if (newOffer && typeof newOffer !== 'boolean') {
+        // update offer state
+        dispatch(setOffersItems([newOffer, ...offers]));
+
+        // clear input fields
+        dispatch(clearOffersCreateInput());
+
+        navigate(ROUTES.SELL.OFFERS.ROOT.FULL_PATH);
+      } else {
+        dispatch(
+          setOffersError({
+            type: 'saveOffer',
+            text: 'Offer creation failed. Please, try again.',
+          })
+        );
+      }
     } catch (error: any) {
       dispatch(
         setOffersError({
           type: 'saveOffer',
           text: getMetaMaskErrorMessage(
             error,
-            'Create offer transaction error'
+            'Offer creation failed. Please, try again.'
           ),
-        })
-      );
-      console.error('setOffer error', error);
-      dispatch(setOffersLoading(false));
-      return;
-    }
-
-    // save offer to DB
-    const newOffer = await createOffer(accessToken, {
-      chainId: input.fromChainId,
-      min: input.amountMin,
-      max: input.amountMax,
-      tokenId: fromToken.coinmarketcapId,
-      token: fromToken.symbol || '',
-      tokenAddress: fromToken.address || '',
-      hash: tx.hash || '',
-      exchangeRate: input.exchangeRate || '',
-      exchangeToken: toToken.symbol || 'ETH',
-      exchangeChainId: input.toChainId,
-      estimatedTime: input.estimatedTime || '',
-      provider: userWallet || '',
-      isActive: false,
-      offerId: '',
-      title: input.title,
-      image: input.image,
-      amount: input.amount,
-    });
-
-    if (newOffer && typeof newOffer !== 'boolean') {
-      // update offer state
-      dispatch(setOffersItems([newOffer, ...offers]));
-
-      // clear input fields
-      dispatch(clearOffersCreateInput());
-
-      navigate(ROUTES.SELL.OFFERS.ROOT.FULL_PATH);
-    } else {
-      dispatch(
-        setOffersError({
-          type: 'saveOffer',
-          text: 'Offer creation failed. Please, try again.',
         })
       );
     }
