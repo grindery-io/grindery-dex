@@ -10,9 +10,9 @@ This a description of all patterns, methods and architecture decisions, that sho
 
   - `/components` - Reusable/shared components. All components in this folder must be global state (store) agnostic. Components might only operate with data and callbacks received as properties.
 
-  - `/controllers` - Page- or component-specific controllers.
+  - `/provider` - Page- or component-specific providers.
 
-  - `/pages` - This folder contains pages components, also sometimes known as "views". Page is responsible for rendering the UI, all the heavy lifting processes, such as effects, must be done in controllers.
+  - `/pages` - This folder contains pages components, also sometimes known as "views". Page is responsible for rendering the UI, all the heavy lifting processes, such as effects, must be done in provider.
 
   - `/services` - This folder contains calls to external services, APIs, etc.
 
@@ -51,6 +51,10 @@ Each component must end with a word `Page`.
 Same as components, each page must be wrapped in a folder called the same as the page, e.g. `/HomePage/HomePage.tsx`.
 
 If a route has nested pages, they can be placed in the same folder, e.g. `/TradePage/TradePage.tsx` for `/trade` route and `/TradePage/TradeHistoryPage.tsx` for `/trade/history` route.
+
+### Providers
+
+Providers are responsible for updating global state, sending transactions and calling services functions.
 
 ### Services
 
