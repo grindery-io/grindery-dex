@@ -24,13 +24,13 @@ import {
   selectChainsItems,
   selectSatelliteAbi,
 } from '../../store';
-import { useUserController, useWalletsController } from '../../controllers';
+import { useUserProvider, useWalletsProvider } from '../../providers';
 import { getChainById } from '../../utils';
 
 function LiquidityWalletPageCreate() {
   let navigate = useNavigate();
   const user = useAppSelector(selectUserId);
-  const { connectUser: connect } = useUserController();
+  const { connectUser: connect } = useUserProvider();
   const accessToken = useAppSelector(selectUserAccessToken);
   const userChainId = useAppSelector(selectUserChainId);
   const loading = useAppSelector(selectWalletsLoading);
@@ -41,7 +41,7 @@ function LiquidityWalletPageCreate() {
   const input = useAppSelector(selectWalletsCreateInput);
   const { chainId } = input;
   const currentChain = getChainById(chainId, chains);
-  const { handleWalletsCreateAction } = useWalletsController();
+  const { handleWalletsCreateAction } = useWalletsProvider();
 
   return (
     <>

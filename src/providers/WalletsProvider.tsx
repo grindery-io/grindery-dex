@@ -39,7 +39,7 @@ import {
   getWalletAddressFromReceipt,
   isNumeric,
 } from '../utils';
-import { useUserController } from './UserController';
+import { useUserProvider } from './UserProvider';
 import { ROUTES, GRTSATELLITE_CONTRACT_ADDRESS } from '../config';
 
 // Context props
@@ -90,15 +90,15 @@ export const WalletsContext = createContext<ContextProps>({
   handleWalletsWithdrawtokensInputChange: () => {},
 });
 
-type WalletsControllerProps = {
+type WalletsProviderProps = {
   children: React.ReactNode;
 };
 
-export const WalletsController = ({ children }: WalletsControllerProps) => {
+export const WalletsProvider = ({ children }: WalletsProviderProps) => {
   let navigate = useNavigate();
   const dispatch = useAppDispatch();
   const accessToken = useAppSelector(selectUserAccessToken);
-  const { getSigner, getEthers } = useUserController();
+  const { getSigner, getEthers } = useUserProvider();
 
   const fetchWallets = useCallback(
     async (accessToken: string) => {
@@ -658,6 +658,6 @@ export const WalletsController = ({ children }: WalletsControllerProps) => {
   );
 };
 
-export const useWalletsController = () => useContext(WalletsContext);
+export const useWalletsProvider = () => useContext(WalletsContext);
 
-export default WalletsController;
+export default WalletsProvider;

@@ -12,7 +12,7 @@ import {
   selectWalletsItems,
 } from '../../store';
 import { ROUTES } from '../../config';
-import { useWalletsController } from '../../controllers';
+import { useWalletsProvider } from '../../providers';
 
 function LiquidityWalletPageSelectChain() {
   let navigate = useNavigate();
@@ -20,7 +20,7 @@ function LiquidityWalletPageSelectChain() {
   const wallets = useAppSelector(selectWalletsItems);
   const input = useAppSelector(selectWalletsCreateInput);
   const { chainId } = input;
-  const { handleWalletsCreateInputChange } = useWalletsController();
+  const { handleWalletsCreateInputChange } = useWalletsProvider();
 
   return (
     <>

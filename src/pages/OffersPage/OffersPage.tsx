@@ -5,13 +5,13 @@ import OffersPageRoot from './OffersPageRoot';
 import OffersPageCreate from './OffersPageCreate';
 import OffersPageSelectChain from './OffersPageSelectChain';
 import OffersPageSelectToChain from './OffersPageSelectToChain';
-import { OffersController } from '../../controllers';
+import { OffersProvider } from '../../providers';
 import { ROUTES } from '../../config';
 import Page404 from '../Page404/Page404';
 
 function OffersPage() {
   return (
-    <OffersController>
+    <OffersProvider>
       <PageCard>
         <Routes>
           <Route
@@ -33,7 +33,7 @@ function OffersPage() {
           <Route path="*" element={<Page404 />} />
         </Routes>
       </PageCard>
-    </OffersController>
+    </OffersProvider>
   );
 }
 

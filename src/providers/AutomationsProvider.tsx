@@ -22,7 +22,7 @@ import {
   selectChainsItems,
 } from '../store';
 import { getChainById, getErrorMessage, switchMetamaskNetwork } from '../utils';
-import { useUserController } from './UserController';
+import { useUserProvider } from './UserProvider';
 import { getBotAddress } from '../services';
 import { ChainType, LiquidityWalletType } from '../types';
 
@@ -47,13 +47,11 @@ export const AutomationsContext = createContext<ContextProps>({
   handleAutomationsDelegateAction: () => {},
 });
 
-type AutomationsControllerProps = {
+type AutomationsProviderProps = {
   children: React.ReactNode;
 };
 
-export const AutomationsController = ({
-  children,
-}: AutomationsControllerProps) => {
+export const AutomationsProvider = ({ children }: AutomationsProviderProps) => {
   const accessToken = useAppSelector(selectUserAccessToken);
   const userChainId = useAppSelector(selectUserChainId);
   const dispatch = useAppDispatch();
@@ -65,7 +63,7 @@ export const AutomationsController = ({
   const wallet = wallets.find(
     (w: LiquidityWalletType) => w.chainId === chainId
   );
-  const { getSigner, getEthers } = useUserController();
+  const { getSigner, getEthers } = useUserProvider();
 
   const fetchBotAddress = useCallback(
     async (accessToken: string, chainId: string): Promise<string> => {
@@ -328,6 +326,6 @@ export const AutomationsController = ({
   );
 };
 
-export const useAutomationsController = () => useContext(AutomationsContext);
+export const useAutomationsProvider = () => useContext(AutomationsContext);
 
-export default AutomationsController;
+export default AutomationsProvider;

@@ -40,7 +40,7 @@ import {
   isNumeric,
   switchMetamaskNetwork,
 } from '../utils';
-import { useUserController } from './UserController';
+import { useUserProvider } from './UserProvider';
 import {
   searchOffersRequest,
   getTokenPriceById,
@@ -85,16 +85,16 @@ export const TradeContext = createContext<ContextProps>({
   handleSearchMoreOffersAction: () => {},
 });
 
-type TradeControllerProps = {
+type TradeProviderProps = {
   children: React.ReactNode;
 };
 
-export const TradeController = ({ children }: TradeControllerProps) => {
+export const TradeProvider = ({ children }: TradeProviderProps) => {
   const accessToken = useAppSelector(selectUserAccessToken);
   const dispatch = useAppDispatch();
   const filter = useAppSelector(selectTradeFilter);
   const { toTokenId, amount } = filter;
-  const { getSigner, getEthers } = useUserController();
+  const { getSigner, getEthers } = useUserProvider();
   const limit = 5;
   const [offset, setOffset] = useState(limit);
   const chains = useAppSelector(selectChainsItems);
@@ -549,6 +549,6 @@ export const TradeController = ({ children }: TradeControllerProps) => {
   );
 };
 
-export const useTradeController = () => useContext(TradeContext);
+export const useTradeProvider = () => useContext(TradeContext);
 
-export default TradeController;
+export default TradeProvider;

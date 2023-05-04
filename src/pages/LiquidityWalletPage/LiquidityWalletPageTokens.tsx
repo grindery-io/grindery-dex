@@ -19,7 +19,7 @@ import {
   selectWalletsItems,
   selectWalletsLoading,
 } from '../../store';
-import { useUserController } from '../../controllers';
+import { useUserProvider } from '../../providers';
 import { ROUTES } from '../../config';
 import { getWalletById, getWalletChain } from '../../utils';
 
@@ -27,7 +27,7 @@ function LiquidityWalletPageTokens() {
   let navigate = useNavigate();
   let { walletId } = useParams();
   const user = useAppSelector(selectUserId);
-  const { connectUser: connect } = useUserController();
+  const { connectUser: connect } = useUserProvider();
   const chains = useAppSelector(selectChainsItems);
   const wallets = useAppSelector(selectWalletsItems);
   const walletsIsLoading = useAppSelector(selectWalletsLoading);

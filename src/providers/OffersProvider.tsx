@@ -38,7 +38,7 @@ import {
   validateOfferCreateAction,
   getNotificationObject,
 } from '../utils';
-import { useUserController } from './UserController';
+import { useUserProvider } from './UserProvider';
 import { addOffer, getOffer, getUserOffers, updateOffer } from '../services';
 import { OfferType, LiquidityWalletType, JSONRPCRequestType } from '../types';
 import { ROUTES, POOL_CONTRACT_ADDRESS } from '../config';
@@ -63,15 +63,15 @@ export const OffersContext = createContext<ContextProps>({
   handleFetchMoreOffersAction: () => {},
 });
 
-type OffersControllerProps = {
+type OffersProviderProps = {
   children: React.ReactNode;
 };
 
-export const OffersController = ({ children }: OffersControllerProps) => {
+export const OffersProvider = ({ children }: OffersProviderProps) => {
   let navigate = useNavigate();
   const accessToken = useAppSelector(selectUserAccessToken);
   const dispatch = useAppDispatch();
-  const { getSigner, getEthers } = useUserController();
+  const { getSigner, getEthers } = useUserProvider();
   const offers = useAppSelector(selectOffersItems);
   const wallets = useAppSelector(selectWalletsItems);
   const userChainId = useAppSelector(selectUserChainId);
@@ -431,6 +431,6 @@ export const OffersController = ({ children }: OffersControllerProps) => {
   );
 };
 
-export const useOffersController = () => useContext(OffersContext);
+export const useOffersProvider = () => useContext(OffersContext);
 
-export default OffersController;
+export default OffersProvider;

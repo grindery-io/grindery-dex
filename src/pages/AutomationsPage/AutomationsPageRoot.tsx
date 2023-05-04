@@ -28,7 +28,7 @@ import {
   selectChainsItems,
   selectWalletsItems,
 } from '../../store';
-import { useUserController, useAutomationsController } from '../../controllers';
+import { useUserProvider, useAutomationsProvider } from '../../providers';
 import { ROUTES } from '../../config';
 import { ChainType, LiquidityWalletType } from '../../types';
 
@@ -38,7 +38,7 @@ const AutomationsPageRoot = (props: Props) => {
   const user = useAppSelector(selectUserId);
   const accessToken = useAppSelector(selectUserAccessToken);
   const userChainId = useAppSelector(selectUserChainId);
-  const { connectUser: connect } = useUserController();
+  const { connectUser: connect } = useUserProvider();
   const input = useAppSelector(selectAutomationsInput);
   const { bot, chainId } = input;
   const chains = useAppSelector(selectChainsItems);
@@ -47,7 +47,7 @@ const AutomationsPageRoot = (props: Props) => {
   const loading = useAppSelector(selectAutomationsLoading);
   const botAddress = useAppSelector(selectAutomationsBotAddress);
   const { handleAutomationsInputChange, handleAutomationsDelegateAction } =
-    useAutomationsController();
+    useAutomationsProvider();
   const wallets = useAppSelector(selectWalletsItems);
   const wallet = wallets.find(
     (w: LiquidityWalletType) => w.chainId === chainId

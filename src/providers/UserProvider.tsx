@@ -45,7 +45,7 @@ type ContextProps = {
 };
 
 // Context provider props
-type UserControllerProps = {
+type UserProviderProps = {
   children: React.ReactNode;
 };
 
@@ -60,7 +60,7 @@ export const UserContext = createContext<ContextProps>({
   handlePopupCloseAction: () => {},
 });
 
-export const UserController = ({ children }: UserControllerProps) => {
+export const UserProvider = ({ children }: UserProviderProps) => {
   const { user, address, chain, connect, disconnect, ethers, provider, token } =
     useGrinderyNexus();
   const userChainId = useAppSelector(selectUserChainId);
@@ -236,6 +236,6 @@ export const UserController = ({ children }: UserControllerProps) => {
   );
 };
 
-export const useUserController = () => useContext(UserContext);
+export const useUserProvider = () => useContext(UserContext);
 
-export default UserController;
+export default UserProvider;

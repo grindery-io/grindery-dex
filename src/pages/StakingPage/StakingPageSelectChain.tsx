@@ -10,13 +10,13 @@ import {
   selectStakesCreateInput,
 } from '../../store';
 import { ROUTES } from '../../config';
-import { useStakesController } from '../../controllers';
+import { useStakesProvider } from '../../providers';
 import { ChainType } from '../../types';
 
 function StakingPageSelectChain() {
   let navigate = useNavigate();
   const chains = useAppSelector(selectChainsItems);
-  const { handleCreateInputChange } = useStakesController();
+  const { handleCreateInputChange } = useStakesProvider();
   const { chainId } = useAppSelector(selectStakesCreateInput);
   const currentChain = chains.find((c: ChainType) => c.chainId === chainId);
 

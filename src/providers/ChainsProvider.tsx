@@ -2,11 +2,11 @@ import React, { useCallback, useEffect } from 'react';
 import { useAppDispatch, setChainsItems, setChainsLoading } from '../store';
 import { getChainsWithTokens } from '../services';
 
-type ChainsControllerProps = {
+type ChainsProviderProps = {
   children: React.ReactNode;
 };
 
-export const ChainsController = ({ children }: ChainsControllerProps) => {
+export const ChainsProvider = ({ children }: ChainsProviderProps) => {
   const dispatch = useAppDispatch();
 
   const getChains = useCallback(async () => {
@@ -23,4 +23,4 @@ export const ChainsController = ({ children }: ChainsControllerProps) => {
   return <>{children}</>;
 };
 
-export default ChainsController;
+export default ChainsProvider;

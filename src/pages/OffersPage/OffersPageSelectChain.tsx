@@ -18,7 +18,7 @@ import {
   selectOffersCreateInput,
 } from '../../store';
 import { getChainById } from '../../utils';
-import { useOffersController } from '../../controllers';
+import { useOffersProvider } from '../../providers';
 import { ROUTES } from '../../config';
 import { getTokensByChain } from '../../utils';
 
@@ -27,7 +27,7 @@ function OffersPageSelectChain() {
   const chains = useAppSelector(selectChainsItems);
   const input = useAppSelector(selectOffersCreateInput);
   const { fromChainId } = input;
-  const { handleOfferCreateInputChange } = useOffersController();
+  const { handleOfferCreateInputChange } = useOffersProvider();
   const [searchToken, setSearchToken] = useState('');
   const fromChain = getChainById(fromChainId, chains);
   const chainLabel = fromChain?.label;

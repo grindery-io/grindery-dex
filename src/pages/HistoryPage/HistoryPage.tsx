@@ -2,7 +2,7 @@ import React from 'react';
 import { Route, Routes } from 'react-router';
 import { ROUTES } from '../../config';
 import HistoryPageRoot from './HistoryPageRoot';
-import { OrdersHistoryController } from '../../controllers';
+import { OrdersHistoryController } from '../../providers';
 import Page404 from '../Page404/Page404';
 
 type Props = {};

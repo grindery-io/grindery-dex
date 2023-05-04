@@ -12,13 +12,13 @@ import {
   selectAutomationsInput,
 } from '../../store';
 import { ROUTES } from '../../config';
-import { useAutomationsController } from '../../controllers';
+import { useAutomationsProvider } from '../../providers';
 
 type Props = {};
 
 const AutomationsPageSelectChain = (props: Props) => {
   const chains = useAppSelector(selectChainsItems);
-  const { handleAutomationsInputChange } = useAutomationsController();
+  const { handleAutomationsInputChange } = useAutomationsProvider();
   const chainsIsLoading = useAppSelector(selectChainsLoading);
   const input = useAppSelector(selectAutomationsInput);
   const { chainId } = input;

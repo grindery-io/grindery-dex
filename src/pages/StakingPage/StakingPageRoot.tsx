@@ -19,14 +19,14 @@ import {
   selectStakesLoading,
   selectUserId,
 } from '../../store';
-import { useUserController } from '../../controllers';
+import { useUserProvider } from '../../providers';
 import { ROUTES } from '../../config';
 import { getStakeChain } from '../../utils';
 
 function StakingPageRoot() {
   let navigate = useNavigate();
   const user = useAppSelector(selectUserId);
-  const { connectUser: connect } = useUserController();
+  const { connectUser: connect } = useUserProvider();
   const errorMessage = useAppSelector(selectStakesError);
   const chains = useAppSelector(selectChainsItems);
   const stakes = useAppSelector(selectStakesItems);

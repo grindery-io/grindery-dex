@@ -24,7 +24,7 @@ import {
 import { addStake, getStake, getUserStakes, updateStake } from '../services';
 import { StakeType } from '../types';
 import { getErrorMessage, isNumeric, getChainIdHex } from '../utils';
-import { useUserController } from './UserController';
+import { useUserProvider } from './UserProvider';
 import { ROUTES, GRT_CONTRACT_ADDRESS, POOL_CONTRACT_ADDRESS } from '../config';
 import { useNavigate } from 'react-router-dom';
 
@@ -60,15 +60,15 @@ export const StakesContext = createContext<ContextProps>({
   handleStakeWithdrawAction: () => {},
 });
 
-type StakesControllerProps = {
+type StakesProviderProps = {
   children: React.ReactNode;
 };
 
-export const StakesController = ({ children }: StakesControllerProps) => {
+export const StakesProvider = ({ children }: StakesProviderProps) => {
   const accessToken = useAppSelector(selectUserAccessToken);
   const dispatch = useAppDispatch();
   const stakes = useAppSelector(selectStakesItems);
-  const { getSigner, getEthers } = useUserController();
+  const { getSigner, getEthers } = useUserProvider();
   let navigate = useNavigate();
   const fetchStakes = useCallback(
     async (accessToken: string) => {
@@ -545,6 +545,6 @@ export const StakesController = ({ children }: StakesControllerProps) => {
   );
 };
 
-export const useStakesController = () => useContext(StakesContext);
+export const useStakesProvider = () => useContext(StakesContext);
 
-export default StakesController;
+export default StakesProvider;

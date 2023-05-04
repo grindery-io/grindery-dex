@@ -11,11 +11,11 @@ import {
   setMessagesStatus,
 } from '../store/slices/messagesSlice';
 
-type WebsocketControllerProps = {
+type WebsocketProviderProps = {
   children: React.ReactNode;
 };
 
-export const WebsocketController = ({ children }: WebsocketControllerProps) => {
+export const WebsocketProvider = ({ children }: WebsocketProviderProps) => {
   const dispatch = useAppDispatch();
   const accessToken = useAppSelector(selectUserAccessToken);
   const { sendMessage, lastMessage, readyState } = useWebSocket(
@@ -75,4 +75,4 @@ export const WebsocketController = ({ children }: WebsocketControllerProps) => {
   return <>{children}</>;
 };
 
-export default WebsocketController;
+export default WebsocketProvider;

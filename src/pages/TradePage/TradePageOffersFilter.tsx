@@ -22,7 +22,7 @@ import {
   selectUserChainTokenBalance,
   selectUserChainTokenBalanceLoading,
 } from '../../store';
-import { useTradeController } from '../../controllers';
+import { useTradeProvider } from '../../providers';
 import { getChainById, getTokenById } from '../../utils';
 import { TokenType } from '../../types';
 
@@ -50,7 +50,7 @@ const TradePageOffersFilter = (props: Props) => {
     handleTradeFilterChange,
     handleFromAmountMaxClick,
     handleSearchOffersAction,
-  } = useTradeController();
+  } = useTradeProvider();
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const debouncedSearch = useCallback(

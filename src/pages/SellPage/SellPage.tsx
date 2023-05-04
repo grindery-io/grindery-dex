@@ -18,7 +18,7 @@ import {
   selectUserIsAdminLoading,
 } from '../../store';
 import { ROUTES } from '../../config';
-import { WalletsController } from '../../controllers';
+import { WalletsProvider } from '../../providers';
 import Page404 from '../Page404/Page404';
 
 type Props = {};
@@ -30,7 +30,7 @@ const SellPage = (props: Props) => {
     return <Loading />;
   }
   return (
-    <WalletsController>
+    <WalletsProvider>
       {isAdmin ? (
         <>
           <SellMenu />
@@ -68,7 +68,7 @@ const SellPage = (props: Props) => {
           </PageCard>
         </>
       )}
-    </WalletsController>
+    </WalletsProvider>
   );
 };
 

@@ -18,7 +18,7 @@ import {
   selectUserChainId,
 } from '../store';
 import { isNumeric, getChainIdHex } from '../utils';
-import { useUserController } from './UserController';
+import { useUserProvider } from './UserProvider';
 import { GRT_CONTRACT_ADDRESS } from '../config';
 
 type ContextProps = {
@@ -30,7 +30,7 @@ type ContextProps = {
   handleInputChange: (name: FaucetInputFieldName, value: string) => void;
 };
 
-type FaucetControllerProps = {
+type FaucetProviderProps = {
   children: React.ReactNode;
 };
 
@@ -39,9 +39,9 @@ export const FaucetContext = createContext<ContextProps>({
   handleInputChange: () => {},
 });
 
-export const FaucetController = ({ children }: FaucetControllerProps) => {
+export const FaucetProvider = ({ children }: FaucetProviderProps) => {
   const dispatch = useAppDispatch();
-  const { getSigner, getEthers } = useUserController();
+  const { getSigner, getEthers } = useUserProvider();
   const userAddress = useAppSelector(selectUserAddress);
   const userChain = useAppSelector(selectUserChainId);
 
@@ -186,6 +186,6 @@ export const FaucetController = ({ children }: FaucetControllerProps) => {
   );
 };
 
-export const useFaucetController = () => useContext(FaucetContext);
+export const useFaucetProvider = () => useContext(FaucetContext);
 
-export default FaucetController;
+export default FaucetProvider;

@@ -25,19 +25,19 @@ import {
   selectChainsItems,
 } from '../../store';
 import { ROUTES } from '../../config';
-import { useUserController, useOffersController } from '../../controllers';
+import { useUserProvider, useOffersProvider } from '../../providers';
 import { getChainById, getTokenById } from '../../utils';
 
 function OffersPageCreate() {
   let navigate = useNavigate();
   const dispatch = useAppDispatch();
   const user = useAppSelector(selectUserId);
-  const { connectUser: connect } = useUserController();
+  const { connectUser: connect } = useUserProvider();
   const loading = useAppSelector(selectOffersLoading);
   const error = useAppSelector(selectOffersError);
   const input = useAppSelector(selectOffersCreateInput);
   const { handleOfferCreateInputChange, handleOfferCreateAction } =
-    useOffersController();
+    useOffersProvider();
   const {
     amountMin,
     amountMax,

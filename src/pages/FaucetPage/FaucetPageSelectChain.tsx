@@ -11,14 +11,14 @@ import {
   selectChainsLoading,
 } from '../../store';
 import { ROUTES } from '../../config';
-import { useFaucetController } from '../../controllers';
+import { useFaucetProvider } from '../../providers';
 import { ChainType } from '../../types';
 
 function FaucetPageSelectChain() {
   const input = useAppSelector(selectFaucetInput);
   const chain = input.chainId;
   let navigate = useNavigate();
-  const { handleInputChange } = useFaucetController();
+  const { handleInputChange } = useFaucetProvider();
   const chains = useAppSelector(selectChainsItems);
   const loading = useAppSelector(selectChainsLoading);
 

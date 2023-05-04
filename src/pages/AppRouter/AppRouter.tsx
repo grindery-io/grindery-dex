@@ -15,7 +15,7 @@ import {
   selectUserSessionExpired,
   useAppSelector,
 } from '../../store';
-import { useUserController } from '../../controllers';
+import { useUserProvider } from '../../providers';
 
 type Props = {};
 
@@ -24,7 +24,7 @@ const AppRouter = (props: Props) => {
   const advancedMode = useAppSelector(selectUserAdvancedMode);
   const advancedModeAlert = useAppSelector(selectUserAdvancedModeAlert);
   const popupClosed = useAppSelector(selectUserPopupClosed);
-  const { handlePopupCloseAction } = useUserController();
+  const { handlePopupCloseAction } = useUserProvider();
 
   return (
     <>

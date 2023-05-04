@@ -18,7 +18,7 @@ import {
   selectOrdersHistoryHasMore,
   selectOrdersHistoryLoading,
 } from '../../store';
-import { useOrdersHistoryController } from '../../controllers';
+import { useOrdersHistoryController } from '../../providers';
 import Page404 from '../Page404/Page404';
 
 type Props = {};

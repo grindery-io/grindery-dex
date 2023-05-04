@@ -25,7 +25,7 @@ import {
   selectUserAddress,
   selectPoolAbi,
 } from '../store';
-import { useUserController } from './UserController';
+import { useUserProvider } from './UserProvider';
 import { getAllOffers, addOrderRequest, getOrderRequest } from '../services';
 import { POOL_CONTRACT_ADDRESS } from '../config';
 import {
@@ -54,13 +54,13 @@ export const ShopContext = createContext<ContextProps>({
   handleFetchMoreOffersAction: () => {},
 });
 
-type ShopControllerProps = {
+type ShopProviderProps = {
   children: React.ReactNode;
 };
 
-export const ShopController = ({ children }: ShopControllerProps) => {
+export const ShopProvider = ({ children }: ShopProviderProps) => {
   const dispatch = useAppDispatch();
-  const { getSigner, getEthers } = useUserController();
+  const { getSigner, getEthers } = useUserProvider();
   const limit = 9;
   const [offset, setOffset] = useState(limit);
   const chains = useAppSelector(selectChainsItems);
@@ -365,6 +365,6 @@ export const ShopController = ({ children }: ShopControllerProps) => {
   );
 };
 
-export const useShopController = () => useContext(ShopContext);
+export const useShopProvider = () => useContext(ShopContext);
 
-export default ShopController;
+export default ShopProvider;

@@ -2,7 +2,7 @@ import React from 'react';
 import { Box } from '@mui/system';
 import { Route, Routes } from 'react-router-dom';
 import ShopPageRoot from './ShopPageRoot';
-import { ShopController } from '../../controllers';
+import { ShopProvider } from '../../providers';
 import { ROUTES } from '../../config';
 import Page404 from '../Page404/Page404';
 
@@ -10,7 +10,7 @@ type Props = {};
 
 const ShopPage = (props: Props) => {
   return (
-    <ShopController>
+    <ShopProvider>
       <Box
         display="flex"
         flexDirection="row"
@@ -25,7 +25,7 @@ const ShopPage = (props: Props) => {
           <Route path="*" element={<Page404 />} />
         </Routes>
       </Box>
-    </ShopController>
+    </ShopProvider>
   );
 };
 

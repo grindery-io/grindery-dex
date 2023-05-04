@@ -20,14 +20,14 @@ import {
   selectChainsItems,
   selectTokenAbi,
 } from '../../store';
-import { useUserController, useFaucetController } from '../../controllers';
+import { useUserProvider, useFaucetProvider } from '../../providers';
 import { ROUTES, TX_EXPLORER } from '../../config';
 import { ChainType } from '../../types';
 
 function FaucetPageRoot() {
   const user = useAppSelector(selectUserId);
   const chain = useAppSelector(selectUserChainId);
-  const { connectUser } = useUserController();
+  const { connectUser } = useUserProvider();
   const input = useAppSelector(selectFaucetInput);
   const error = useAppSelector(selectFaucetError);
   const loading = useAppSelector(selectFaucetLoading);
@@ -37,7 +37,7 @@ function FaucetPageRoot() {
   const currentChain = chains.find(
     (c: ChainType) => c.chainId === input.chainId
   );
-  const { handleInputChange, handleGetTokensAction } = useFaucetController();
+  const { handleInputChange, handleGetTokensAction } = useFaucetProvider();
   const tokenAbi = useAppSelector(selectTokenAbi);
 
   return (

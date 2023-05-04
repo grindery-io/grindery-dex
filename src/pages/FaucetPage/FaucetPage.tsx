@@ -5,7 +5,7 @@ import { ROUTES } from '../../config';
 import FaucetPageRoot from './FaucetPageRoot';
 import FaucetPageSelectChain from './FaucetPageSelectChain';
 import FaucetPagePlaceholder from './FaucetPagePlaceholder';
-import { FaucetController } from '../../controllers';
+import { FaucetProvider } from '../../providers';
 import {
   useAppSelector,
   selectUserId,
@@ -28,7 +28,7 @@ function FaucetPage() {
   }
 
   return (
-    <FaucetController>
+    <FaucetProvider>
       <FaucetMenu />
       <PageCard>
         <Routes>
@@ -51,7 +51,7 @@ function FaucetPage() {
           <Route path="*" element={<Page404 />} />
         </Routes>
       </PageCard>
-    </FaucetController>
+    </FaucetProvider>
   );
 }
 

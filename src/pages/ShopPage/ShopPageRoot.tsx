@@ -31,13 +31,13 @@ import {
   selectShopOffersHasMore,
 } from '../../store';
 import { getChainById } from '../../utils';
-import { useShopController, useUserController } from '../../controllers';
+import { useShopProvider, useUserProvider } from '../../providers';
 
 type Props = {};
 
 const ShopPageRoot = (props: Props) => {
   const dispatch = useAppDispatch();
-  const { connectUser } = useUserController();
+  const { connectUser } = useUserProvider();
   const accessToken = useAppSelector(selectUserAccessToken);
   const offers = useAppSelector(selectShopOffers);
   const loading = useAppSelector(selectShopLoading);
@@ -48,7 +48,7 @@ const ShopPageRoot = (props: Props) => {
   const fromToken = fromChain?.tokens?.find(
     (token: TokenType) => token.symbol === fromChain?.nativeToken
   );
-  const { handleAcceptOfferAction } = useShopController();
+  const { handleAcceptOfferAction } = useShopProvider();
   const advancedMode = useAppSelector(selectUserAdvancedMode);
   const [showWalletModal, setShowWalletModal] = useState(false);
 
@@ -63,7 +63,7 @@ const ShopPageRoot = (props: Props) => {
       orders.find((order: OrderType) => order.hash === orderTransactionId)) ||
     undefined;
   const { handleEmailSubmitAction, handleFetchMoreOffersAction } =
-    useShopController();
+    useShopProvider();
   const hasMore = useAppSelector(selectShopOffersHasMore);
 
   const onEmailSubmit = useCallback(

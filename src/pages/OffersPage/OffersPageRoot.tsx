@@ -20,16 +20,16 @@ import {
   selectUserId,
   selectOffersHasMore,
 } from '../../store';
-import { useUserController, useOffersController } from '../../controllers';
+import { useUserProvider, useOffersProvider } from '../../providers';
 import { ROUTES } from '../../config';
 import { OfferType } from '../../types';
 
 function OffersPageRoot() {
   const user = useAppSelector(selectUserId);
-  const { connectUser: connect } = useUserController();
+  const { connectUser: connect } = useUserProvider();
   const isActivating = useAppSelector(selectOffersActivating);
   const { handleActivationAction, handleFetchMoreOffersAction } =
-    useOffersController();
+    useOffersProvider();
   let navigate = useNavigate();
   const chains = useAppSelector(selectChainsItems);
   const offers = useAppSelector(selectOffersItems);

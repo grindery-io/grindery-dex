@@ -8,7 +8,7 @@ import {
   selectUserId,
   setUserAdvancedModeAlert,
 } from '../../store';
-import { useUserController } from '../../controllers';
+import { useUserProvider } from '../../providers';
 
 type Props = {};
 
@@ -17,7 +17,7 @@ const MainNavigationAdvancedModeAlert = (props: Props) => {
   const advancedMode = useAppSelector(selectUserAdvancedMode);
   const advancedModeAlert = useAppSelector(selectUserAdvancedModeAlert);
   const dispatch = useAppDispatch();
-  const { handleAdvancedModeToggleAction } = useUserController();
+  const { handleAdvancedModeToggleAction } = useUserProvider();
 
   return advancedMode && advancedModeAlert ? (
     <Alert

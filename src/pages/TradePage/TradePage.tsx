@@ -4,7 +4,7 @@ import { Route, Routes, useLocation } from 'react-router-dom';
 import TradePageSelectToChainAndToken from './TradePageSelectToChainAndToken';
 import TradePageOffersList from './TradePageOffersList';
 import TradePageOffersFilter from './TradePageOffersFilter';
-import { TradeController, useTradeController } from '../../controllers';
+import { TradeProvider, useTradeProvider } from '../../providers';
 import { ROUTES } from '../../config';
 import {
   useAppSelector,
@@ -47,7 +47,7 @@ const TradePage = (props: Props) => {
     undefined;
   const errorMessage = useAppSelector(selectTradeError);
   const userWalletAddress = useAppSelector(selectUserAddress);
-  const { handleEmailSubmitAction } = useTradeController();
+  const { handleEmailSubmitAction } = useTradeProvider();
 
   const onEmailSubmit = useCallback(
     async (email: string): Promise<boolean> => {
@@ -71,7 +71,7 @@ const TradePage = (props: Props) => {
   };
 
   return (
-    <TradeController>
+    <TradeProvider>
       <OrderPlacingModal
         open={showModal}
         chains={chains}
@@ -117,7 +117,7 @@ const TradePage = (props: Props) => {
           <TradePageOffersList />
         </Box>
       </Box>
-    </TradeController>
+    </TradeProvider>
   );
 };
 

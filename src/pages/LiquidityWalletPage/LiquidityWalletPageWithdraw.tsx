@@ -26,7 +26,7 @@ import {
   selectWalletsLoading,
   selectLiquidityWalletAbi,
 } from '../../store';
-import { useUserController, useWalletsController } from '../../controllers';
+import { useUserProvider, useWalletsProvider } from '../../providers';
 import { getWalletById, getWalletChain, getTokenBySymbol } from '../../utils';
 import { ROUTES } from '../../config';
 
@@ -35,7 +35,7 @@ function LiquidityWalletPageWithdraw() {
   let { walletId, tokenSymbol } = useParams();
   const dispatch = useAppDispatch();
   const user = useAppSelector(selectUserId);
-  const { connectUser: connect } = useUserController();
+  const { connectUser: connect } = useUserProvider();
   const accessToken = useAppSelector(selectUserAccessToken);
   const userChainId = useAppSelector(selectUserChainId);
   const chains = useAppSelector(selectChainsItems);
@@ -55,7 +55,7 @@ function LiquidityWalletPageWithdraw() {
       ? getTokenBySymbol(tokenSymbol, walletChain?.chainId || '', chains)
       : null;
   const { handleWalletsWithdrawtokensInputChange, handleWithdrawTokensAction } =
-    useWalletsController();
+    useWalletsProvider();
 
   useEffect(() => {
     if (!currentWallet && !walletsIsLoading) {

@@ -17,7 +17,7 @@ import { useNavigate } from 'react-router-dom';
 import Icon from '@mdi/react';
 import { mdiWaterPump } from '@mdi/js';
 import SellOutlinedIcon from '@mui/icons-material/SellOutlined';
-import { useUserController } from '../../controllers';
+import { useUserProvider } from '../../providers';
 import {
   useAppSelector,
   selectUserAddress,
@@ -41,7 +41,7 @@ const MainNavigationUserMenu = (props: Props) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const { disconnectUser, connectUser, handleAdvancedModeToggleAction } =
-    useUserController();
+    useUserProvider();
   let navigate = useNavigate();
   const userId = useAppSelector(selectUserId);
   const accessToken = useAppSelector(selectUserAccessToken);

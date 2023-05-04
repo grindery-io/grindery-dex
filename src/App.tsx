@@ -4,11 +4,11 @@ import { default as AuthenticationProvider } from 'use-grindery-nexus';
 import { ThemeProvider } from '@mui/material/styles';
 import './index.css';
 import { store } from './store';
-import { UserController, ChainsController, AbiController } from './controllers';
+import { UserProvider, ChainsProvider, AbiProvider } from './providers';
 import { theme } from './theme';
 import AppRouter from './pages/AppRouter/AppRouter';
-import WebsocketController from './controllers/WebsocketController';
-import SnackbarsController from './controllers/SnackbarsController';
+import WebsocketProvider from './providers/WebsocketProvider';
+import SnackbarsProvider from './providers/SnackbarsProvider';
 
 declare global {
   interface Window {
@@ -21,17 +21,17 @@ export const App = () => {
     <ThemeProvider theme={theme}>
       <AuthenticationProvider>
         <StoreProvider store={store}>
-          <SnackbarsController>
-            <UserController>
-              <WebsocketController>
-                <AbiController>
-                  <ChainsController>
+          <SnackbarsProvider>
+            <UserProvider>
+              <WebsocketProvider>
+                <AbiProvider>
+                  <ChainsProvider>
                     <AppRouter />
-                  </ChainsController>
-                </AbiController>
-              </WebsocketController>
-            </UserController>
-          </SnackbarsController>
+                  </ChainsProvider>
+                </AbiProvider>
+              </WebsocketProvider>
+            </UserProvider>
+          </SnackbarsProvider>
         </StoreProvider>
       </AuthenticationProvider>
     </ThemeProvider>

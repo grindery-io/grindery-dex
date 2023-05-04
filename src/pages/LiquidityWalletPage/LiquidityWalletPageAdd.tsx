@@ -25,7 +25,7 @@ import {
   selectWalletsItems,
   selectWalletsLoading,
 } from '../../store';
-import { useUserController, useWalletsController } from '../../controllers';
+import { useUserProvider, useWalletsProvider } from '../../providers';
 import { ROUTES } from '../../config';
 import {
   getWalletById,
@@ -39,7 +39,7 @@ function LiquidityWalletPageAdd() {
   let { walletId, tokenSymbol } = useParams();
   const dispatch = useAppDispatch();
   const user = useAppSelector(selectUserId);
-  const { connectUser: connect } = useUserController();
+  const { connectUser: connect } = useUserProvider();
   const accessToken = useAppSelector(selectUserAccessToken);
   const userChainId = useAppSelector(selectUserChainId);
   const chains = useAppSelector(selectChainsItems);
@@ -59,7 +59,7 @@ function LiquidityWalletPageAdd() {
       ? getTokenBySymbol(tokenSymbol, walletChain?.chainId || '', chains)
       : null;
   const { handleWalletsAddtokensInputChange, handleAddTokensAction } =
-    useWalletsController();
+    useWalletsProvider();
 
   useEffect(() => {
     if (!currentWallet && !walletsIsLoading) {

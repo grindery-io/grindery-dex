@@ -21,7 +21,7 @@ import {
   selectWalletsItems,
   selectOrdersHasMore,
 } from '../../store';
-import { useOrdersController } from '../../controllers';
+import { useOrdersProvider } from '../../providers';
 
 function OrdersPageRoot() {
   const accessToken = useAppSelector(selectUserAccessToken);
@@ -29,12 +29,12 @@ function OrdersPageRoot() {
   const liquidityWalletAbi = useAppSelector(selectLiquidityWalletAbi);
   const orders = useAppSelector(selectOrdersItems);
   const error = useAppSelector(selectOrdersError);
-  const { handleOrderCompleteAction } = useOrdersController();
+  const { handleOrderCompleteAction } = useOrdersProvider();
   const wallets = useAppSelector(selectWalletsItems);
   const chains = useAppSelector(selectChainsItems);
   const hasMore = useAppSelector(selectOrdersHasMore);
   const loading = useAppSelector(selectOrdersLoading);
-  const { handleFetchMoreOrdersAction } = useOrdersController();
+  const { handleFetchMoreOrdersAction } = useOrdersProvider();
 
   return (
     <PageCard>

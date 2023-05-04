@@ -20,7 +20,7 @@ import {
   selectTradeFilter,
 } from '../../store';
 import { getChainById, getTokensByChain } from '../../utils';
-import { useTradeController } from '../../controllers';
+import { useTradeProvider } from '../../providers';
 import { ROUTES } from '../../config';
 
 type Props = {};
@@ -36,7 +36,7 @@ const TradePageSelectChainAndToken = (props: Props) => {
   const { toChainId } = filter;
   const toChain = getChainById(toChainId, chains);
   const chainTokens = getTokensByChain(toChain);
-  const { handleTradeFilterChange } = useTradeController();
+  const { handleTradeFilterChange } = useTradeProvider();
   const [searchToken, setSearchToken] = useState('');
   const toChainTokens = chainTokens.filter(
     (t: TokenType) =>

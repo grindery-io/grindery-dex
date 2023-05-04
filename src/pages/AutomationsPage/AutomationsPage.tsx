@@ -3,7 +3,7 @@ import { Route, Routes } from 'react-router-dom';
 import AutomationsPageRoot from './AutomationsPageRoot';
 import AutomationsPageSelectChain from './AutomationsPageSelectChain';
 import { ROUTES } from '../../config';
-import { AutomationsController } from '../../controllers';
+import { AutomationsProvider } from '../../providers';
 import { PageCard } from '../../components';
 import Page404 from '../Page404/Page404';
 
@@ -11,7 +11,7 @@ type Props = {};
 
 const AutomationsPage = (props: Props) => {
   return (
-    <AutomationsController>
+    <AutomationsProvider>
       <PageCard>
         <Routes>
           <Route
@@ -25,7 +25,7 @@ const AutomationsPage = (props: Props) => {
           <Route path="*" element={<Page404 />} />
         </Routes>
       </PageCard>
-    </AutomationsController>
+    </AutomationsProvider>
   );
 };
 

@@ -6,12 +6,12 @@ import StakingPageStake from './StakingPageStake';
 import StakingPageWithdraw from './StakingPageWithdraw';
 import StakingPageSelectChain from './StakingPageSelectChain';
 import { ROUTES } from '../../config';
-import { StakesController } from '../../controllers';
+import { StakesProvider } from '../../providers';
 import Page404 from '../Page404/Page404';
 
 function StakingPage() {
   return (
-    <StakesController>
+    <StakesProvider>
       <PageCard>
         <Routes>
           <Route
@@ -33,7 +33,7 @@ function StakingPage() {
           <Route path="*" element={<Page404 />} />
         </Routes>
       </PageCard>
-    </StakesController>
+    </StakesProvider>
   );
 }
 

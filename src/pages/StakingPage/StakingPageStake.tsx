@@ -24,19 +24,19 @@ import {
   selectPoolAbi,
   selectTokenAbi,
 } from '../../store';
-import { useUserController, useStakesController } from '../../controllers';
+import { useUserProvider, useStakesProvider } from '../../providers';
 import { ROUTES } from '../../config';
 import { ChainType } from '../../types';
 
 function StakingPageStake() {
   let navigate = useNavigate();
   const user = useAppSelector(selectUserId);
-  const { connectUser: connect } = useUserController();
+  const { connectUser: connect } = useUserProvider();
   const input = useAppSelector(selectStakesCreateInput);
   const userChain = useAppSelector(selectUserChainId);
   const { amount, chainId } = input;
   const { handleCreateInputChange, handleStakeCreateAction } =
-    useStakesController();
+    useStakesProvider();
   const loading = useAppSelector(selectStakesLoading);
   const errorMessage = useAppSelector(selectStakesError);
   const approved = useAppSelector(selectStakesApproved);

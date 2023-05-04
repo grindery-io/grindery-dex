@@ -21,12 +21,12 @@ import {
   selectUserAccessToken,
   selectTradeOffersHasMore,
 } from '../../store';
-import { useTradeController, useUserController } from '../../controllers';
+import { useTradeProvider, useUserProvider } from '../../providers';
 
 type Props = {};
 
 const TradePageOffersList = (props: Props) => {
-  const { connectUser } = useUserController();
+  const { connectUser } = useUserProvider();
   const accessToken = useAppSelector(selectUserAccessToken);
   const loading = useAppSelector(selectTradeLoading);
   const foundOffers = useAppSelector(selectTradeOffers);
@@ -35,7 +35,7 @@ const TradePageOffersList = (props: Props) => {
   const advancedMode = useAppSelector(selectUserAdvancedMode);
   const [showWalletModal, setShowWalletModal] = useState(false);
   const { handleAcceptOfferAction, handleSearchMoreOffersAction } =
-    useTradeController();
+    useTradeProvider();
   const hasMore = useAppSelector(selectTradeOffersHasMore);
 
   return (

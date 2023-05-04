@@ -12,7 +12,7 @@ type Props = {
   children: React.ReactNode;
 };
 
-const SnackbarsController = (props: Props) => {
+const SnackbarsProvider = (props: Props) => {
   const { children } = props;
 
   return (
@@ -51,4 +51,4 @@ const SnackbarsController = (props: Props) => {
   );
 };
 
-export default SnackbarsController;
+export default SnackbarsProvider;

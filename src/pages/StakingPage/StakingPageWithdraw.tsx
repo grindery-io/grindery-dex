@@ -21,13 +21,13 @@ import {
   selectUserId,
   selectPoolAbi,
 } from '../../store';
-import { useUserController, useStakesController } from '../../controllers';
+import { useUserProvider, useStakesProvider } from '../../providers';
 import { ROUTES } from '../../config';
 
 function StakingPageWithdraw() {
   const user = useAppSelector(selectUserId);
   const userChainId = useAppSelector(selectUserChainId);
-  const { connectUser: connect } = useUserController();
+  const { connectUser: connect } = useUserProvider();
   const input = useAppSelector(selectStakesWithdrawInput);
   const { amount } = input;
   const loading = useAppSelector(selectStakesLoading);
@@ -37,7 +37,7 @@ function StakingPageWithdraw() {
   const stakes = useAppSelector(selectStakesItems);
   const stakesIsLoading = useAppSelector(selectStakesLoading);
   const { handleWithdrawInputChange, handleStakeWithdrawAction } =
-    useStakesController();
+    useStakesProvider();
   let { stakeId } = useParams();
   const currentStake = stakes.find((s: StakeType) => s._id === stakeId);
 

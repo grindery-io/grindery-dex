@@ -20,7 +20,7 @@ import {
 } from '../../store';
 import { ROUTES } from '../../config';
 import { getWalletById, getWalletChain } from '../../utils';
-import { useWalletsController } from '../../controllers';
+import { useWalletsProvider } from '../../providers';
 import { TokenType } from '../../types';
 
 function LiquidityWalletPageSelectToken() {
@@ -35,7 +35,7 @@ function LiquidityWalletPageSelectToken() {
   const walletChain = currentWallet
     ? getWalletChain(currentWallet, chains)
     : null;
-  const { handleWalletsAddtokensInputChange } = useWalletsController();
+  const { handleWalletsAddtokensInputChange } = useWalletsProvider();
   const tokens = (walletChain?.tokens || []).filter(
     (t: TokenType) =>
       !searchToken || t.symbol.toLowerCase().includes(searchToken.toLowerCase())

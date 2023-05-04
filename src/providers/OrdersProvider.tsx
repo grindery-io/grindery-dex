@@ -22,7 +22,7 @@ import {
   getOfferFromChain,
   switchMetamaskNetwork,
 } from '../utils';
-import { useUserController } from './UserController';
+import { useUserProvider } from './UserProvider';
 import {
   completeSellerOrderRequest,
   getSellerOrdersRequest,
@@ -49,14 +49,14 @@ export const OrdersContext = createContext<ContextProps>({
   handleFetchMoreOrdersAction: () => {},
 });
 
-type OrdersControllerProps = {
+type OrdersProviderProps = {
   children: React.ReactNode;
 };
 
-export const OrdersController = ({ children }: OrdersControllerProps) => {
+export const OrdersProvider = ({ children }: OrdersProviderProps) => {
   const dispatch = useAppDispatch();
   const accessToken = useAppSelector(selectUserAccessToken);
-  const { getSigner, getEthers } = useUserController();
+  const { getSigner, getEthers } = useUserProvider();
   const limit = 5;
   const [offset, setOffset] = useState(limit);
 
@@ -322,6 +322,6 @@ export const OrdersController = ({ children }: OrdersControllerProps) => {
   );
 };
 
-export const useOrdersController = () => useContext(OrdersContext);
+export const useOrdersProvider = () => useContext(OrdersContext);
 
-export default OrdersController;
+export default OrdersProvider;
