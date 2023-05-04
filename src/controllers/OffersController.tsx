@@ -159,67 +159,44 @@ export const OffersController = ({ children }: OffersControllerProps) => {
       return false;
     }
 
-    const userWallet = wallets.find(
-      (w: LiquidityWalletType) => w.chainId === input.fromChainId
-    )?.walletAddress;
-
-    if (!userWallet) {
-      dispatch(
-        setOffersError({
-          type: 'saveOffer',
-          text: 'Liquidity wallet is missing',
-        })
-      );
-      return false;
-    }
-
-    const fromToken = getTokenById(
-      input.fromTokenId,
-      input.fromChainId,
-      chains
-    );
-    const toToken = getTokenById(input.toTokenId, input.toChainId, chains);
-
-    if (!fromToken || !toToken) {
-      dispatch(
-        setOffersError({
-          type: 'saveOffer',
-          text: 'Tokens not found',
-        })
-      );
-      return;
-    }
-
-    // start executing
-    dispatch(setOffersLoading(true));
-
-    const inputChain = getChainById(input.toChainId || '', chains);
-    if (!inputChain) {
-      dispatch(
-        setOffersError({
-          type: 'saveOffer',
-          text: 'Chain not found',
-        })
-      );
-      dispatch(setOffersLoading(false));
-      return;
-    }
-    const networkSwitched = await switchMetamaskNetwork(
-      userChainId,
-      inputChain
-    );
-    if (!networkSwitched) {
-      dispatch(
-        setOffersError({
-          type: 'saveOffer',
-          text: 'Network switching failed. Please, switch network in your MetaMask and try again.',
-        })
-      );
-      dispatch(setOffersLoading(false));
-      return;
-    }
-
     try {
+      const userWallet = wallets.find(
+        (w: LiquidityWalletType) => w.chainId === input.fromChainId
+      )?.walletAddress;
+
+      if (!userWallet) {
+        throw new Error('Liquidity wallet is missing');
+      }
+
+      const fromToken = getTokenById(
+        input.fromTokenId,
+        input.fromChainId,
+        chains
+      );
+      const toToken = getTokenById(input.toTokenId, input.toChainId, chains);
+
+      if (!fromToken || !toToken) {
+        throw new Error('Tokens not found');
+      }
+
+      // start executing
+      dispatch(setOffersLoading(true));
+
+      const inputChain = getChainById(input.toChainId || '', chains);
+      if (!inputChain) {
+        throw new Error('Chain not found');
+      }
+
+      const networkSwitched = await switchMetamaskNetwork(
+        userChainId,
+        inputChain
+      );
+      if (!networkSwitched) {
+        throw new Error(
+          'Network switching failed. Please, switch network in your MetaMask and try again.'
+        );
+      }
+
       const ethers = getEthers();
       const signer = getSigner();
 
@@ -254,33 +231,17 @@ export const OffersController = ({ children }: OffersControllerProps) => {
       );
 
       // create offer transaction
-      let tx;
-      try {
-        tx = await poolContract.setOffer(
-          fromToken.address && fromToken.address !== '0x0'
-            ? fromToken.address
-            : ethers.constants.AddressZero,
-          parseFloat(input.fromChainId),
-          upperLimitOffer,
-          lowerLimitOffer,
-          {
-            gasLimit: 1000000,
-          }
-        );
-      } catch (error: any) {
-        dispatch(
-          setOffersError({
-            type: 'saveOffer',
-            text: getMetaMaskErrorMessage(
-              error,
-              'Create offer transaction error'
-            ),
-          })
-        );
-        console.error('setOffer error', error);
-        dispatch(setOffersLoading(false));
-        return;
-      }
+      const tx = await poolContract.setOffer(
+        fromToken.address && fromToken.address !== '0x0'
+          ? fromToken.address
+          : ethers.constants.AddressZero,
+        parseFloat(input.fromChainId),
+        upperLimitOffer,
+        lowerLimitOffer,
+        {
+          gasLimit: 1000000,
+        }
+      );
 
       // save offer to DB
       const newOffer = await createOffer(accessToken, {

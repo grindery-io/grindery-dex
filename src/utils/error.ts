@@ -40,6 +40,6 @@ export const getMetaMaskErrorMessage = (
   defaultMessage?: string
 ) => {
   return capitalizeFirstLetter(
-    error.reason || defaultMessage || 'Unknown error'
+    error.reason || error.message || defaultMessage || 'Unknown error'
   );
 };
