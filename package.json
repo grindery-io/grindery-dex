@@ -43,7 +43,6 @@
     "start:testing": "BROWSER=none REACT_APP_DELIGHT_API_URL=https://delight-api-staging.grindery.org/v2-test REACT_APP_DISABLE_POPUP=true react-scripts start",
     "build": "react-scripts build",
     "build:env:staging": "REACT_APP_DELIGHT_API_URL=https://delight-api-staging.grindery.org/v2-test react-scripts build",
-    "eject": "react-scripts eject",
     "format": "prettier --write \"src/**/*.{ts,tsx}\"",
     "cypress:open": "cypress open",
     "cypress:run": "env-cmd -f ./.env.test.local cypress run --browser chrome --headed",
