@@ -13,8 +13,13 @@ import {
   selectUserAccessToken,
   addOrdersHistoryItems,
   setOrdersHistoryTotal,
+  updateOrderItem,
 } from '../store';
-import { getBuyerOrdersRequest } from '../services';
+import { getBuyerOrdersRequest, getOrderRequest } from '../services';
+import { JSONRPCRequestType } from '../types';
+import { getNotificationObject } from '../utils';
+import { enqueueSnackbar } from 'notistack';
+import { selectMessagesItems } from '../store/slices/messagesSlice';
 
 // Context props
 type ContextProps = {
@@ -36,6 +41,7 @@ export const OrdersHistoryController = ({
   const accessToken = useAppSelector(selectUserAccessToken);
   const limit = 5;
   const [offset, setOffset] = useState(limit);
+  const messages = useAppSelector(selectMessagesItems);
 
   const fetchOrders = useCallback(
     async (accessToken: string) => {
@@ -54,11 +60,41 @@ export const OrdersHistoryController = ({
     dispatch(addOrdersHistoryItems(res?.items || []));
   }, [accessToken, offset, dispatch]);
 
+  const fetchOrder = useCallback(
+    async (id: string) => {
+      const order = await getOrderRequest(accessToken, id);
+      return order;
+    },
+    [accessToken]
+  );
+
+  const refreshOrder = useCallback(
+    async (event: JSONRPCRequestType) => {
+      if (event?.params?.type === 'order' && event?.params?.id) {
+        const offer = await fetchOrder(event.params.id);
+        if (offer) {
+          dispatch(updateOrderItem(offer));
+          const notification = getNotificationObject(event);
+          if (notification) {
+            enqueueSnackbar(notification.text, notification.props);
+          }
+        }
+      }
+    },
+    [fetchOrder, dispatch]
+  );
+
   useEffect(() => {
     if (accessToken) {
       fetchOrders(accessToken);
     }
   }, [accessToken, fetchOrders]);
+
+  useEffect(() => {
+    const allMessages = [...messages];
+    const lastMessage = allMessages.pop();
+    refreshOrder(lastMessage);
+  }, [messages, refreshOrder]);
 
   return (
     <OrdersHistoryContext.Provider

@@ -26,6 +26,23 @@ const ordersHistorySlice = createSlice({
     addOrdersHistoryItems(state, action: PayloadAction<OrderType[]>) {
       state.items = [...state.items, ...action.payload];
     },
+    updateOrderItem(state, action: PayloadAction<OrderType>) {
+      if (
+        state.items.find((item: OrderType) => item._id === action.payload._id)
+      ) {
+        state.items = [
+          ...state.items.map((item: OrderType) => {
+            if (item._id === action.payload._id) {
+              return action.payload;
+            } else {
+              return item;
+            }
+          }),
+        ];
+      } else {
+        state.items = [...state.items, action.payload];
+      }
+    },
     setOrdersHistoryTotal(state, action: PayloadAction<number>) {
       state.total = action.payload;
     },
@@ -60,6 +77,7 @@ export const {
   clearOrdersHistoryError,
   addOrdersHistoryItems,
   setOrdersHistoryTotal,
+  updateOrderItem,
 } = ordersHistorySlice.actions;
 
 export default ordersHistorySlice.reducer;
