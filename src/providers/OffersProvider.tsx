@@ -241,7 +241,7 @@ export const OffersProvider = ({ children }: OffersProviderProps) => {
         tokenAddress: fromToken.address || '',
         hash: tx.hash || '',
         exchangeRate: input.exchangeRate || '',
-        exchangeToken: toToken.symbol || 'ETH',
+        exchangeToken: toToken.symbol || '',
         exchangeChainId: input.toChainId,
         estimatedTime: input.estimatedTime || '',
         provider: userWallet || '',
