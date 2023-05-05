@@ -16,9 +16,9 @@ import {
   useAppSelector,
 } from '../store';
 import { getNotificationObject } from '../utils';
-import { useNavigate } from 'react-router';
 import { ROUTES } from '../config';
 import { selectMessagesItems } from '../store/slices/messagesSlice';
+import { router } from '..';
 
 type Props = {
   children: React.ReactNode;
@@ -26,7 +26,6 @@ type Props = {
 
 const SnackbarsProvider = (props: Props) => {
   const { children } = props;
-  const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const accessToken = useAppSelector(selectUserAccessToken);
   const messages = useAppSelector(selectMessagesItems);
@@ -48,7 +47,7 @@ const SnackbarsProvider = (props: Props) => {
                     size="small"
                     color="inherit"
                     onClick={() => {
-                      navigate(ROUTES.SELL.OFFERS.ROOT.FULL_PATH);
+                      router.navigate(ROUTES.SELL.OFFERS.ROOT.FULL_PATH);
                       closeSnackbar(snackbarId);
                     }}
                   >
@@ -69,13 +68,12 @@ const SnackbarsProvider = (props: Props) => {
         }
       }
     },
-    [accessToken, dispatch, navigate]
+    [accessToken, dispatch]
   );
 
   useEffect(() => {
     const allMessages = [...messages];
     const lastMessage = allMessages.pop();
-
     refreshOffer(lastMessage);
   }, [messages, refreshOffer]);
 
