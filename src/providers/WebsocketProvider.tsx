@@ -3,13 +3,11 @@ import useWebSocket, { ReadyState } from 'react-use-websocket';
 import { WEBSOCKET_URL } from '../config';
 import {
   selectUserAccessToken,
+  setMessagesItem,
+  setMessagesStatus,
   useAppDispatch,
   useAppSelector,
 } from '../store';
-import {
-  setMessagesItem,
-  setMessagesStatus,
-} from '../store/slices/messagesSlice';
 
 type WebsocketProviderProps = {
   children: React.ReactNode;

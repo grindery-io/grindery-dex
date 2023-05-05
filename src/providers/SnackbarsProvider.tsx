@@ -8,16 +8,17 @@ import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
 import TaskAltOutlinedIcon from '@mui/icons-material/TaskAltOutlined';
 import { NotistackSnackbar } from '../components';
 import { JSONRPCRequestType } from '../types';
-import { getOfferById } from '../services';
+import { getOfferById, getOrderByIdRequest } from '../services';
 import {
+  selectMessagesItems,
   selectUserAccessToken,
   updateOfferItem,
+  updateOrderHistoryItem,
   useAppDispatch,
   useAppSelector,
 } from '../store';
 import { getNotificationObject } from '../utils';
 import { ROUTES } from '../config';
-import { selectMessagesItems } from '../store/slices/messagesSlice';
 import { router } from '..';
 
 type Props = {
@@ -30,52 +31,76 @@ const SnackbarsProvider = (props: Props) => {
   const accessToken = useAppSelector(selectUserAccessToken);
   const messages = useAppSelector(selectMessagesItems);
 
-  const refreshOffer = useCallback(
+  const showNotification = useCallback((event: JSONRPCRequestType) => {
+    const notification = getNotificationObject(event);
+    if (notification) {
+      let route = '';
+      switch (event?.params?.type) {
+        case 'offer':
+          route = ROUTES.SELL.OFFERS.ROOT.FULL_PATH;
+          break;
+        case 'order':
+          route = ROUTES.HISTORY.ROOT.FULL_PATH;
+          break;
+      }
+      enqueueSnackbar(notification.text, {
+        ...notification.props,
+        persist: true,
+        action: (snackbarId) => (
+          <>
+            {route && (
+              <Button
+                size="small"
+                color="inherit"
+                onClick={() => {
+                  router.navigate(route);
+                  closeSnackbar(snackbarId);
+                }}
+              >
+                View
+              </Button>
+            )}
+            <IconButton
+              className="notistack__close"
+              size="small"
+              onClick={() => closeSnackbar(snackbarId)}
+              color="inherit"
+            >
+              <CloseIcon fontSize="small" />
+            </IconButton>
+          </>
+        ),
+      });
+    }
+  }, []);
+
+  const updateStateAndShowNotification = useCallback(
     async (event: JSONRPCRequestType) => {
-      if (accessToken && event?.params?.type === 'offer' && event?.params?.id) {
-        const offer = await getOfferById(accessToken, event.params.id);
-        if (offer) {
-          dispatch(updateOfferItem(offer));
-          const notification = getNotificationObject(event);
-          if (notification) {
-            enqueueSnackbar(notification.text, {
-              ...notification.props,
-              persist: true,
-              action: (snackbarId) => (
-                <>
-                  <Button
-                    size="small"
-                    color="inherit"
-                    onClick={() => {
-                      router.navigate(ROUTES.SELL.OFFERS.ROOT.FULL_PATH);
-                      closeSnackbar(snackbarId);
-                    }}
-                  >
-                    View
-                  </Button>
-                  <IconButton
-                    className="notistack__close"
-                    size="small"
-                    onClick={() => closeSnackbar(snackbarId)}
-                    color="inherit"
-                  >
-                    <CloseIcon fontSize="small" />
-                  </IconButton>
-                </>
-              ),
-            });
+      if (accessToken && event?.params?.id) {
+        if (event?.params?.type === 'offer') {
+          const offer = await getOfferById(accessToken, event.params.id);
+          if (offer) {
+            dispatch(updateOfferItem(offer));
+            showNotification(event);
+          }
+        }
+        if (event?.params?.type === 'order') {
+          const order = await getOrderByIdRequest(accessToken, event.params.id);
+          if (order) {
+            dispatch(updateOrderHistoryItem(order));
+            showNotification(event);
           }
         }
       }
     },
-    [accessToken, dispatch]
+    [accessToken, dispatch, showNotification]
   );
 
   useEffect(() => {
     const allMessages = [...messages];
     const lastMessage = allMessages.pop();
-    refreshOffer(lastMessage);
-  }, [messages, refreshOffer]);
+    updateStateAndShowNotification(lastMessage);
+  }, [messages, updateStateAndShowNotification]);
 
   return (
     <>

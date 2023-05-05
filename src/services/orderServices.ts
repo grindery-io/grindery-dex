@@ -62,6 +62,36 @@ export const getOrderRequest = (
   });
 };
 
+export const getOrderByIdRequest = (
+  accessToken: string,
+  id: string
+): Promise<OrderType> => {
+  return new Promise((resolve, reject) => {
+    try {
+      axios
+        .get(`${DELIGHT_API_URL}/orders/orderId?orderId=${id}`, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        })
+        .then((res) => {
+          if (res?.data) {
+            resolve(res.data);
+          } else {
+            reject('Order not found');
+          }
+        })
+        .catch((err) => {
+          console.error('getOrderRequest > axios err=', err);
+          reject('Error in getOrderRequest axios');
+        });
+    } catch (error) {
+      console.error('in orderServices > getOrderRequest, Err===', error);
+      reject('System error. Please try again later!');
+    }
+  });
+};
+
 export const getBuyerOrdersRequest = (
   accessToken: string,
   limit?: number,
