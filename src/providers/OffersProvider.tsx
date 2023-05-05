@@ -390,6 +390,12 @@ export const OffersProvider = ({ children }: OffersProviderProps) => {
     }
   }, [error]);
 
+  useEffect(() => {
+    return () => {
+      dispatch(setOffersError({ type: '', text: '' }));
+    };
+  }, [dispatch]);
+
   return (
     <OffersContext.Provider
       value={{
