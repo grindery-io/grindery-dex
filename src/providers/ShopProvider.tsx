@@ -30,10 +30,10 @@ import { getAllOffers, addOrderRequest, getOrderRequest } from '../services';
 import { POOL_CONTRACT_ADDRESS } from '../config';
 import { OfferType, OrderPlacingStatusType, ErrorMessageType } from '../types';
 import {
-  getErrorMessage,
   getChainById,
   switchMetamaskNetwork,
   getTokenBySymbol,
+  getMetaMaskErrorMessage,
 } from '../utils';
 import { addGsheetRowRequest } from '../services/gsheetServices';
 
@@ -168,99 +168,73 @@ export const ShopProvider = ({ children }: ShopProviderProps) => {
         return;
       }
 
-      const exchangeToken = getTokenBySymbol(
-        offer.exchangeToken,
-        offer.exchangeChainId,
-        chains
-      );
-
-      dispatch(setShopOfferId(offer.offerId || ''));
-
-      const inputChain = getChainById(offer.exchangeChainId, chains);
-      if (!inputChain) {
-        dispatch(
-          setShopError({
-            type: 'acceptOffer',
-            text: 'Chain not found',
-          })
-        );
-        dispatch(setShopOfferId(''));
-        dispatch(setShopOorderStatus(OrderPlacingStatusType.ERROR));
-        return;
-      }
-      if (userChainId !== offer.exchangeChainId) {
-        dispatch(
-          setShopOorderStatus(OrderPlacingStatusType.WAITING_NETWORK_SWITCH)
-        );
-      }
-      const networkSwitched = await switchMetamaskNetwork(
-        userChainId,
-        inputChain
-      );
-      if (!networkSwitched) {
-        dispatch(
-          setShopError({
-            type: 'acceptOffer',
-            text: 'Network switching failed. Please, switch network in your MetaMask and try again.',
-          })
-        );
-        dispatch(setShopOfferId(''));
-        dispatch(setShopOorderStatus(OrderPlacingStatusType.ERROR));
-        return;
-      }
-
-      dispatch(
-        setShopOorderStatus(OrderPlacingStatusType.WAITING_CONFIRMATION)
-      );
-
-      // get signer
-      const signer = getSigner();
-      const ethers = getEthers();
-
-      const amountToPay = (
-        parseFloat(offer.amount || '0') * parseFloat(offer.exchangeRate || '0')
-      ).toString();
-
-      // set pool contract
-      const _poolContract = new ethers.Contract(
-        POOL_CONTRACT_ADDRESS[`eip155:${offer.exchangeChainId}`],
-        poolAbi,
-        signer
-      );
-
-      // connect signer
-      const poolContract = _poolContract.connect(signer);
-
-      // get gas estimation
-      const gasEstimate = await poolContract.estimateGas
-        .depositETHAndAcceptOffer(
-          offer.offerId,
-          userAddress,
-          ethers.utils.parseEther(
-            parseFloat(offer.amount || '0')
-              .toFixed(18)
-              .toString()
-          ),
-          {
-            value: ethers.utils.parseEther(amountToPay),
-          }
-        )
-        .catch((error: any) => {
-          dispatch(
-            setShopError({
-              type: 'acceptOffer',
-              text: getErrorMessage(error.error, 'Gas estimation error'),
-            })
-          );
-          dispatch(setShopOfferId(''));
-          dispatch(setShopOorderStatus(OrderPlacingStatusType.ERROR));
-          return;
-        });
-
-      // create transaction
-      let tx;
       try {
-        tx = await poolContract.depositETHAndAcceptOffer(
+        const exchangeToken = getTokenBySymbol(
+          offer.exchangeToken,
+          offer.exchangeChainId,
+          chains
+        );
+
+        dispatch(setShopOfferId(offer.offerId || ''));
+
+        const inputChain = getChainById(offer.exchangeChainId, chains);
+        if (!inputChain) {
+          throw new Error('Chain not found');
+        }
+        if (userChainId !== offer.exchangeChainId) {
+          dispatch(
+            setShopOorderStatus(OrderPlacingStatusType.WAITING_NETWORK_SWITCH)
+          );
+        }
+        const networkSwitched = await switchMetamaskNetwork(
+          userChainId,
+          inputChain
+        );
+        if (!networkSwitched) {
+          throw new Error(
+            'Network switching failed. Please, switch network in your MetaMask and try again.'
+          );
+        }
+
+        dispatch(
+          setShopOorderStatus(OrderPlacingStatusType.WAITING_CONFIRMATION)
+        );
+
+        // get signer
+        const signer = getSigner();
+        const ethers = getEthers();
+
+        const amountToPay = (
+          parseFloat(offer.amount || '0') *
+          parseFloat(offer.exchangeRate || '0')
+        ).toString();
+
+        // set pool contract
+        const _poolContract = new ethers.Contract(
+          POOL_CONTRACT_ADDRESS[`eip155:${offer.exchangeChainId}`],
+          poolAbi,
+          signer
+        );
+
+        // connect signer
+        const poolContract = _poolContract.connect(signer);
+
+        // get gas estimation
+        const gasEstimate =
+          await poolContract.estimateGas.depositETHAndAcceptOffer(
+            offer.offerId,
+            userAddress,
+            ethers.utils.parseEther(
+              parseFloat(offer.amount || '0')
+                .toFixed(18)
+                .toString()
+            ),
+            {
+              value: ethers.utils.parseEther(amountToPay),
+            }
+          );
+
+        const tx = await poolContract.depositETHAndAcceptOffer(
           offer.offerId,
           userAddress,
           ethers.utils.parseEther(
@@ -273,66 +247,40 @@ export const ShopProvider = ({ children }: ShopProviderProps) => {
             gasLimit: gasEstimate,
           }
         );
+
+        // save order to DB
+        const order = await addOrderRequest(accessToken, {
+          amountTokenDeposit: amountToPay,
+          addressTokenDeposit: exchangeToken?.address || '',
+          chainIdTokenDeposit: offer.exchangeChainId,
+          destAddr: userAddress,
+          offerId: offer.offerId,
+          orderId: '',
+          amountTokenOffer: offer.amount,
+          hash: tx.hash || '',
+        });
+        if (order) {
+          fetchSingleOrder(order);
+          dispatch(setShopOrderTransactionId(tx.hash || ''));
+          dispatch(setShopOorderStatus(OrderPlacingStatusType.COMPLETED));
+        } else {
+          dispatch(
+            setShopError({
+              type: 'acceptOffer',
+              text: "Server error, order wasn't saved",
+            })
+          );
+        }
       } catch (error: any) {
         dispatch(
           setShopError({
             type: 'acceptOffer',
-            text: getErrorMessage(error.error, 'Transaction rejected'),
+            text:
+              getMetaMaskErrorMessage(error) ||
+              'Server error, please try again later.',
           })
         );
-        console.error('depositGRTWithOffer error', error);
-        dispatch(setShopOfferId(''));
         dispatch(setShopOorderStatus(OrderPlacingStatusType.ERROR));
-        return;
-      }
-
-      // save order to DB
-      const order = await addOrderRequest(accessToken, {
-        amountTokenDeposit: amountToPay,
-        addressTokenDeposit: exchangeToken?.address || '',
-        chainIdTokenDeposit: offer.exchangeChainId,
-        destAddr: userAddress,
-        offerId: offer.offerId,
-        orderId: '',
-        amountTokenOffer: offer.amount,
-        hash: tx.hash || '',
-      }).catch((error: any) => {
-        console.error('saveOrder error', error);
-        dispatch(
-          setShopError({
-            type: 'acceptOffer',
-            text: error?.message || 'Server error',
-          })
-        );
-        dispatch(setShopOfferId(''));
-        dispatch(setShopOorderStatus(OrderPlacingStatusType.ERROR));
-      });
-      if (order) {
-        // get created order
-        try {
-          fetchSingleOrder(order);
-        } catch (error: any) {
-          console.error('saveOrder error', error);
-          dispatch(
-            setShopError({
-              type: 'acceptOffer',
-              text: error?.message || "Server error, order wasn't found",
-            })
-          );
-          dispatch(setShopOfferId(''));
-          dispatch(setShopOorderStatus(OrderPlacingStatusType.ERROR));
-          return;
-        }
-
-        dispatch(setShopOrderTransactionId(tx.hash || ''));
-        dispatch(setShopOorderStatus(OrderPlacingStatusType.COMPLETED));
-      } else {
-        dispatch(
-          setShopError({
-            type: 'acceptOffer',
-            text: "Server error, order wasn't saved",
-          })
-        );
       }
       dispatch(setShopOfferId(''));
     },

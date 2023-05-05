@@ -42,6 +42,7 @@ type ContextProps = {
   getSigner: () => any;
   handleAdvancedModeToggleAction: (userId: string, newMode: boolean) => void;
   handlePopupCloseAction: () => void;
+  getTokenPriceBySymbol: (tokenSymbol: string) => Promise<number>;
 };
 
 // Context provider props
@@ -58,11 +59,13 @@ export const UserContext = createContext<ContextProps>({
   getSigner: () => {},
   handleAdvancedModeToggleAction: () => {},
   handlePopupCloseAction: () => {},
+  getTokenPriceBySymbol: async () => 0,
 });
 
 export const UserProvider = ({ children }: UserProviderProps) => {
   const { user, address, chain, connect, disconnect, ethers, provider, token } =
     useGrinderyNexus();
+  const accessToken = useAppSelector(selectUserAccessToken);
   const userChainId = useAppSelector(selectUserChainId);
   const userAccessToken = useAppSelector(selectUserAccessToken);
   const userAddress = useAppSelector(selectUserAddress);
@@ -104,13 +107,21 @@ export const UserProvider = ({ children }: UserProviderProps) => {
   );
 
   const fetchChainTokenPrice = useCallback(
-    async (accessToken: string) => {
+    async (tokenSymbol: string) => {
       dispatch(setUserChainTokenPriceLoading(true));
-      const price = await getTokenPriceById(accessToken, userChainTokenSymbol);
+      const price = await getTokenPriceById(accessToken, tokenSymbol);
       dispatch(setUserChainTokenPrice(price));
       dispatch(setUserChainTokenPriceLoading(false));
     },
-    [userChainTokenSymbol, dispatch]
+    [accessToken, dispatch]
+  );
+
+  const getTokenPriceBySymbol = useCallback(
+    async (tokenSymbol: string) => {
+      const price = await getTokenPriceById(accessToken, tokenSymbol);
+      return price;
+    },
+    [accessToken]
   );
 
   const fetchChainTokenBalance = useCallback(
@@ -173,7 +184,7 @@ export const UserProvider = ({ children }: UserProviderProps) => {
   useEffect(() => {
     if (userChainId && userAccessToken && userAddress && userChainTokenSymbol) {
       fetchChainTokenBalance(userAccessToken, userAddress);
-      fetchChainTokenPrice(userAccessToken);
+      fetchChainTokenPrice(userChainTokenSymbol);
     } else {
       dispatch(setUserChainTokenBalance('0'));
       dispatch(setUserChainTokenPrice(null));
@@ -230,6 +241,7 @@ export const UserProvider = ({ children }: UserProviderProps) => {
         getSigner,
         handleAdvancedModeToggleAction,
         handlePopupCloseAction,
+        getTokenPriceBySymbol,
       }}
     >
       {children}

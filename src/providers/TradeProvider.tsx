@@ -34,7 +34,7 @@ import {
 } from '../store';
 import {
   getChainById,
-  getErrorMessage,
+  getMetaMaskErrorMessage,
   getTokenById,
   getTokenBySymbol,
   isNumeric,
@@ -358,90 +358,72 @@ export const TradeProvider = ({ children }: TradeProviderProps) => {
         return;
       }
 
-      const exchangeToken = getTokenBySymbol(
-        offer?.exchangeToken || '',
-        offer?.exchangeChainId || '',
-        chains
-      );
-
-      dispatch(setTradeOfferId(offer.offerId || ''));
-
-      if (userChainId !== offer.exchangeChainId) {
-        dispatch(
-          setTradeOrderStatus(OrderPlacingStatusType.WAITING_NETWORK_SWITCH)
-        );
-      }
-
-      const inputChain = getChainById(offer.exchangeChainId || '', chains);
-      if (!inputChain) {
-        dispatch(
-          setTradeError({
-            type: 'acceptOffer',
-            text: 'Chain not found',
-          })
-        );
-        dispatch(setTradeOfferId(''));
-        dispatch(setTradeOrderStatus(OrderPlacingStatusType.ERROR));
-        return;
-      }
-      const networkSwitched = await switchMetamaskNetwork(
-        userChainId,
-        inputChain
-      );
-      if (!networkSwitched) {
-        dispatch(
-          setTradeError({
-            type: 'acceptOffer',
-            text: 'Network switching failed. Please, switch network in your MetaMask and try again.',
-          })
-        );
-        dispatch(setTradeOfferId(''));
-        dispatch(setTradeOrderStatus(OrderPlacingStatusType.ERROR));
-        return;
-      }
-
-      dispatch(
-        setTradeOrderStatus(OrderPlacingStatusType.WAITING_CONFIRMATION)
-      );
-
-      // get signer
-      const signer = getSigner();
-      const ethers = getEthers();
-
-      const amountToPay = amount;
-
-      // set pool contract
-      const _poolContract = new ethers.Contract(
-        POOL_CONTRACT_ADDRESS[`eip155:${offer.exchangeChainId}`],
-        poolAbi,
-        signer
-      );
-
-      // connect signer
-      const poolContract = _poolContract.connect(signer);
-
-      // get gas estimation
-      const gasEstimate = await poolContract.estimateGas
-        .depositETHAndAcceptOffer(
-          offer.offerId,
-          userAddress,
-          ethers.utils.parseEther(
-            parseFloat(offer.amount || '0')
-              .toFixed(18)
-              .toString()
-          ),
-          {
-            value: ethers.utils.parseEther(amountToPay),
-          }
-        )
-        .catch((error: any) => {
-          console.log('gasEstimate error:', error);
-        });
-
-      // create transaction
-      let tx;
       try {
-        tx = await poolContract.depositETHAndAcceptOffer(
+        const exchangeToken = getTokenBySymbol(
+          offer?.exchangeToken || '',
+          offer?.exchangeChainId || '',
+          chains
+        );
+
+        dispatch(setTradeOfferId(offer.offerId || ''));
+
+        if (userChainId !== offer.exchangeChainId) {
+          dispatch(
+            setTradeOrderStatus(OrderPlacingStatusType.WAITING_NETWORK_SWITCH)
+          );
+        }
+
+        const inputChain = getChainById(offer.exchangeChainId || '', chains);
+        if (!inputChain) {
+          throw new Error('Chain not found');
+        }
+        const networkSwitched = await switchMetamaskNetwork(
+          userChainId,
+          inputChain
+        );
+        if (!networkSwitched) {
+          throw new Error(
+            'Network switching failed. Please, switch network in your MetaMask and try again.'
+          );
+        }
+
+        dispatch(
+          setTradeOrderStatus(OrderPlacingStatusType.WAITING_CONFIRMATION)
+        );
+
+        // get signer
+        const signer = getSigner();
+        const ethers = getEthers();
+
+        const amountToPay = amount;
+
+        // set pool contract
+        const _poolContract = new ethers.Contract(
+          POOL_CONTRACT_ADDRESS[`eip155:${offer.exchangeChainId}`],
+          poolAbi,
+          signer
+        );
+
+        // connect signer
+        const poolContract = _poolContract.connect(signer);
+
+        // get gas estimation
+        const gasEstimate =
+          await poolContract.estimateGas.depositETHAndAcceptOffer(
+            offer.offerId,
+            userAddress,
+            ethers.utils.parseEther(
+              parseFloat(offer.amount || '0')
+                .toFixed(18)
+                .toString()
+            ),
+            {
+              value: ethers.utils.parseEther(amountToPay),
+            }
+          );
+
+        // create transaction
+        const tx = await poolContract.depositETHAndAcceptOffer(
           offer.offerId,
           userAddress,
           ethers.utils.parseEther(
@@ -454,65 +436,41 @@ export const TradeProvider = ({ children }: TradeProviderProps) => {
             gasLimit: gasEstimate,
           }
         );
+
+        // save order to DB
+        const order = await addOrderRequest(accessToken, {
+          amountTokenDeposit: amountToPay,
+          addressTokenDeposit: exchangeToken?.address || '',
+          chainIdTokenDeposit: offer.exchangeChainId,
+          destAddr: userAddress,
+          offerId: offer.offerId,
+          orderId: '',
+          amountTokenOffer: (
+            parseFloat(amount) / parseFloat(offer.exchangeRate || '1')
+          ).toString(),
+          hash: tx.hash || '',
+        });
+        if (order) {
+          fetchSingleOrder(order);
+
+          dispatch(setTradeOrderTransactionId(tx.hash || ''));
+          dispatch(setTradeOrderStatus(OrderPlacingStatusType.COMPLETED));
+        } else {
+          dispatch(
+            setTradeError({
+              type: 'acceptOffer',
+              text: "Server error, order wasn't saved",
+            })
+          );
+          dispatch(setTradeOrderStatus(OrderPlacingStatusType.ERROR));
+        }
       } catch (error: any) {
         dispatch(
           setTradeError({
             type: 'acceptOffer',
-            text: getErrorMessage(error.error, 'Transaction rejected'),
-          })
-        );
-        console.error('depositGRTWithOffer error', error);
-        dispatch(setTradeOfferId(''));
-        dispatch(setTradeOrderStatus(OrderPlacingStatusType.ERROR));
-        return;
-      }
-
-      // save order to DB
-      const order = await addOrderRequest(accessToken, {
-        amountTokenDeposit: amountToPay,
-        addressTokenDeposit: exchangeToken?.address || '',
-        chainIdTokenDeposit: offer.exchangeChainId,
-        destAddr: userAddress,
-        offerId: offer.offerId,
-        orderId: '',
-        amountTokenOffer: (
-          parseFloat(amount) / parseFloat(offer.exchangeRate || '1')
-        ).toString(),
-        hash: tx.hash || '',
-      }).catch((error: any) => {
-        console.error('saveOrder error', error);
-        dispatch(
-          setTradeError({
-            type: 'acceptOffer',
-            text: error?.message || 'Server error',
-          })
-        );
-        dispatch(setTradeOfferId(''));
-        dispatch(setTradeOrderStatus(OrderPlacingStatusType.ERROR));
-      });
-      if (order) {
-        try {
-          fetchSingleOrder(order);
-        } catch (error: any) {
-          console.error('saveOrder error', error);
-          dispatch(
-            setTradeError({
-              type: 'acceptOffer',
-              text: error?.message || "Server error, order wasn't found",
-            })
-          );
-          dispatch(setTradeOfferId(''));
-          dispatch(setTradeOrderStatus(OrderPlacingStatusType.ERROR));
-          return;
-        }
-
-        dispatch(setTradeOrderTransactionId(tx.hash || ''));
-        dispatch(setTradeOrderStatus(OrderPlacingStatusType.COMPLETED));
-      } else {
-        dispatch(
-          setTradeError({
-            type: 'acceptOffer',
-            text: "Server error, order wasn't saved",
+            text:
+              getMetaMaskErrorMessage(error) ||
+              'Server error, please try again later.',
           })
         );
         dispatch(setTradeOrderStatus(OrderPlacingStatusType.ERROR));

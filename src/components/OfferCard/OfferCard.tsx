@@ -17,6 +17,7 @@ export type OfferCardProps = {
   accepting: string;
   advancedMode?: boolean;
   onAcceptOfferClick: (offer: OfferType) => void;
+  getTokenPrice: (tokenSymbol: string) => Promise<number>;
 };
 
 const OfferCard = (props: OfferCardProps) => {

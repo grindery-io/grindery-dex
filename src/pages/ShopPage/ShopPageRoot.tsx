@@ -37,7 +37,7 @@ type Props = {};
 
 const ShopPageRoot = (props: Props) => {
   const dispatch = useAppDispatch();
-  const { connectUser } = useUserProvider();
+  const { connectUser, getTokenPriceBySymbol } = useUserProvider();
   const accessToken = useAppSelector(selectUserAccessToken);
   const offers = useAppSelector(selectShopOffers);
   const loading = useAppSelector(selectShopLoading);
@@ -193,6 +193,7 @@ const ShopPageRoot = (props: Props) => {
                       handleAcceptOfferAction(offer);
                     }
                   }}
+                  getTokenPrice={getTokenPriceBySymbol}
                 />
               ))}
             </Stack>

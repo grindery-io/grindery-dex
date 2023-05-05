@@ -1,22 +1,46 @@
-import React from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Avatar, Badge, Box, Skeleton, Stack, Typography } from '@mui/material';
 import { ChainTokenBox } from '../ChainTokenBox/ChainTokenBox';
 import { AvatarDefault } from '../Avatar/AvatarDefault';
 import {
+  getChainById,
   getOfferAmount,
   getOfferExchangeAmount,
   getOfferFromChain,
   getOfferFromToken,
   getOfferUSDAmount,
+  getTokenBySymbol,
 } from '../../utils';
 import { OfferCardProps } from './OfferCard';
 
 const OfferCardBody = (props: OfferCardProps) => {
-  const { offer, fromToken, fromChain, tokenPrice, chains } = props;
+  const { offer, chains, getTokenPrice } = props;
   const chain = getOfferFromChain(offer, chains);
   const token = getOfferFromToken(offer, chains);
   const fromAmount = getOfferExchangeAmount(offer);
+
+  const fromChain = getChainById(offer.exchangeChainId, chains);
+  const fromToken = getTokenBySymbol(
+    offer.exchangeToken,
+    offer.exchangeChainId,
+    chains
+  );
+  const [tokenPrice, setTokenPrice] = useState<number | null>(null);
   const price = getOfferUSDAmount(offer, tokenPrice);
+
+  const fetchTokenPrice = useCallback(
+    async (tokenSymbol: string) => {
+      const p = await getTokenPrice(tokenSymbol);
+      setTokenPrice(p || null);
+    },
+    [getTokenPrice]
+  );
+
+  useEffect(() => {
+    if (fromToken) {
+      fetchTokenPrice(fromToken.symbol);
+    }
+  }, [fromToken, fetchTokenPrice]);
 
   return (
     <>
@@ -311,7 +335,13 @@ const OfferCardBody = (props: OfferCardProps) => {
                     fontWeight: '500',
                   },
                 }}
-                title={fromAmount !== '0' ? `${fromAmount} ETH` : <Skeleton />}
+                title={
+                  fromAmount !== '0' ? (
+                    `${fromAmount} ${fromToken?.symbol || ''}`
+                  ) : (
+                    <Skeleton />
+                  )
+                }
                 subheader={price !== '0' ? `US$${price}` : ''}
                 selected={true}
                 compact={false}
