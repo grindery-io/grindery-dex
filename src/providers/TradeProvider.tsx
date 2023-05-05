@@ -92,19 +92,19 @@ type TradeProviderProps = {
 export const TradeProvider = ({ children }: TradeProviderProps) => {
   const accessToken = useAppSelector(selectUserAccessToken);
   const dispatch = useAppDispatch();
+  const userChainId = useAppSelector(selectUserChainId);
   const filter = useAppSelector(selectTradeFilter);
   const { toTokenId, amount } = filter;
   const { getSigner, getEthers } = useUserProvider();
   const limit = 5;
   const [offset, setOffset] = useState(limit);
   const chains = useAppSelector(selectChainsItems);
-  const fromChain = getChainById('5', chains);
+  const fromChain = getChainById(userChainId, chains);
   const fromToken = fromChain?.tokens?.find(
     (token: TokenType) => token.symbol === fromChain?.nativeToken
   );
   const fromChainId = fromChain?.chainId;
   const fromTokenId = fromToken?.coinmarketcapId;
-  const userChainId = useAppSelector(selectUserChainId);
   const userAddress = useAppSelector(selectUserAddress);
   const poolAbi = useAppSelector(selectPoolAbi);
 
@@ -241,9 +241,10 @@ export const TradeProvider = ({ children }: TradeProviderProps) => {
       dispatch(setTradeLoading(true));
       dispatch(setTradeOffersVisible(true));
       const toToken = getTokenById(filter.toTokenId, filter.toChainId, chains);
+      const fromToken = getTokenById(fromTokenId, fromChainId, chains);
       const query = {
-        exchangeChainId: '5',
-        exchangeToken: 'ETH',
+        exchangeChainId: fromChainId,
+        exchangeToken: fromToken?.symbol || '',
         chainId: filter.toChainId,
         token: toToken?.symbol || '',
         depositAmount: filter.amount,
@@ -279,9 +280,14 @@ export const TradeProvider = ({ children }: TradeProviderProps) => {
     }
     dispatch(setTradeOffersVisible(true));
     const toToken = getTokenById(filter.toTokenId, filter.toChainId, chains);
+    const fromToken = getTokenById(
+      fromTokenId || '',
+      fromChainId || '',
+      chains
+    );
     const query = {
-      exchangeChainId: '5',
-      exchangeToken: 'ETH',
+      exchangeChainId: fromChainId || '',
+      exchangeToken: fromToken?.symbol || '',
       chainId: filter.toChainId,
       token: toToken?.symbol || '',
       depositAmount: filter.amount,

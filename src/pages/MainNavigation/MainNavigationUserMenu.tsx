@@ -50,7 +50,7 @@ const MainNavigationUserMenu = (props: Props) => {
   const advancedMode = useAppSelector(selectUserAdvancedMode);
   const userChainId = useAppSelector(selectUserChainId);
   const chains = useAppSelector(selectChainsItems);
-  const goerliChain = getChainById('5', chains);
+  const userChain = getChainById(userChainId, chains);
 
   const handleClickListItemButton = (event: React.MouseEvent<HTMLElement>) => {
     if (accessToken) {
@@ -142,11 +142,7 @@ const MainNavigationUserMenu = (props: Props) => {
                   }}
                 >
                   {userChainId
-                    ? `MetaMask @ ${
-                        goerliChain && userChainId === '5'
-                          ? goerliChain.label
-                          : 'Unknown'
-                      }`
+                    ? `MetaMask @ ${userChain ? userChain.label : 'Unknown'}`
                     : 'Not Connected'}
                 </Typography>
               }

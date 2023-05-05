@@ -21,6 +21,7 @@ import {
   selectChainsItems,
   selectUserChainTokenBalance,
   selectUserChainTokenBalanceLoading,
+  selectUserChainId,
 } from '../../store';
 import { useTradeProvider } from '../../providers';
 import { getChainById, getTokenById } from '../../utils';
@@ -31,13 +32,14 @@ type Props = {};
 const TradePageOffersFilter = (props: Props) => {
   let navigate = useNavigate();
   const errorMessage = useAppSelector(selectTradeError);
+  const userChainId = useAppSelector(selectUserChainId);
   const loading = useAppSelector(selectTradeLoading);
   const chains = useAppSelector(selectChainsItems);
   const filter = useAppSelector(selectTradeFilter);
   const { toChainId, toTokenId, amount } = filter;
   const toChain = getChainById(toChainId, chains);
   const toToken = getTokenById(toTokenId, toChainId, chains);
-  const fromChain = getChainById('5', chains);
+  const fromChain = getChainById(userChainId, chains);
   const fromToken = fromChain?.tokens?.find(
     (token: TokenType) => token.symbol === fromChain?.nativeToken
   );

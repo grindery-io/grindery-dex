@@ -28,13 +28,13 @@ import {
 import { useUserProvider } from './UserProvider';
 import { getAllOffers, addOrderRequest, getOrderRequest } from '../services';
 import { POOL_CONTRACT_ADDRESS } from '../config';
+import { OfferType, OrderPlacingStatusType, ErrorMessageType } from '../types';
 import {
-  TokenType,
-  OfferType,
-  OrderPlacingStatusType,
-  ErrorMessageType,
-} from '../types';
-import { getErrorMessage, getChainById, switchMetamaskNetwork } from '../utils';
+  getErrorMessage,
+  getChainById,
+  switchMetamaskNetwork,
+  getTokenBySymbol,
+} from '../utils';
 import { addGsheetRowRequest } from '../services/gsheetServices';
 
 // Context props
@@ -168,14 +168,15 @@ export const ShopProvider = ({ children }: ShopProviderProps) => {
         return;
       }
 
-      const fromChain = getChainById('5', chains);
-      const exchangeToken = fromChain?.tokens?.find(
-        (token: TokenType) => token.symbol === fromChain?.nativeToken
+      const exchangeToken = getTokenBySymbol(
+        offer.exchangeToken,
+        offer.exchangeChainId,
+        chains
       );
 
       dispatch(setShopOfferId(offer.offerId || ''));
 
-      const inputChain = getChainById(offer.exchangeChainId || '', chains);
+      const inputChain = getChainById(offer.exchangeChainId, chains);
       if (!inputChain) {
         dispatch(
           setShopError({

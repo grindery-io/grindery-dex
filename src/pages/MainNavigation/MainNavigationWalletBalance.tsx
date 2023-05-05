@@ -8,7 +8,7 @@ import {
   selectUserChainTokenBalanceLoading,
   useAppSelector,
 } from '../../store';
-import { getTokenBySymbol } from '../../utils';
+import { getChainById, getTokenBySymbol } from '../../utils';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '../../config';
 import { AvatarDefault } from '../../components';
@@ -24,13 +24,18 @@ const MainNavigationWalletBalance = (props: Props) => {
     selectUserChainTokenBalanceLoading
   );
   const chains = useAppSelector(selectChainsItems);
-  const goerliNativeToken = getTokenBySymbol('ETH', '5', chains);
+  const userChain = getChainById(userChainId, chains);
+  const nativeToken = getTokenBySymbol(
+    userChain?.nativeToken || '',
+    userChainId,
+    chains
+  );
 
   const handleGetClick = () => {
     navigate(ROUTES.FAUCET.FULL_PATH);
   };
 
-  return accessToken && userChainId === '5' ? (
+  return accessToken && nativeToken ? (
     <Box
       className="MainNavigationWalletBalance"
       sx={{
@@ -53,7 +58,7 @@ const MainNavigationWalletBalance = (props: Props) => {
             padding: 0,
           },
           '& .MuiChip-avatar': {
-            margin: '0 4px 0 0',
+            margin: '0 6px 0 0',
             width: '16px',
             height: '16px',
           },
@@ -72,11 +77,8 @@ const MainNavigationWalletBalance = (props: Props) => {
           {parseFloat(walletBalance) > 0 ? (
             <Chip
               avatar={
-                goerliNativeToken?.icon ? (
-                  <Avatar
-                    src={goerliNativeToken?.icon}
-                    alt={goerliNativeToken?.symbol}
-                  />
+                nativeToken.icon ? (
+                  <Avatar src={nativeToken.icon} alt={nativeToken.symbol} />
                 ) : (
                   <AvatarDefault sx={{ width: '16px', height: '16px' }} />
                 )
@@ -88,11 +90,8 @@ const MainNavigationWalletBalance = (props: Props) => {
           ) : (
             <Chip
               avatar={
-                goerliNativeToken?.icon ? (
-                  <Avatar
-                    src={goerliNativeToken?.icon}
-                    alt={goerliNativeToken?.symbol}
-                  />
+                nativeToken.icon ? (
+                  <Avatar src={nativeToken.icon} alt={nativeToken.symbol} />
                 ) : (
                   <AvatarDefault sx={{ width: '16px', height: '16px' }} />
                 )
@@ -107,10 +106,23 @@ const MainNavigationWalletBalance = (props: Props) => {
                     fontWeight: '700',
                   }}
                 >
-                  0.0000 / <span style={{ color: '#EA5230' }}>Get gETH</span>
+                  0.0000
+                  {
+                    <>
+                      {userChain?.isTestnet ? (
+                        <>
+                          {' '}
+                          /{' '}
+                          <span style={{ color: '#EA5230' }}>
+                            Get {nativeToken.symbol}
+                          </span>
+                        </>
+                      ) : null}
+                    </>
+                  }
                 </Typography>
               }
-              onClick={handleGetClick}
+              onClick={userChain?.isTestnet ? handleGetClick : undefined}
             />
           )}
         </>

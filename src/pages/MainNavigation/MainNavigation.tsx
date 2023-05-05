@@ -22,9 +22,9 @@ import {
 } from '../../store';
 import { ROUTES } from '../../config';
 import { NavTabsItemType } from '../../types';
-import MainNavigationSwitchChainButton from './MainNavigationSwitchChainButton';
 import MainNavigationWalletBalance from './MainNavigationWalletBalance';
 import MainNavigationAdvancedModeAlert from './MainNavigationAdvancedModeAlert';
+import MainNavigationSwitchChainButtonV2 from './MainNavigationSwitchChainButtonV2';
 
 export const TABS_NAV: NavTabsItemType[] = [
   {
@@ -105,7 +105,7 @@ const MainNavigation = (props: Props) => {
               gap: '8px',
             }}
           >
-            <MainNavigationSwitchChainButton />
+            <MainNavigationSwitchChainButtonV2 />
             <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
               <MainNavigationWalletBalance />
             </Box>

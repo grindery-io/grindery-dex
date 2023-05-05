@@ -14,3 +14,10 @@ export const sortChains = (chains: ChainType[]) => {
     return a.order - b.order;
   });
 };
+
+export const filterBuyerChains = (chains: ChainType[]): ChainType[] => {
+  return chains.filter(
+    (chain) =>
+      chain.chainId === '5' || chain.chainId === '1' || chain.chainId === '56'
+  );
+};

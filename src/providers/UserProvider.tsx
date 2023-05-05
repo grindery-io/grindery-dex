@@ -67,7 +67,8 @@ export const UserProvider = ({ children }: UserProviderProps) => {
   const userAccessToken = useAppSelector(selectUserAccessToken);
   const userAddress = useAppSelector(selectUserAddress);
   const chains = useAppSelector(selectChainsItems);
-  const userChainTokenSymbol = getChainById('5', chains)?.nativeToken || '';
+  const userChainTokenSymbol =
+    getChainById(userChainId, chains)?.nativeToken || '';
 
   const dispatch = useAppDispatch();
 
@@ -105,11 +106,11 @@ export const UserProvider = ({ children }: UserProviderProps) => {
   const fetchChainTokenPrice = useCallback(
     async (accessToken: string) => {
       dispatch(setUserChainTokenPriceLoading(true));
-      const price = await getTokenPriceById(accessToken, 'ETH');
+      const price = await getTokenPriceById(accessToken, userChainTokenSymbol);
       dispatch(setUserChainTokenPrice(price));
       dispatch(setUserChainTokenPriceLoading(false));
     },
-    [dispatch]
+    [userChainTokenSymbol, dispatch]
   );
 
   const fetchChainTokenBalance = useCallback(
@@ -117,14 +118,14 @@ export const UserProvider = ({ children }: UserProviderProps) => {
       dispatch(setUserChainTokenBalanceLoading(true));
       const balance = await getTokenBalanceRequest(
         accessToken,
-        '5',
+        userChainId,
         address,
         '0x0'
       );
       dispatch(setUserChainTokenBalance(balance || '0'));
       dispatch(setUserChainTokenBalanceLoading(false));
     },
-    [dispatch]
+    [userChainId, dispatch]
   );
 
   const handleAdvancedModeToggleAction = (userId: string, newMode: boolean) => {

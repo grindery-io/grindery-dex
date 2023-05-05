@@ -18,7 +18,7 @@ import {
   selectOffersCreateInput,
 } from '../../store';
 import { useOffersProvider } from '../../providers';
-import { getChainById, getTokensByChain } from '../../utils';
+import { filterBuyerChains, getChainById, getTokensByChain } from '../../utils';
 import { ROUTES } from '../../config';
 
 function OffersPageSelectToChain() {
@@ -59,10 +59,7 @@ function OffersPageSelectToChain() {
       <PageCardBody>
         <ChainsList
           chain={toChainId}
-          chains={chains.filter(
-            (c: ChainType) =>
-              c.chainId === '5' || c.chainId === '1' || c.chainId === '56'
-          )}
+          chains={filterBuyerChains(chains)}
           onClick={(blockchain: ChainType) => {
             handleOfferCreateInputChange('toChainId', blockchain.chainId);
             handleOfferCreateInputChange('toTokenId', '');
