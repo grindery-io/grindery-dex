@@ -9,6 +9,14 @@ export const NotistackSnackbar = styled(MaterialDesignContent)(() => ({
     flexWrap: 'nowrap',
     alignItems: 'flex-start',
     paddingBottom: '4px',
+    '& .MuiButton-root': {
+      color: 'inherit',
+      backgroundColor: 'transparent',
+      padding: '4px 6px',
+      fontSize: '13px',
+      margin: '3px 0 0',
+      width: 'auto',
+    },
     '& .notistack__close': {
       marginTop: '3px',
     },

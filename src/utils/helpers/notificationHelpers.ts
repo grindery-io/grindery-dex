@@ -1,4 +1,5 @@
 import { JSONRPCRequestType, NotificationType } from '../../types';
+import { formatAddress } from '../address';
 import { capitalizeFirstLetter } from '../string';
 
 export const getNotificationObject = (
@@ -16,36 +17,36 @@ export const getNotificationObject = (
     switch (event.method) {
       case 'success':
         return {
-          text: `${capitalizeFirstLetter(event.params.type)} ${
+          text: `${capitalizeFirstLetter(event.params.type)} ${formatAddress(
             event.params.id
-          } ${event.params.type === 'offer' ? 'created' : 'placed'}!`,
+          )} ${event.params.type === 'offer' ? 'created' : 'placed'}!`,
           props: {
             variant: 'success',
           },
         };
       case 'failure':
         return {
-          text: `${capitalizeFirstLetter(event.params.type)} ${
+          text: `${capitalizeFirstLetter(event.params.type)} ${formatAddress(
             event.params.id
-          } ${event.params.type === 'offer' ? 'creation' : 'placing'} failed.`,
+          )} ${event.params.type === 'offer' ? 'creation' : 'placing'} failed.`,
           props: {
             variant: 'error',
           },
         };
       case 'activationSuccess':
         return {
-          text: `${capitalizeFirstLetter(event.params.type)} ${
+          text: `${capitalizeFirstLetter(event.params.type)} ${formatAddress(
             event.params.id
-          } is active now!`,
+          )} is active now!`,
           props: {
             variant: 'success',
           },
         };
       case 'deactivationSuccess':
         return {
-          text: `${capitalizeFirstLetter(event.params.type)} ${
+          text: `${capitalizeFirstLetter(event.params.type)} ${formatAddress(
             event.params.id
-          } deactivated.`,
+          )} deactivated.`,
           props: {
             variant: 'success',
           },

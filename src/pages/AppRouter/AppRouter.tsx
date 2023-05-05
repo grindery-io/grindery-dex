@@ -15,7 +15,7 @@ import {
   selectUserSessionExpired,
   useAppSelector,
 } from '../../store';
-import { useUserProvider } from '../../providers';
+import { SnackbarsProvider, useUserProvider } from '../../providers';
 
 type Props = {};
 
@@ -32,21 +32,26 @@ const AppRouter = (props: Props) => {
         topShift={advancedMode && advancedModeAlert ? '123px' : '75px'}
       >
         <BrowserRouter>
-          <MainNavigation />
-          <Routes>
-            <Route path={ROUTES.BUY.RELATIVE_PATH} element={<BuyPage />} />
-            <Route path={ROUTES.SELL.RELATIVE_PATH} element={<SellPage />} />
-            <Route
-              path={ROUTES.HISTORY.RELATIVE_PATH}
-              element={<HistoryPage />}
-            />
-            <Route
-              path={ROUTES.FAUCET.RELATIVE_PATH}
-              element={<FaucetPage />}
-            />
-            <Route path="/" element={<Navigate to={ROUTES.BUY.FULL_PATH} />} />
-            <Route path="*" element={<Page404 />} />
-          </Routes>
+          <SnackbarsProvider>
+            <MainNavigation />
+            <Routes>
+              <Route path={ROUTES.BUY.RELATIVE_PATH} element={<BuyPage />} />
+              <Route path={ROUTES.SELL.RELATIVE_PATH} element={<SellPage />} />
+              <Route
+                path={ROUTES.HISTORY.RELATIVE_PATH}
+                element={<HistoryPage />}
+              />
+              <Route
+                path={ROUTES.FAUCET.RELATIVE_PATH}
+                element={<FaucetPage />}
+              />
+              <Route
+                path="/"
+                element={<Navigate to={ROUTES.BUY.FULL_PATH} />}
+              />
+              <Route path="*" element={<Page404 />} />
+            </Routes>
+          </SnackbarsProvider>
         </BrowserRouter>
       </PageContainer>
       {DISABLE_POPUP !== 'true' && !popupClosed && (

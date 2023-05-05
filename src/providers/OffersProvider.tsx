@@ -27,7 +27,6 @@ import {
   addOffersItems,
   setOffersTotal,
   selectOffersError,
-  updateOfferItem,
 } from '../store';
 import {
   getTokenById,
@@ -36,14 +35,12 @@ import {
   getChainById,
   switchMetamaskNetwork,
   validateOfferCreateAction,
-  getNotificationObject,
 } from '../utils';
 import { useUserProvider } from './UserProvider';
 import { addOffer, getOffer, getUserOffers, updateOffer } from '../services';
-import { OfferType, LiquidityWalletType, JSONRPCRequestType } from '../types';
+import { OfferType, LiquidityWalletType } from '../types';
 import { ROUTES, POOL_CONTRACT_ADDRESS } from '../config';
 import { enqueueSnackbar } from 'notistack';
-import { selectMessagesItems } from '../store/slices/messagesSlice';
 
 // Context props
 type ContextProps = {
@@ -81,7 +78,6 @@ export const OffersProvider = ({ children }: OffersProviderProps) => {
   const limit = 5;
   const [offset, setOffset] = useState(limit);
   const error = useAppSelector(selectOffersError);
-  const messages = useAppSelector(selectMessagesItems);
 
   const fetchOffers = useCallback(async () => {
     dispatch(setOffersLoading(true));
@@ -374,22 +370,6 @@ export const OffersProvider = ({ children }: OffersProviderProps) => {
     ]
   );
 
-  const refreshOffer = useCallback(
-    async (event: JSONRPCRequestType) => {
-      if (event?.params?.type === 'offer' && event?.params?.id) {
-        const offer = await fetchOffer(event.params.id);
-        if (offer) {
-          dispatch(updateOfferItem(offer));
-          const notification = getNotificationObject(event);
-          if (notification) {
-            enqueueSnackbar(notification.text, notification.props);
-          }
-        }
-      }
-    },
-    [fetchOffer, dispatch]
-  );
-
   useEffect(() => {
     if (accessToken) {
       fetchOffers();
@@ -410,12 +390,6 @@ export const OffersProvider = ({ children }: OffersProviderProps) => {
       });
     }
   }, [error]);
-
-  useEffect(() => {
-    const allMessages = [...messages];
-    const lastMessage = allMessages.pop();
-    refreshOffer(lastMessage);
-  }, [messages, refreshOffer]);
 
   return (
     <OffersContext.Provider
