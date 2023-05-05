@@ -245,7 +245,6 @@ export const OffersProvider = ({ children }: OffersProviderProps) => {
         exchangeChainId: input.toChainId,
         estimatedTime: input.estimatedTime || '',
         provider: userWallet || '',
-        isActive: false,
         offerId: '',
         title: input.title,
         image: input.image,
