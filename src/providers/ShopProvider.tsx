@@ -7,23 +7,12 @@ import React, {
 } from 'react';
 import {
   useAppDispatch,
-  clearShopError,
-  setShopError,
-  setShopLoading,
-  setShopModal,
-  setShopOffers,
-  setOrdersItems,
-  setShopOfferId,
-  setShopOrderTransactionId,
-  setShopOorderStatus,
-  setShopOffersTotal,
-  addShopOffers,
   useAppSelector,
-  selectChainsItems,
-  selectUserAccessToken,
-  selectUserChainId,
-  selectUserAddress,
-  selectPoolAbi,
+  shopStoreActions,
+  ordersStoreActions,
+  selectAbiStore,
+  selectChainsStore,
+  selectUserStore,
 } from '../store';
 import { useUserProvider } from './UserProvider';
 import { getAllOffers, addOrderRequest, getOrderRequest } from '../services';
@@ -63,24 +52,26 @@ export const ShopProvider = ({ children }: ShopProviderProps) => {
   const { getSigner, getEthers } = useUserProvider();
   const limit = 9;
   const [offset, setOffset] = useState(limit);
-  const chains = useAppSelector(selectChainsItems);
-  const accessToken = useAppSelector(selectUserAccessToken);
-  const userChainId = useAppSelector(selectUserChainId);
-  const userAddress = useAppSelector(selectUserAddress);
-  const poolAbi = useAppSelector(selectPoolAbi);
+  const { items: chains } = useAppSelector(selectChainsStore);
+  const {
+    accessToken,
+    chainId: userChainId,
+    address: userAddress,
+  } = useAppSelector(selectUserStore);
+  const { poolAbi } = useAppSelector(selectAbiStore);
 
   const fetchOffers = useCallback(async () => {
-    dispatch(setShopLoading(true));
+    dispatch(shopStoreActions.setLoading(true));
     const res = await getAllOffers(limit);
 
-    dispatch(setShopOffers(res?.items || []));
-    dispatch(setShopOffersTotal(res?.total || 0));
-    dispatch(setShopLoading(false));
+    dispatch(shopStoreActions.setOffers(res?.items || []));
+    dispatch(shopStoreActions.setOffersTotal(res?.total || 0));
+    dispatch(shopStoreActions.setLoading(false));
   }, [dispatch]);
 
   const handleFetchMoreOffersAction = useCallback(async () => {
     const res = await getAllOffers(limit, offset);
-    dispatch(addShopOffers(res?.items || []));
+    dispatch(shopStoreActions.addOffers(res?.items || []));
     setOffset(offset + limit);
   }, [dispatch, offset]);
 
@@ -91,7 +82,7 @@ export const ShopProvider = ({ children }: ShopProviderProps) => {
         order = await getOrderRequest(accessToken, id);
       } catch (error) {}
       if (order) {
-        dispatch(setOrdersItems([order]));
+        dispatch(ordersStoreActions.setItems([order]));
       }
     },
     [accessToken, dispatch]
@@ -155,16 +146,18 @@ export const ShopProvider = ({ children }: ShopProviderProps) => {
 
   const handleAcceptOfferAction = useCallback(
     async (offer: OfferType) => {
-      dispatch(clearShopError());
-      dispatch(setShopOfferId(''));
-      dispatch(setShopOrderTransactionId(''));
-      dispatch(setShopOorderStatus(OrderPlacingStatusType.UNINITIALIZED));
-      dispatch(setShopModal(true));
+      dispatch(shopStoreActions.clearError());
+      dispatch(shopStoreActions.setOfferId(''));
+      dispatch(shopStoreActions.setOrderTransactionId(''));
+      dispatch(
+        shopStoreActions.setOrderStatus(OrderPlacingStatusType.UNINITIALIZED)
+      );
+      dispatch(shopStoreActions.setModal(true));
 
       const validation = validateAcceptOfferAction(offer);
       if (validation !== true) {
-        dispatch(setShopError(validation));
-        dispatch(setShopOorderStatus(OrderPlacingStatusType.ERROR));
+        dispatch(shopStoreActions.setError(validation));
+        dispatch(shopStoreActions.setOrderStatus(OrderPlacingStatusType.ERROR));
         return;
       }
 
@@ -175,7 +168,7 @@ export const ShopProvider = ({ children }: ShopProviderProps) => {
           chains
         );
 
-        dispatch(setShopOfferId(offer.offerId || ''));
+        dispatch(shopStoreActions.setOfferId(offer.offerId || ''));
 
         const inputChain = getChainById(offer.exchangeChainId, chains);
         if (!inputChain) {
@@ -183,7 +176,9 @@ export const ShopProvider = ({ children }: ShopProviderProps) => {
         }
         if (userChainId !== offer.exchangeChainId) {
           dispatch(
-            setShopOorderStatus(OrderPlacingStatusType.WAITING_NETWORK_SWITCH)
+            shopStoreActions.setOrderStatus(
+              OrderPlacingStatusType.WAITING_NETWORK_SWITCH
+            )
           );
         }
         const networkSwitched = await switchMetamaskNetwork(
@@ -197,7 +192,9 @@ export const ShopProvider = ({ children }: ShopProviderProps) => {
         }
 
         dispatch(
-          setShopOorderStatus(OrderPlacingStatusType.WAITING_CONFIRMATION)
+          shopStoreActions.setOrderStatus(
+            OrderPlacingStatusType.WAITING_CONFIRMATION
+          )
         );
 
         // get signer
@@ -261,11 +258,13 @@ export const ShopProvider = ({ children }: ShopProviderProps) => {
         });
         if (order) {
           fetchSingleOrder(order);
-          dispatch(setShopOrderTransactionId(tx.hash || ''));
-          dispatch(setShopOorderStatus(OrderPlacingStatusType.COMPLETED));
+          dispatch(shopStoreActions.setOrderTransactionId(tx.hash || ''));
+          dispatch(
+            shopStoreActions.setOrderStatus(OrderPlacingStatusType.COMPLETED)
+          );
         } else {
           dispatch(
-            setShopError({
+            shopStoreActions.setError({
               type: 'acceptOffer',
               text: "Server error, order wasn't saved",
             })
@@ -273,16 +272,16 @@ export const ShopProvider = ({ children }: ShopProviderProps) => {
         }
       } catch (error: any) {
         dispatch(
-          setShopError({
+          shopStoreActions.setError({
             type: 'acceptOffer',
             text:
               getMetaMaskErrorMessage(error) ||
               'Server error, please try again later.',
           })
         );
-        dispatch(setShopOorderStatus(OrderPlacingStatusType.ERROR));
+        dispatch(shopStoreActions.setOrderStatus(OrderPlacingStatusType.ERROR));
       }
-      dispatch(setShopOfferId(''));
+      dispatch(shopStoreActions.setOfferId(''));
     },
     [
       accessToken,

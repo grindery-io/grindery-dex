@@ -16,17 +16,11 @@ import {
 } from '../../components';
 import {
   useAppSelector,
-  selectLiquidityWalletAbi,
-  selectPoolAbi,
-  selectUserAccessToken,
-  selectUserChainId,
-  selectUserId,
-  selectAutomationsBotAddress,
-  selectAutomationsError,
-  selectAutomationsInput,
-  selectAutomationsLoading,
-  selectChainsItems,
-  selectWalletsItems,
+  selectAbiStore,
+  selectAutomationsStore,
+  selectChainsStore,
+  selectWalletsStore,
+  selectUserStore,
 } from '../../store';
 import { useUserProvider, useAutomationsProvider } from '../../providers';
 import { ROUTES } from '../../config';
@@ -35,25 +29,28 @@ import { ChainType, LiquidityWalletType } from '../../types';
 type Props = {};
 
 const AutomationsPageRoot = (props: Props) => {
-  const user = useAppSelector(selectUserId);
-  const accessToken = useAppSelector(selectUserAccessToken);
-  const userChainId = useAppSelector(selectUserChainId);
+  const {
+    id: user,
+    accessToken,
+    chainId: userChainId,
+  } = useAppSelector(selectUserStore);
   const { connectUser: connect } = useUserProvider();
-  const input = useAppSelector(selectAutomationsInput);
+  const {
+    error: errorMessage,
+    loading,
+    botAddress,
+    input,
+  } = useAppSelector(selectAutomationsStore);
   const { bot, chainId } = input;
-  const chains = useAppSelector(selectChainsItems);
+  const { items: chains } = useAppSelector(selectChainsStore);
   const currentChain = chains.find((c: ChainType) => c.chainId === chainId);
-  const errorMessage = useAppSelector(selectAutomationsError);
-  const loading = useAppSelector(selectAutomationsLoading);
-  const botAddress = useAppSelector(selectAutomationsBotAddress);
   const { handleAutomationsInputChange, handleAutomationsDelegateAction } =
     useAutomationsProvider();
-  const wallets = useAppSelector(selectWalletsItems);
+  const { items: wallets } = useAppSelector(selectWalletsStore);
   const wallet = wallets.find(
     (w: LiquidityWalletType) => w.chainId === chainId
   );
-  const liquidityWalletAbi = useAppSelector(selectLiquidityWalletAbi);
-  const poolAbi = useAppSelector(selectPoolAbi);
+  const { poolAbi, liquidityWalletAbi } = useAppSelector(selectAbiStore);
   let navigate = useNavigate();
 
   return (

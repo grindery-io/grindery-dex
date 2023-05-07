@@ -13,10 +13,9 @@ import {
 } from '../../components';
 import {
   useAppSelector,
-  selectChainsItems,
-  selectUserId,
-  selectWalletsItems,
-  selectWalletsLoading,
+  selectChainsStore,
+  selectWalletsStore,
+  selectUserStore,
 } from '../../store';
 import { ROUTES } from '../../config';
 import { getWalletById, getWalletChain } from '../../utils';
@@ -26,11 +25,11 @@ import { TokenType } from '../../types';
 function LiquidityWalletPageSelectToken() {
   let navigate = useNavigate();
   let { walletId } = useParams();
-  const userId = useAppSelector(selectUserId);
-  const chains = useAppSelector(selectChainsItems);
+  const { id: userId } = useAppSelector(selectUserStore);
+  const { items: chains } = useAppSelector(selectChainsStore);
   const [searchToken, setSearchToken] = useState('');
-  const wallets = useAppSelector(selectWalletsItems);
-  const walletsIsLoading = useAppSelector(selectWalletsLoading);
+  const { items: wallets, loading: walletsIsLoading } =
+    useAppSelector(selectWalletsStore);
   const currentWallet = getWalletById(walletId || '', wallets);
   const walletChain = currentWallet
     ? getWalletChain(currentWallet, chains)

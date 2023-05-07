@@ -12,11 +12,7 @@ import {
 } from '../../components';
 import { Box, Typography } from '@mui/material';
 import TimerIcon from '@mui/icons-material/Timer';
-import {
-  useAppSelector,
-  selectUserIsAdmin,
-  selectUserIsAdminLoading,
-} from '../../store';
+import { useAppSelector, selectUserStore } from '../../store';
 import { ROUTES } from '../../config';
 import { WalletsProvider } from '../../providers';
 import Page404 from '../Page404/Page404';
@@ -24,9 +20,9 @@ import Page404 from '../Page404/Page404';
 type Props = {};
 
 const SellPage = (props: Props) => {
-  const isLoading = useAppSelector(selectUserIsAdminLoading);
-  const isAdmin = useAppSelector(selectUserIsAdmin);
-  if (isLoading) {
+  const { isAdmin, isAdminLoading } = useAppSelector(selectUserStore);
+
+  if (isAdminLoading) {
     return <Loading />;
   }
   return (

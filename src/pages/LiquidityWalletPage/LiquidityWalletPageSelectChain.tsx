@@ -7,19 +7,20 @@ import { ChainsList, PageCardBody, PageCardHeader } from '../../components';
 import { ChainType, LiquidityWalletType } from '../../types';
 import {
   useAppSelector,
-  selectChainsItems,
-  selectWalletsCreateInput,
-  selectWalletsItems,
+  selectChainsStore,
+  selectWalletsStore,
 } from '../../store';
 import { ROUTES } from '../../config';
 import { useWalletsProvider } from '../../providers';
 
 function LiquidityWalletPageSelectChain() {
   let navigate = useNavigate();
-  const chains = useAppSelector(selectChainsItems);
-  const wallets = useAppSelector(selectWalletsItems);
-  const input = useAppSelector(selectWalletsCreateInput);
-  const { chainId } = input;
+  const { items: chains } = useAppSelector(selectChainsStore);
+  const {
+    items: wallets,
+    input: { create },
+  } = useAppSelector(selectWalletsStore);
+  const { chainId } = create;
   const { handleWalletsCreateInputChange } = useWalletsProvider();
 
   return (

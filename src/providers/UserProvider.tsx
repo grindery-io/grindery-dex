@@ -7,24 +7,10 @@ import React, {
 import { useGrinderyNexus } from 'use-grindery-nexus';
 import {
   useAppDispatch,
-  setUserAccessToken,
-  setUserAddress,
-  setUserChain,
-  setUserId,
-  setUserIsAdmin,
-  setUserIsAdminLoading,
-  setUserChainTokenPriceLoading,
-  setUserChainTokenPrice,
-  setUserChainTokenBalance,
   useAppSelector,
-  selectUserChainId,
-  selectUserAccessToken,
-  selectUserAddress,
-  selectChainsItems,
-  setUserChainTokenBalanceLoading,
-  setUserAdvancedMode,
-  setUserPopupClosed,
-  setUserSessionExpired,
+  selectChainsStore,
+  selectUserStore,
+  userStoreActions,
 } from '../store';
 import {
   getTokenBalanceRequest,
@@ -65,15 +51,15 @@ export const UserContext = createContext<ContextProps>({
 export const UserProvider = ({ children }: UserProviderProps) => {
   const { user, address, chain, connect, disconnect, ethers, provider, token } =
     useGrinderyNexus();
-  const accessToken = useAppSelector(selectUserAccessToken);
-  const userChainId = useAppSelector(selectUserChainId);
-  const userAccessToken = useAppSelector(selectUserAccessToken);
-  const userAddress = useAppSelector(selectUserAddress);
-  const chains = useAppSelector(selectChainsItems);
+  const dispatch = useAppDispatch();
+  const {
+    accessToken,
+    chainId: userChainId,
+    address: userAddress,
+  } = useAppSelector(selectUserStore);
+  const { items: chains } = useAppSelector(selectChainsStore);
   const userChainTokenSymbol =
     getChainById(userChainId, chains)?.nativeToken || '';
-
-  const dispatch = useAppDispatch();
 
   const connectUser = () => {
     connect();
@@ -98,20 +84,20 @@ export const UserProvider = ({ children }: UserProviderProps) => {
 
   const checkUserIsAdmin = useCallback(
     async (accessToken: string) => {
-      dispatch(setUserIsAdminLoading(true));
+      dispatch(userStoreActions.setIsAdminLoading(true));
       const res = await isUserAdmin(accessToken);
-      dispatch(setUserIsAdmin(res));
-      dispatch(setUserIsAdminLoading(false));
+      dispatch(userStoreActions.setIsAdmin(res));
+      dispatch(userStoreActions.setIsAdminLoading(false));
     },
     [dispatch]
   );
 
   const fetchChainTokenPrice = useCallback(
     async (tokenSymbol: string) => {
-      dispatch(setUserChainTokenPriceLoading(true));
+      dispatch(userStoreActions.setChainTokenPriceLoading(true));
       const price = await getTokenPriceById(accessToken, tokenSymbol);
-      dispatch(setUserChainTokenPrice(price));
-      dispatch(setUserChainTokenPriceLoading(false));
+      dispatch(userStoreActions.setChainTokenPrice(price));
+      dispatch(userStoreActions.setChainTokenPriceLoading(false));
     },
     [accessToken, dispatch]
   );
@@ -126,26 +112,26 @@ export const UserProvider = ({ children }: UserProviderProps) => {
 
   const fetchChainTokenBalance = useCallback(
     async (accessToken: string, address: string) => {
-      dispatch(setUserChainTokenBalanceLoading(true));
+      dispatch(userStoreActions.setChainTokenBalanceLoading(true));
       const balance = await getTokenBalanceRequest(
         accessToken,
         userChainId,
         address,
         '0x0'
       );
-      dispatch(setUserChainTokenBalance(balance || '0'));
-      dispatch(setUserChainTokenBalanceLoading(false));
+      dispatch(userStoreActions.setChainTokenBalance(balance || '0'));
+      dispatch(userStoreActions.setChainTokenBalanceLoading(false));
     },
     [userChainId, dispatch]
   );
 
   const handleAdvancedModeToggleAction = (userId: string, newMode: boolean) => {
-    dispatch(setUserAdvancedMode(newMode));
+    dispatch(userStoreActions.setAdvancedMode(newMode));
     localStorage.setItem(`${userId}_advancedMode`, newMode.toString());
   };
 
   const handlePopupCloseAction = () => {
-    dispatch(setUserPopupClosed(true));
+    dispatch(userStoreActions.setPopupClosed(true));
     localStorage.setItem(
       `mercari_popup_closed`,
       JSON.stringify({
@@ -156,43 +142,43 @@ export const UserProvider = ({ children }: UserProviderProps) => {
   };
 
   useEffect(() => {
-    dispatch(setUserId(user || ''));
+    dispatch(userStoreActions.setId(user || ''));
   }, [user, dispatch]);
 
   useEffect(() => {
-    dispatch(setUserAddress(address || ''));
+    dispatch(userStoreActions.setAddress(address || ''));
   }, [address, dispatch]);
 
   useEffect(() => {
     dispatch(
-      setUserChain(
+      userStoreActions.setChain(
         chain ? (typeof chain === 'number' ? chain.toString() : chain) : ''
       )
     );
   }, [chain, dispatch]);
 
   useEffect(() => {
-    dispatch(setUserAccessToken(token?.access_token || ''));
+    dispatch(userStoreActions.setAccessToken(token?.access_token || ''));
   }, [token?.access_token, dispatch]);
 
   useEffect(() => {
-    if (userAccessToken) {
-      checkUserIsAdmin(userAccessToken);
+    if (accessToken) {
+      checkUserIsAdmin(accessToken);
     }
-  }, [userAccessToken, checkUserIsAdmin]);
+  }, [accessToken, checkUserIsAdmin]);
 
   useEffect(() => {
-    if (userChainId && userAccessToken && userAddress && userChainTokenSymbol) {
-      fetchChainTokenBalance(userAccessToken, userAddress);
+    if (userChainId && accessToken && userAddress && userChainTokenSymbol) {
+      fetchChainTokenBalance(accessToken, userAddress);
       fetchChainTokenPrice(userChainTokenSymbol);
     } else {
-      dispatch(setUserChainTokenBalance('0'));
-      dispatch(setUserChainTokenPrice(null));
-      dispatch(setUserChainTokenPriceLoading(false));
+      dispatch(userStoreActions.setChainTokenBalance('0'));
+      dispatch(userStoreActions.setChainTokenPrice(null));
+      dispatch(userStoreActions.setChainTokenPriceLoading(false));
     }
   }, [
     userChainId,
-    userAccessToken,
+    accessToken,
     userAddress,
     userChainTokenSymbol,
     fetchChainTokenBalance,
@@ -202,7 +188,7 @@ export const UserProvider = ({ children }: UserProviderProps) => {
 
   useEffect(() => {
     const savedAdvancedMode = localStorage.getItem(`${user}_advancedMode`);
-    dispatch(setUserAdvancedMode(savedAdvancedMode === 'true'));
+    dispatch(userStoreActions.setAdvancedMode(savedAdvancedMode === 'true'));
   }, [user, dispatch]);
 
   useEffect(() => {
@@ -212,7 +198,7 @@ export const UserProvider = ({ children }: UserProviderProps) => {
       const value = popupClosedJson.value;
       const expires = popupClosedJson.expires;
       if (value === 'true' && expires && new Date().getTime() < expires) {
-        dispatch(setUserPopupClosed(true));
+        dispatch(userStoreActions.setPopupClosed(true));
       } else {
         localStorage.removeItem('mercari_popup_closed');
       }
@@ -224,7 +210,7 @@ export const UserProvider = ({ children }: UserProviderProps) => {
     const timer = setTimeout(() => {
       if (token?.expires_in && typeof token?.expires_in === 'number') {
         disconnectUser();
-        dispatch(setUserSessionExpired(true));
+        dispatch(userStoreActions.setSessionExpired(true));
       }
     }, timeout);
 

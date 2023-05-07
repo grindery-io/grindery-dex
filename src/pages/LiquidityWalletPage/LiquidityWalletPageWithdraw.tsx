@@ -15,16 +15,11 @@ import { LiquidityWalletType } from '../../types';
 import {
   useAppDispatch,
   useAppSelector,
-  selectUserAccessToken,
-  selectUserChainId,
-  selectUserId,
-  selectChainsItems,
-  clearWalletsWithdrawTokensInput,
-  selectWalletWithdrawTokensInput,
-  selectWalletsError,
-  selectWalletsItems,
-  selectWalletsLoading,
-  selectLiquidityWalletAbi,
+  selectAbiStore,
+  selectChainsStore,
+  selectWalletsStore,
+  walletsStoreActions,
+  selectUserStore,
 } from '../../store';
 import { useUserProvider, useWalletsProvider } from '../../providers';
 import { getWalletById, getWalletChain, getTokenBySymbol } from '../../utils';
@@ -34,18 +29,21 @@ function LiquidityWalletPageWithdraw() {
   let navigate = useNavigate();
   let { walletId, tokenSymbol } = useParams();
   const dispatch = useAppDispatch();
-  const user = useAppSelector(selectUserId);
+  const {
+    id: user,
+    accessToken,
+    chainId: userChainId,
+  } = useAppSelector(selectUserStore);
   const { connectUser: connect } = useUserProvider();
-  const accessToken = useAppSelector(selectUserAccessToken);
-  const userChainId = useAppSelector(selectUserChainId);
-  const chains = useAppSelector(selectChainsItems);
-  const liquidityWalletAbi = useAppSelector(selectLiquidityWalletAbi);
-  const wallets = useAppSelector(selectWalletsItems);
-  const walletsIsLoading = useAppSelector(selectWalletsLoading);
-  const loading = useAppSelector(selectWalletsLoading);
-  const errorMessage = useAppSelector(selectWalletsError);
-  const input = useAppSelector(selectWalletWithdrawTokensInput);
-  const { amount } = input;
+  const { items: chains } = useAppSelector(selectChainsStore);
+  const { liquidityWalletAbi } = useAppSelector(selectAbiStore);
+  const {
+    items: wallets,
+    loading,
+    error: errorMessage,
+    input: { withdraw },
+  } = useAppSelector(selectWalletsStore);
+  const { amount } = withdraw;
   const currentWallet = getWalletById(walletId || '', wallets);
   const walletChain = currentWallet
     ? getWalletChain(currentWallet, chains)
@@ -58,10 +56,10 @@ function LiquidityWalletPageWithdraw() {
     useWalletsProvider();
 
   useEffect(() => {
-    if (!currentWallet && !walletsIsLoading) {
+    if (!currentWallet && !loading) {
       navigate(ROUTES.SELL.WALLETS.ROOT.FULL_PATH);
     }
-  }, [currentWallet, walletsIsLoading, navigate]);
+  }, [currentWallet, loading, navigate]);
 
   return (
     <>
@@ -74,7 +72,7 @@ function LiquidityWalletPageWithdraw() {
             size="medium"
             edge="start"
             onClick={() => {
-              dispatch(clearWalletsWithdrawTokensInput());
+              dispatch(walletsStoreActions.clearWithdrawTokensInput());
               navigate(
                 ROUTES.SELL.WALLETS.TOKENS.FULL_PATH.replace(
                   ':walletId',
@@ -90,7 +88,7 @@ function LiquidityWalletPageWithdraw() {
       />
 
       <PageCardBody>
-        {user && walletsIsLoading ? (
+        {user && loading ? (
           <Loading />
         ) : (
           <>
@@ -168,7 +166,7 @@ function LiquidityWalletPageWithdraw() {
                   ? () => {
                       handleWithdrawTokensAction(
                         accessToken,
-                        input,
+                        withdraw,
                         userChainId,
                         currentWallet,
                         preselectedToken,

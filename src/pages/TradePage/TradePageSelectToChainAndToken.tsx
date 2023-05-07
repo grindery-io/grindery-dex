@@ -15,9 +15,8 @@ import {
 import { ChainType, TokenType } from '../../types';
 import {
   useAppSelector,
-  selectChainsItems,
-  selectChainsLoading,
-  selectTradeFilter,
+  selectChainsStore,
+  selectTradeStore,
 } from '../../store';
 import { getChainById, getTokensByChain } from '../../utils';
 import { useTradeProvider } from '../../providers';
@@ -27,12 +26,12 @@ type Props = {};
 
 const TradePageSelectChainAndToken = (props: Props) => {
   let navigate = useNavigate();
-  const chains = useAppSelector(selectChainsItems);
-  const chainsIsLoading = useAppSelector(selectChainsLoading);
+  const { items: chains, loading: chainsIsLoading } =
+    useAppSelector(selectChainsStore);
   const filteredChains = chains.filter(
     (c: ChainType) => c.value === 'eip155:97'
   );
-  const filter = useAppSelector(selectTradeFilter);
+  const { filter } = useAppSelector(selectTradeStore);
   const { toChainId } = filter;
   const toChain = getChainById(toChainId, chains);
   const chainTokens = getTokensByChain(toChain);

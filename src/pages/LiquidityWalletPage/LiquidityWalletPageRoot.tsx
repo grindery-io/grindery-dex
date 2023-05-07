@@ -13,21 +13,20 @@ import {
 } from '../../components';
 import {
   useAppSelector,
-  selectChainsItems,
-  selectUserId,
-  selectWalletsItems,
-  selectWalletsLoading,
+  selectChainsStore,
+  selectWalletsStore,
+  selectUserStore,
 } from '../../store';
 import { ROUTES } from '../../config';
 import { useUserProvider } from '../../providers';
 
 function LiquidityWalletPageRoot() {
   let navigate = useNavigate();
-  const user = useAppSelector(selectUserId);
+  const { id: user } = useAppSelector(selectUserStore);
   const { connectUser } = useUserProvider();
-  const wallets = useAppSelector(selectWalletsItems);
-  const walletsIsLoading = useAppSelector(selectWalletsLoading);
-  const chains = useAppSelector(selectChainsItems);
+  const { items: wallets, loading: walletsIsLoading } =
+    useAppSelector(selectWalletsStore);
+  const { items: chains } = useAppSelector(selectChainsStore);
 
   return (
     <>

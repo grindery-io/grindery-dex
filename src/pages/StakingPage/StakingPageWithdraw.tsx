@@ -13,39 +13,36 @@ import {
 import { StakeType } from '../../types';
 import {
   useAppSelector,
-  selectStakesError,
-  selectStakesItems,
-  selectStakesLoading,
-  selectStakesWithdrawInput,
-  selectUserChainId,
-  selectUserId,
-  selectPoolAbi,
+  selectAbiStore,
+  selectStakesStore,
+  selectUserStore,
 } from '../../store';
 import { useUserProvider, useStakesProvider } from '../../providers';
 import { ROUTES } from '../../config';
 
 function StakingPageWithdraw() {
-  const user = useAppSelector(selectUserId);
-  const userChainId = useAppSelector(selectUserChainId);
+  const { id: user, chainId: userChainId } = useAppSelector(selectUserStore);
   const { connectUser: connect } = useUserProvider();
-  const input = useAppSelector(selectStakesWithdrawInput);
-  const { amount } = input;
-  const loading = useAppSelector(selectStakesLoading);
-  const errorMessage = useAppSelector(selectStakesError);
-  const poolAbi = useAppSelector(selectPoolAbi);
+  const {
+    items: stakes,
+    error: errorMessage,
+    loading,
+    input: { withdraw },
+  } = useAppSelector(selectStakesStore);
+  const { amount } = withdraw;
+  const { poolAbi } = useAppSelector(selectAbiStore);
   let navigate = useNavigate();
-  const stakes = useAppSelector(selectStakesItems);
-  const stakesIsLoading = useAppSelector(selectStakesLoading);
+
   const { handleWithdrawInputChange, handleStakeWithdrawAction } =
     useStakesProvider();
   let { stakeId } = useParams();
   const currentStake = stakes.find((s: StakeType) => s._id === stakeId);
 
   useEffect(() => {
-    if (!currentStake && !stakesIsLoading) {
+    if (!currentStake && !loading) {
       navigate(ROUTES.SELL.STAKING.ROOT.FULL_PATH);
     }
-  }, [currentStake, stakesIsLoading, navigate]);
+  }, [currentStake, loading, navigate]);
 
   return (
     <>
@@ -134,7 +131,7 @@ function StakingPageWithdraw() {
               ? () => {
                   if (currentStake) {
                     handleStakeWithdrawAction(
-                      input,
+                      withdraw,
                       currentStake,
                       userChainId,
                       poolAbi

@@ -20,13 +20,13 @@ const ordersHistorySlice = createSlice({
   name: 'ordersHistory',
   initialState,
   reducers: {
-    setOrdersHistoryItems(state, action: PayloadAction<OrderType[]>) {
+    setItems(state, action: PayloadAction<OrderType[]>) {
       state.items = action.payload;
     },
-    addOrdersHistoryItems(state, action: PayloadAction<OrderType[]>) {
+    addItems(state, action: PayloadAction<OrderType[]>) {
       state.items = [...state.items, ...action.payload];
     },
-    updateOrderHistoryItem(state, action: PayloadAction<OrderType>) {
+    updateItem(state, action: PayloadAction<OrderType>) {
       if (
         state.items.find((item: OrderType) => item._id === action.payload._id)
       ) {
@@ -43,41 +43,22 @@ const ordersHistorySlice = createSlice({
         state.items = [...state.items, action.payload];
       }
     },
-    setOrdersHistoryTotal(state, action: PayloadAction<number>) {
+    setTotal(state, action: PayloadAction<number>) {
       state.total = action.payload;
     },
-    setOrdersHistoryLoading(state, action: PayloadAction<boolean>) {
+    setLoading(state, action: PayloadAction<boolean>) {
       state.loading = action.payload;
     },
-    setOrdersHistoryError(
-      state,
-      action: PayloadAction<{ type: string; text: string }>
-    ) {
+    setError(state, action: PayloadAction<{ type: string; text: string }>) {
       state.error = action.payload;
     },
-    clearOrdersHistoryError(state) {
+    clearError(state) {
       state.error = { type: '', text: '' };
     },
   },
 });
 
-export const selectOrdersHistoryItems = (state: RootState) =>
-  state.ordersHistory.items;
-export const selectOrdersHistoryError = (state: RootState) =>
-  state.ordersHistory.error;
-export const selectOrdersHistoryLoading = (state: RootState) =>
-  state.ordersHistory.loading;
-export const selectOrdersHistoryHasMore = (state: RootState) =>
-  Boolean(state.ordersHistory.items.length < state.ordersHistory.total);
-
-export const {
-  setOrdersHistoryItems,
-  setOrdersHistoryLoading,
-  setOrdersHistoryError,
-  clearOrdersHistoryError,
-  addOrdersHistoryItems,
-  setOrdersHistoryTotal,
-  updateOrderHistoryItem,
-} = ordersHistorySlice.actions;
-
+export const selectOrdersHistoryStore = (state: RootState) =>
+  state.ordersHistory;
+export const ordersHistoryStoreActions = ordersHistorySlice.actions;
 export default ordersHistorySlice.reducer;

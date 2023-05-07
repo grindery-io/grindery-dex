@@ -2,27 +2,27 @@ import React from 'react';
 import { Alert, Switch, Tooltip } from '@mui/material';
 import {
   useAppSelector,
-  selectUserAdvancedMode,
-  selectUserAdvancedModeAlert,
   useAppDispatch,
-  selectUserId,
-  setUserAdvancedModeAlert,
+  selectUserStore,
+  userStoreActions,
 } from '../../store';
 import { useUserProvider } from '../../providers';
 
 type Props = {};
 
 const MainNavigationAdvancedModeAlert = (props: Props) => {
-  const userId = useAppSelector(selectUserId);
-  const advancedMode = useAppSelector(selectUserAdvancedMode);
-  const advancedModeAlert = useAppSelector(selectUserAdvancedModeAlert);
+  const {
+    id: userId,
+    advancedMode,
+    advancedModeAlert,
+  } = useAppSelector(selectUserStore);
   const dispatch = useAppDispatch();
   const { handleAdvancedModeToggleAction } = useUserProvider();
 
   return advancedMode && advancedModeAlert ? (
     <Alert
       onClose={() => {
-        dispatch(setUserAdvancedModeAlert(false));
+        dispatch(userStoreActions.setAdvancedModeAlert(false));
       }}
       sx={{
         '& .MuiAlert-icon': {

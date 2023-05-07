@@ -29,25 +29,22 @@ const automationsSlice = createSlice({
   name: 'automations',
   initialState,
   reducers: {
-    setAutomationsBotAddress(state, action: PayloadAction<string>) {
+    setBotAddress(state, action: PayloadAction<string>) {
       state.botAddress = action.payload;
     },
-    setAutomationsLoading(state, action: PayloadAction<boolean>) {
+    setLoading(state, action: PayloadAction<boolean>) {
       state.loading = action.payload;
     },
-    setAutomationsError(
-      state,
-      action: PayloadAction<{ type: string; text: string }>
-    ) {
+    setError(state, action: PayloadAction<{ type: string; text: string }>) {
       state.error = action.payload;
     },
-    clearAutomationsError(state) {
+    clearError(state) {
       state.error = { type: '', text: '' };
     },
-    setAutomationsInput(state, action: PayloadAction<AutomationsInput>) {
+    setInput(state, action: PayloadAction<AutomationsInput>) {
       state.input = action.payload;
     },
-    setAutomationsInputValue(
+    setInputValue(
       state,
       action: PayloadAction<{
         name: AutomationsInputFieldName;
@@ -59,22 +56,6 @@ const automationsSlice = createSlice({
   },
 });
 
-export const selectAutomationsError = (state: RootState) =>
-  state.automations.error;
-export const selectAutomationsLoading = (state: RootState) =>
-  state.automations.loading;
-export const selectAutomationsInput = (state: RootState) =>
-  state.automations.input;
-export const selectAutomationsBotAddress = (state: RootState) =>
-  state.automations.botAddress;
-
-export const {
-  setAutomationsBotAddress,
-  setAutomationsLoading,
-  setAutomationsError,
-  clearAutomationsError,
-  setAutomationsInput,
-  setAutomationsInputValue,
-} = automationsSlice.actions;
-
+export const selectAutomationsStore = (state: RootState) => state.automations;
+export const automationsStoreActions = automationsSlice.actions;
 export default automationsSlice.reducer;

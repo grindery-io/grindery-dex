@@ -9,24 +9,13 @@ import { useNavigate } from 'react-router-dom';
 import {
   useAppDispatch,
   useAppSelector,
-  selectUserAccessToken,
   OffersCreateInputInputFieldName,
-  clearOffersCreateInput,
-  clearOffersError,
-  selectOffersItems,
-  setOfferCreateInputValue,
-  setOffersActivating,
-  setOffersError,
-  setOffersItems,
-  setOffersLoading,
-  selectPoolAbi,
-  selectChainsItems,
-  selectWalletsItems,
-  selectUserChainId,
-  selectOffersCreateInput,
-  addOffersItems,
-  setOffersTotal,
-  selectOffersError,
+  selectAbiStore,
+  selectChainsStore,
+  selectOffersStore,
+  offersStoreActions,
+  selectWalletsStore,
+  selectUserStore,
 } from '../store';
 import {
   getTokenById,
@@ -66,30 +55,27 @@ type OffersProviderProps = {
 
 export const OffersProvider = ({ children }: OffersProviderProps) => {
   let navigate = useNavigate();
-  const accessToken = useAppSelector(selectUserAccessToken);
   const dispatch = useAppDispatch();
+  const { accessToken, chainId: userChainId } = useAppSelector(selectUserStore);
   const { getSigner, getEthers } = useUserProvider();
-  const offers = useAppSelector(selectOffersItems);
-  const wallets = useAppSelector(selectWalletsItems);
-  const userChainId = useAppSelector(selectUserChainId);
-  const poolAbi = useAppSelector(selectPoolAbi);
-  const chains = useAppSelector(selectChainsItems);
-  const input = useAppSelector(selectOffersCreateInput);
+  const { items: offers, input, error } = useAppSelector(selectOffersStore);
+  const { items: wallets } = useAppSelector(selectWalletsStore);
+  const { poolAbi } = useAppSelector(selectAbiStore);
+  const { items: chains } = useAppSelector(selectChainsStore);
   const limit = 5;
   const [offset, setOffset] = useState(limit);
-  const error = useAppSelector(selectOffersError);
 
   const fetchOffers = useCallback(async () => {
-    dispatch(setOffersLoading(true));
+    dispatch(offersStoreActions.setLoading(true));
     const res = await getUserOffers(accessToken, limit);
-    dispatch(setOffersItems(res?.items || []));
-    dispatch(setOffersTotal(res?.total || 0));
-    dispatch(setOffersLoading(false));
+    dispatch(offersStoreActions.setItems(res?.items || []));
+    dispatch(offersStoreActions.setTotal(res?.total || 0));
+    dispatch(offersStoreActions.setLoading(false));
   }, [dispatch, accessToken]);
 
   const handleFetchMoreOffersAction = useCallback(async () => {
     const res = await getUserOffers(accessToken, limit, offset);
-    dispatch(addOffersItems(res?.items || []));
+    dispatch(offersStoreActions.addItems(res?.items || []));
     setOffset(offset + limit);
   }, [dispatch, accessToken, offset]);
 
@@ -138,18 +124,18 @@ export const OffersProvider = ({ children }: OffersProviderProps) => {
 
   const handleOfferCreateInputChange = useCallback(
     (name: OffersCreateInputInputFieldName, value: string) => {
-      dispatch(clearOffersError());
-      dispatch(setOfferCreateInputValue({ name, value }));
+      dispatch(offersStoreActions.clearError());
+      dispatch(offersStoreActions.setInputValue({ name, value }));
     },
     [dispatch]
   );
 
   const handleOfferCreateAction = useCallback(async () => {
-    dispatch(clearOffersError());
+    dispatch(offersStoreActions.clearError());
 
     const validation = validateOfferCreateAction(input);
     if (validation !== true) {
-      dispatch(setOffersError(validation));
+      dispatch(offersStoreActions.setError(validation));
       return false;
     }
 
@@ -173,7 +159,7 @@ export const OffersProvider = ({ children }: OffersProviderProps) => {
         throw new Error('Tokens not found');
       }
 
-      dispatch(setOffersLoading(true));
+      dispatch(offersStoreActions.setLoading(true));
 
       const inputChain = getChainById(input.toChainId || '', chains);
       if (!inputChain) {
@@ -252,12 +238,12 @@ export const OffersProvider = ({ children }: OffersProviderProps) => {
       });
 
       if (newOffer && typeof newOffer !== 'boolean') {
-        dispatch(setOffersItems([newOffer, ...offers]));
-        dispatch(clearOffersCreateInput());
+        dispatch(offersStoreActions.setItems([newOffer, ...offers]));
+        dispatch(offersStoreActions.clearInput());
         navigate(ROUTES.SELL.OFFERS.ROOT.FULL_PATH);
       } else {
         dispatch(
-          setOffersError({
+          offersStoreActions.setError({
             type: 'saveOffer',
             text: 'Offer creation failed. Please, try again.',
           })
@@ -265,7 +251,7 @@ export const OffersProvider = ({ children }: OffersProviderProps) => {
       }
     } catch (error: any) {
       dispatch(
-        setOffersError({
+        offersStoreActions.setError({
           type: 'saveOffer',
           text: getMetaMaskErrorMessage(
             error,
@@ -275,7 +261,7 @@ export const OffersProvider = ({ children }: OffersProviderProps) => {
       );
     }
 
-    dispatch(setOffersLoading(false));
+    dispatch(offersStoreActions.setLoading(false));
   }, [
     accessToken,
     poolAbi,
@@ -293,7 +279,7 @@ export const OffersProvider = ({ children }: OffersProviderProps) => {
 
   const handleActivationAction = useCallback(
     async (offer: OfferType, isActive: boolean) => {
-      dispatch(setOffersActivating(offer.offerId || ''));
+      dispatch(offersStoreActions.setActivating(offer.offerId || ''));
 
       try {
         const offerToChain = getOfferToChain(offer, chains);
@@ -336,11 +322,11 @@ export const OffersProvider = ({ children }: OffersProviderProps) => {
         });
 
         if (!updated) {
-          dispatch(setOffersActivating(''));
+          dispatch(offersStoreActions.setActivating(''));
           return;
         }
         dispatch(
-          setOffersItems([
+          offersStoreActions.setItems([
             ...offers.map((offer) => ({
               ...offer,
               isActive: offerId === offer.offerId ? isActive : offer.isActive,
@@ -349,13 +335,13 @@ export const OffersProvider = ({ children }: OffersProviderProps) => {
         );
       } catch (error: any) {
         dispatch(
-          setOffersError({
+          offersStoreActions.setError({
             type: 'setIsActive',
             text: getMetaMaskErrorMessage(error, 'Offer activation error'),
           })
         );
       }
-      dispatch(setOffersActivating(''));
+      dispatch(offersStoreActions.setActivating(''));
     },
     [
       accessToken,
@@ -392,7 +378,7 @@ export const OffersProvider = ({ children }: OffersProviderProps) => {
 
   useEffect(() => {
     return () => {
-      dispatch(setOffersError({ type: '', text: '' }));
+      dispatch(offersStoreActions.setError({ type: '', text: '' }));
     };
   }, [dispatch]);
 

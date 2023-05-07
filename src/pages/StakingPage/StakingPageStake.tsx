@@ -14,15 +14,10 @@ import {
 } from '../../components';
 import {
   useAppSelector,
-  selectUserChainId,
-  selectUserId,
-  selectStakesApproved,
-  selectStakesCreateInput,
-  selectStakesError,
-  selectStakesLoading,
-  selectChainsItems,
-  selectPoolAbi,
-  selectTokenAbi,
+  selectAbiStore,
+  selectChainsStore,
+  selectStakesStore,
+  selectUserStore,
 } from '../../store';
 import { useUserProvider, useStakesProvider } from '../../providers';
 import { ROUTES } from '../../config';
@@ -30,20 +25,21 @@ import { ChainType } from '../../types';
 
 function StakingPageStake() {
   let navigate = useNavigate();
-  const user = useAppSelector(selectUserId);
+  const { id: user, chainId: userChain } = useAppSelector(selectUserStore);
   const { connectUser: connect } = useUserProvider();
-  const input = useAppSelector(selectStakesCreateInput);
-  const userChain = useAppSelector(selectUserChainId);
-  const { amount, chainId } = input;
+  const {
+    error: errorMessage,
+    loading,
+    approved,
+    input: { create },
+  } = useAppSelector(selectStakesStore);
+  const { amount, chainId } = create;
   const { handleCreateInputChange, handleStakeCreateAction } =
     useStakesProvider();
-  const loading = useAppSelector(selectStakesLoading);
-  const errorMessage = useAppSelector(selectStakesError);
-  const approved = useAppSelector(selectStakesApproved);
-  const chains = useAppSelector(selectChainsItems);
+
+  const { items: chains } = useAppSelector(selectChainsStore);
   const currentChain = chains.find((c: ChainType) => c.chainId === chainId);
-  const tokenAbi = useAppSelector(selectTokenAbi);
-  const poolAib = useAppSelector(selectPoolAbi);
+  const { poolAbi, tokenAbi } = useAppSelector(selectAbiStore);
 
   return (
     <>
@@ -120,11 +116,11 @@ function StakingPageStake() {
             user
               ? () => {
                   handleStakeCreateAction(
-                    input,
+                    create,
                     userChain,
                     approved,
                     tokenAbi,
-                    poolAib
+                    poolAbi
                   );
                 }
               : () => {

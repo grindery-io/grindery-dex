@@ -7,19 +7,13 @@ import React, {
 import {
   useAppDispatch,
   useAppSelector,
-  selectUserAccessToken,
   StakeCreateInput,
   StakeCreateInputFieldName,
   StakeWithdrawInput,
   StakeWithdrawInputFieldName,
-  clearStakesError,
-  selectStakesItems,
-  setStakesApproved,
-  setStakesCreateInputValue,
-  setStakesError,
-  setStakesItems,
-  setStakesLoading,
-  setStakesWithdrawInputValue,
+  selectStakesStore,
+  stakesStoreActions,
+  selectUserStore,
 } from '../store';
 import { addStake, getStake, getUserStakes, updateStake } from '../services';
 import { StakeType } from '../types';
@@ -65,17 +59,18 @@ type StakesProviderProps = {
 };
 
 export const StakesProvider = ({ children }: StakesProviderProps) => {
-  const accessToken = useAppSelector(selectUserAccessToken);
-  const dispatch = useAppDispatch();
-  const stakes = useAppSelector(selectStakesItems);
-  const { getSigner, getEthers } = useUserProvider();
   let navigate = useNavigate();
+  const { accessToken } = useAppSelector(selectUserStore);
+  const dispatch = useAppDispatch();
+  const { items: stakes } = useAppSelector(selectStakesStore);
+  const { getSigner, getEthers } = useUserProvider();
+
   const fetchStakes = useCallback(
     async (accessToken: string) => {
-      dispatch(setStakesLoading(true));
+      dispatch(stakesStoreActions.setLoading(true));
       const stakes = await getUserStakes(accessToken);
-      dispatch(setStakesItems(stakes || []));
-      dispatch(setStakesLoading(false));
+      dispatch(stakesStoreActions.setItems(stakes || []));
+      dispatch(stakesStoreActions.setLoading(false));
     },
     [dispatch]
   );
@@ -122,16 +117,16 @@ export const StakesProvider = ({ children }: StakesProviderProps) => {
 
   const handleCreateInputChange = useCallback(
     (name: StakeCreateInputFieldName, value: string) => {
-      dispatch(clearStakesError());
-      dispatch(setStakesCreateInputValue({ name, value }));
+      dispatch(stakesStoreActions.clearError());
+      dispatch(stakesStoreActions.setCreateInputValue({ name, value }));
     },
     [dispatch]
   );
 
   const handleWithdrawInputChange = useCallback(
     (name: StakeWithdrawInputFieldName, value: string) => {
-      dispatch(clearStakesError());
-      dispatch(setStakesWithdrawInputValue({ name, value }));
+      dispatch(stakesStoreActions.clearError());
+      dispatch(stakesStoreActions.setWithdrawInputValue({ name, value }));
     },
     [dispatch]
   );
@@ -139,7 +134,7 @@ export const StakesProvider = ({ children }: StakesProviderProps) => {
   const validatehandleStakeCreateAction = (input: StakeCreateInput) => {
     if (!input.chainId) {
       dispatch(
-        setStakesError({
+        stakesStoreActions.setError({
           type: 'chain',
           text: 'Blockchain is required',
         })
@@ -148,7 +143,7 @@ export const StakesProvider = ({ children }: StakesProviderProps) => {
     }
     if (!input.amount) {
       dispatch(
-        setStakesError({
+        stakesStoreActions.setError({
           type: 'amount',
           text: 'Amount is required',
         })
@@ -157,7 +152,7 @@ export const StakesProvider = ({ children }: StakesProviderProps) => {
     }
     if (!isNumeric(input.amount)) {
       dispatch(
-        setStakesError({
+        stakesStoreActions.setError({
           type: 'amount',
           text: 'Must be a number',
         })
@@ -176,7 +171,7 @@ export const StakesProvider = ({ children }: StakesProviderProps) => {
     poolAbi: any
   ) => {
     // clear error message
-    dispatch(clearStakesError());
+    dispatch(stakesStoreActions.clearError());
 
     // validate before executing
     if (!validatehandleStakeCreateAction(input)) {
@@ -184,7 +179,7 @@ export const StakesProvider = ({ children }: StakesProviderProps) => {
     }
 
     // start executing
-    dispatch(setStakesLoading(true));
+    dispatch(stakesStoreActions.setLoading(true));
 
     if (input.chainId !== userChainId || !userChainId) {
       try {
@@ -197,7 +192,7 @@ export const StakesProvider = ({ children }: StakesProviderProps) => {
           ],
         });
       } catch (error: any) {
-        dispatch(setStakesLoading(false));
+        dispatch(stakesStoreActions.setLoading(false));
         return;
       }
     }
@@ -224,19 +219,19 @@ export const StakesProvider = ({ children }: StakesProviderProps) => {
         )
         .catch((error: any) => {
           dispatch(
-            setStakesError({
+            stakesStoreActions.setError({
               type: 'transaction',
               text: getErrorMessage(error, 'Approval transaction error'),
             })
           );
           console.error('approve error', error);
-          dispatch(setStakesLoading(false));
+          dispatch(stakesStoreActions.setLoading(false));
           return;
         });
 
       // stop executing if approval failed
       if (!txApprove) {
-        dispatch(setStakesLoading(false));
+        dispatch(stakesStoreActions.setLoading(false));
         return;
       }
 
@@ -245,17 +240,17 @@ export const StakesProvider = ({ children }: StakesProviderProps) => {
         await txApprove.wait();
       } catch (error: any) {
         dispatch(
-          setStakesError({
+          stakesStoreActions.setError({
             type: 'transaction',
             text: error?.message || 'Transaction error',
           })
         );
         console.error('txApprove.wait error', error);
-        dispatch(setStakesLoading(false));
+        dispatch(stakesStoreActions.setLoading(false));
         return;
       }
-      dispatch(setStakesLoading(false));
-      dispatch(setStakesApproved(true));
+      dispatch(stakesStoreActions.setLoading(false));
+      dispatch(stakesStoreActions.setApproved(true));
 
       // stake if tokens were approved
     } else {
@@ -277,19 +272,19 @@ export const StakesProvider = ({ children }: StakesProviderProps) => {
         )
         .catch((error: any) => {
           dispatch(
-            setStakesError({
+            stakesStoreActions.setError({
               type: 'transaction',
               text: getErrorMessage(error, 'Staking transaction error'),
             })
           );
           console.error('stakeGRT error', error);
-          dispatch(setStakesLoading(false));
+          dispatch(stakesStoreActions.setLoading(false));
           return;
         });
 
       // stop execution if stake failed
       if (!tx) {
-        dispatch(setStakesLoading(false));
+        dispatch(stakesStoreActions.setLoading(false));
         return;
       }
 
@@ -298,13 +293,13 @@ export const StakesProvider = ({ children }: StakesProviderProps) => {
         await tx.wait();
       } catch (error: any) {
         dispatch(
-          setStakesError({
+          stakesStoreActions.setError({
             type: 'transaction',
             text: error?.message || 'Transaction error',
           })
         );
         console.error('tx.wait error', error);
-        dispatch(setStakesLoading(false));
+        dispatch(stakesStoreActions.setLoading(false));
         return;
       }
 
@@ -317,7 +312,7 @@ export const StakesProvider = ({ children }: StakesProviderProps) => {
         if (newStake && typeof newStake !== 'boolean') {
           // update stakes state
           dispatch(
-            setStakesItems([
+            stakesStoreActions.setItems([
               {
                 ...newStake,
                 new: true,
@@ -340,7 +335,7 @@ export const StakesProvider = ({ children }: StakesProviderProps) => {
         if (stakeUpdated) {
           // update stakes state
           dispatch(
-            setStakesItems(
+            stakesStoreActions.setItems(
               [...stakes].map((stake: StakeType) => {
                 if (stake.chainId === input.chainId) {
                   return {
@@ -359,11 +354,16 @@ export const StakesProvider = ({ children }: StakesProviderProps) => {
       }
 
       // clear amount field
-      dispatch(setStakesCreateInputValue({ name: 'amount', value: '' }));
+      dispatch(
+        stakesStoreActions.setCreateInputValue({
+          name: 'amount',
+          value: '',
+        })
+      );
 
       // complete execution
-      dispatch(setStakesLoading(false));
-      dispatch(setStakesApproved(false));
+      dispatch(stakesStoreActions.setLoading(false));
+      dispatch(stakesStoreActions.setApproved(false));
 
       // change view
       navigate(ROUTES.SELL.STAKING.ROOT.FULL_PATH);
@@ -377,7 +377,7 @@ export const StakesProvider = ({ children }: StakesProviderProps) => {
     // validate data
     if (!input.amount) {
       dispatch(
-        setStakesError({
+        stakesStoreActions.setError({
           type: 'amount',
           text: 'Amount is required',
         })
@@ -386,7 +386,7 @@ export const StakesProvider = ({ children }: StakesProviderProps) => {
     }
     if (!isNumeric(input.amount)) {
       dispatch(
-        setStakesError({
+        stakesStoreActions.setError({
           type: 'amount',
           text: 'Must be a number',
         })
@@ -398,7 +398,7 @@ export const StakesProvider = ({ children }: StakesProviderProps) => {
       parseFloat(stakes.find((s) => selectedStakeId === s._id)?.amount || '0')
     ) {
       dispatch(
-        setStakesError({
+        stakesStoreActions.setError({
           type: 'amount',
           text: `You can withdraw maximum ${
             stakes.find((s) => selectedStakeId === s._id)?.amount
@@ -417,7 +417,7 @@ export const StakesProvider = ({ children }: StakesProviderProps) => {
     poolAbi: any
   ) => {
     // clear error message
-    dispatch(clearStakesError());
+    dispatch(stakesStoreActions.clearError());
 
     // validate before executing
     if (!validatehandleStakeWithdrawAction(input, selectedStake._id)) {
@@ -425,7 +425,7 @@ export const StakesProvider = ({ children }: StakesProviderProps) => {
     }
 
     // start executing
-    dispatch(setStakesLoading(true));
+    dispatch(stakesStoreActions.setLoading(true));
 
     if (!userChainId || selectedStake.chainId !== userChainId) {
       try {
@@ -463,19 +463,19 @@ export const StakesProvider = ({ children }: StakesProviderProps) => {
       )
       .catch((error: any) => {
         dispatch(
-          setStakesError({
+          stakesStoreActions.setError({
             type: 'transaction',
             text: getErrorMessage(error, 'Withdrawal transaction error'),
           })
         );
         console.error('unstakeGRT error', error);
-        dispatch(setStakesLoading(false));
+        dispatch(stakesStoreActions.setLoading(false));
         return;
       });
 
     // stop execution if unstake failed
     if (!tx) {
-      dispatch(setStakesLoading(false));
+      dispatch(stakesStoreActions.setLoading(false));
       return;
     }
 
@@ -484,13 +484,13 @@ export const StakesProvider = ({ children }: StakesProviderProps) => {
       await tx.wait();
     } catch (error: any) {
       dispatch(
-        setStakesError({
+        stakesStoreActions.setError({
           type: 'transaction',
           text: error?.message || 'Transaction error',
         })
       );
       console.error('tx.wait error', error);
-      dispatch(setStakesLoading(false));
+      dispatch(stakesStoreActions.setLoading(false));
       return;
     }
 
@@ -506,7 +506,7 @@ export const StakesProvider = ({ children }: StakesProviderProps) => {
     if (stakeUpdated) {
       // update stakes state
       dispatch(
-        setStakesItems([
+        stakesStoreActions.setItems([
           ...stakes.map((s: StakeType) => {
             if (s._id === selectedStake._id) {
               return {

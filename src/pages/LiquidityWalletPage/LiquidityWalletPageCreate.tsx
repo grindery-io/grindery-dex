@@ -14,32 +14,31 @@ import {
 import { ROUTES } from '../../config';
 import {
   useAppSelector,
-  selectUserAccessToken,
-  selectUserChainId,
-  selectUserId,
-  selectWalletsCreateInput,
-  selectWalletsError,
-  selectWalletsItems,
-  selectWalletsLoading,
-  selectChainsItems,
-  selectSatelliteAbi,
+  selectAbiStore,
+  selectChainsStore,
+  selectWalletsStore,
+  selectUserStore,
 } from '../../store';
 import { useUserProvider, useWalletsProvider } from '../../providers';
 import { getChainById } from '../../utils';
 
 function LiquidityWalletPageCreate() {
   let navigate = useNavigate();
-  const user = useAppSelector(selectUserId);
+  const {
+    id: user,
+    accessToken,
+    chainId: userChainId,
+  } = useAppSelector(selectUserStore);
   const { connectUser: connect } = useUserProvider();
-  const accessToken = useAppSelector(selectUserAccessToken);
-  const userChainId = useAppSelector(selectUserChainId);
-  const loading = useAppSelector(selectWalletsLoading);
-  const errorMessage = useAppSelector(selectWalletsError);
-  const chains = useAppSelector(selectChainsItems);
-  const wallets = useAppSelector(selectWalletsItems);
-  const satelliteAbi = useAppSelector(selectSatelliteAbi);
-  const input = useAppSelector(selectWalletsCreateInput);
-  const { chainId } = input;
+  const { items: chains } = useAppSelector(selectChainsStore);
+  const {
+    items: wallets,
+    input: { create },
+    error: errorMessage,
+    loading,
+  } = useAppSelector(selectWalletsStore);
+  const { satelliteAbi } = useAppSelector(selectAbiStore);
+  const { chainId } = create;
   const currentChain = getChainById(chainId, chains);
   const { handleWalletsCreateAction } = useWalletsProvider();
 
@@ -97,7 +96,7 @@ function LiquidityWalletPageCreate() {
               ? () => {
                   handleWalletsCreateAction(
                     accessToken,
-                    input,
+                    create,
                     wallets,
                     userChainId,
                     satelliteAbi

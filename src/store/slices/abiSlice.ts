@@ -35,18 +35,12 @@ const abiSlice = createSlice({
       state.satelliteAbi = action.payload.satelliteAbi;
       state.liquidityWalletAbi = action.payload.liquidityWalletAbi;
     },
-    setAbiLoading(state, action: PayloadAction<boolean>) {
+    setLoading(state, action: PayloadAction<boolean>) {
       state.loading = action.payload;
     },
   },
 });
 
-export const selectAbiLoading = (state: RootState) => state.abi.loading;
-export const selectPoolAbi = (state: RootState) => state.abi.poolAbi;
-export const selectTokenAbi = (state: RootState) => state.abi.tokenAbi;
-export const selectSatelliteAbi = (state: RootState) => state.abi.satelliteAbi;
-export const selectLiquidityWalletAbi = (state: RootState) =>
-  state.abi.liquidityWalletAbi;
-export const { setAbiLoading, setAbis } = abiSlice.actions;
-
+export const selectAbiStore = (state: RootState) => state.abi;
+export const abiStoreActions = abiSlice.actions;
 export default abiSlice.reducer;

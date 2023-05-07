@@ -11,29 +11,27 @@ import {
 import { OrderType, LiquidityWalletType } from '../../types';
 import {
   useAppSelector,
-  selectOrdersError,
-  selectOrdersItems,
-  selectOrdersLoading,
-  selectUserAccessToken,
-  selectUserChainId,
-  selectLiquidityWalletAbi,
-  selectChainsItems,
-  selectWalletsItems,
-  selectOrdersHasMore,
+  selectOrdersStore,
+  selectAbiStore,
+  selectChainsStore,
+  selectWalletsStore,
+  selectUserStore,
 } from '../../store';
 import { useOrdersProvider } from '../../providers';
 
 function OrdersPageRoot() {
-  const accessToken = useAppSelector(selectUserAccessToken);
-  const userChainId = useAppSelector(selectUserChainId);
-  const liquidityWalletAbi = useAppSelector(selectLiquidityWalletAbi);
-  const orders = useAppSelector(selectOrdersItems);
-  const error = useAppSelector(selectOrdersError);
+  const { accessToken, chainId: userChainId } = useAppSelector(selectUserStore);
+  const { liquidityWalletAbi } = useAppSelector(selectAbiStore);
+  const {
+    items: orders,
+    loading,
+    error,
+    total,
+  } = useAppSelector(selectOrdersStore);
+  const hasMore = orders.length < total;
   const { handleOrderCompleteAction } = useOrdersProvider();
-  const wallets = useAppSelector(selectWalletsItems);
-  const chains = useAppSelector(selectChainsItems);
-  const hasMore = useAppSelector(selectOrdersHasMore);
-  const loading = useAppSelector(selectOrdersLoading);
+  const { items: wallets } = useAppSelector(selectWalletsStore);
+  const { items: chains } = useAppSelector(selectChainsStore);
   const { handleFetchMoreOrdersAction } = useOrdersProvider();
 
   return (

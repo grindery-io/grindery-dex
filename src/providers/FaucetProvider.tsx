@@ -8,14 +8,9 @@ import {
   useAppDispatch,
   useAppSelector,
   FaucetInput,
-  clearFaucetError,
-  setFaucetTransactionId,
-  setFaucetLoading,
-  setFaucetError,
-  setFaucetInputValue,
   FaucetInputFieldName,
-  selectUserAddress,
-  selectUserChainId,
+  faucetStoreActions,
+  selectUserStore,
 } from '../store';
 import { isNumeric, getChainIdHex } from '../utils';
 import { useUserProvider } from './UserProvider';
@@ -42,13 +37,12 @@ export const FaucetContext = createContext<ContextProps>({
 export const FaucetProvider = ({ children }: FaucetProviderProps) => {
   const dispatch = useAppDispatch();
   const { getSigner, getEthers } = useUserProvider();
-  const userAddress = useAppSelector(selectUserAddress);
-  const userChain = useAppSelector(selectUserChainId);
-
+  const { address: userAddress, chainId: userChain } =
+    useAppSelector(selectUserStore);
   const handleInputChange = useCallback(
     (name: FaucetInputFieldName, value: string) => {
-      dispatch(clearFaucetError());
-      dispatch(setFaucetInputValue({ name, value }));
+      dispatch(faucetStoreActions.clearError());
+      dispatch(faucetStoreActions.setInputValue({ name, value }));
     },
     [dispatch]
   );
@@ -56,7 +50,7 @@ export const FaucetProvider = ({ children }: FaucetProviderProps) => {
   const validateGetTokensAction = (input: FaucetInput) => {
     if (!input.address) {
       dispatch(
-        setFaucetError({
+        faucetStoreActions.setError({
           type: 'address',
           text: 'Wallet address is required',
         })
@@ -65,7 +59,7 @@ export const FaucetProvider = ({ children }: FaucetProviderProps) => {
     }
     if (!input.amount) {
       dispatch(
-        setFaucetError({
+        faucetStoreActions.setError({
           type: 'amount',
           text: 'Amount is required',
         })
@@ -74,7 +68,7 @@ export const FaucetProvider = ({ children }: FaucetProviderProps) => {
     }
     if (!isNumeric(input.amount)) {
       dispatch(
-        setFaucetError({
+        faucetStoreActions.setError({
           type: 'amount',
           text: 'Must be a number',
         })
@@ -83,7 +77,7 @@ export const FaucetProvider = ({ children }: FaucetProviderProps) => {
     }
     if (!input.chainId) {
       dispatch(
-        setFaucetError({
+        faucetStoreActions.setError({
           type: 'chain',
           text: 'Blockchain is required',
         })
@@ -99,14 +93,14 @@ export const FaucetProvider = ({ children }: FaucetProviderProps) => {
     currentChainId: string,
     tokenContractAbi: any
   ) => {
-    dispatch(clearFaucetError());
-    dispatch(setFaucetTransactionId(''));
+    dispatch(faucetStoreActions.clearError());
+    dispatch(faucetStoreActions.setTransactionId(''));
 
     if (!validateGetTokensAction(input)) {
       return;
     }
 
-    dispatch(setFaucetLoading(true));
+    dispatch(faucetStoreActions.setLoading(true));
 
     if (input.chainId !== currentChainId || !currentChainId) {
       try {
@@ -119,7 +113,7 @@ export const FaucetProvider = ({ children }: FaucetProviderProps) => {
           ],
         });
       } catch (error: any) {
-        dispatch(setFaucetLoading(false));
+        dispatch(faucetStoreActions.setLoading(false));
         return;
       }
     }
@@ -137,9 +131,9 @@ export const FaucetProvider = ({ children }: FaucetProviderProps) => {
     const tx = await grtContract
       .mint(input.address, ethers.utils.parseEther(input.amount))
       .catch(() => {
-        dispatch(setFaucetLoading(false));
+        dispatch(faucetStoreActions.setLoading(false));
         dispatch(
-          setFaucetError({
+          faucetStoreActions.setError({
             type: 'transaction',
             text: 'Transaction rejected',
           })
@@ -150,9 +144,9 @@ export const FaucetProvider = ({ children }: FaucetProviderProps) => {
     try {
       await tx.wait();
     } catch (e) {
-      dispatch(setFaucetLoading(false));
+      dispatch(faucetStoreActions.setLoading(false));
       dispatch(
-        setFaucetError({
+        faucetStoreActions.setError({
           type: 'transaction',
           text: 'Transaction failed',
         })
@@ -160,8 +154,8 @@ export const FaucetProvider = ({ children }: FaucetProviderProps) => {
       return;
     }
 
-    dispatch(setFaucetTransactionId(tx.hash));
-    dispatch(setFaucetLoading(false));
+    dispatch(faucetStoreActions.setTransactionId(tx.hash));
+    dispatch(faucetStoreActions.setLoading(false));
   };
 
   useEffect(() => {

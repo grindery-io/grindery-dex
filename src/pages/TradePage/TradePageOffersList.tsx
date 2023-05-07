@@ -13,13 +13,9 @@ import {
 import { OfferType } from '../../types';
 import {
   useAppSelector,
-  selectTradeFilter,
-  selectTradeLoading,
-  selectTradeOffers,
-  selectChainsItems,
-  selectUserAdvancedMode,
-  selectUserAccessToken,
-  selectTradeOffersHasMore,
+  selectChainsStore,
+  selectTradeStore,
+  selectUserStore,
 } from '../../store';
 import { useTradeProvider, useUserProvider } from '../../providers';
 
@@ -27,16 +23,19 @@ type Props = {};
 
 const TradePageOffersList = (props: Props) => {
   const { connectUser } = useUserProvider();
-  const accessToken = useAppSelector(selectUserAccessToken);
-  const loading = useAppSelector(selectTradeLoading);
-  const foundOffers = useAppSelector(selectTradeOffers);
-  const { amount } = useAppSelector(selectTradeFilter);
-  const chains = useAppSelector(selectChainsItems);
-  const advancedMode = useAppSelector(selectUserAdvancedMode);
+  const { accessToken, advancedMode } = useAppSelector(selectUserStore);
+  const {
+    offers: foundOffers,
+    filter,
+    total,
+    loading,
+  } = useAppSelector(selectTradeStore);
+  const { amount } = filter;
+  const { items: chains } = useAppSelector(selectChainsStore);
   const [showWalletModal, setShowWalletModal] = useState(false);
   const { handleAcceptOfferAction, handleSearchMoreOffersAction } =
     useTradeProvider();
-  const hasMore = useAppSelector(selectTradeOffersHasMore);
+  const hasMore = foundOffers.length < total;
 
   return (
     <>

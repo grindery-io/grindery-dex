@@ -8,29 +8,14 @@ import React, {
 import {
   useAppDispatch,
   useAppSelector,
-  selectUserAccessToken,
   TradeFilterFieldName,
   Tradefilter,
-  clearTradeError,
-  selectTradeFilter,
-  setTradeError,
-  setTradeFilterValue,
-  setTradeLoading,
-  setTradeOffers,
-  setTradeOffersVisible,
-  setTradePricesLoading,
-  setTradeToTokenPrice,
-  setOrdersItems,
-  setTradeOrderStatus,
-  setTradeOrderTransactionId,
-  setTradeOfferId,
-  setTradeModal,
-  selectChainsItems,
-  addTradeOffers,
-  setTradeOffersTotal,
-  selectUserChainId,
-  selectUserAddress,
-  selectPoolAbi,
+  ordersStoreActions,
+  selectAbiStore,
+  selectChainsStore,
+  selectTradeStore,
+  tradeStoreActions,
+  selectUserStore,
 } from '../store';
 import {
   getChainById,
@@ -90,30 +75,32 @@ type TradeProviderProps = {
 };
 
 export const TradeProvider = ({ children }: TradeProviderProps) => {
-  const accessToken = useAppSelector(selectUserAccessToken);
   const dispatch = useAppDispatch();
-  const userChainId = useAppSelector(selectUserChainId);
-  const filter = useAppSelector(selectTradeFilter);
+  const {
+    accessToken,
+    chainId: userChainId,
+    address: userAddress,
+  } = useAppSelector(selectUserStore);
+  const { filter } = useAppSelector(selectTradeStore);
   const { toTokenId, amount } = filter;
   const { getSigner, getEthers } = useUserProvider();
   const limit = 5;
   const [offset, setOffset] = useState(limit);
-  const chains = useAppSelector(selectChainsItems);
+  const { items: chains } = useAppSelector(selectChainsStore);
   const fromChain = getChainById(userChainId, chains);
   const fromToken = fromChain?.tokens?.find(
     (token: TokenType) => token.symbol === fromChain?.nativeToken
   );
   const fromChainId = fromChain?.chainId;
   const fromTokenId = fromToken?.coinmarketcapId;
-  const userAddress = useAppSelector(selectUserAddress);
-  const poolAbi = useAppSelector(selectPoolAbi);
+  const { poolAbi } = useAppSelector(selectAbiStore);
 
   const fetchTokenPrice = useCallback(
     async (toTokenId: string) => {
-      dispatch(setTradePricesLoading(true));
+      dispatch(tradeStoreActions.setPricesLoading(true));
       const toPrice = await getTokenPriceById(accessToken, toTokenId);
-      dispatch(setTradeToTokenPrice(toPrice));
-      dispatch(setTradePricesLoading(false));
+      dispatch(tradeStoreActions.setToTokenPrice(toPrice));
+      dispatch(tradeStoreActions.setPricesLoading(false));
     },
     [accessToken, dispatch]
   );
@@ -125,7 +112,7 @@ export const TradeProvider = ({ children }: TradeProviderProps) => {
         order = await getOrderRequest(accessToken, id);
       } catch (error) {}
       if (order) {
-        dispatch(setOrdersItems([order]));
+        dispatch(ordersStoreActions.setItems([order]));
       }
     },
     [accessToken, dispatch]
@@ -135,15 +122,17 @@ export const TradeProvider = ({ children }: TradeProviderProps) => {
     name: TradeFilterFieldName,
     value: string
   ) => {
-    dispatch(clearTradeError());
-    dispatch(setTradeOffersVisible(false));
-    dispatch(setTradeFilterValue({ name, value }));
+    dispatch(tradeStoreActions.clearError());
+    dispatch(tradeStoreActions.setOffersVisible(false));
+    dispatch(tradeStoreActions.setFilterValue({ name, value }));
   };
 
   const handleFromAmountMaxClick = (balance: string) => {
-    dispatch(clearTradeError());
-    dispatch(setTradeOffersVisible(false));
-    dispatch(setTradeFilterValue({ name: 'amount', value: balance }));
+    dispatch(tradeStoreActions.clearError());
+    dispatch(tradeStoreActions.setOffersVisible(false));
+    dispatch(
+      tradeStoreActions.setFilterValue({ name: 'amount', value: balance })
+    );
   };
 
   const handleEmailSubmitAction = useCallback(
@@ -228,18 +217,18 @@ export const TradeProvider = ({ children }: TradeProviderProps) => {
       fromChainId: string,
       fromTokenId: string
     ) => {
-      dispatch(clearTradeError());
+      dispatch(tradeStoreActions.clearError());
       const validation = validateSearchOffersAction(
         filter,
         fromChainId,
         fromTokenId
       );
       if (validation !== true) {
-        dispatch(setTradeError(validation));
+        dispatch(tradeStoreActions.setError(validation));
         return;
       }
-      dispatch(setTradeLoading(true));
-      dispatch(setTradeOffersVisible(true));
+      dispatch(tradeStoreActions.setLoading(true));
+      dispatch(tradeStoreActions.setOffersVisible(true));
       const toToken = getTokenById(filter.toTokenId, filter.toChainId, chains);
       const fromToken = getTokenById(fromTokenId, fromChainId, chains);
       const query = {
@@ -252,33 +241,33 @@ export const TradeProvider = ({ children }: TradeProviderProps) => {
       };
       const queryString = new URLSearchParams(query).toString();
       const res = await searchOffersRequest(queryString).catch((error) => {
-        dispatch(setTradeError({ type: 'search', text: error }));
+        dispatch(tradeStoreActions.setError({ type: 'search', text: error }));
       });
       if (typeof res?.items !== 'undefined') {
-        dispatch(setTradeOffers(res.items));
+        dispatch(tradeStoreActions.setOffers(res.items));
       } else {
-        dispatch(setTradeOffers([]));
-        dispatch(setTradeOffersVisible(false));
+        dispatch(tradeStoreActions.setOffers([]));
+        dispatch(tradeStoreActions.setOffersVisible(false));
       }
-      dispatch(setTradeOffersTotal(res?.total || 0));
-      dispatch(setTradeLoading(false));
+      dispatch(tradeStoreActions.setOffersTotal(res?.total || 0));
+      dispatch(tradeStoreActions.setLoading(false));
       setOffset(limit);
     },
     [dispatch, validateSearchOffersAction]
   );
 
   const handleSearchMoreOffersAction = useCallback(async () => {
-    dispatch(clearTradeError());
+    dispatch(tradeStoreActions.clearError());
     const validation = validateSearchOffersAction(
       filter,
       fromChainId || '',
       fromTokenId || ''
     );
     if (validation !== true) {
-      dispatch(setTradeError(validation));
+      dispatch(tradeStoreActions.setError(validation));
       return;
     }
-    dispatch(setTradeOffersVisible(true));
+    dispatch(tradeStoreActions.setOffersVisible(true));
     const toToken = getTokenById(filter.toTokenId, filter.toChainId, chains);
     const fromToken = getTokenById(
       fromTokenId || '',
@@ -296,7 +285,7 @@ export const TradeProvider = ({ children }: TradeProviderProps) => {
     };
     const queryString = new URLSearchParams(query).toString();
     const res = await searchOffersRequest(queryString);
-    dispatch(addTradeOffers(res?.items || []));
+    dispatch(tradeStoreActions.addOffers(res?.items || []));
     setOffset(offset + limit);
   }, [
     dispatch,
@@ -345,16 +334,20 @@ export const TradeProvider = ({ children }: TradeProviderProps) => {
 
   const handleAcceptOfferAction = useCallback(
     async (offer: OfferType) => {
-      dispatch(clearTradeError());
-      dispatch(setTradeOfferId(''));
-      dispatch(setTradeOrderTransactionId(''));
-      dispatch(setTradeOrderStatus(OrderPlacingStatusType.UNINITIALIZED));
-      dispatch(setTradeModal(true));
+      dispatch(tradeStoreActions.clearError());
+      dispatch(tradeStoreActions.setOfferId(''));
+      dispatch(tradeStoreActions.setOrderTransactionId(''));
+      dispatch(
+        tradeStoreActions.setOrderStatus(OrderPlacingStatusType.UNINITIALIZED)
+      );
+      dispatch(tradeStoreActions.setModal(true));
 
       const validation = validateAcceptOfferAction(offer, amount);
       if (!validation) {
-        dispatch(setTradeError(validation));
-        dispatch(setTradeOrderStatus(OrderPlacingStatusType.ERROR));
+        dispatch(tradeStoreActions.setError(validation));
+        dispatch(
+          tradeStoreActions.setOrderStatus(OrderPlacingStatusType.ERROR)
+        );
         return;
       }
 
@@ -365,11 +358,13 @@ export const TradeProvider = ({ children }: TradeProviderProps) => {
           chains
         );
 
-        dispatch(setTradeOfferId(offer.offerId || ''));
+        dispatch(tradeStoreActions.setOfferId(offer.offerId || ''));
 
         if (userChainId !== offer.exchangeChainId) {
           dispatch(
-            setTradeOrderStatus(OrderPlacingStatusType.WAITING_NETWORK_SWITCH)
+            tradeStoreActions.setOrderStatus(
+              OrderPlacingStatusType.WAITING_NETWORK_SWITCH
+            )
           );
         }
 
@@ -388,7 +383,9 @@ export const TradeProvider = ({ children }: TradeProviderProps) => {
         }
 
         dispatch(
-          setTradeOrderStatus(OrderPlacingStatusType.WAITING_CONFIRMATION)
+          tradeStoreActions.setOrderStatus(
+            OrderPlacingStatusType.WAITING_CONFIRMATION
+          )
         );
 
         // get signer
@@ -453,29 +450,35 @@ export const TradeProvider = ({ children }: TradeProviderProps) => {
         if (order) {
           fetchSingleOrder(order);
 
-          dispatch(setTradeOrderTransactionId(tx.hash || ''));
-          dispatch(setTradeOrderStatus(OrderPlacingStatusType.COMPLETED));
+          dispatch(tradeStoreActions.setOrderTransactionId(tx.hash || ''));
+          dispatch(
+            tradeStoreActions.setOrderStatus(OrderPlacingStatusType.COMPLETED)
+          );
         } else {
           dispatch(
-            setTradeError({
+            tradeStoreActions.setError({
               type: 'acceptOffer',
               text: "Server error, order wasn't saved",
             })
           );
-          dispatch(setTradeOrderStatus(OrderPlacingStatusType.ERROR));
+          dispatch(
+            tradeStoreActions.setOrderStatus(OrderPlacingStatusType.ERROR)
+          );
         }
       } catch (error: any) {
         dispatch(
-          setTradeError({
+          tradeStoreActions.setError({
             type: 'acceptOffer',
             text:
               getMetaMaskErrorMessage(error) ||
               'Server error, please try again later.',
           })
         );
-        dispatch(setTradeOrderStatus(OrderPlacingStatusType.ERROR));
+        dispatch(
+          tradeStoreActions.setOrderStatus(OrderPlacingStatusType.ERROR)
+        );
       }
-      dispatch(setTradeOfferId(''));
+      dispatch(tradeStoreActions.setOfferId(''));
     },
     [
       accessToken,

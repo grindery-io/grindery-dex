@@ -14,8 +14,8 @@ import {
 import { ChainType, TokenType } from '../../types';
 import {
   useAppSelector,
-  selectChainsItems,
-  selectOffersCreateInput,
+  selectChainsStore,
+  selectOffersStore,
 } from '../../store';
 import { useOffersProvider } from '../../providers';
 import { filterBuyerChains, getChainById, getTokensByChain } from '../../utils';
@@ -23,8 +23,8 @@ import { ROUTES } from '../../config';
 
 function OffersPageSelectToChain() {
   let navigate = useNavigate();
-  const chains = useAppSelector(selectChainsItems);
-  const input = useAppSelector(selectOffersCreateInput);
+  const { items: chains } = useAppSelector(selectChainsStore);
+  const { input } = useAppSelector(selectOffersStore);
   const { toChainId } = input;
   const { handleOfferCreateInputChange } = useOffersProvider();
   const [searchToken, setSearchToken] = useState('');

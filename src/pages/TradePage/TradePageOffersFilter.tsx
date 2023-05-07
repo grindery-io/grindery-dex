@@ -15,13 +15,9 @@ import {
 import { ROUTES, GRT_CONTRACT_ADDRESS } from '../../config';
 import {
   useAppSelector,
-  selectTradeError,
-  selectTradeFilter,
-  selectTradeLoading,
-  selectChainsItems,
-  selectUserChainTokenBalance,
-  selectUserChainTokenBalanceLoading,
-  selectUserChainId,
+  selectChainsStore,
+  selectTradeStore,
+  selectUserStore,
 } from '../../store';
 import { useTradeProvider } from '../../providers';
 import { getChainById, getTokenById } from '../../utils';
@@ -31,21 +27,23 @@ type Props = {};
 
 const TradePageOffersFilter = (props: Props) => {
   let navigate = useNavigate();
-  const errorMessage = useAppSelector(selectTradeError);
-  const userChainId = useAppSelector(selectUserChainId);
-  const loading = useAppSelector(selectTradeLoading);
-  const chains = useAppSelector(selectChainsItems);
-  const filter = useAppSelector(selectTradeFilter);
+  const {
+    error: errorMessage,
+    loading,
+    filter,
+  } = useAppSelector(selectTradeStore);
+  const {
+    chainId: userChainId,
+    chainTokenBalance: userChainTokenBalance,
+    chainTokenBalanceLoading: userChainTokenBalanceLoading,
+  } = useAppSelector(selectUserStore);
+  const { items: chains } = useAppSelector(selectChainsStore);
   const { toChainId, toTokenId, amount } = filter;
   const toChain = getChainById(toChainId, chains);
   const toToken = getTokenById(toTokenId, toChainId, chains);
   const fromChain = getChainById(userChainId, chains);
   const fromToken = fromChain?.tokens?.find(
     (token: TokenType) => token.symbol === fromChain?.nativeToken
-  );
-  const userChainTokenBalance = useAppSelector(selectUserChainTokenBalance);
-  const userChainTokenBalanceLoading = useAppSelector(
-    selectUserChainTokenBalanceLoading
   );
 
   const {

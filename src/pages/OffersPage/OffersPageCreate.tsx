@@ -17,12 +17,10 @@ import {
 import {
   useAppDispatch,
   useAppSelector,
-  selectUserId,
-  clearOffersCreateInput,
-  selectOffersCreateInput,
-  selectOffersError,
-  selectOffersLoading,
-  selectChainsItems,
+  selectChainsStore,
+  selectOffersStore,
+  offersStoreActions,
+  selectUserStore,
 } from '../../store';
 import { ROUTES } from '../../config';
 import { useUserProvider, useOffersProvider } from '../../providers';
@@ -31,11 +29,9 @@ import { getChainById, getTokenById } from '../../utils';
 function OffersPageCreate() {
   let navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const user = useAppSelector(selectUserId);
+  const { id: user } = useAppSelector(selectUserStore);
   const { connectUser: connect } = useUserProvider();
-  const loading = useAppSelector(selectOffersLoading);
-  const error = useAppSelector(selectOffersError);
-  const input = useAppSelector(selectOffersCreateInput);
+  const { error, input, loading } = useAppSelector(selectOffersStore);
   const { handleOfferCreateInputChange, handleOfferCreateAction } =
     useOffersProvider();
   const {
@@ -51,7 +47,7 @@ function OffersPageCreate() {
     toChainId,
     toTokenId,
   } = input;
-  const chains = useAppSelector(selectChainsItems);
+  const { items: chains } = useAppSelector(selectChainsStore);
   const fromChain = getChainById(fromChainId, chains);
   const fromToken = getTokenById(fromTokenId, fromChainId, chains);
   const toChain = getChainById(toChainId, chains);
@@ -68,7 +64,7 @@ function OffersPageCreate() {
             size="medium"
             edge="start"
             onClick={() => {
-              dispatch(clearOffersCreateInput());
+              dispatch(offersStoreActions.clearInput());
               navigate(ROUTES.SELL.OFFERS.ROOT.FULL_PATH);
             }}
           >

@@ -10,10 +10,10 @@ import { NotistackSnackbar } from '../components';
 import { JSONRPCRequestType } from '../types';
 import { getOfferById, getOrderByIdRequest } from '../services';
 import {
-  selectMessagesItems,
-  selectUserAccessToken,
-  updateOfferItem,
-  updateOrderHistoryItem,
+  offersStoreActions,
+  ordersHistoryStoreActions,
+  selectMessagesStore,
+  selectUserStore,
   useAppDispatch,
   useAppSelector,
 } from '../store';
@@ -28,8 +28,8 @@ type Props = {
 const SnackbarsProvider = (props: Props) => {
   const { children } = props;
   const dispatch = useAppDispatch();
-  const accessToken = useAppSelector(selectUserAccessToken);
-  const messages = useAppSelector(selectMessagesItems);
+  const { accessToken } = useAppSelector(selectUserStore);
+  const { items: messages } = useAppSelector(selectMessagesStore);
 
   const showNotification = useCallback((event: JSONRPCRequestType) => {
     const notification = getNotificationObject(event);
@@ -80,14 +80,14 @@ const SnackbarsProvider = (props: Props) => {
         if (event?.params?.type === 'offer') {
           const offer = await getOfferById(accessToken, event.params.id);
           if (offer) {
-            dispatch(updateOfferItem(offer));
+            dispatch(offersStoreActions.updateItem(offer));
             showNotification(event);
           }
         }
         if (event?.params?.type === 'order') {
           const order = await getOrderByIdRequest(accessToken, event.params.id);
           if (order) {
-            dispatch(updateOrderHistoryItem(order));
+            dispatch(ordersHistoryStoreActions.updateItem(order));
             showNotification(event);
           }
         }

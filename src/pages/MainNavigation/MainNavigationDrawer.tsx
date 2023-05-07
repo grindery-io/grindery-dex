@@ -13,7 +13,7 @@ import ExpandMore from '@mui/icons-material/ExpandMore';
 import { Collapse, List, ListItemButton, ListItemText } from '@mui/material';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import { Drawer } from '../../components';
-import { useAppSelector, selectUserIsAdmin } from '../../store';
+import { useAppSelector, selectUserStore } from '../../store';
 import { SidebarNavigationItemType } from '../../types';
 
 const drawerWidth = 240;
@@ -26,7 +26,7 @@ type Props = {
 const MainNavigationDrawer = (props: Props) => {
   let navigate = useNavigate();
   const { opened, onClose } = props;
-  const isAdmin = useAppSelector(selectUserIsAdmin);
+  const { isAdmin } = useAppSelector(selectUserStore);
   const location = useLocation();
   const [open, setOpen] = React.useState(true);
   const [faucetOpen, setFaucetOpen] = React.useState(true);

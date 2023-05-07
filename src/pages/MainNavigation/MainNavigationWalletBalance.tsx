@@ -1,11 +1,8 @@
 import React from 'react';
 import { Avatar, Box, Chip, Skeleton, Typography } from '@mui/material';
 import {
-  selectChainsItems,
-  selectUserAccessToken,
-  selectUserChainId,
-  selectUserChainTokenBalance,
-  selectUserChainTokenBalanceLoading,
+  selectChainsStore,
+  selectUserStore,
   useAppSelector,
 } from '../../store';
 import { getChainById, getTokenBySymbol } from '../../utils';
@@ -17,13 +14,13 @@ type Props = {};
 
 const MainNavigationWalletBalance = (props: Props) => {
   let navigate = useNavigate();
-  const accessToken = useAppSelector(selectUserAccessToken);
-  const userChainId = useAppSelector(selectUserChainId);
-  const walletBalance = useAppSelector(selectUserChainTokenBalance);
-  const walletBalanceLoading = useAppSelector(
-    selectUserChainTokenBalanceLoading
-  );
-  const chains = useAppSelector(selectChainsItems);
+  const {
+    accessToken,
+    chainId: userChainId,
+    chainTokenBalance: walletBalance,
+    chainTokenBalanceLoading: walletBalanceLoading,
+  } = useAppSelector(selectUserStore);
+  const { items: chains } = useAppSelector(selectChainsStore);
   const userChain = getChainById(userChainId, chains);
   const nativeToken = getTokenBySymbol(
     userChain?.nativeToken || '',

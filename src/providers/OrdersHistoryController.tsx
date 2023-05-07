@@ -8,11 +8,8 @@ import React, {
 import {
   useAppDispatch,
   useAppSelector,
-  setOrdersHistoryItems,
-  setOrdersHistoryLoading,
-  selectUserAccessToken,
-  addOrdersHistoryItems,
-  setOrdersHistoryTotal,
+  ordersHistoryStoreActions,
+  selectUserStore,
 } from '../store';
 import { getBuyerOrdersRequest } from '../services';
 
@@ -33,17 +30,17 @@ export const OrdersHistoryController = ({
   children,
 }: OrdersHistoryControllerProps) => {
   const dispatch = useAppDispatch();
-  const accessToken = useAppSelector(selectUserAccessToken);
+  const { accessToken } = useAppSelector(selectUserStore);
   const limit = 5;
   const [offset, setOffset] = useState(limit);
 
   const fetchOrders = useCallback(
     async (accessToken: string) => {
-      dispatch(setOrdersHistoryLoading(true));
+      dispatch(ordersHistoryStoreActions.setLoading(true));
       const res = await getBuyerOrdersRequest(accessToken, limit, 0);
-      dispatch(setOrdersHistoryItems(res?.items || []));
-      dispatch(setOrdersHistoryTotal(res?.total || 0));
-      dispatch(setOrdersHistoryLoading(false));
+      dispatch(ordersHistoryStoreActions.setItems(res?.items || []));
+      dispatch(ordersHistoryStoreActions.setTotal(res?.total || 0));
+      dispatch(ordersHistoryStoreActions.setLoading(false));
     },
     [dispatch]
   );
@@ -51,7 +48,7 @@ export const OrdersHistoryController = ({
   const handleFetchMoreOrdersAction = useCallback(async () => {
     const res = await getBuyerOrdersRequest(accessToken, limit, offset);
     setOffset(offset + limit);
-    dispatch(addOrdersHistoryItems(res?.items || []));
+    dispatch(ordersHistoryStoreActions.addItems(res?.items || []));
   }, [accessToken, offset, dispatch]);
 
   useEffect(() => {

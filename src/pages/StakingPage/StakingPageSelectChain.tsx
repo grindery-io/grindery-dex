@@ -6,8 +6,8 @@ import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
 import { ChainsList, PageCardBody, PageCardHeader } from '../../components';
 import {
   useAppSelector,
-  selectChainsItems,
-  selectStakesCreateInput,
+  selectChainsStore,
+  selectStakesStore,
 } from '../../store';
 import { ROUTES } from '../../config';
 import { useStakesProvider } from '../../providers';
@@ -15,9 +15,13 @@ import { ChainType } from '../../types';
 
 function StakingPageSelectChain() {
   let navigate = useNavigate();
-  const chains = useAppSelector(selectChainsItems);
+  const { items: chains } = useAppSelector(selectChainsStore);
   const { handleCreateInputChange } = useStakesProvider();
-  const { chainId } = useAppSelector(selectStakesCreateInput);
+  const {
+    input: {
+      create: { chainId },
+    },
+  } = useAppSelector(selectStakesStore);
   const currentChain = chains.find((c: ChainType) => c.chainId === chainId);
 
   return (

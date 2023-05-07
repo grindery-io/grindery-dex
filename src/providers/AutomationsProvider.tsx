@@ -7,19 +7,14 @@ import React, {
 import {
   useAppDispatch,
   useAppSelector,
-  selectUserAccessToken,
-  selectUserChainId,
   AutomationsInput,
   AutomationsInputFieldName,
-  clearAutomationsError,
-  selectAutomationsInput,
-  setAutomationsBotAddress,
-  setAutomationsError,
-  setAutomationsInputValue,
-  setAutomationsLoading,
-  selectLiquidityWalletAbi,
-  selectWalletsItems,
-  selectChainsItems,
+  selectAbiStore,
+  selectAutomationsStore,
+  automationsStoreActions,
+  selectChainsStore,
+  selectWalletsStore,
+  selectUserStore,
 } from '../store';
 import { getChainById, getErrorMessage, switchMetamaskNetwork } from '../utils';
 import { useUserProvider } from './UserProvider';
@@ -52,14 +47,13 @@ type AutomationsProviderProps = {
 };
 
 export const AutomationsProvider = ({ children }: AutomationsProviderProps) => {
-  const accessToken = useAppSelector(selectUserAccessToken);
-  const userChainId = useAppSelector(selectUserChainId);
   const dispatch = useAppDispatch();
-  const input = useAppSelector(selectAutomationsInput);
+  const { accessToken, chainId: userChainId } = useAppSelector(selectUserStore);
+  const { input } = useAppSelector(selectAutomationsStore);
   const { chainId } = input;
-  const chains = useAppSelector(selectChainsItems);
-  const wallets = useAppSelector(selectWalletsItems);
-  const liquidityWalletAbi = useAppSelector(selectLiquidityWalletAbi);
+  const { items: chains } = useAppSelector(selectChainsStore);
+  const { items: wallets } = useAppSelector(selectWalletsStore);
+  const { liquidityWalletAbi } = useAppSelector(selectAbiStore);
   const wallet = wallets.find(
     (w: LiquidityWalletType) => w.chainId === chainId
   );
@@ -67,11 +61,11 @@ export const AutomationsProvider = ({ children }: AutomationsProviderProps) => {
 
   const fetchBotAddress = useCallback(
     async (accessToken: string, chainId: string): Promise<string> => {
-      dispatch(setAutomationsLoading(true));
+      dispatch(automationsStoreActions.setLoading(true));
       const botAddress = await getBotAddress(accessToken, chainId);
       const result = botAddress || '';
-      dispatch(setAutomationsBotAddress(result));
-      dispatch(setAutomationsLoading(false));
+      dispatch(automationsStoreActions.setBotAddress(result));
+      dispatch(automationsStoreActions.setLoading(false));
       return result;
     },
     [dispatch]
@@ -79,8 +73,8 @@ export const AutomationsProvider = ({ children }: AutomationsProviderProps) => {
 
   const handleAutomationsInputChange = useCallback(
     (name: AutomationsInputFieldName, value: string) => {
-      dispatch(clearAutomationsError());
-      dispatch(setAutomationsInputValue({ name, value }));
+      dispatch(automationsStoreActions.clearError());
+      dispatch(automationsStoreActions.setInputValue({ name, value }));
     },
     [dispatch]
   );
@@ -97,28 +91,28 @@ export const AutomationsProvider = ({ children }: AutomationsProviderProps) => {
       if (!walletAddress) {
         return;
       }
-      dispatch(clearAutomationsError());
+      dispatch(automationsStoreActions.clearError());
 
       const chain = getChainById(chainId, chains);
       if (!chain) {
         dispatch(
-          setAutomationsError({
+          automationsStoreActions.setError({
             type: 'setBot',
             text: 'Chain not found',
           })
         );
-        dispatch(setAutomationsLoading(false));
+        dispatch(automationsStoreActions.setLoading(false));
         return;
       }
       const networkSwitched = await switchMetamaskNetwork(userChainId, chain);
       if (!networkSwitched) {
         dispatch(
-          setAutomationsError({
+          automationsStoreActions.setError({
             type: 'setBot',
             text: 'Network switching failed. Please, switch network in your MetaMask and try again.',
           })
         );
-        dispatch(setAutomationsLoading(false));
+        dispatch(automationsStoreActions.setLoading(false));
         return;
       }
 
@@ -138,7 +132,7 @@ export const AutomationsProvider = ({ children }: AutomationsProviderProps) => {
       // get wallet bot
       const _bot = await walletContract.getBot().catch((error: any) => {
         dispatch(
-          setAutomationsError({
+          automationsStoreActions.setError({
             type: 'setBot',
             text: getErrorMessage(error, 'Get wallet bot failed'),
           })
@@ -149,14 +143,14 @@ export const AutomationsProvider = ({ children }: AutomationsProviderProps) => {
 
       const botAddress = await fetchBotAddress(accessToken, chainId);
 
-      dispatch(setAutomationsBotAddress(_bot || ''));
+      dispatch(automationsStoreActions.setBotAddress(_bot || ''));
       dispatch(
-        setAutomationsInputValue({
+        automationsStoreActions.setInputValue({
           name: 'bot',
           value: botAddress || _bot || '',
         })
       );
-      dispatch(setAutomationsLoading(false));
+      dispatch(automationsStoreActions.setLoading(false));
     },
     [dispatch, fetchBotAddress, getEthers, getSigner]
   );
@@ -164,7 +158,7 @@ export const AutomationsProvider = ({ children }: AutomationsProviderProps) => {
   const validateAutomationsDelegateAction = (input: AutomationsInput) => {
     if (!input.chainId) {
       dispatch(
-        setAutomationsError({
+        automationsStoreActions.setError({
           type: 'chain',
           text: 'Blockchain is required',
         })
@@ -173,7 +167,7 @@ export const AutomationsProvider = ({ children }: AutomationsProviderProps) => {
     }
     if (!input.bot) {
       dispatch(
-        setAutomationsError({
+        automationsStoreActions.setError({
           type: 'bot',
           text: 'Bot address is required',
         })
@@ -193,7 +187,7 @@ export const AutomationsProvider = ({ children }: AutomationsProviderProps) => {
     chains: ChainType[]
   ) => {
     // clear error message
-    dispatch(clearAutomationsError());
+    dispatch(automationsStoreActions.clearError());
 
     // validate before executing
     if (!validateAutomationsDelegateAction(input)) {
@@ -201,17 +195,17 @@ export const AutomationsProvider = ({ children }: AutomationsProviderProps) => {
     }
 
     // start executing
-    dispatch(setAutomationsLoading(true));
+    dispatch(automationsStoreActions.setLoading(true));
 
     const inputChain = getChainById(input.chainId, chains);
     if (!inputChain) {
       dispatch(
-        setAutomationsError({
+        automationsStoreActions.setError({
           type: 'setBot',
           text: 'Chain not found',
         })
       );
-      dispatch(setAutomationsLoading(false));
+      dispatch(automationsStoreActions.setLoading(false));
       return;
     }
     const networkSwitched = await switchMetamaskNetwork(
@@ -220,12 +214,12 @@ export const AutomationsProvider = ({ children }: AutomationsProviderProps) => {
     );
     if (!networkSwitched) {
       dispatch(
-        setAutomationsError({
+        automationsStoreActions.setError({
           type: 'setBot',
           text: 'Network switching failed. Please, switch network in your MetaMask and try again.',
         })
       );
-      dispatch(setAutomationsLoading(false));
+      dispatch(automationsStoreActions.setLoading(false));
       return;
     }
 
@@ -245,18 +239,18 @@ export const AutomationsProvider = ({ children }: AutomationsProviderProps) => {
     // set wallet bot
     const tx = await walletContract.setBot(input.bot).catch((error: any) => {
       dispatch(
-        setAutomationsError({
+        automationsStoreActions.setError({
           type: 'setBot',
           text: getErrorMessage(error, 'Transaction error'),
         })
       );
       console.error('setBot error', error);
-      dispatch(setAutomationsLoading(false));
+      dispatch(automationsStoreActions.setLoading(false));
       return;
     });
 
     if (!tx) {
-      dispatch(setAutomationsLoading(false));
+      dispatch(automationsStoreActions.setLoading(false));
       return;
     }
 
@@ -264,13 +258,13 @@ export const AutomationsProvider = ({ children }: AutomationsProviderProps) => {
       await tx.wait();
     } catch (error: any) {
       dispatch(
-        setAutomationsError({
+        automationsStoreActions.setError({
           type: 'setbot',
           text: error?.message || 'Transaction error',
         })
       );
       console.error('tx.wait error', error);
-      dispatch(setAutomationsLoading(false));
+      dispatch(automationsStoreActions.setLoading(false));
       return;
     }
 

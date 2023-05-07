@@ -1,10 +1,8 @@
 import React from 'react';
 import { Box, Button } from '@mui/material';
 import {
-  selectChainsItems,
-  selectChainsLoading,
-  selectUserChainId,
-  selectUserId,
+  selectChainsStore,
+  selectUserStore,
   useAppSelector,
 } from '../../store';
 import { getChainById, switchMetamaskNetwork } from '../../utils';
@@ -14,10 +12,9 @@ import { RefreshIcon } from '../../icons';
 type Props = {};
 
 const MainNavigationSwitchChainButton = (props: Props) => {
-  const chains = useAppSelector(selectChainsItems);
-  const chainsLoading = useAppSelector(selectChainsLoading);
-  const userChainId = useAppSelector(selectUserChainId);
-  const userId = useAppSelector(selectUserId);
+  const { items: chains, loading: chainsLoading } =
+    useAppSelector(selectChainsStore);
+  const { id: userId, chainId: userChainId } = useAppSelector(selectUserStore);
   const goerliChain = getChainById('5', chains);
 
   const handleButtonClick = async (userChainId: string, chain: ChainType) => {

@@ -41,92 +41,52 @@ const userSlice = createSlice({
   name: 'user',
   initialState,
   reducers: {
-    setUserId(state, action: PayloadAction<string>) {
+    setId(state, action: PayloadAction<string>) {
       state.id = action.payload || '';
     },
-    setUserAddress(state, action: PayloadAction<string>) {
+    setAddress(state, action: PayloadAction<string>) {
       state.address = action.payload || '';
     },
-    setUserChain(state, action: PayloadAction<string>) {
+    setChain(state, action: PayloadAction<string>) {
       state.chain = action.payload || '';
       state.chainId = (action.payload || '').split(':').pop() || '';
     },
-    setUserAccessToken(state, action: PayloadAction<string>) {
+    setAccessToken(state, action: PayloadAction<string>) {
       state.accessToken = action.payload || '';
     },
-    setUserIsAdmin(state, action: PayloadAction<boolean>) {
+    setIsAdmin(state, action: PayloadAction<boolean>) {
       state.isAdmin = action.payload;
     },
-    setUserIsAdminLoading(state, action: PayloadAction<boolean>) {
+    setIsAdminLoading(state, action: PayloadAction<boolean>) {
       state.isAdminLoading = action.payload;
     },
-    setUserChainTokenPrice(state, action: PayloadAction<number | null>) {
+    setChainTokenPrice(state, action: PayloadAction<number | null>) {
       state.chainTokenPrice = action.payload;
     },
-    setUserChainTokenPriceLoading(state, action: PayloadAction<boolean>) {
+    setChainTokenPriceLoading(state, action: PayloadAction<boolean>) {
       state.chainTokenPriceLoading = action.payload;
     },
-    setUserChainTokenBalance(state, action: PayloadAction<string>) {
+    setChainTokenBalance(state, action: PayloadAction<string>) {
       state.chainTokenBalance = action.payload;
     },
-    setUserChainTokenBalanceLoading(state, action: PayloadAction<boolean>) {
+    setChainTokenBalanceLoading(state, action: PayloadAction<boolean>) {
       state.chainTokenBalanceLoading = action.payload;
     },
-    setUserAdvancedMode(state, action: PayloadAction<boolean>) {
+    setAdvancedMode(state, action: PayloadAction<boolean>) {
       state.advancedMode = action.payload;
     },
-    setUserAdvancedModeAlert(state, action: PayloadAction<boolean>) {
+    setAdvancedModeAlert(state, action: PayloadAction<boolean>) {
       state.advancedModeAlert = action.payload;
     },
-    setUserPopupClosed(state, action: PayloadAction<boolean>) {
+    setPopupClosed(state, action: PayloadAction<boolean>) {
       state.popupClosed = action.payload;
     },
-    setUserSessionExpired(state, action: PayloadAction<boolean>) {
+    setSessionExpired(state, action: PayloadAction<boolean>) {
       state.sessionExpired = action.payload;
     },
   },
 });
 
-export const selectUserId = (state: RootState) => state.user.id;
-export const selectUserAddress = (state: RootState) => state.user.address;
-export const selectUserChain = (state: RootState) => state.user.chain;
-export const selectUserChainId = (state: RootState) => state.user.chainId;
-export const selectUserAccessToken = (state: RootState) =>
-  state.user.accessToken;
-export const selectUserIsAdmin = (state: RootState) => state.user.isAdmin;
-export const selectUserIsAdminLoading = (state: RootState) =>
-  state.user.isAdminLoading;
-export const selectUserChainTokenPrice = (state: RootState) =>
-  state.user.chainTokenPrice;
-export const selectUserChainTokenPriceLoading = (state: RootState) =>
-  state.user.chainTokenPriceLoading;
-export const selectUserChainTokenBalance = (state: RootState) =>
-  state.user.chainTokenBalance;
-export const selectUserChainTokenBalanceLoading = (state: RootState) =>
-  state.user.chainTokenBalanceLoading;
-export const selectUserAdvancedMode = (state: RootState) =>
-  state.user.advancedMode;
-export const selectUserAdvancedModeAlert = (state: RootState) =>
-  state.user.advancedModeAlert;
-export const selectUserPopupClosed = (state: RootState) =>
-  state.user.popupClosed;
-export const selectUserSessionExpired = (state: RootState) =>
-  state.user.sessionExpired;
-
-export const {
-  setUserId,
-  setUserAddress,
-  setUserChain,
-  setUserAccessToken,
-  setUserIsAdmin,
-  setUserIsAdminLoading,
-  setUserChainTokenPrice,
-  setUserChainTokenPriceLoading,
-  setUserChainTokenBalance,
-  setUserChainTokenBalanceLoading,
-  setUserAdvancedMode,
-  setUserAdvancedModeAlert,
-  setUserPopupClosed,
-  setUserSessionExpired,
-} = userSlice.actions;
+export const selectUserStore = (state: RootState) => state.user;
+export const userStoreActions = userSlice.actions;
 export default userSlice.reducer;

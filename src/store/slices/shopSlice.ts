@@ -43,28 +43,28 @@ const shopSlice = createSlice({
   name: 'shop',
   initialState,
   reducers: {
-    setShopOffers(state, action: PayloadAction<OfferType[]>) {
+    setOffers(state, action: PayloadAction<OfferType[]>) {
       state.offers = action.payload;
     },
-    addShopOffers(state, action: PayloadAction<OfferType[]>) {
+    addOffers(state, action: PayloadAction<OfferType[]>) {
       state.offers = [...state.offers, ...action.payload];
     },
-    setShopOffersTotal(state, action: PayloadAction<number>) {
+    setOffersTotal(state, action: PayloadAction<number>) {
       state.total = action.payload;
     },
-    setShopLoading(state, action: PayloadAction<boolean>) {
+    setLoading(state, action: PayloadAction<boolean>) {
       state.loading = action.payload;
     },
-    setShopError(state, action: PayloadAction<{ type: string; text: string }>) {
+    setError(state, action: PayloadAction<{ type: string; text: string }>) {
       state.error = action.payload;
     },
-    clearShopError(state) {
+    clearError(state) {
       state.error = { type: '', text: '' };
     },
-    setShopFilter(state, action: PayloadAction<Shopfilter>) {
+    setFilter(state, action: PayloadAction<Shopfilter>) {
       state.filter = action.payload;
     },
-    setShopFilterValue(
+    setFilterValue(
       state,
       action: PayloadAction<{
         name: ShopFilterFieldName;
@@ -73,54 +73,27 @@ const shopSlice = createSlice({
     ) {
       state.filter[action.payload.name] = action.payload.value;
     },
-    clearShopFilter(state) {
+    clearFilter(state) {
       state.filter = {
         toChainId: '',
         toTokenId: '',
       };
     },
-    setShopModal(state, action: PayloadAction<boolean>) {
+    setModal(state, action: PayloadAction<boolean>) {
       state.modal = action.payload;
     },
-    setShopOfferId(state, action: PayloadAction<string>) {
+    setOfferId(state, action: PayloadAction<string>) {
       state.offerId = action.payload;
     },
-    setShopOrderTransactionId(state, action: PayloadAction<string>) {
+    setOrderTransactionId(state, action: PayloadAction<string>) {
       state.orderTransactionId = action.payload;
     },
-    setShopOorderStatus(state, action: PayloadAction<OrderPlacingStatusType>) {
+    setOrderStatus(state, action: PayloadAction<OrderPlacingStatusType>) {
       state.orderStatus = action.payload;
     },
   },
 });
 
-export const selectShopOffers = (state: RootState) => state.shop.offers;
-export const selectShopError = (state: RootState) => state.shop.error;
-export const selectShopLoading = (state: RootState) => state.shop.loading;
-export const selectShopFilter = (state: RootState) => state.shop.filter;
-export const selectShopModal = (state: RootState) => state.shop.modal;
-export const selectShopOfferId = (state: RootState) => state.shop.offerId;
-export const selectShopOrderTransactionId = (state: RootState) =>
-  state.shop.orderTransactionId;
-export const selectShopOrderStatus = (state: RootState) =>
-  state.shop.orderStatus;
-export const selectShopOffersHasMore = (state: RootState) =>
-  Boolean(state.shop.offers.length < state.shop.total);
-
-export const {
-  setShopOffers,
-  setShopLoading,
-  setShopError,
-  clearShopError,
-  setShopFilter,
-  setShopFilterValue,
-  clearShopFilter,
-  setShopModal,
-  setShopOfferId,
-  setShopOrderTransactionId,
-  setShopOorderStatus,
-  addShopOffers,
-  setShopOffersTotal,
-} = shopSlice.actions;
-
+export const selectShopStore = (state: RootState) => state.shop;
+export const shopStoreActions = shopSlice.actions;
 export default shopSlice.reducer;

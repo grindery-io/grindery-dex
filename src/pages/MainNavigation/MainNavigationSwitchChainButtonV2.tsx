@@ -1,10 +1,8 @@
 import React from 'react';
 import { Box, Button, ListItemIcon, MenuItem, Typography } from '@mui/material';
 import {
-  selectChainsItems,
-  selectChainsLoading,
-  selectUserChainId,
-  selectUserId,
+  selectChainsStore,
+  selectUserStore,
   useAppSelector,
 } from '../../store';
 import {
@@ -19,10 +17,9 @@ import { Menu } from '../../components';
 type Props = {};
 
 const MainNavigationSwitchChainButtonV2 = (props: Props) => {
-  const chains = useAppSelector(selectChainsItems);
-  const chainsLoading = useAppSelector(selectChainsLoading);
-  const userChainId = useAppSelector(selectUserChainId);
-  const userId = useAppSelector(selectUserId);
+  const { items: chains, loading: chainsLoading } =
+    useAppSelector(selectChainsStore);
+  const { id: userId, chainId: userChainId } = useAppSelector(selectUserStore);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const selectedChain = getChainById(userChainId, chains);

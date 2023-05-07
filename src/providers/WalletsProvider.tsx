@@ -8,23 +8,14 @@ import { useNavigate } from 'react-router-dom';
 import {
   useAppDispatch,
   useAppSelector,
-  selectUserAccessToken,
   WalletsAddTokensInput,
   WalletsAddTokensInputFieldName,
   WalletsCreateInput,
   WalletsCreateInputFieldName,
   WalletsWithdrawTokensInput,
   WalletsWithdrawTokensInputFieldName,
-  clearWalletsAddTokensInput,
-  clearWalletsCreateInput,
-  clearWalletsError,
-  clearWalletsWithdrawTokensInput,
-  setWalletsAddTokensInputValue,
-  setWalletsCreateInputValue,
-  setWalletsError,
-  setWalletsItems,
-  setWalletsLoading,
-  setWalletsWithdrawTokensInputValue,
+  walletsStoreActions,
+  selectUserStore,
 } from '../store';
 import {
   addWalletRequest,
@@ -97,15 +88,15 @@ type WalletsProviderProps = {
 export const WalletsProvider = ({ children }: WalletsProviderProps) => {
   let navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const accessToken = useAppSelector(selectUserAccessToken);
+  const { accessToken } = useAppSelector(selectUserStore);
   const { getSigner, getEthers } = useUserProvider();
 
   const fetchWallets = useCallback(
     async (accessToken: string) => {
-      dispatch(setWalletsLoading(true));
+      dispatch(walletsStoreActions.setLoading(true));
       const wallets = await getWalletsRequest(accessToken);
-      dispatch(setWalletsItems(wallets || []));
-      dispatch(setWalletsLoading(false));
+      dispatch(walletsStoreActions.setItems(wallets || []));
+      dispatch(walletsStoreActions.setLoading(false));
     },
     [dispatch]
   );
@@ -114,14 +105,14 @@ export const WalletsProvider = ({ children }: WalletsProviderProps) => {
     name: WalletsCreateInputFieldName,
     value: string
   ) => {
-    dispatch(clearWalletsError());
-    dispatch(setWalletsCreateInputValue({ name, value }));
+    dispatch(walletsStoreActions.clearError());
+    dispatch(walletsStoreActions.setCreateInputValue({ name, value }));
   };
 
   const handleWalletsAddtokensInputChange = useCallback(
     (name: WalletsAddTokensInputFieldName, value: string) => {
-      dispatch(clearWalletsError());
-      dispatch(setWalletsAddTokensInputValue({ name, value }));
+      dispatch(walletsStoreActions.clearError());
+      dispatch(walletsStoreActions.setAddTokensInputValue({ name, value }));
     },
     [dispatch]
   );
@@ -130,8 +121,8 @@ export const WalletsProvider = ({ children }: WalletsProviderProps) => {
     name: WalletsWithdrawTokensInputFieldName,
     value: string
   ) => {
-    dispatch(clearWalletsError());
-    dispatch(setWalletsWithdrawTokensInputValue({ name, value }));
+    dispatch(walletsStoreActions.clearError());
+    dispatch(walletsStoreActions.setWithdrawTokensInputValue({ name, value }));
   };
 
   const validateWalletsCreateAction = (
@@ -153,17 +144,17 @@ export const WalletsProvider = ({ children }: WalletsProviderProps) => {
     userChainId: string,
     satelliteAbi: any
   ) => {
-    dispatch(clearWalletsError());
+    dispatch(walletsStoreActions.clearError());
 
     const validate = validateWalletsCreateAction(input);
     if (validate !== true) {
-      dispatch(setWalletsError(validate));
+      dispatch(walletsStoreActions.setError(validate));
       return;
     }
 
     if (!satelliteAbi) {
       dispatch(
-        setWalletsError({
+        walletsStoreActions.setError({
           type: 'createWallet',
           text: 'Satellite ABI not found.',
         })
@@ -178,7 +169,7 @@ export const WalletsProvider = ({ children }: WalletsProviderProps) => {
         .includes(input.chainId)
     ) {
       dispatch(
-        setWalletsError({
+        walletsStoreActions.setError({
           type: 'chain',
           text: `You already have wallet for this chain. Please, select another.`,
         })
@@ -186,7 +177,7 @@ export const WalletsProvider = ({ children }: WalletsProviderProps) => {
       return;
     }
 
-    dispatch(setWalletsLoading(true));
+    dispatch(walletsStoreActions.setLoading(true));
 
     if (!userChainId || userChainId !== input.chainId) {
       try {
@@ -200,12 +191,12 @@ export const WalletsProvider = ({ children }: WalletsProviderProps) => {
         });
       } catch (error: any) {
         dispatch(
-          setWalletsError({
+          walletsStoreActions.setError({
             type: 'createWallet',
             text: `Chain switching failed`,
           })
         );
-        dispatch(setWalletsLoading(false));
+        dispatch(walletsStoreActions.setLoading(false));
         return;
       }
     }
@@ -225,7 +216,7 @@ export const WalletsProvider = ({ children }: WalletsProviderProps) => {
       .deployLiquidityContract()
       .catch((error: any) => {
         dispatch(
-          setWalletsError({
+          walletsStoreActions.setError({
             type: 'createWallet',
             text: getErrorMessage(
               error.error,
@@ -234,18 +225,18 @@ export const WalletsProvider = ({ children }: WalletsProviderProps) => {
           })
         );
         console.error('create wallet error', error.error);
-        dispatch(setWalletsLoading(false));
+        dispatch(walletsStoreActions.setLoading(false));
         return;
       });
 
     if (!tx) {
       dispatch(
-        setWalletsError({
+        walletsStoreActions.setError({
           type: 'createWallet',
           text: 'Create wallet transaction failed',
         })
       );
-      dispatch(setWalletsLoading(false));
+      dispatch(walletsStoreActions.setLoading(false));
       return;
     }
 
@@ -254,13 +245,13 @@ export const WalletsProvider = ({ children }: WalletsProviderProps) => {
       receipt = await tx.wait();
     } catch (error: any) {
       dispatch(
-        setWalletsError({
+        walletsStoreActions.setError({
           type: 'createWallet',
           text: error?.message || 'Transaction error',
         })
       );
       console.error('tx.wait error', error);
-      dispatch(setWalletsLoading(false));
+      dispatch(walletsStoreActions.setLoading(false));
       return;
     }
 
@@ -273,24 +264,24 @@ export const WalletsProvider = ({ children }: WalletsProviderProps) => {
 
     if (!createdWalletId) {
       dispatch(
-        setWalletsError({
+        walletsStoreActions.setError({
           type: 'createWallet',
           text: 'Wallet saving error',
         })
       );
-      dispatch(setWalletsLoading(false));
+      dispatch(walletsStoreActions.setLoading(false));
       return;
     }
 
     const wallet = await getWalletRequest(accessToken, createdWalletId).catch(
       () => {
         dispatch(
-          setWalletsError({
+          walletsStoreActions.setError({
             type: 'createWallet',
             text: 'Wallet saving error',
           })
         );
-        dispatch(setWalletsLoading(false));
+        dispatch(walletsStoreActions.setLoading(false));
       }
     );
 
@@ -299,7 +290,7 @@ export const WalletsProvider = ({ children }: WalletsProviderProps) => {
     }
 
     dispatch(
-      setWalletsItems([
+      walletsStoreActions.setItems([
         {
           ...wallet,
           new: true,
@@ -307,9 +298,9 @@ export const WalletsProvider = ({ children }: WalletsProviderProps) => {
         ...[...wallets],
       ])
     );
-    dispatch(setWalletsLoading(false));
-    dispatch(clearWalletsError());
-    dispatch(clearWalletsCreateInput());
+    dispatch(walletsStoreActions.setLoading(false));
+    dispatch(walletsStoreActions.clearError());
+    dispatch(walletsStoreActions.clearCreateInput());
     navigate(ROUTES.SELL.WALLETS.ROOT.FULL_PATH);
   };
 
@@ -344,18 +335,18 @@ export const WalletsProvider = ({ children }: WalletsProviderProps) => {
     wallet: LiquidityWalletType | null,
     token: TokenType | null
   ) => {
-    dispatch(clearWalletsError());
+    dispatch(walletsStoreActions.clearError());
 
     const validate = validateAddTokensAction(input);
 
     if (validate !== true) {
-      dispatch(setWalletsError(validate));
+      dispatch(walletsStoreActions.setError(validate));
       return;
     }
 
     if (!wallet) {
       dispatch(
-        setWalletsError({
+        walletsStoreActions.setError({
           type: 'addTokens',
           text: 'Wallet not found.',
         })
@@ -365,7 +356,7 @@ export const WalletsProvider = ({ children }: WalletsProviderProps) => {
 
     if (!token) {
       dispatch(
-        setWalletsError({
+        walletsStoreActions.setError({
           type: 'addTokens',
           text: 'Token not found.',
         })
@@ -373,7 +364,7 @@ export const WalletsProvider = ({ children }: WalletsProviderProps) => {
       return;
     }
 
-    dispatch(setWalletsLoading(true));
+    dispatch(walletsStoreActions.setLoading(true));
 
     if (!userChainId || userChainId !== wallet.chainId) {
       try {
@@ -387,12 +378,12 @@ export const WalletsProvider = ({ children }: WalletsProviderProps) => {
         });
       } catch (error: any) {
         dispatch(
-          setWalletsError({
+          walletsStoreActions.setError({
             type: 'addTokens',
             text: 'Chain switching failed.',
           })
         );
-        dispatch(setWalletsLoading(false));
+        dispatch(walletsStoreActions.setLoading(false));
         return;
       }
     }
@@ -407,37 +398,37 @@ export const WalletsProvider = ({ children }: WalletsProviderProps) => {
       })
       .catch((error: any) => {
         dispatch(
-          setWalletsError({
+          walletsStoreActions.setError({
             type: 'addTokens',
             text: getErrorMessage(error, 'Transfer transaction error'),
           })
         );
         console.error('transfer error', error);
-        dispatch(setWalletsLoading(false));
+        dispatch(walletsStoreActions.setLoading(false));
         return;
       });
 
     if (!txTransfer) {
       dispatch(
-        setWalletsError({
+        walletsStoreActions.setError({
           type: 'addTokens',
           text: 'Transfer transaction failed',
         })
       );
-      dispatch(setWalletsLoading(false));
+      dispatch(walletsStoreActions.setLoading(false));
       return;
     }
     try {
       await txTransfer.wait();
     } catch (error: any) {
       dispatch(
-        setWalletsError({
+        walletsStoreActions.setError({
           type: 'addTokens',
           text: error?.message || 'Transaction error',
         })
       );
       console.error('txTransfer.wait error', error);
-      dispatch(setWalletsLoading(false));
+      dispatch(walletsStoreActions.setLoading(false));
       return;
     }
 
@@ -450,17 +441,17 @@ export const WalletsProvider = ({ children }: WalletsProviderProps) => {
     });
     if (!isUpdated) {
       dispatch(
-        setWalletsError({
+        walletsStoreActions.setError({
           type: 'addTokens',
           text: 'Transaction error',
         })
       );
-      dispatch(setWalletsLoading(false));
+      dispatch(walletsStoreActions.setLoading(false));
       return;
     }
 
-    dispatch(setWalletsLoading(false));
-    dispatch(clearWalletsAddTokensInput());
+    dispatch(walletsStoreActions.setLoading(false));
+    dispatch(walletsStoreActions.clearAddTokensInput());
     navigate(ROUTES.SELL.WALLETS.ROOT.FULL_PATH);
   };
 
@@ -516,18 +507,18 @@ export const WalletsProvider = ({ children }: WalletsProviderProps) => {
     token: TokenType | null,
     liquidityWalletAbi: any
   ) => {
-    dispatch(clearWalletsError());
+    dispatch(walletsStoreActions.clearError());
 
     const validate = validateWithdrawTokensAction(input, wallet, token);
 
     if (validate !== true) {
-      dispatch(setWalletsError(validate));
+      dispatch(walletsStoreActions.setError(validate));
       return;
     }
 
     if (!liquidityWalletAbi) {
       dispatch(
-        setWalletsError({
+        walletsStoreActions.setError({
           type: 'withdrawTokens',
           text: 'Contract ABI not found.',
         })
@@ -535,7 +526,7 @@ export const WalletsProvider = ({ children }: WalletsProviderProps) => {
 
       return;
     }
-    dispatch(setWalletsLoading(true));
+    dispatch(walletsStoreActions.setLoading(true));
 
     if (!userChainId || wallet?.chainId !== userChainId) {
       try {
@@ -549,12 +540,12 @@ export const WalletsProvider = ({ children }: WalletsProviderProps) => {
         });
       } catch (error: any) {
         dispatch(
-          setWalletsError({
+          walletsStoreActions.setError({
             type: 'withdrawTokens',
             text: 'Chain switching failed.',
           })
         );
-        dispatch(setWalletsLoading(false));
+        dispatch(walletsStoreActions.setLoading(false));
         return;
       }
     }
@@ -577,24 +568,24 @@ export const WalletsProvider = ({ children }: WalletsProviderProps) => {
       );
     } catch (error: any) {
       dispatch(
-        setWalletsError({
+        walletsStoreActions.setError({
           type: 'withdrawTokens',
           text: getErrorMessage(error.error, 'Transfer transaction error'),
         })
       );
       console.error('transfer error', error.error);
-      dispatch(setWalletsLoading(false));
+      dispatch(walletsStoreActions.setLoading(false));
       return;
     }
 
     if (!txTransfer) {
       dispatch(
-        setWalletsError({
+        walletsStoreActions.setError({
           type: 'withdrawTokens',
           text: 'Transfer transaction failed',
         })
       );
-      dispatch(setWalletsLoading(false));
+      dispatch(walletsStoreActions.setLoading(false));
       return;
     }
 
@@ -602,13 +593,13 @@ export const WalletsProvider = ({ children }: WalletsProviderProps) => {
       await txTransfer.wait();
     } catch (error: any) {
       dispatch(
-        setWalletsError({
+        walletsStoreActions.setError({
           type: 'withdrawTokens',
           text: error?.message || 'Transaction error',
         })
       );
       console.error('txTransfer.wait error', error);
-      dispatch(setWalletsLoading(false));
+      dispatch(walletsStoreActions.setLoading(false));
       return;
     }
 
@@ -623,16 +614,16 @@ export const WalletsProvider = ({ children }: WalletsProviderProps) => {
 
     if (!isUpdated) {
       dispatch(
-        setWalletsError({
+        walletsStoreActions.setError({
           type: 'withdrawTokens',
           text: 'Transaction error',
         })
       );
-      dispatch(setWalletsLoading(false));
+      dispatch(walletsStoreActions.setLoading(false));
       return;
     }
-    dispatch(clearWalletsWithdrawTokensInput());
-    dispatch(setWalletsLoading(false));
+    dispatch(walletsStoreActions.clearWithdrawTokensInput());
+    dispatch(walletsStoreActions.setLoading(false));
     navigate(ROUTES.SELL.WALLETS.ROOT.FULL_PATH);
   };
 

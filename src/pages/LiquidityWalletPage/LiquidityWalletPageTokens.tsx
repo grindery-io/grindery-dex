@@ -14,10 +14,9 @@ import {
 } from '../../components';
 import {
   useAppSelector,
-  selectChainsItems,
-  selectUserId,
-  selectWalletsItems,
-  selectWalletsLoading,
+  selectChainsStore,
+  selectWalletsStore,
+  selectUserStore,
 } from '../../store';
 import { useUserProvider } from '../../providers';
 import { ROUTES } from '../../config';
@@ -26,11 +25,11 @@ import { getWalletById, getWalletChain } from '../../utils';
 function LiquidityWalletPageTokens() {
   let navigate = useNavigate();
   let { walletId } = useParams();
-  const user = useAppSelector(selectUserId);
+  const { id: user } = useAppSelector(selectUserStore);
   const { connectUser: connect } = useUserProvider();
-  const chains = useAppSelector(selectChainsItems);
-  const wallets = useAppSelector(selectWalletsItems);
-  const walletsIsLoading = useAppSelector(selectWalletsLoading);
+  const { items: chains } = useAppSelector(selectChainsStore);
+  const { items: wallets, loading: walletsIsLoading } =
+    useAppSelector(selectWalletsStore);
   const currentWallet = getWalletById(walletId || '', wallets);
   const walletChain = currentWallet
     ? getWalletChain(currentWallet, chains)

@@ -11,24 +11,12 @@ import {
 import { OfferType, OrderType, TokenType } from '../../types';
 import {
   useAppSelector,
-  selectShopLoading,
-  selectShopOffers,
-  selectChainsItems,
-  selectUserAccessToken,
-  selectUserAddress,
-  selectUserChainTokenPrice,
-  selectUserAdvancedMode,
-  selectShopOfferId,
-  selectShopModal,
-  selectShopError,
-  selectShopOrderTransactionId,
-  selectOrdersItems,
-  selectShopOrderStatus,
   useAppDispatch,
-  setShopOfferId,
-  setShopOrderTransactionId,
-  setShopModal,
-  selectShopOffersHasMore,
+  selectOrdersStore,
+  selectShopStore,
+  shopStoreActions,
+  selectChainsStore,
+  selectUserStore,
 } from '../../store';
 import { getChainById } from '../../utils';
 import { useShopProvider, useUserProvider } from '../../providers';
@@ -38,33 +26,37 @@ type Props = {};
 const ShopPageRoot = (props: Props) => {
   const dispatch = useAppDispatch();
   const { connectUser, getTokenPriceBySymbol } = useUserProvider();
-  const accessToken = useAppSelector(selectUserAccessToken);
-  const offers = useAppSelector(selectShopOffers);
-  const loading = useAppSelector(selectShopLoading);
-  const offerId = useAppSelector(selectShopOfferId);
-  const chains = useAppSelector(selectChainsItems);
+  const {
+    accessToken,
+    address: userWalletAddress,
+    advancedMode,
+    chainTokenPrice: tokenPrice,
+  } = useAppSelector(selectUserStore);
+  const {
+    offers,
+    loading,
+    offerId,
+    modal: showModal,
+    error: errorMessage,
+    orderTransactionId,
+    orderStatus,
+    total,
+  } = useAppSelector(selectShopStore);
+  const { items: chains } = useAppSelector(selectChainsStore);
   const fromChain = getChainById('5', chains);
-  const tokenPrice = useAppSelector(selectUserChainTokenPrice);
   const fromToken = fromChain?.tokens?.find(
     (token: TokenType) => token.symbol === fromChain?.nativeToken
   );
   const { handleAcceptOfferAction } = useShopProvider();
-  const advancedMode = useAppSelector(selectUserAdvancedMode);
   const [showWalletModal, setShowWalletModal] = useState(false);
-
-  const userWalletAddress = useAppSelector(selectUserAddress);
-  const showModal = useAppSelector(selectShopModal);
-  const errorMessage = useAppSelector(selectShopError);
-  const orderTransactionId = useAppSelector(selectShopOrderTransactionId);
-  const orders = useAppSelector(selectOrdersItems);
-  const orderStatus = useAppSelector(selectShopOrderStatus);
+  const { items: orders } = useAppSelector(selectOrdersStore);
   const createdOrder =
     (orderTransactionId &&
       orders.find((order: OrderType) => order.hash === orderTransactionId)) ||
     undefined;
   const { handleEmailSubmitAction, handleFetchMoreOffersAction } =
     useShopProvider();
-  const hasMore = useAppSelector(selectShopOffersHasMore);
+  const hasMore = offers.length < total;
 
   const onEmailSubmit = useCallback(
     async (email: string): Promise<boolean> => {
@@ -82,9 +74,9 @@ const ShopPageRoot = (props: Props) => {
   );
 
   const onModalClose = () => {
-    dispatch(setShopOfferId(''));
-    dispatch(setShopOrderTransactionId(''));
-    dispatch(setShopModal(false));
+    dispatch(shopStoreActions.setOfferId(''));
+    dispatch(shopStoreActions.setOrderTransactionId(''));
+    dispatch(shopStoreActions.setModal(false));
   };
 
   return (

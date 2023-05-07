@@ -6,21 +6,19 @@ import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
 import { ChainsList, PageCardBody, PageCardHeader } from '../../components';
 import {
   useAppSelector,
-  selectFaucetInput,
-  selectChainsItems,
-  selectChainsLoading,
+  selectChainsStore,
+  selectFaucetStore,
 } from '../../store';
 import { ROUTES } from '../../config';
 import { useFaucetProvider } from '../../providers';
 import { ChainType } from '../../types';
 
 function FaucetPageSelectChain() {
-  const input = useAppSelector(selectFaucetInput);
+  const { input } = useAppSelector(selectFaucetStore);
   const chain = input.chainId;
   let navigate = useNavigate();
   const { handleInputChange } = useFaucetProvider();
-  const chains = useAppSelector(selectChainsItems);
-  const loading = useAppSelector(selectChainsLoading);
+  const { items: chains, loading } = useAppSelector(selectChainsStore);
 
   return (
     <>

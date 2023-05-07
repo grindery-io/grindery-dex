@@ -7,9 +7,8 @@ import { PageCardHeader, PageCardBody, ChainsList } from '../../components';
 import { ChainType } from '../../types';
 import {
   useAppSelector,
-  selectChainsItems,
-  selectChainsLoading,
-  selectAutomationsInput,
+  selectAutomationsStore,
+  selectChainsStore,
 } from '../../store';
 import { ROUTES } from '../../config';
 import { useAutomationsProvider } from '../../providers';
@@ -17,10 +16,11 @@ import { useAutomationsProvider } from '../../providers';
 type Props = {};
 
 const AutomationsPageSelectChain = (props: Props) => {
-  const chains = useAppSelector(selectChainsItems);
+  const { items: chains, loading: chainsIsLoading } =
+    useAppSelector(selectChainsStore);
   const { handleAutomationsInputChange } = useAutomationsProvider();
-  const chainsIsLoading = useAppSelector(selectChainsLoading);
-  const input = useAppSelector(selectAutomationsInput);
+
+  const { input } = useAppSelector(selectAutomationsStore);
   const { chainId } = input;
   const filteredChains = chains.filter((c: ChainType) => c.chainId === '97');
   let navigate = useNavigate();

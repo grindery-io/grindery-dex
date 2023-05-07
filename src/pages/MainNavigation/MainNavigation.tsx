@@ -15,11 +15,7 @@ import {
 import { Logo, NavTabs } from '../../components';
 import MainNavigationDrawer from './MainNavigationDrawer';
 import MainNavigationUserMenu from './MainNavigationUserMenu';
-import {
-  useAppSelector,
-  selectUserAdvancedMode,
-  selectUserAdvancedModeAlert,
-} from '../../store';
+import { useAppSelector, selectUserStore } from '../../store';
 import { ROUTES } from '../../config';
 import { NavTabsItemType } from '../../types';
 import MainNavigationWalletBalance from './MainNavigationWalletBalance';
@@ -46,8 +42,7 @@ type Props = {};
 const MainNavigation = (props: Props) => {
   let navigate = useNavigate();
   const [drawerOpen, setDrawerOpen] = React.useState(false);
-  const advancedMode = useAppSelector(selectUserAdvancedMode);
-  const advancedModeAlert = useAppSelector(selectUserAdvancedModeAlert);
+  const { advancedMode, advancedModeAlert } = useAppSelector(selectUserStore);
 
   return (
     <>

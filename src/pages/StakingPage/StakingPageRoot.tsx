@@ -13,11 +13,9 @@ import {
 import { StakeType } from '../../types';
 import {
   useAppSelector,
-  selectChainsItems,
-  selectStakesError,
-  selectStakesItems,
-  selectStakesLoading,
-  selectUserId,
+  selectChainsStore,
+  selectStakesStore,
+  selectUserStore,
 } from '../../store';
 import { useUserProvider } from '../../providers';
 import { ROUTES } from '../../config';
@@ -25,12 +23,14 @@ import { getStakeChain } from '../../utils';
 
 function StakingPageRoot() {
   let navigate = useNavigate();
-  const user = useAppSelector(selectUserId);
+  const { id: user } = useAppSelector(selectUserStore);
   const { connectUser: connect } = useUserProvider();
-  const errorMessage = useAppSelector(selectStakesError);
-  const chains = useAppSelector(selectChainsItems);
-  const stakes = useAppSelector(selectStakesItems);
-  const stakesIsLoading = useAppSelector(selectStakesLoading);
+  const { items: chains } = useAppSelector(selectChainsStore);
+  const {
+    items: stakes,
+    loading: stakesIsLoading,
+    error: errorMessage,
+  } = useAppSelector(selectStakesStore);
 
   return (
     <>

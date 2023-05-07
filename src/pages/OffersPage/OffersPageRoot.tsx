@@ -13,28 +13,28 @@ import {
 } from '../../components';
 import {
   useAppSelector,
-  selectChainsItems,
-  selectOffersActivating,
-  selectOffersItems,
-  selectOffersLoading,
-  selectUserId,
-  selectOffersHasMore,
+  selectChainsStore,
+  selectOffersStore,
+  selectUserStore,
 } from '../../store';
 import { useUserProvider, useOffersProvider } from '../../providers';
 import { ROUTES } from '../../config';
 import { OfferType } from '../../types';
 
 function OffersPageRoot() {
-  const user = useAppSelector(selectUserId);
+  const { id: user } = useAppSelector(selectUserStore);
   const { connectUser: connect } = useUserProvider();
-  const isActivating = useAppSelector(selectOffersActivating);
   const { handleActivationAction, handleFetchMoreOffersAction } =
     useOffersProvider();
   let navigate = useNavigate();
-  const chains = useAppSelector(selectChainsItems);
-  const offers = useAppSelector(selectOffersItems);
-  const offersIsLoading = useAppSelector(selectOffersLoading);
-  const hasMore = useAppSelector(selectOffersHasMore);
+  const { items: chains } = useAppSelector(selectChainsStore);
+  const {
+    items: offers,
+    loading: offersIsLoading,
+    total,
+    activating: isActivating,
+  } = useAppSelector(selectOffersStore);
+  const hasMore = offers.length < total;
 
   return (
     <>

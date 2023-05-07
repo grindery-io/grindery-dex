@@ -11,12 +11,9 @@ import {
 import { OrderType } from '../../types';
 import {
   useAppSelector,
-  selectOrdersHistoryItems,
-  selectChainsItems,
-  selectUserAdvancedMode,
-  selectUserAccessToken,
-  selectOrdersHistoryHasMore,
-  selectOrdersHistoryLoading,
+  selectChainsStore,
+  selectOrdersHistoryStore,
+  selectUserStore,
 } from '../../store';
 import { useOrdersHistoryController } from '../../providers';
 import Page404 from '../Page404/Page404';
@@ -24,13 +21,15 @@ import Page404 from '../Page404/Page404';
 type Props = {};
 
 const HistoryPageRoot = (props: Props) => {
-  const orders = useAppSelector(selectOrdersHistoryItems);
-  const accessToken = useAppSelector(selectUserAccessToken);
-  const chains = useAppSelector(selectChainsItems);
-  const advancedMode = useAppSelector(selectUserAdvancedMode);
+  const {
+    items: orders,
+    loading,
+    total,
+  } = useAppSelector(selectOrdersHistoryStore);
+  const { accessToken, advancedMode } = useAppSelector(selectUserStore);
+  const { items: chains } = useAppSelector(selectChainsStore);
   const { handleFetchMoreOrdersAction } = useOrdersHistoryController();
-  const hasMore = useAppSelector(selectOrdersHistoryHasMore);
-  const loading = useAppSelector(selectOrdersHistoryLoading);
+  const hasMore = orders.length < total;
 
   return accessToken ? (
     <PageCard>

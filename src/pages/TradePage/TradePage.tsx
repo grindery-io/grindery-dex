@@ -8,18 +8,12 @@ import { TradeProvider, useTradeProvider } from '../../providers';
 import { ROUTES } from '../../config';
 import {
   useAppSelector,
-  selectTradeOffersVisible,
-  selectTradeModal,
-  selectChainsItems,
-  selectTradeOrderStatus,
-  selectTradeOrderTransactionId,
-  selectOrdersItems,
-  selectTradeError,
-  selectUserAddress,
   useAppDispatch,
-  setTradeOfferId,
-  setTradeOrderTransactionId,
-  setTradeModal,
+  selectOrdersStore,
+  selectChainsStore,
+  selectTradeStore,
+  tradeStoreActions,
+  selectUserStore,
 } from '../../store';
 import Page404 from '../Page404/Page404';
 import { OrderType } from '../../types';
@@ -30,23 +24,25 @@ type Props = {};
 const TradePage = (props: Props) => {
   let location = useLocation();
   const dispatch = useAppDispatch();
-  const isOffersVisible = useAppSelector(selectTradeOffersVisible);
+  const {
+    isOffersVisible,
+    modal: showModal,
+    orderStatus,
+    orderTransactionId,
+    error: errorMessage,
+  } = useAppSelector(selectTradeStore);
   const showRightColumn =
     [
       ROUTES.BUY.TRADE.ROOT.FULL_PATH,
       ROUTES.BUY.TRADE.SELECT_TO.FULL_PATH,
     ].includes(location.pathname) && isOffersVisible;
-  const showModal = useAppSelector(selectTradeModal);
-  const chains = useAppSelector(selectChainsItems);
-  const orderStatus = useAppSelector(selectTradeOrderStatus);
-  const orderTransactionId = useAppSelector(selectTradeOrderTransactionId);
-  const orders = useAppSelector(selectOrdersItems);
+  const { items: chains } = useAppSelector(selectChainsStore);
+  const { items: orders } = useAppSelector(selectOrdersStore);
   const createdOrder =
     (orderTransactionId &&
       orders.find((order: OrderType) => order.hash === orderTransactionId)) ||
     undefined;
-  const errorMessage = useAppSelector(selectTradeError);
-  const userWalletAddress = useAppSelector(selectUserAddress);
+  const { address: userWalletAddress } = useAppSelector(selectUserStore);
   const { handleEmailSubmitAction } = useTradeProvider();
 
   const onEmailSubmit = useCallback(
@@ -65,9 +61,9 @@ const TradePage = (props: Props) => {
   );
 
   const onModalClose = () => {
-    dispatch(setTradeOfferId(''));
-    dispatch(setTradeOrderTransactionId(''));
-    dispatch(setTradeModal(false));
+    dispatch(tradeStoreActions.setOfferId(''));
+    dispatch(tradeStoreActions.setOrderTransactionId(''));
+    dispatch(tradeStoreActions.setModal(false));
   };
 
   return (

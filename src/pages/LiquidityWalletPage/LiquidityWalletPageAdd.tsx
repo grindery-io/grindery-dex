@@ -15,15 +15,10 @@ import {
 import {
   useAppDispatch,
   useAppSelector,
-  selectChainsItems,
-  selectUserAccessToken,
-  selectUserChainId,
-  selectUserId,
-  clearWalletsAddTokensInput,
-  selectWalletsAddTokensInput,
-  selectWalletsError,
-  selectWalletsItems,
-  selectWalletsLoading,
+  selectChainsStore,
+  selectWalletsStore,
+  walletsStoreActions,
+  selectUserStore,
 } from '../../store';
 import { useUserProvider, useWalletsProvider } from '../../providers';
 import { ROUTES } from '../../config';
@@ -38,17 +33,20 @@ function LiquidityWalletPageAdd() {
   let navigate = useNavigate();
   let { walletId, tokenSymbol } = useParams();
   const dispatch = useAppDispatch();
-  const user = useAppSelector(selectUserId);
+  const {
+    id: user,
+    accessToken,
+    chainId: userChainId,
+  } = useAppSelector(selectUserStore);
   const { connectUser: connect } = useUserProvider();
-  const accessToken = useAppSelector(selectUserAccessToken);
-  const userChainId = useAppSelector(selectUserChainId);
-  const chains = useAppSelector(selectChainsItems);
-  const wallets = useAppSelector(selectWalletsItems);
-  const walletsIsLoading = useAppSelector(selectWalletsLoading);
-  const loading = useAppSelector(selectWalletsLoading);
-  const errorMessage = useAppSelector(selectWalletsError);
-  const input = useAppSelector(selectWalletsAddTokensInput);
-  const { amount, tokenId } = input;
+  const { items: chains } = useAppSelector(selectChainsStore);
+  const {
+    items: wallets,
+    loading,
+    error: errorMessage,
+    input: { add },
+  } = useAppSelector(selectWalletsStore);
+  const { amount, tokenId } = add;
   const currentWallet = getWalletById(walletId || '', wallets);
   const walletChain = currentWallet
     ? getWalletChain(currentWallet, chains)
@@ -62,10 +60,10 @@ function LiquidityWalletPageAdd() {
     useWalletsProvider();
 
   useEffect(() => {
-    if (!currentWallet && !walletsIsLoading) {
+    if (!currentWallet && !loading) {
       navigate(ROUTES.SELL.WALLETS.ROOT.FULL_PATH);
     }
-  }, [currentWallet, walletsIsLoading, navigate]);
+  }, [currentWallet, loading, navigate]);
 
   useEffect(() => {
     if (preselectedToken) {
@@ -87,7 +85,7 @@ function LiquidityWalletPageAdd() {
             size="medium"
             edge="start"
             onClick={() => {
-              dispatch(clearWalletsAddTokensInput());
+              dispatch(walletsStoreActions.clearAddTokensInput());
               navigate(
                 ROUTES.SELL.WALLETS.TOKENS.FULL_PATH.replace(
                   ':walletId',
@@ -103,7 +101,7 @@ function LiquidityWalletPageAdd() {
       />
 
       <PageCardBody>
-        {user && walletsIsLoading ? (
+        {user && loading ? (
           <Loading />
         ) : (
           <>
@@ -153,7 +151,7 @@ function LiquidityWalletPageAdd() {
                   ? () => {
                       handleAddTokensAction(
                         accessToken,
-                        input,
+                        add,
                         userChainId,
                         currentWallet,
                         token

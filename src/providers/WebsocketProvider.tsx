@@ -2,9 +2,8 @@ import React, { useEffect } from 'react';
 import useWebSocket, { ReadyState } from 'react-use-websocket';
 import { WEBSOCKET_URL } from '../config';
 import {
-  selectUserAccessToken,
-  setMessagesItem,
-  setMessagesStatus,
+  messagesStoreActions,
+  selectUserStore,
   useAppDispatch,
   useAppSelector,
 } from '../store';
@@ -15,7 +14,7 @@ type WebsocketProviderProps = {
 
 export const WebsocketProvider = ({ children }: WebsocketProviderProps) => {
   const dispatch = useAppDispatch();
-  const accessToken = useAppSelector(selectUserAccessToken);
+  const { accessToken } = useAppSelector(selectUserStore);
   const { sendMessage, lastMessage, readyState } = useWebSocket(
     accessToken ? WEBSOCKET_URL || null : null,
     {
@@ -40,7 +39,7 @@ export const WebsocketProvider = ({ children }: WebsocketProviderProps) => {
   }[readyState];
 
   useEffect(() => {
-    dispatch(setMessagesStatus(connectionStatus));
+    dispatch(messagesStoreActions.setStatus(connectionStatus));
   }, [connectionStatus, dispatch]);
 
   useEffect(() => {
@@ -51,7 +50,7 @@ export const WebsocketProvider = ({ children }: WebsocketProviderProps) => {
       } catch (error: any) {
         messageData = lastMessage.data;
       }
-      dispatch(setMessagesItem(messageData));
+      dispatch(messagesStoreActions.setItem(messageData));
     }
   }, [lastMessage, dispatch]);
 

@@ -30,10 +30,10 @@ const faucetSlice = createSlice({
   name: 'faucet',
   initialState,
   reducers: {
-    setFaucetInput(state, action: PayloadAction<FaucetInput>) {
+    setInput(state, action: PayloadAction<FaucetInput>) {
       state.input = action.payload;
     },
-    setFaucetInputValue(
+    setInputValue(
       state,
       action: PayloadAction<{
         name: FaucetInputFieldName;
@@ -42,22 +42,19 @@ const faucetSlice = createSlice({
     ) {
       state.input[action.payload.name] = action.payload.value;
     },
-    setFaucetError(
-      state,
-      action: PayloadAction<{ type: string; text: string }>
-    ) {
+    setError(state, action: PayloadAction<{ type: string; text: string }>) {
       state.error = action.payload;
     },
-    clearFaucetError(state) {
+    clearError(state) {
       state.error = { type: '', text: '' };
     },
-    setFaucetLoading(state, action: PayloadAction<boolean>) {
+    setLoading(state, action: PayloadAction<boolean>) {
       state.loading = action.payload;
     },
-    setFaucetTransactionId(state, action: PayloadAction<string>) {
+    setTransactionId(state, action: PayloadAction<string>) {
       state.transactionId = action.payload;
     },
-    clearFaucetInput(state) {
+    clearInput(state) {
       state.input = {
         address: '',
         amount: '',
@@ -67,19 +64,6 @@ const faucetSlice = createSlice({
   },
 });
 
-export const selectFaucetError = (state: RootState) => state.faucet.error;
-export const selectFaucetLoading = (state: RootState) => state.faucet.loading;
-export const selectFaucetTransactionId = (state: RootState) =>
-  state.faucet.transactionId;
-export const selectFaucetInput = (state: RootState) => state.faucet.input;
-export const {
-  setFaucetError,
-  clearFaucetError,
-  setFaucetLoading,
-  setFaucetTransactionId,
-  setFaucetInput,
-  clearFaucetInput,
-  setFaucetInputValue,
-} = faucetSlice.actions;
-
+export const selectFaucetStore = (state: RootState) => state.faucet;
+export const faucetStoreActions = faucetSlice.actions;
 export default faucetSlice.reducer;

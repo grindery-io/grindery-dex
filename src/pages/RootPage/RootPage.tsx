@@ -8,22 +8,14 @@ import HistoryPage from '../HistoryPage/HistoryPage';
 import FaucetPage from '../FaucetPage/FaucetPage';
 import Page404 from '../Page404/Page404';
 import { PageContainer, Popup, SessionExpiredPopup } from '../../components';
-import {
-  selectUserAdvancedMode,
-  selectUserAdvancedModeAlert,
-  selectUserPopupClosed,
-  selectUserSessionExpired,
-  useAppSelector,
-} from '../../store';
+import { selectUserStore, useAppSelector } from '../../store';
 import { useUserProvider } from '../../providers';
 
 type Props = {};
 
 const RootPage = (props: Props) => {
-  const sessionExpired = useAppSelector(selectUserSessionExpired);
-  const advancedMode = useAppSelector(selectUserAdvancedMode);
-  const advancedModeAlert = useAppSelector(selectUserAdvancedModeAlert);
-  const popupClosed = useAppSelector(selectUserPopupClosed);
+  const { sessionExpired, advancedMode, advancedModeAlert, popupClosed } =
+    useAppSelector(selectUserStore);
   const { handlePopupCloseAction } = useUserProvider();
 
   return (

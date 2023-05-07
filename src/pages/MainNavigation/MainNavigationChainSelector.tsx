@@ -11,14 +11,8 @@ import {
 } from '@mui/material';
 import React from 'react';
 import {
-  selectChainsItems,
-  selectChainsLoading,
-  selectUserChainId,
-  selectUserChainTokenBalance,
-  selectUserChainTokenBalanceLoading,
-  selectUserChainTokenPrice,
-  selectUserChainTokenPriceLoading,
-  selectUserId,
+  selectChainsStore,
+  selectUserStore,
   useAppSelector,
 } from '../../store';
 import { getChainById, switchMetamaskNetwork } from '../../utils';
@@ -30,21 +24,18 @@ type Props = {};
 const MainNavigationChainSelector = (props: Props) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
-  const chains = useAppSelector(selectChainsItems);
-  const chainsLoading = useAppSelector(selectChainsLoading);
-  const userChainId = useAppSelector(selectUserChainId);
-  const userId = useAppSelector(selectUserId);
+  const { items: chains, loading: chainsLoading } =
+    useAppSelector(selectChainsStore);
+  const {
+    id: userId,
+    chainId: userChainId,
+    chainTokenBalance: userChainTokenBalance,
+    chainTokenBalanceLoading: userChainTokenBalanceLoading,
+    chainTokenPrice: userChainTokenPrice,
+    chainTokenPriceLoading: userChainTokenPriceLoading,
+  } = useAppSelector(selectUserStore);
   const selectedChain = getChainById(userChainId, chains);
   const chainsList = chains.filter((chain: ChainType) => chain.chainId === '5');
-  const userChainTokenBalance = useAppSelector(selectUserChainTokenBalance);
-  const userChainTokenBalanceLoading = useAppSelector(
-    selectUserChainTokenBalanceLoading
-  );
-  const userChainTokenPrice = useAppSelector(selectUserChainTokenPrice);
-  const userChainTokenPriceLoading = useAppSelector(
-    selectUserChainTokenPriceLoading
-  );
-
   const handleClickListItemButton = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };

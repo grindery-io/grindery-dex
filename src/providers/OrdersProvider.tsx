@@ -9,13 +9,8 @@ import { OrderType, ChainType } from '../types';
 import {
   useAppDispatch,
   useAppSelector,
-  clearOrdersError,
-  setOrdersError,
-  setOrdersItems,
-  setOrdersLoading,
-  selectUserAccessToken,
-  addOrdersItems,
-  setOrdersTotal,
+  ordersStoreActions,
+  selectUserStore,
 } from '../store';
 import {
   getErrorMessage,
@@ -55,18 +50,18 @@ type OrdersProviderProps = {
 
 export const OrdersProvider = ({ children }: OrdersProviderProps) => {
   const dispatch = useAppDispatch();
-  const accessToken = useAppSelector(selectUserAccessToken);
+  const { accessToken } = useAppSelector(selectUserStore);
   const { getSigner, getEthers } = useUserProvider();
   const limit = 5;
   const [offset, setOffset] = useState(limit);
 
   const fetchOrders = useCallback(
     async (accessToken: string) => {
-      dispatch(setOrdersLoading(true));
+      dispatch(ordersStoreActions.setLoading(true));
       const res = await getSellerOrdersRequest(accessToken, limit, 0);
-      dispatch(setOrdersItems(res?.items || []));
-      dispatch(setOrdersTotal(res?.total || 0));
-      dispatch(setOrdersLoading(false));
+      dispatch(ordersStoreActions.setItems(res?.items || []));
+      dispatch(ordersStoreActions.setTotal(res?.total || 0));
+      dispatch(ordersStoreActions.setLoading(false));
     },
     [dispatch]
   );
@@ -74,13 +69,13 @@ export const OrdersProvider = ({ children }: OrdersProviderProps) => {
   const handleFetchMoreOrdersAction = useCallback(async () => {
     const res = await getSellerOrdersRequest(accessToken, limit, offset);
     setOffset(offset + limit);
-    dispatch(addOrdersItems(res?.items || []));
+    dispatch(ordersStoreActions.addItems(res?.items || []));
   }, [dispatch, offset, accessToken]);
 
   const validateOrderCompleteAction = (order: OrderType): boolean => {
     if (!order.offer) {
       dispatch(
-        setOrdersError({
+        ordersStoreActions.setError({
           type: order.orderId || '',
           text: 'Associated offer not found',
         })
@@ -92,7 +87,7 @@ export const OrdersProvider = ({ children }: OrdersProviderProps) => {
     }
     if (!order.offerId) {
       dispatch(
-        setOrdersError({
+        ordersStoreActions.setError({
           type: order.orderId || '',
           text: 'Order has no associated offer id',
         })
@@ -112,7 +107,7 @@ export const OrdersProvider = ({ children }: OrdersProviderProps) => {
     orders: OrderType[],
     chains: ChainType[]
   ): Promise<boolean> => {
-    dispatch(clearOrdersError());
+    dispatch(ordersStoreActions.clearError());
 
     if (!validateOrderCompleteAction(order)) {
       return false;
@@ -120,7 +115,7 @@ export const OrdersProvider = ({ children }: OrdersProviderProps) => {
 
     if (!userWalletAddress) {
       dispatch(
-        setOrdersError({
+        ordersStoreActions.setError({
           type: order.orderId || '',
           text: 'Liquidity wallet not found',
         })
@@ -132,7 +127,7 @@ export const OrdersProvider = ({ children }: OrdersProviderProps) => {
     const offerTokenSymbol = order.offer?.token || '';
     if (!order.offer) {
       dispatch(
-        setOrdersError({
+        ordersStoreActions.setError({
           type: order.orderId,
           text: 'Associated offer not found',
         })
@@ -142,7 +137,7 @@ export const OrdersProvider = ({ children }: OrdersProviderProps) => {
     const offerFromChain = getOfferFromChain(order.offer, chains);
     if (!offerFromChain) {
       dispatch(
-        setOrdersError({
+        ordersStoreActions.setError({
           type: order.orderId,
           text: 'Offer chain not found',
         })
@@ -155,7 +150,7 @@ export const OrdersProvider = ({ children }: OrdersProviderProps) => {
     );
     if (!switchNetwork) {
       dispatch(
-        setOrdersError({
+        ordersStoreActions.setError({
           type: order.orderId,
           text: 'Network switching failed. Please, switch network in your MetaMask and try again.',
         })
@@ -175,7 +170,7 @@ export const OrdersProvider = ({ children }: OrdersProviderProps) => {
         "handleOrderCompleteClick error: You don't have enough BNB. Fund your liquidity wallet."
       );
       dispatch(
-        setOrdersError({
+        ordersStoreActions.setError({
           type: order.orderId,
           text: "You don't have enough BNB. Fund your liquidity wallet.",
         })
@@ -207,7 +202,7 @@ export const OrdersProvider = ({ children }: OrdersProviderProps) => {
       .catch((error: any) => {
         console.error('payOfferWithNativeTokens error', error);
         dispatch(
-          setOrdersError({
+          ordersStoreActions.setError({
             type: order.orderId || '',
             text: getErrorMessage(error) || 'Transaction error',
           })
@@ -218,7 +213,7 @@ export const OrdersProvider = ({ children }: OrdersProviderProps) => {
     // stop execution if order payment failed
     if (!tx) {
       dispatch(
-        setOrdersError({
+        ordersStoreActions.setError({
           type: order.orderId || '',
           text: 'Transaction error',
         })
@@ -232,7 +227,7 @@ export const OrdersProvider = ({ children }: OrdersProviderProps) => {
     } catch (error: any) {
       console.error('tx.wait error', error);
       dispatch(
-        setOrdersError({
+        ordersStoreActions.setError({
           type: order.orderId || '',
           text: getErrorMessage(error) || 'Transaction error',
         })
@@ -261,7 +256,7 @@ export const OrdersProvider = ({ children }: OrdersProviderProps) => {
         "handleOrderCompleteClick error: wallet balance wasn't updated"
       );
       dispatch(
-        setOrdersError({
+        ordersStoreActions.setError({
           type: order.orderId || '',
           text: "Server error: wallet balance wasn't updated",
         })
@@ -280,7 +275,7 @@ export const OrdersProvider = ({ children }: OrdersProviderProps) => {
         "handleOrderCompleteClick error: order wasn't marked as completed"
       );
       dispatch(
-        setOrdersError({
+        ordersStoreActions.setError({
           type: order.orderId || '',
           text: "Server error: order wasn't marked as complete",
         })
@@ -288,7 +283,7 @@ export const OrdersProvider = ({ children }: OrdersProviderProps) => {
       return false;
     }
     dispatch(
-      setOrdersItems([
+      ordersStoreActions.setItems([
         ...orders.map((o: OrderType) => {
           if (o.orderId === order.orderId) {
             return {

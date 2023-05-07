@@ -20,13 +20,8 @@ import SellOutlinedIcon from '@mui/icons-material/SellOutlined';
 import { useUserProvider } from '../../providers';
 import {
   useAppSelector,
-  selectUserAddress,
-  selectUserIsAdmin,
-  selectUserAdvancedMode,
-  selectUserId,
-  selectChainsItems,
-  selectUserChainId,
-  selectUserAccessToken,
+  selectChainsStore,
+  selectUserStore,
 } from '../../store';
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 import { Menu } from '../../components';
@@ -43,13 +38,15 @@ const MainNavigationUserMenu = (props: Props) => {
   const { disconnectUser, connectUser, handleAdvancedModeToggleAction } =
     useUserProvider();
   let navigate = useNavigate();
-  const userId = useAppSelector(selectUserId);
-  const accessToken = useAppSelector(selectUserAccessToken);
-  const isAdmin = useAppSelector(selectUserIsAdmin);
-  const address = useAppSelector(selectUserAddress);
-  const advancedMode = useAppSelector(selectUserAdvancedMode);
-  const userChainId = useAppSelector(selectUserChainId);
-  const chains = useAppSelector(selectChainsItems);
+  const {
+    id: userId,
+    accessToken,
+    isAdmin,
+    address,
+    advancedMode,
+    chainId: userChainId,
+  } = useAppSelector(selectUserStore);
+  const { items: chains } = useAppSelector(selectChainsStore);
   const userChain = getChainById(userChainId, chains);
 
   const handleClickListItemButton = (event: React.MouseEvent<HTMLElement>) => {

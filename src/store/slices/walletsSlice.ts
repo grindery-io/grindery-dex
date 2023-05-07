@@ -51,25 +51,22 @@ const walletsSlice = createSlice({
   name: 'wallets',
   initialState,
   reducers: {
-    setWalletsItems(state, action: PayloadAction<LiquidityWalletType[]>) {
+    setItems(state, action: PayloadAction<LiquidityWalletType[]>) {
       state.items = action.payload;
     },
-    setWalletsLoading(state, action: PayloadAction<boolean>) {
+    setLoading(state, action: PayloadAction<boolean>) {
       state.loading = action.payload;
     },
-    setWalletsError(
-      state,
-      action: PayloadAction<{ type: string; text: string }>
-    ) {
+    setError(state, action: PayloadAction<{ type: string; text: string }>) {
       state.error = action.payload;
     },
-    clearWalletsError(state) {
+    clearError(state) {
       state.error = { type: '', text: '' };
     },
-    setWalletsCreateInput(state, action: PayloadAction<WalletsCreateInput>) {
+    setCreateInput(state, action: PayloadAction<WalletsCreateInput>) {
       state.input.create = action.payload;
     },
-    setWalletsCreateInputValue(
+    setCreateInputValue(
       state,
       action: PayloadAction<{
         name: WalletsCreateInputFieldName;
@@ -78,19 +75,16 @@ const walletsSlice = createSlice({
     ) {
       state.input.create[action.payload.name] = action.payload.value;
     },
-    clearWalletsCreateInput(state) {
+    clearCreateInput(state) {
       state.input.create = {
         chainId: '',
       };
     },
 
-    setWalletsAddTokensInput(
-      state,
-      action: PayloadAction<WalletsAddTokensInput>
-    ) {
+    setAddTokensInput(state, action: PayloadAction<WalletsAddTokensInput>) {
       state.input.add = action.payload;
     },
-    setWalletsAddTokensInputValue(
+    setAddTokensInputValue(
       state,
       action: PayloadAction<{
         name: WalletsAddTokensInputFieldName;
@@ -99,20 +93,20 @@ const walletsSlice = createSlice({
     ) {
       state.input.add[action.payload.name] = action.payload.value;
     },
-    clearWalletsAddTokensInput(state) {
+    clearAddTokensInput(state) {
       state.input.add = {
         tokenId: '',
         amount: '',
       };
     },
 
-    setWalletsWithdrawTokensInput(
+    setWithdrawTokensInput(
       state,
       action: PayloadAction<WalletsWithdrawTokensInput>
     ) {
       state.input.withdraw = action.payload;
     },
-    setWalletsWithdrawTokensInputValue(
+    setWithdrawTokensInputValue(
       state,
       action: PayloadAction<{
         name: WalletsWithdrawTokensInputFieldName;
@@ -121,7 +115,7 @@ const walletsSlice = createSlice({
     ) {
       state.input.withdraw[action.payload.name] = action.payload.value;
     },
-    clearWalletsWithdrawTokensInput(state) {
+    clearWithdrawTokensInput(state) {
       state.input.withdraw = {
         amount: '',
       };
@@ -129,30 +123,6 @@ const walletsSlice = createSlice({
   },
 });
 
-export const selectWalletsItems = (state: RootState) => state.wallets.items;
-export const selectWalletsError = (state: RootState) => state.wallets.error;
-export const selectWalletsLoading = (state: RootState) => state.wallets.loading;
-export const selectWalletsCreateInput = (state: RootState) =>
-  state.wallets.input.create;
-export const selectWalletsAddTokensInput = (state: RootState) =>
-  state.wallets.input.add;
-export const selectWalletWithdrawTokensInput = (state: RootState) =>
-  state.wallets.input.withdraw;
-
-export const {
-  setWalletsItems,
-  setWalletsLoading,
-  setWalletsError,
-  clearWalletsError,
-  setWalletsCreateInput,
-  setWalletsCreateInputValue,
-  clearWalletsCreateInput,
-  setWalletsAddTokensInput,
-  setWalletsAddTokensInputValue,
-  clearWalletsAddTokensInput,
-  setWalletsWithdrawTokensInput,
-  setWalletsWithdrawTokensInputValue,
-  clearWalletsWithdrawTokensInput,
-} = walletsSlice.actions;
-
+export const selectWalletsStore = (state: RootState) => state.wallets;
+export const walletsStoreActions = walletsSlice.actions;
 export default walletsSlice.reducer;

@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect } from 'react';
-import { useAppDispatch, setChainsItems, setChainsLoading } from '../store';
+import { useAppDispatch, chainsStoreActions } from '../store';
 import { getChainsWithTokens } from '../services';
 import { sortChains } from '../utils';
 
@@ -11,10 +11,10 @@ export const ChainsProvider = ({ children }: ChainsProviderProps) => {
   const dispatch = useAppDispatch();
 
   const getChains = useCallback(async () => {
-    dispatch(setChainsLoading(true));
+    dispatch(chainsStoreActions.setLoading(true));
     const chains = await getChainsWithTokens();
-    dispatch(setChainsItems(sortChains(chains || [])));
-    dispatch(setChainsLoading(false));
+    dispatch(chainsStoreActions.setItems(sortChains(chains || [])));
+    dispatch(chainsStoreActions.setLoading(false));
   }, [dispatch]);
 
   useEffect(() => {

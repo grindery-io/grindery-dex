@@ -20,43 +20,27 @@ const ordersSlice = createSlice({
   name: 'orders',
   initialState,
   reducers: {
-    setOrdersItems(state, action: PayloadAction<OrderType[]>) {
+    setItems(state, action: PayloadAction<OrderType[]>) {
       state.items = action.payload;
     },
-    addOrdersItems(state, action: PayloadAction<OrderType[]>) {
+    addItems(state, action: PayloadAction<OrderType[]>) {
       state.items = [...state.items, ...action.payload];
     },
-    setOrdersTotal(state, action: PayloadAction<number>) {
+    setTotal(state, action: PayloadAction<number>) {
       state.total = action.payload;
     },
-    setOrdersLoading(state, action: PayloadAction<boolean>) {
+    setLoading(state, action: PayloadAction<boolean>) {
       state.loading = action.payload;
     },
-    setOrdersError(
-      state,
-      action: PayloadAction<{ type: string; text: string }>
-    ) {
+    setError(state, action: PayloadAction<{ type: string; text: string }>) {
       state.error = action.payload;
     },
-    clearOrdersError(state) {
+    clearError(state) {
       state.error = { type: '', text: '' };
     },
   },
 });
 
-export const selectOrdersItems = (state: RootState) => state.orders.items;
-export const selectOrdersError = (state: RootState) => state.orders.error;
-export const selectOrdersLoading = (state: RootState) => state.orders.loading;
-export const selectOrdersHasMore = (state: RootState) =>
-  Boolean(state.orders.items.length < state.orders.total);
-
-export const {
-  setOrdersItems,
-  setOrdersLoading,
-  setOrdersError,
-  clearOrdersError,
-  addOrdersItems,
-  setOrdersTotal,
-} = ordersSlice.actions;
-
+export const selectOrdersStore = (state: RootState) => state.orders;
+export const ordersStoreActions = ordersSlice.actions;
 export default ordersSlice.reducer;

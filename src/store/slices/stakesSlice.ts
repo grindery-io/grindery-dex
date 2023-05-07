@@ -45,25 +45,22 @@ const stakesSlice = createSlice({
   name: 'stakes',
   initialState,
   reducers: {
-    setStakesItems(state, action: PayloadAction<StakeType[]>) {
+    setItems(state, action: PayloadAction<StakeType[]>) {
       state.items = action.payload;
     },
-    setStakesLoading(state, action: PayloadAction<boolean>) {
+    setLoading(state, action: PayloadAction<boolean>) {
       state.loading = action.payload;
     },
-    setStakesError(
-      state,
-      action: PayloadAction<{ type: string; text: string }>
-    ) {
+    setError(state, action: PayloadAction<{ type: string; text: string }>) {
       state.error = action.payload;
     },
-    clearStakesError(state) {
+    clearError(state) {
       state.error = { type: '', text: '' };
     },
-    setStakesCreateInput(state, action: PayloadAction<StakeCreateInput>) {
+    setCreateInput(state, action: PayloadAction<StakeCreateInput>) {
       state.input.create = action.payload;
     },
-    setStakesCreateInputValue(
+    setCreateInputValue(
       state,
       action: PayloadAction<{
         name: StakeCreateInputFieldName;
@@ -72,10 +69,10 @@ const stakesSlice = createSlice({
     ) {
       state.input.create[action.payload.name] = action.payload.value;
     },
-    setStakesWithdrawInput(state, action: PayloadAction<StakeWithdrawInput>) {
+    setWithdrawInput(state, action: PayloadAction<StakeWithdrawInput>) {
       state.input.withdraw = action.payload;
     },
-    setStakesWithdrawInputValue(
+    setWithdrawInputValue(
       state,
       action: PayloadAction<{
         name: StakeWithdrawInputFieldName;
@@ -84,31 +81,12 @@ const stakesSlice = createSlice({
     ) {
       state.input.withdraw[action.payload.name] = action.payload.value;
     },
-    setStakesApproved(state, action: PayloadAction<boolean>) {
+    setApproved(state, action: PayloadAction<boolean>) {
       state.approved = action.payload;
     },
   },
 });
 
-export const selectStakesItems = (state: RootState) => state.stakes.items;
-export const selectStakesError = (state: RootState) => state.stakes.error;
-export const selectStakesLoading = (state: RootState) => state.stakes.loading;
-export const selectStakesApproved = (state: RootState) => state.stakes.approved;
-export const selectStakesCreateInput = (state: RootState) =>
-  state.stakes.input.create;
-export const selectStakesWithdrawInput = (state: RootState) =>
-  state.stakes.input.withdraw;
-
-export const {
-  setStakesItems,
-  setStakesLoading,
-  setStakesError,
-  clearStakesError,
-  setStakesCreateInput,
-  setStakesCreateInputValue,
-  setStakesWithdrawInput,
-  setStakesWithdrawInputValue,
-  setStakesApproved,
-} = stakesSlice.actions;
-
+export const selectStakesStore = (state: RootState) => state.stakes;
+export const stakesStoreActions = stakesSlice.actions;
 export default stakesSlice.reducer;

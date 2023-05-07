@@ -6,18 +6,15 @@ import FaucetPageRoot from './FaucetPageRoot';
 import FaucetPageSelectChain from './FaucetPageSelectChain';
 import FaucetPagePlaceholder from './FaucetPagePlaceholder';
 import { FaucetProvider } from '../../providers';
-import {
-  useAppSelector,
-  selectUserId,
-  selectUserIsAdmin,
-  selectUserIsAdminLoading,
-} from '../../store';
+import { useAppSelector, selectUserStore } from '../../store';
 import Page404 from '../Page404/Page404';
 
 function FaucetPage() {
-  const isLoading = useAppSelector(selectUserIsAdminLoading);
-  const isAdmin = useAppSelector(selectUserIsAdmin);
-  const user = useAppSelector(selectUserId);
+  const {
+    id: user,
+    isAdmin,
+    isAdminLoading: isLoading,
+  } = useAppSelector(selectUserStore);
 
   if (!user) {
     return null;
