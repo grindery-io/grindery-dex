@@ -1,17 +1,18 @@
 import { ReactElement } from 'react';
 import { Wrapper } from './style';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
-import { Alert } from '@mui/material';
+import { Alert, SxProps } from '@mui/material';
 
 type Props = {
   color?: 'success' | 'error';
   icon?: ReactElement;
   children: React.ReactNode;
   wrapperStyle?: { [key: string]: string };
+  alertStyle?: SxProps | React.CSSProperties;
 };
 
 const AlertBox = (props: Props) => {
-  const { color, icon, children, wrapperStyle } = props;
+  const { color, icon, children, wrapperStyle, alertStyle } = props;
 
   const icons = {
     success: iconSuccess,
@@ -21,6 +22,7 @@ const AlertBox = (props: Props) => {
   return (
     <Wrapper style={{ ...wrapperStyle }} data-testid="alert-box-wrapper">
       <Alert
+        sx={alertStyle}
         color={color || 'success'}
         icon={icon || icons[color || 'success']}
         elevation={0}

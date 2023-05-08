@@ -212,7 +212,17 @@ const OrderPlacingModal = (props: Props) => {
           errorMessage.type === 'acceptOffer' &&
           errorMessage.text && (
             <Box sx={{ paddingLeft: '16px', paddingRight: '16px' }}>
-              <AlertBox color="error" wrapperStyle={{ marginTop: '0' }}>
+              <AlertBox
+                color="error"
+                wrapperStyle={{
+                  marginTop: '0',
+                }}
+                alertStyle={{
+                  '&.MuiAlert-standardError': {
+                    backgroundColor: 'rgb(253, 237, 237)',
+                  },
+                }}
+              >
                 <p>{errorMessage.text}</p>
               </AlertBox>
             </Box>
