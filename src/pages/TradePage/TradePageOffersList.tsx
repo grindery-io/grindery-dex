@@ -3,12 +3,12 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 import { Box } from '@mui/system';
 import {
   OfferSkeleton,
-  OfferPublic,
   NotFound,
   PageCard,
   PageCardHeader,
   PageCardBody,
   ConnectWalletModal,
+  TradeOffer,
 } from '../../components';
 import { OfferType } from '../../types';
 import {
@@ -82,10 +82,9 @@ const TradePageOffersList = (props: Props) => {
               scrollableTarget="offers-list"
             >
               {foundOffers.map((offer: OfferType) => (
-                <OfferPublic
+                <TradeOffer
                   key={offer._id}
                   chains={chains}
-                  compact
                   offer={offer}
                   fromAmount={amount}
                   advancedMode={advancedMode}
@@ -96,6 +95,7 @@ const TradePageOffersList = (props: Props) => {
                       handleAcceptOfferAction(_offer);
                     }
                   }}
+                  loading={loading}
                 />
               ))}
             </InfiniteScroll>

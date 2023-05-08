@@ -46,5 +46,6 @@ export { default as TextArea } from './TextArea/TextArea';
 export { default as TextInput } from './TextInput/TextInput';
 export { default as TokenSearch } from './TokenSearch/TokenSearch';
 export { default as TokensList } from './TokensList/TokensList';
+export { default as TradeOffer } from './TradeOffer/TradeOffer';
 export { default as TransactionID } from './TransactionID/TransactionID';
 export { default as UploadButton } from './UploadButton/UploadButton';
