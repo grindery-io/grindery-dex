@@ -235,6 +235,7 @@ export const OffersProvider = ({ children }: OffersProviderProps) => {
         title: input.title,
         image: input.image,
         amount: input.amount,
+        isActive: true,
       });
 
       if (newOffer && typeof newOffer !== 'boolean') {
