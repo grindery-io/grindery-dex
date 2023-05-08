@@ -6,7 +6,12 @@ import {
   OrderPlacingStatusType,
 } from '../../types';
 
-export type TradeFilterFieldName = 'toChainId' | 'toTokenId' | 'amount';
+export type TradeFilterFieldName =
+  | 'fromChainId'
+  | 'fromTokenId'
+  | 'toChainId'
+  | 'toTokenId'
+  | 'amount';
 
 export type Tradefilter = {
   [key in TradeFilterFieldName]: string;
@@ -30,6 +35,8 @@ interface TradeState {
 const initialState: TradeState = {
   error: { type: '', text: '' },
   filter: {
+    fromChainId: '',
+    fromTokenId: '',
     toChainId: '97',
     toTokenId: '1839',
     amount: '',
@@ -83,6 +90,8 @@ const tradeSlice = createSlice({
     },
     clearFilter(state) {
       state.filter = {
+        fromChainId: '',
+        fromTokenId: '',
         toChainId: '',
         toTokenId: '',
         amount: '',

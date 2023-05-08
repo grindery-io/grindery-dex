@@ -82,16 +82,15 @@ export const TradeProvider = ({ children }: TradeProviderProps) => {
     address: userAddress,
   } = useAppSelector(selectUserStore);
   const { filter } = useAppSelector(selectTradeStore);
-  const { toTokenId, amount } = filter;
+  const { toTokenId, amount, fromChainId } = filter;
   const { getSigner, getEthers } = useUserProvider();
   const limit = 5;
   const [offset, setOffset] = useState(limit);
   const { items: chains } = useAppSelector(selectChainsStore);
-  const fromChain = getChainById(userChainId, chains);
+  const fromChain = getChainById(fromChainId, chains);
   const fromToken = fromChain?.tokens?.find(
     (token: TokenType) => token.symbol === fromChain?.nativeToken
   );
-  const fromChainId = fromChain?.chainId;
   const fromTokenId = fromToken?.coinmarketcapId;
   const { poolAbi } = useAppSelector(selectAbiStore);
 
@@ -165,13 +164,13 @@ export const TradeProvider = ({ children }: TradeProviderProps) => {
     ): ErrorMessageType | true => {
       if (!fromChainId) {
         return {
-          type: 'amount',
+          type: 'fromChain',
           text: 'Chain is required',
         };
       }
       if (!fromTokenId) {
         return {
-          type: 'amount',
+          type: 'fromChain',
           text: 'Token is required',
         };
       }
@@ -499,6 +498,36 @@ export const TradeProvider = ({ children }: TradeProviderProps) => {
       fetchTokenPrice(toTokenId);
     }
   }, [accessToken, fetchTokenPrice, toTokenId]);
+
+  useEffect(() => {
+    if (!fromChainId) {
+      if (userChainId) {
+        const userChain = getChainById(userChainId, chains);
+
+        if (userChain) {
+          dispatch(
+            tradeStoreActions.setFilterValue({
+              name: 'fromChainId',
+              value: userChainId,
+            })
+          );
+          const token = getTokenBySymbol(
+            userChain.nativeToken || '',
+            userChainId,
+            chains
+          );
+          if (token) {
+            dispatch(
+              tradeStoreActions.setFilterValue({
+                name: 'fromTokenId',
+                value: token.coinmarketcapId || '',
+              })
+            );
+          }
+        }
+      }
+    }
+  }, [dispatch, userChainId, chains, fromChainId]);
 
   return (
     <TradeContext.Provider

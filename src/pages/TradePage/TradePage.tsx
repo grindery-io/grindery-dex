@@ -18,6 +18,7 @@ import {
 import Page404 from '../Page404/Page404';
 import { OrderType } from '../../types';
 import { OrderPlacingModal } from '../../components';
+import TradePageSelectFromChainAndToken from './TradePageSelectFromChainAndToken';
 
 type Props = {};
 
@@ -88,6 +89,10 @@ const TradePage = (props: Props) => {
             <Route
               path={ROUTES.BUY.TRADE.ROOT.RELATIVE_PATH}
               element={<TradePageOffersFilter />}
+            />
+            <Route
+              path={ROUTES.BUY.TRADE.SELECT_FROM.RELATIVE_PATH}
+              element={<TradePageSelectFromChainAndToken />}
             />
             <Route
               path={ROUTES.BUY.TRADE.SELECT_TO.RELATIVE_PATH}

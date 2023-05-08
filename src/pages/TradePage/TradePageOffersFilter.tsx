@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect } from 'react';
 import _ from 'lodash';
 import { useNavigate } from 'react-router-dom';
-import { Button } from '@mui/material';
+import { Button, Stack } from '@mui/material';
 import { Box } from '@mui/system';
 import {
   SelectChainAndTokenButton,
@@ -21,7 +21,6 @@ import {
 } from '../../store';
 import { useTradeProvider } from '../../providers';
 import { getChainById, getTokenById } from '../../utils';
-import { TokenType } from '../../types';
 
 type Props = {};
 
@@ -33,18 +32,15 @@ const TradePageOffersFilter = (props: Props) => {
     filter,
   } = useAppSelector(selectTradeStore);
   const {
-    chainId: userChainId,
     chainTokenBalance: userChainTokenBalance,
     chainTokenBalanceLoading: userChainTokenBalanceLoading,
   } = useAppSelector(selectUserStore);
   const { items: chains } = useAppSelector(selectChainsStore);
-  const { toChainId, toTokenId, amount } = filter;
+  const { toChainId, toTokenId, amount, fromChainId, fromTokenId } = filter;
   const toChain = getChainById(toChainId, chains);
   const toToken = getTokenById(toTokenId, toChainId, chains);
-  const fromChain = getChainById(userChainId, chains);
-  const fromToken = fromChain?.tokens?.find(
-    (token: TokenType) => token.symbol === fromChain?.nativeToken
-  );
+  const fromChain = getChainById(fromChainId, chains);
+  const fromToken = getTokenById(fromTokenId, fromChainId, chains);
 
   const {
     handleTradeFilterChange,
@@ -87,17 +83,30 @@ const TradePageOffersFilter = (props: Props) => {
     <PageCard>
       <PageCardHeader title="Trade" />
       <PageCardBody>
-        <SelectChainAndTokenButton
-          title="Receive"
-          onClick={() => {
-            navigate(ROUTES.BUY.TRADE.SELECT_TO.FULL_PATH);
-          }}
-          chain={toChain}
-          token={toToken || ''}
-          error={errorMessage}
-          name="toChain"
-          id="receive-button"
-        />
+        <Stack direction="column" gap="20px">
+          <SelectChainAndTokenButton
+            title="Pay"
+            onClick={() => {
+              navigate(ROUTES.BUY.TRADE.SELECT_FROM.FULL_PATH);
+            }}
+            chain={fromChain}
+            token={fromToken || ''}
+            error={errorMessage}
+            name="fromChain"
+            id="pay-button"
+          />
+          <SelectChainAndTokenButton
+            title="Receive"
+            onClick={() => {
+              navigate(ROUTES.BUY.TRADE.SELECT_TO.FULL_PATH);
+            }}
+            chain={toChain}
+            token={toToken || ''}
+            error={errorMessage}
+            name="toChain"
+            id="receive-button"
+          />
+        </Stack>
 
         <AmountInput
           label="You pay"
