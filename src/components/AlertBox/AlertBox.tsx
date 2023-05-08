@@ -19,7 +19,7 @@ const AlertBox = (props: Props) => {
   };
 
   return (
-    <Wrapper style={{ ...wrapperStyle }}>
+    <Wrapper style={{ ...wrapperStyle }} data-testid="alert-box-wrapper">
       <Alert
         color={color || 'success'}
         icon={icon || icons[color || 'success']}
@@ -31,7 +31,9 @@ const AlertBox = (props: Props) => {
   );
 };
 
-const iconSuccess = <CheckCircleOutlineIcon fontSize="inherit" />;
+const iconSuccess = (
+  <CheckCircleOutlineIcon fontSize="inherit" data-testid="success-icon" />
+);
 
 const iconError = (
   <svg
@@ -40,6 +42,7 @@ const iconError = (
     viewBox="0 0 20 20"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
+    data-testid="error-icon"
   >
     <g clipPath="url(#clip0_2152_696)">
       <path
