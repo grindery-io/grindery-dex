@@ -26,9 +26,15 @@ import {
   validateOfferCreateAction,
 } from '../utils';
 import { useUserProvider } from './UserProvider';
-import { addOffer, getOffer, getUserOffers, updateOffer } from '../services';
+import {
+  activationOfferRequest,
+  addOffer,
+  getOffer,
+  getUserOffers,
+  refreshOffersRequest,
+} from '../services';
 import { OfferType, LiquidityWalletType } from '../types';
-import { ROUTES, POOL_CONTRACT_ADDRESS } from '../config';
+import { ROUTES } from '../config';
 import { enqueueSnackbar } from 'notistack';
 
 // Context props
@@ -40,6 +46,7 @@ type ContextProps = {
   ) => void;
   handleActivationAction: (offer: OfferType, isActive: boolean) => void;
   handleFetchMoreOffersAction: () => void;
+  handleOffersRefreshAction: () => void;
 };
 
 export const OffersContext = createContext<ContextProps>({
@@ -47,6 +54,7 @@ export const OffersContext = createContext<ContextProps>({
   handleOfferCreateInputChange: () => {},
   handleActivationAction: () => {},
   handleFetchMoreOffersAction: () => {},
+  handleOffersRefreshAction: () => {},
 });
 
 type OffersProviderProps = {
@@ -107,21 +115,6 @@ export const OffersProvider = ({ children }: OffersProviderProps) => {
     [fetchOffer]
   );
 
-  const editOffer = async (
-    accessToken: string,
-    body: {
-      offerId: string;
-      isActive: boolean;
-    }
-  ): Promise<boolean> => {
-    const isEdited = await updateOffer(accessToken, body);
-    if (typeof isEdited === 'boolean') {
-      return isEdited;
-    } else {
-      return false;
-    }
-  };
-
   const handleOfferCreateInputChange = useCallback(
     (name: OffersCreateInputInputFieldName, value: string) => {
       dispatch(offersStoreActions.clearError());
@@ -129,6 +122,15 @@ export const OffersProvider = ({ children }: OffersProviderProps) => {
     },
     [dispatch]
   );
+
+  const handleOffersRefreshAction = useCallback(async () => {
+    const refreshedOffers = await refreshOffersRequest(accessToken);
+    if (refreshedOffers) {
+      for (const offer of refreshedOffers) {
+        dispatch(offersStoreActions.updateItem(offer));
+      }
+    }
+  }, [accessToken, dispatch]);
 
   const handleOfferCreateAction = useCallback(async () => {
     dispatch(offersStoreActions.clearError());
@@ -180,7 +182,7 @@ export const OffersProvider = ({ children }: OffersProviderProps) => {
       const signer = getSigner();
 
       const _poolContract = new ethers.Contract(
-        POOL_CONTRACT_ADDRESS[`eip155:${input.toChainId}`],
+        inputChain.usefulAddresses?.poolContract,
         poolAbi,
         signer
       );
@@ -235,7 +237,6 @@ export const OffersProvider = ({ children }: OffersProviderProps) => {
         title: input.title,
         image: input.image,
         amount: input.amount,
-        isActive: true,
       });
 
       if (newOffer && typeof newOffer !== 'boolean') {
@@ -302,7 +303,7 @@ export const OffersProvider = ({ children }: OffersProviderProps) => {
         const ethers = getEthers();
 
         const _poolContract = new ethers.Contract(
-          POOL_CONTRACT_ADDRESS['eip155:5'],
+          offerToChain.usefulAddresses?.poolContract,
           poolAbi,
           signer
         );
@@ -313,27 +314,22 @@ export const OffersProvider = ({ children }: OffersProviderProps) => {
 
         await poolContract.getOfferer(offerId);
 
-        await poolContract.setIsActive(offerId, isActive, {
+        const tx = await poolContract.setIsActive(offerId, isActive, {
           gasLimit: 1000000,
         });
 
-        const updated = await editOffer(accessToken, {
+        const updated = await activationOfferRequest(accessToken, {
           offerId: offerId || '',
-          isActive,
+          activating: isActive,
+          hash: tx.hash,
         });
-
         if (!updated) {
-          dispatch(offersStoreActions.setActivating(''));
-          return;
+          throw new Error(
+            'Server error: offer activation request failed. Please, try again.'
+          );
         }
-        dispatch(
-          offersStoreActions.setItems([
-            ...offers.map((offer) => ({
-              ...offer,
-              isActive: offerId === offer.offerId ? isActive : offer.isActive,
-            })),
-          ])
-        );
+        const updatedOffer = await getOffer(accessToken, offer._id);
+        dispatch(offersStoreActions.updateItem(updatedOffer));
       } catch (error: any) {
         dispatch(
           offersStoreActions.setError({
@@ -344,16 +340,7 @@ export const OffersProvider = ({ children }: OffersProviderProps) => {
       }
       dispatch(offersStoreActions.setActivating(''));
     },
-    [
-      accessToken,
-      userChainId,
-      chains,
-      poolAbi,
-      offers,
-      dispatch,
-      getEthers,
-      getSigner,
-    ]
+    [accessToken, userChainId, chains, poolAbi, dispatch, getEthers, getSigner]
   );
 
   useEffect(() => {
@@ -363,11 +350,19 @@ export const OffersProvider = ({ children }: OffersProviderProps) => {
   }, [accessToken, fetchOffers]);
 
   useEffect(() => {
-    handleOfferCreateInputChange('fromChainId', '97');
-    handleOfferCreateInputChange('toChainId', '5');
-    handleOfferCreateInputChange('fromTokenId', '1839');
-    handleOfferCreateInputChange('toTokenId', '1027');
-  }, [handleOfferCreateInputChange]);
+    if (!input.fromChainId) {
+      handleOfferCreateInputChange('fromChainId', '97');
+    }
+    if (!input.fromTokenId) {
+      handleOfferCreateInputChange('fromTokenId', '1839');
+    }
+    if (!input.toChainId) {
+      handleOfferCreateInputChange('toChainId', '5');
+    }
+    if (!input.toTokenId) {
+      handleOfferCreateInputChange('toTokenId', '1027');
+    }
+  }, [input, handleOfferCreateInputChange]);
 
   useEffect(() => {
     if (error && error.text) {
@@ -390,6 +385,7 @@ export const OffersProvider = ({ children }: OffersProviderProps) => {
         handleOfferCreateInputChange,
         handleActivationAction,
         handleFetchMoreOffersAction,
+        handleOffersRefreshAction,
       }}
     >
       {children}

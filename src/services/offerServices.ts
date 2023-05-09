@@ -212,3 +212,62 @@ export const updateOffer = (
     }
   });
 };
+
+export const activationOfferRequest = (
+  accessToken: string,
+  body: {
+    offerId: string;
+    activating: boolean;
+    hash: string;
+  }
+): Promise<boolean> => {
+  return new Promise((resolve, reject) => {
+    try {
+      axios
+        .put(`${DELIGHT_API_URL}/offers/activation`, body, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        })
+        .then((res) => {
+          resolve(res?.data?.modifiedCount ? true : false);
+        })
+        .catch((err) => {
+          console.error('activationOfferRequest > axios err=', err);
+          reject('Error in activationOfferRequest axios');
+        });
+    } catch (error) {
+      console.error('in offerServices > activationOfferRequest, Err===', error);
+      reject('System error. Please try again later!');
+    }
+  });
+};
+
+export const refreshOffersRequest = (
+  accessToken: string
+): Promise<OfferType[]> => {
+  return new Promise((resolve, reject) => {
+    try {
+      axios
+        .put(
+          `${DELIGHT_API_URL}/offers-onchain/update-offer-user`,
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        )
+        .then((res) => {
+          resolve(res?.data || []);
+        })
+        .catch((err) => {
+          console.error('refreshOffersRequest > axios err=', err);
+          reject('Error in refreshOffersRequest axios');
+        });
+    } catch (error) {
+      console.error('in offerServices > refreshOffersRequest, Err===', error);
+      reject('System error. Please try again later!');
+    }
+  });
+};

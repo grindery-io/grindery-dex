@@ -39,7 +39,6 @@ import {
   OrderPlacingStatusType,
   ErrorMessageType,
 } from '../types';
-import { POOL_CONTRACT_ADDRESS } from '../config';
 import { addGsheetRowRequest } from '../services/gsheetServices';
 
 // Context props
@@ -395,7 +394,7 @@ export const TradeProvider = ({ children }: TradeProviderProps) => {
 
         // set pool contract
         const _poolContract = new ethers.Contract(
-          POOL_CONTRACT_ADDRESS[`eip155:${offer.exchangeChainId}`],
+          inputChain.usefulAddresses?.poolContract,
           poolAbi,
           signer
         );

@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { Box, IconButton, Tooltip } from '@mui/material';
-import { AddCircleOutline as AddCircleOutlineIcon } from '@mui/icons-material';
+import RefreshIcon from '@mui/icons-material/Refresh';
 import {
   NotFound,
   Offer,
@@ -24,8 +24,11 @@ import { OfferType } from '../../types';
 function OffersPageRoot() {
   const { id: user } = useAppSelector(selectUserStore);
   const { connectUser: connect } = useUserProvider();
-  const { handleActivationAction, handleFetchMoreOffersAction } =
-    useOffersProvider();
+  const {
+    handleActivationAction,
+    handleFetchMoreOffersAction,
+    handleOffersRefreshAction,
+  } = useOffersProvider();
   let navigate = useNavigate();
   const { items: chains } = useAppSelector(selectChainsStore);
   const {
@@ -41,16 +44,16 @@ function OffersPageRoot() {
       <PageCardHeader
         title="Offers"
         endAdornment={
-          user && offers.length > 4 ? (
-            <Tooltip title="Create">
+          user && offers.length > 0 ? (
+            <Tooltip title="Refresh">
               <IconButton
                 size="medium"
                 edge="end"
                 onClick={() => {
-                  navigate(ROUTES.SELL.OFFERS.CREATE.FULL_PATH);
+                  handleOffersRefreshAction();
                 }}
               >
-                <AddCircleOutlineIcon sx={{ color: 'black' }} />
+                <RefreshIcon sx={{ color: 'black' }} />
               </IconButton>
             </Tooltip>
           ) : null

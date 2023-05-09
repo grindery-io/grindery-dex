@@ -18,4 +18,9 @@ export type ChainType = {
   transactionExplorerUrl?: string;
   addressExplorerUrl?: string;
   order: number;
+  usefulAddresses?: ChainUsefulAddressesType;
+};
+
+export type ChainUsefulAddressesType = {
+  poolContract?: string;
 };

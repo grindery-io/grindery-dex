@@ -16,7 +16,6 @@ import {
 } from '../store';
 import { useUserProvider } from './UserProvider';
 import { getAllOffers, addOrderRequest, getOrderRequest } from '../services';
-import { POOL_CONTRACT_ADDRESS } from '../config';
 import { OfferType, OrderPlacingStatusType, ErrorMessageType } from '../types';
 import {
   getChainById,
@@ -208,7 +207,7 @@ export const ShopProvider = ({ children }: ShopProviderProps) => {
 
         // set pool contract
         const _poolContract = new ethers.Contract(
-          POOL_CONTRACT_ADDRESS[`eip155:${offer.exchangeChainId}`],
+          inputChain.usefulAddresses?.poolContract,
           poolAbi,
           signer
         );
