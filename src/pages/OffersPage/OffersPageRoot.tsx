@@ -4,6 +4,7 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 import { Box, IconButton, Tooltip } from '@mui/material';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import {
+  Loading,
   NotFound,
   Offer,
   OfferSkeleton,
@@ -36,6 +37,7 @@ function OffersPageRoot() {
     loading: offersIsLoading,
     total,
     activating: isActivating,
+    refreshing,
   } = useAppSelector(selectOffersStore);
   const hasMore = offers.length < total;
 
@@ -45,16 +47,32 @@ function OffersPageRoot() {
         title="Offers"
         endAdornment={
           user && offers.length > 0 ? (
-            <Tooltip title="Refresh">
-              <IconButton
-                size="medium"
-                edge="end"
-                onClick={() => {
-                  handleOffersRefreshAction();
-                }}
-              >
-                <RefreshIcon sx={{ color: 'black' }} />
-              </IconButton>
+            <Tooltip title={refreshing ? 'Loading...' : 'Refresh'}>
+              <div>
+                {refreshing ? (
+                  <Loading
+                    style={{
+                      width: 'auto',
+                      margin: 0,
+                      padding: '8px 0 8px 8px',
+                    }}
+                    progressStyle={{
+                      width: '20px !important',
+                      height: '20px !important',
+                    }}
+                  />
+                ) : (
+                  <IconButton
+                    size="medium"
+                    edge="end"
+                    onClick={() => {
+                      handleOffersRefreshAction();
+                    }}
+                  >
+                    <RefreshIcon sx={{ color: 'black' }} />
+                  </IconButton>
+                )}
+              </div>
             </Tooltip>
           ) : null
         }

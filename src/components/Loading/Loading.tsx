@@ -1,13 +1,14 @@
 import React from 'react';
-import { CircularProgress } from '@mui/material';
+import { CircularProgress, SxProps } from '@mui/material';
 
 type Props = {
   size?: number;
-  style?: { [key: string]: string | number };
+  style?: React.CSSProperties;
+  progressStyle?: SxProps | React.CSSProperties;
 };
 
 const Loading = (props: Props) => {
-  const { size, style } = props;
+  const { size, style, progressStyle } = props;
   return (
     <div
       style={{
@@ -18,7 +19,7 @@ const Loading = (props: Props) => {
         ...style,
       }}
     >
-      <CircularProgress color="inherit" size={size} />
+      <CircularProgress color="inherit" size={size} sx={progressStyle} />
     </div>
   );
 };

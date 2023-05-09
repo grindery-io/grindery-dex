@@ -207,7 +207,7 @@ export const ShopProvider = ({ children }: ShopProviderProps) => {
 
         // set pool contract
         const _poolContract = new ethers.Contract(
-          inputChain.usefulAddresses?.poolContract,
+          inputChain.usefulAddresses?.grtPoolAddress,
           poolAbi,
           signer
         );

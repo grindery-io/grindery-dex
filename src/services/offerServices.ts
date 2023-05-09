@@ -259,7 +259,25 @@ export const refreshOffersRequest = (
           }
         )
         .then((res) => {
-          resolve(res?.data || []);
+          let refreshedOffers = res?.data || [];
+          axios
+            .put(
+              `${DELIGHT_API_URL}/offers-onchain/update-offer-activation-user`,
+              {},
+              {
+                headers: {
+                  Authorization: `Bearer ${accessToken}`,
+                },
+              }
+            )
+            .then((res2) => {
+              let offers = [...refreshedOffers, ...(res2?.data || [])];
+              resolve(offers);
+            })
+            .catch((err) => {
+              console.error('refreshOffersRequest > axios err=', err);
+              resolve(refreshedOffers);
+            });
         })
         .catch((err) => {
           console.error('refreshOffersRequest > axios err=', err);

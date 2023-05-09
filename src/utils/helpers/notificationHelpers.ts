@@ -33,20 +33,11 @@ export const getNotificationObject = (
             variant: 'error',
           },
         };
-      case 'activationSuccess':
+      case 'activationDeactivation':
         return {
           text: `${capitalizeFirstLetter(event.params.type)} ${formatAddress(
             event.params.id
-          )} is active now!`,
-          props: {
-            variant: 'success',
-          },
-        };
-      case 'deactivationSuccess':
-        return {
-          text: `${capitalizeFirstLetter(event.params.type)} ${formatAddress(
-            event.params.id
-          )} deactivated.`,
+          )} updated now!`,
           props: {
             variant: 'success',
           },

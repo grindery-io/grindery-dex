@@ -25,6 +25,7 @@ interface OffersState {
   input: OffersCreateInput;
   items: OfferType[];
   loading: boolean;
+  refreshing: boolean;
   total: number;
 }
 
@@ -46,6 +47,7 @@ const initialState: OffersState = {
   },
   items: [],
   loading: true,
+  refreshing: false,
   total: 0,
 };
 
@@ -114,6 +116,9 @@ const offersSlice = createSlice({
     },
     setActivating(state, action: PayloadAction<string>) {
       state.activating = action.payload;
+    },
+    setRefreshing(state, action: PayloadAction<boolean>) {
+      state.refreshing = action.payload;
     },
   },
 });

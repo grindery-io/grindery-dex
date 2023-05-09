@@ -22,5 +22,5 @@ export type ChainType = {
 };
 
 export type ChainUsefulAddressesType = {
-  poolContract?: string;
+  grtPoolAddress?: string;
 };

@@ -124,12 +124,14 @@ export const OffersProvider = ({ children }: OffersProviderProps) => {
   );
 
   const handleOffersRefreshAction = useCallback(async () => {
+    dispatch(offersStoreActions.setRefreshing(true));
     const refreshedOffers = await refreshOffersRequest(accessToken);
     if (refreshedOffers) {
       for (const offer of refreshedOffers) {
         dispatch(offersStoreActions.updateItem(offer));
       }
     }
+    dispatch(offersStoreActions.setRefreshing(false));
   }, [accessToken, dispatch]);
 
   const handleOfferCreateAction = useCallback(async () => {
@@ -182,7 +184,7 @@ export const OffersProvider = ({ children }: OffersProviderProps) => {
       const signer = getSigner();
 
       const _poolContract = new ethers.Contract(
-        inputChain.usefulAddresses?.poolContract,
+        inputChain.usefulAddresses?.grtPoolAddress,
         poolAbi,
         signer
       );
@@ -303,7 +305,7 @@ export const OffersProvider = ({ children }: OffersProviderProps) => {
         const ethers = getEthers();
 
         const _poolContract = new ethers.Contract(
-          offerToChain.usefulAddresses?.poolContract,
+          offerToChain.usefulAddresses?.grtPoolAddress,
           poolAbi,
           signer
         );
