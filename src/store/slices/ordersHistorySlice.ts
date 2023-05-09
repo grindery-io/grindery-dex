@@ -6,6 +6,7 @@ interface OrdersHistoryState {
   error: ErrorMessageType;
   items: OrderType[];
   loading: boolean;
+  refreshing: boolean;
   total: number;
 }
 
@@ -13,6 +14,7 @@ const initialState: OrdersHistoryState = {
   error: { type: '', text: '' },
   items: [],
   loading: true,
+  refreshing: false,
   total: 0,
 };
 
@@ -54,6 +56,9 @@ const ordersHistorySlice = createSlice({
     },
     clearError(state) {
       state.error = { type: '', text: '' };
+    },
+    setRefreshing(state, action: PayloadAction<boolean>) {
+      state.refreshing = action.payload;
     },
   },
 });

@@ -195,3 +195,50 @@ export const completeSellerOrderRequest = (
     }
   });
 };
+
+export const refreshOrdersRequest = (
+  accessToken: string
+): Promise<OrderType[]> => {
+  return new Promise((resolve, reject) => {
+    try {
+      axios
+        .put(
+          `${DELIGHT_API_URL}/orders-onchain/update-order-user`,
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        )
+        .then((res) => {
+          let refreshedOrders = res?.data || [];
+          axios
+            .put(
+              `${DELIGHT_API_URL}/orders-onchain/update-order-completion-user`,
+              {},
+              {
+                headers: {
+                  Authorization: `Bearer ${accessToken}`,
+                },
+              }
+            )
+            .then((res2) => {
+              let orders = [...refreshedOrders, ...(res2?.data || [])];
+              resolve(orders);
+            })
+            .catch((err) => {
+              console.error('refreshOrdersRequest > axios err=', err);
+              resolve(refreshedOrders);
+            });
+        })
+        .catch((err) => {
+          console.error('refreshOrdersRequest > axios err=', err);
+          reject('Error in refreshOrdersRequest axios');
+        });
+    } catch (error) {
+      console.error('in offerServices > refreshOrdersRequest, Err===', error);
+      reject('System error. Please try again later!');
+    }
+  });
+};

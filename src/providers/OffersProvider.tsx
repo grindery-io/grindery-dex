@@ -125,7 +125,11 @@ export const OffersProvider = ({ children }: OffersProviderProps) => {
 
   const handleOffersRefreshAction = useCallback(async () => {
     dispatch(offersStoreActions.setRefreshing(true));
-    const refreshedOffers = await refreshOffersRequest(accessToken);
+    const refreshedOffers = await refreshOffersRequest(accessToken).catch(
+      (error: any) => {
+        dispatch(offersStoreActions.setRefreshing(false));
+      }
+    );
     if (refreshedOffers) {
       for (const offer of refreshedOffers) {
         dispatch(offersStoreActions.updateItem(offer));

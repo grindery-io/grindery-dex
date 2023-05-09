@@ -11,15 +11,17 @@ import {
   ordersHistoryStoreActions,
   selectUserStore,
 } from '../store';
-import { getBuyerOrdersRequest } from '../services';
+import { getBuyerOrdersRequest, refreshOrdersRequest } from '../services';
 
 // Context props
 type ContextProps = {
   handleFetchMoreOrdersAction: () => void;
+  handleOrdersRefreshAction: () => void;
 };
 
 export const OrdersHistoryContext = createContext<ContextProps>({
   handleFetchMoreOrdersAction: () => {},
+  handleOrdersRefreshAction: () => {},
 });
 
 type OrdersHistoryControllerProps = {
@@ -51,6 +53,21 @@ export const OrdersHistoryController = ({
     dispatch(ordersHistoryStoreActions.addItems(res?.items || []));
   }, [accessToken, offset, dispatch]);
 
+  const handleOrdersRefreshAction = useCallback(async () => {
+    dispatch(ordersHistoryStoreActions.setRefreshing(true));
+    const refreshedOrders = await refreshOrdersRequest(accessToken).catch(
+      (error: any) => {
+        dispatch(ordersHistoryStoreActions.setRefreshing(false));
+      }
+    );
+    if (refreshedOrders) {
+      for (const order of refreshedOrders) {
+        dispatch(ordersHistoryStoreActions.updateItem(order));
+      }
+    }
+    dispatch(ordersHistoryStoreActions.setRefreshing(false));
+  }, [accessToken, dispatch]);
+
   useEffect(() => {
     if (accessToken) {
       fetchOrders(accessToken);
@@ -61,6 +78,7 @@ export const OrdersHistoryController = ({
     <OrdersHistoryContext.Provider
       value={{
         handleFetchMoreOrdersAction,
+        handleOrdersRefreshAction,
       }}
     >
       {children}
