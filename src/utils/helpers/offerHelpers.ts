@@ -219,3 +219,10 @@ export const validateOfferCreateAction = (
   }
   return true;
 };
+
+export const getOfferById = (
+  offerId: string,
+  offers: OfferType[]
+): OfferType | null => {
+  return offers.find((offer) => offer.offerId === offerId) || null;
+};

@@ -60,6 +60,8 @@ export const getOrderStatus = (order: OrderType): string => {
   switch (order.status) {
     case OrderStatusType.PENDING:
       return 'Waiting transaction confirmation';
+    case OrderStatusType.COMPLETION:
+      return 'Processing';
     case OrderStatusType.SUCCESS:
       return 'Processing';
     case OrderStatusType.FAILURE:

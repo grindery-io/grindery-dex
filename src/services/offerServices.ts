@@ -32,7 +32,7 @@ export const getOffer = (
   });
 };
 
-export const getOfferById = (
+export const getOfferByIdRequest = (
   accessToken: string,
   offerId: string
 ): Promise<OfferType> => {
@@ -52,11 +52,11 @@ export const getOfferById = (
           }
         })
         .catch((err) => {
-          console.error('getOfferById > axios err=', err);
-          reject('Error in getOfferById axios');
+          console.error('getOfferByIdRequest > axios err=', err);
+          reject('Error in getOfferByIdRequest axios');
         });
     } catch (error) {
-      console.error('in offerServices > getOfferById, Err===', error);
+      console.error('in offerServices > getOfferByIdRequest, Err===', error);
       reject('System error. Please try again later!');
     }
   });

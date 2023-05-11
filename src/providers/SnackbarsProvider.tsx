@@ -8,7 +8,7 @@ import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
 import TaskAltOutlinedIcon from '@mui/icons-material/TaskAltOutlined';
 import { NotistackSnackbar } from '../components';
 import { JSONRPCRequestType } from '../types';
-import { getOfferById, getOrderByIdRequest } from '../services';
+import { getOfferByIdRequest, getOrderByIdRequest } from '../services';
 import {
   offersStoreActions,
   ordersHistoryStoreActions,
@@ -78,7 +78,7 @@ const SnackbarsProvider = (props: Props) => {
     async (event: JSONRPCRequestType) => {
       if (accessToken && event?.params?.id) {
         if (event?.params?.type === 'offer') {
-          const offer = await getOfferById(accessToken, event.params.id);
+          const offer = await getOfferByIdRequest(accessToken, event.params.id);
           if (offer) {
             dispatch(offersStoreActions.updateItem(offer));
             showNotification(event);

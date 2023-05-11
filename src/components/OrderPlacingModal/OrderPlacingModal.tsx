@@ -191,12 +191,14 @@ const OrderPlacingModal = (props: Props) => {
         {orderStatus}
       </DialogTitle>
       <DialogContent sx={{ paddingBottom: '0' }}>
-        {orderStatus === OrderPlacingStatusType.PROCESSING && (
+        {(orderStatus === OrderPlacingStatusType.PROCESSING ||
+          orderStatus === OrderPlacingStatusType.PROCESSING_APPROVAL) && (
           <Box sx={{ padding: '16px 0' }}>
             <Loading />
           </Box>
         )}
-        {(orderStatus === OrderPlacingStatusType.WAITING_NETWORK_SWITCH ||
+        {(orderStatus === OrderPlacingStatusType.WAITING_APPROVAL ||
+          orderStatus === OrderPlacingStatusType.WAITING_NETWORK_SWITCH ||
           orderStatus === OrderPlacingStatusType.WAITING_CONFIRMATION) && (
           <Box sx={{ padding: '16px 0', textAlign: 'center' }}>
             <img

@@ -165,14 +165,15 @@ export const getSellerOrdersRequest = (
 
 export const completeSellerOrderRequest = (
   accessToken: string,
-  orderId: string
+  orderId: string,
+  completionHash: string
 ): Promise<boolean> => {
   return new Promise((resolve, reject) => {
     try {
       axios
         .put(
           `${DELIGHT_API_URL}/orders/complete`,
-          { orderId },
+          { orderId, completionHash },
           {
             headers: {
               Authorization: `Bearer ${accessToken}`,

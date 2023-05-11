@@ -21,4 +21,5 @@ export enum OrderStatusType {
   PENDING = 'pending',
   SUCCESS = 'success',
   FAILURE = 'failure',
+  COMPLETION = 'completion',
 }

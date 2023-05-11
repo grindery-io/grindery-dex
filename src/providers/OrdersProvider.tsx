@@ -267,7 +267,8 @@ export const OrdersProvider = ({ children }: OrdersProviderProps) => {
     // set order as completed
     const completed = await completeSellerOrderRequest(
       accessToken,
-      order.orderId
+      order.orderId,
+      tx.hash || ''
     );
 
     if (!completed) {

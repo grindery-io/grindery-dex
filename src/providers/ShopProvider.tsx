@@ -57,7 +57,7 @@ export const ShopProvider = ({ children }: ShopProviderProps) => {
     chainId: userChainId,
     address: userAddress,
   } = useAppSelector(selectUserStore);
-  const { poolAbi } = useAppSelector(selectAbiStore);
+  const { poolAbi, tokenAbi } = useAppSelector(selectAbiStore);
 
   const fetchOffers = useCallback(async () => {
     dispatch(shopStoreActions.setLoading(true));
@@ -190,12 +190,6 @@ export const ShopProvider = ({ children }: ShopProviderProps) => {
           );
         }
 
-        dispatch(
-          shopStoreActions.setOrderStatus(
-            OrderPlacingStatusType.WAITING_CONFIRMATION
-          )
-        );
-
         // get signer
         const signer = getSigner();
         const ethers = getEthers();
@@ -204,6 +198,8 @@ export const ShopProvider = ({ children }: ShopProviderProps) => {
           parseFloat(offer.amount || '0') *
           parseFloat(offer.exchangeRate || '0')
         ).toString();
+
+        const offerAmount = offer.amount;
 
         // set pool contract
         const _poolContract = new ethers.Contract(
@@ -215,9 +211,79 @@ export const ShopProvider = ({ children }: ShopProviderProps) => {
         // connect signer
         const poolContract = _poolContract.connect(signer);
 
-        // get gas estimation
-        const gasEstimate =
-          await poolContract.estimateGas.depositETHAndAcceptOffer(
+        if (exchangeToken?.address !== '0x0') {
+          dispatch(
+            shopStoreActions.setOrderStatus(
+              OrderPlacingStatusType.WAITING_APPROVAL
+            )
+          );
+          const _tokenContract = new ethers.Contract(
+            exchangeToken?.address,
+            tokenAbi,
+            signer
+          );
+
+          // connect signer
+          const tokenContract = _tokenContract.connect(signer);
+
+          const approvalTx = await tokenContract.approve(
+            inputChain.usefulAddresses?.grtPoolAddress,
+            ethers.utils.parseEther(amountToPay)
+          );
+
+          dispatch(
+            shopStoreActions.setOrderStatus(
+              OrderPlacingStatusType.PROCESSING_APPROVAL
+            )
+          );
+          // wait for approval transaction
+          await approvalTx.wait();
+        }
+
+        dispatch(
+          shopStoreActions.setOrderStatus(
+            OrderPlacingStatusType.WAITING_CONFIRMATION
+          )
+        );
+
+        let tx;
+
+        if (exchangeToken?.address !== '0x0') {
+          const gasEstimate =
+            await poolContract.estimateGas.depositTestTokenAndAcceptOffer(
+              exchangeToken?.address,
+              ethers.utils.parseEther(amountToPay),
+              offer.offerId,
+              userAddress,
+              ethers.utils.parseEther(offerAmount)
+            );
+
+          tx = await poolContract.depositTestTokenAndAcceptOffer(
+            exchangeToken?.address,
+            ethers.utils.parseEther(amountToPay),
+            offer.offerId,
+            userAddress,
+            ethers.utils.parseEther(offerAmount),
+            {
+              gasLimit: gasEstimate,
+            }
+          );
+        } else {
+          const gasEstimate =
+            await poolContract.estimateGas.depositETHAndAcceptOffer(
+              offer.offerId,
+              userAddress,
+              ethers.utils.parseEther(
+                parseFloat(offer.amount || '0')
+                  .toFixed(18)
+                  .toString()
+              ),
+              {
+                value: ethers.utils.parseEther(amountToPay),
+              }
+            );
+
+          tx = await poolContract.depositETHAndAcceptOffer(
             offer.offerId,
             userAddress,
             ethers.utils.parseEther(
@@ -227,22 +293,10 @@ export const ShopProvider = ({ children }: ShopProviderProps) => {
             ),
             {
               value: ethers.utils.parseEther(amountToPay),
+              gasLimit: gasEstimate,
             }
           );
-
-        const tx = await poolContract.depositETHAndAcceptOffer(
-          offer.offerId,
-          userAddress,
-          ethers.utils.parseEther(
-            parseFloat(offer.amount || '0')
-              .toFixed(18)
-              .toString()
-          ),
-          {
-            value: ethers.utils.parseEther(amountToPay),
-            gasLimit: gasEstimate,
-          }
-        );
+        }
 
         // save order to DB
         const order = await addOrderRequest(accessToken, {
@@ -288,6 +342,7 @@ export const ShopProvider = ({ children }: ShopProviderProps) => {
       poolAbi,
       userAddress,
       chains,
+      tokenAbi,
       dispatch,
       fetchSingleOrder,
       getEthers,
