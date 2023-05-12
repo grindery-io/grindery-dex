@@ -13,6 +13,7 @@ import {
 import { theme } from './theme';
 import WebsocketProvider from './providers/WebsocketProvider';
 import RootPage from './pages/RootPage/RootPage';
+import NotificationsProvider from './providers/NotificationsProvider';
 
 declare global {
   interface Window {
@@ -25,17 +26,19 @@ export const App = () => {
     <ThemeProvider theme={theme}>
       <AuthenticationProvider>
         <StoreProvider store={store}>
-          <UserProvider>
-            <WebsocketProvider>
-              <SnackbarsProvider>
-                <AbiProvider>
-                  <ChainsProvider>
-                    <RootPage />
-                  </ChainsProvider>
-                </AbiProvider>
-              </SnackbarsProvider>
-            </WebsocketProvider>
-          </UserProvider>
+          <NotificationsProvider>
+            <UserProvider>
+              <WebsocketProvider>
+                <SnackbarsProvider>
+                  <AbiProvider>
+                    <ChainsProvider>
+                      <RootPage />
+                    </ChainsProvider>
+                  </AbiProvider>
+                </SnackbarsProvider>
+              </WebsocketProvider>
+            </UserProvider>
+          </NotificationsProvider>
         </StoreProvider>
       </AuthenticationProvider>
     </ThemeProvider>

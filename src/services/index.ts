@@ -7,3 +7,4 @@ export * from './stakeServices';
 export * from './tokenServices';
 export * from './userServices';
 export * from './walletServices';
+export * from './notificationServices';

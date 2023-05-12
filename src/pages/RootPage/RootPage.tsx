@@ -8,15 +8,31 @@ import HistoryPage from '../HistoryPage/HistoryPage';
 import FaucetPage from '../FaucetPage/FaucetPage';
 import Page404 from '../Page404/Page404';
 import { PageContainer, Popup, SessionExpiredPopup } from '../../components';
-import { selectUserStore, useAppSelector } from '../../store';
+import {
+  //selectNotificationsStore,
+  selectUserStore,
+  useAppSelector,
+} from '../../store';
 import { useUserProvider } from '../../providers';
+//import NotificationsPopup from '../../components/NotificationsPopup/NotificationsPopup';
+//import { useNotificationsProvider } from '../../providers/NotificationsProvider';
 
 type Props = {};
 
 const RootPage = (props: Props) => {
-  const { sessionExpired, advancedMode, advancedModeAlert, popupClosed } =
-    useAppSelector(selectUserStore);
+  const {
+    //id: userId,
+    sessionExpired,
+    advancedMode,
+    advancedModeAlert,
+    popupClosed,
+  } = useAppSelector(selectUserStore);
+  //const { isCanceled, isSupported, isSubscribed } = useAppSelector(
+  //  selectNotificationsStore
+  //);
   const { handlePopupCloseAction } = useUserProvider();
+  //const { requestNotificationsPermissionAction, dismissNotificationsAction } =
+  //  useNotificationsProvider();
 
   return (
     <>
@@ -39,6 +55,14 @@ const RootPage = (props: Props) => {
       {DISABLE_POPUP !== 'true' && !popupClosed && (
         <Popup onClose={handlePopupCloseAction} />
       )}
+      {/*<NotificationsPopup
+        userId={userId}
+        isSubscribed={isSubscribed}
+        isCanceled={isCanceled}
+        isSupported={isSupported}
+        onDismiss={dismissNotificationsAction}
+        onAccept={requestNotificationsPermissionAction}
+      />*/}
       {sessionExpired && <SessionExpiredPopup />}
     </>
   );
