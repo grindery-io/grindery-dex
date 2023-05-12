@@ -76,7 +76,7 @@ export const NotificationsProvider = ({
     if (accessToken && token) {
       saveUserToken(token);
     }
-  }, [accessToken, token]);
+  }, [accessToken, token, saveUserToken]);
 
   useEffect(() => {
     if (userId) {
