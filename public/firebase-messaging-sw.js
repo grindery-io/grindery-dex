@@ -28,12 +28,14 @@ messaging.onBackgroundMessage((payload) => {
   const notificationTitle =
     (payload.data && payload.data.title) ||
     (payload.notification && payload.notification.title) ||
-    'Title';
+    payload.title ||
+    'Mercari notification';
   const notificationOptions = {
     body:
       (payload.data && payload.data.body) ||
       (payload.notification && payload.notification.body) ||
-      '',
+      payload.body ||
+      'Click to open the Mercari dApp',
     icon:
       (payload.data && payload.data.icon) ||
       'https://mercari.grindery.io/logo192.png',

@@ -69,6 +69,25 @@ const NotificationsPopup = (props: Props) => {
         alignItems="center"
         justifyContent="flex-end"
         gap="15px"
+        sx={{
+          marginBottom: '10px',
+          '& .MuiButton-root': {
+            fontSize: '14px',
+            padding: '8px 24px',
+            margin: 0,
+            '&:hover': {
+              opacity: '0.9 !important',
+            },
+          },
+          '& .MuiButton-outlined': {
+            borderColor: '#3f49e1 !important',
+            color: '#3f49e1 !important',
+          },
+          '& .MuiButton-text': {
+            backgroundColor: '#3f49e1 !important',
+            color: '#fff !important',
+          },
+        }}
       >
         <Button
           onClick={() => {
@@ -79,6 +98,7 @@ const NotificationsPopup = (props: Props) => {
         >
           No Thanks
         </Button>
+
         <Button
           onClick={() => {
             onAccept();

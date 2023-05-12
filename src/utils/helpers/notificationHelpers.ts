@@ -5,14 +5,6 @@ import { capitalizeFirstLetter } from '../string';
 export const getNotificationObject = (
   event: JSONRPCRequestType
 ): NotificationType | null => {
-  if (event.result === 'authenticated') {
-    return {
-      text: `Websocket authenticated!`,
-      props: {
-        variant: 'info',
-      },
-    };
-  }
   if (event.method && event.params && event.params.type && event.params.id) {
     switch (event.method) {
       case 'success':
@@ -20,6 +12,15 @@ export const getNotificationObject = (
           text: `${capitalizeFirstLetter(event.params.type)} ${formatAddress(
             event.params.id
           )} ${event.params.type === 'offer' ? 'created' : 'placed'}!`,
+          props: {
+            variant: 'success',
+          },
+        };
+      case 'complete':
+        return {
+          text: `${capitalizeFirstLetter(event.params.type)} ${formatAddress(
+            event.params.id
+          )} ${event.params.type === 'offer' ? 'completed' : 'completed'}!`,
           props: {
             variant: 'success',
           },
