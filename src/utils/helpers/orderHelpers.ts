@@ -30,7 +30,9 @@ export const getOrderFromToken = (
 ): TokenType | null => {
   return (
     getOrderFromChain(order, chains)?.tokens?.find(
-      (t: TokenType) => t.address === order.addressTokenDeposit
+      (t: TokenType) =>
+        t.address === order.addressTokenDeposit ||
+        (t.address && order.addressTokenDeposit.includes(t.address))
     ) || null
   );
 };

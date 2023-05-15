@@ -195,6 +195,7 @@ const OrderCard = (props: Props) => {
                 onCompleteClick(order);
               }
             }}
+            loading={loading}
           />
         </Box>
       )}
