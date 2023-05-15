@@ -197,7 +197,7 @@ export const completeSellerOrderRequest = (
   });
 };
 
-export const refreshOrdersRequest = (
+export const refreshBuyerOrdersRequest = (
   accessToken: string
 ): Promise<OrderType[]> => {
   return new Promise((resolve, reject) => {
@@ -229,16 +229,51 @@ export const refreshOrdersRequest = (
               resolve(orders);
             })
             .catch((err) => {
-              console.error('refreshOrdersRequest > axios err=', err);
+              console.error('refreshBuyerOrdersRequest > axios err=', err);
               resolve(refreshedOrders);
             });
         })
         .catch((err) => {
-          console.error('refreshOrdersRequest > axios err=', err);
-          reject('Error in refreshOrdersRequest axios');
+          console.error('refreshBuyerOrdersRequest > axios err=', err);
+          reject('Error in refreshBuyerOrdersRequest axios');
         });
     } catch (error) {
-      console.error('in offerServices > refreshOrdersRequest, Err===', error);
+      console.error(
+        'in offerServices > refreshBuyerOrdersRequest, Err===',
+        error
+      );
+      reject('System error. Please try again later!');
+    }
+  });
+};
+
+export const refreshSellerOrdersRequest = (
+  accessToken: string
+): Promise<OrderType[]> => {
+  return new Promise((resolve, reject) => {
+    try {
+      axios
+        .put(
+          `${DELIGHT_API_URL}/orders-onchain/update-order-completion-seller`,
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        )
+        .then((res) => {
+          resolve(res?.data || []);
+        })
+        .catch((err) => {
+          console.error('refreshSellerOrdersRequest > axios err=', err);
+          reject('Error in refreshSellerOrdersRequest axios');
+        });
+    } catch (error) {
+      console.error(
+        'in offerServices > refreshSellerOrdersRequest, Err===',
+        error
+      );
       reject('System error. Please try again later!');
     }
   });

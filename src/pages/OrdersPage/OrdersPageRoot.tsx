@@ -7,36 +7,72 @@ import {
   PageCardBody,
   PageCard,
   NotFound,
+  Loading,
 } from '../../components';
-import { OrderType, LiquidityWalletType } from '../../types';
+import { OrderType } from '../../types';
 import {
   useAppSelector,
   selectOrdersStore,
-  selectAbiStore,
   selectChainsStore,
-  selectWalletsStore,
   selectUserStore,
 } from '../../store';
 import { useOrdersProvider } from '../../providers';
+import { IconButton, Tooltip } from '@mui/material';
+import RefreshIcon from '@mui/icons-material/Refresh';
 
 function OrdersPageRoot() {
-  const { accessToken, chainId: userChainId } = useAppSelector(selectUserStore);
-  const { liquidityWalletAbi } = useAppSelector(selectAbiStore);
+  const { id: user } = useAppSelector(selectUserStore);
   const {
+    completing,
     items: orders,
     loading,
     error,
     total,
+    refreshing,
   } = useAppSelector(selectOrdersStore);
   const hasMore = orders.length < total;
   const { handleOrderCompleteAction } = useOrdersProvider();
-  const { items: wallets } = useAppSelector(selectWalletsStore);
   const { items: chains } = useAppSelector(selectChainsStore);
-  const { handleFetchMoreOrdersAction } = useOrdersProvider();
+  const { handleFetchMoreOrdersAction, handleOrdersRefreshAction } =
+    useOrdersProvider();
 
   return (
     <PageCard>
-      <PageCardHeader title="Orders" />
+      <PageCardHeader
+        title="Orders"
+        endAdornment={
+          user && orders.length > 0 ? (
+            <Tooltip title={refreshing ? 'Loading...' : 'Refresh'}>
+              <div>
+                {refreshing ? (
+                  <Loading
+                    style={{
+                      width: 'auto',
+                      margin: 0,
+                      padding: '8px 0 8px 8px',
+                    }}
+                    progressStyle={{
+                      width: '20px !important',
+                      height: '20px !important',
+                    }}
+                  />
+                ) : (
+                  <IconButton
+                    size="medium"
+                    edge="end"
+                    onClick={() => {
+                      handleOrdersRefreshAction();
+                    }}
+                  >
+                    <RefreshIcon sx={{ color: 'black' }} />
+                  </IconButton>
+                )}
+              </div>
+            </Tooltip>
+          ) : null
+        }
+      />
+
       <PageCardBody maxHeight="540px" id="orders-list">
         {!loading && orders.length < 1 && <NotFound text="No orders found" />}
         {loading ? (
@@ -56,26 +92,13 @@ function OrdersPageRoot() {
                 order={order}
                 userType="b"
                 chains={chains}
-                onCompleteClick={async (order: OrderType) => {
-                  const wallet = wallets.find(
-                    (w: LiquidityWalletType) =>
-                      w.chainId === order.offer?.chainId || ''
-                  );
-                  return await handleOrderCompleteAction(
-                    order,
-                    accessToken,
-                    wallet?.walletAddress || '',
-                    userChainId,
-                    liquidityWalletAbi,
-                    orders,
-                    chains
-                  );
-                }}
+                onCompleteClick={handleOrderCompleteAction}
                 error={
                   error.type && error.type === order.orderId && error.text
                     ? error.text
                     : ''
                 }
+                completing={completing}
               />
             ))}
           </InfiniteScroll>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Skeleton, SxProps, Typography } from '@mui/material';
 import { Box } from '@mui/system';
 import moment from 'moment';
@@ -19,13 +19,14 @@ import PageCardSubmitButton from '../PageCardSubmitButton/PageCardSubmitButton';
 type Props = {
   order: OrderType;
   userType: 'a' | 'b';
-  onCompleteClick?: (order: OrderType) => Promise<boolean>;
+  onCompleteClick?: (order: OrderType) => void;
   error?: string;
   chains: ChainType[];
   id?: string;
   excludeSteps?: ('gas' | 'rate' | 'time' | 'impact')[];
   hideStatus?: boolean;
   containerStyle?: SxProps | React.CSSProperties;
+  completing?: string;
 };
 
 const OrderCard = (props: Props) => {
@@ -39,28 +40,16 @@ const OrderCard = (props: Props) => {
     excludeSteps,
     hideStatus,
     containerStyle,
+    completing,
   } = props;
   const offer = order.offer;
-  const [loading, setLoading] = useState(false);
+  const loading = Boolean(completing && completing === order.orderId);
   const isUserA = userType === 'a';
   const explorerLink = getOrderLink(order, chains);
   const fromChain = getOrderFromChain(order, chains);
   const fromToken = getOrderFromToken(order, chains);
   const buyer = !isUserA && order && order.destAddr;
   const buyerLink = !isUserA ? getOrderBuyerLink(order, chains) : '';
-
-  const handleCompleteClick = async () => {
-    if (order.orderId && onCompleteClick) {
-      setLoading(true);
-      const res = await onCompleteClick(order);
-      if (res) {
-        // handle success
-      } else {
-        // handle fail
-      }
-      setLoading(false);
-    }
-  };
 
   return (
     <Card
@@ -202,14 +191,8 @@ const OrderCard = (props: Props) => {
             className="OrderCard__button"
             label={getOrderButtonLabel(order, loading, isUserA)}
             onClick={() => {
-              if (!isUserA) {
-                if (
-                  !order.isComplete &&
-                  !loading &&
-                  order.status === OrderStatusType.SUCCESS
-                ) {
-                  handleCompleteClick();
-                }
+              if (!isUserA && onCompleteClick) {
+                onCompleteClick(order);
               }
             }}
           />

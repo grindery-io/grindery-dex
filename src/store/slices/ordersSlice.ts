@@ -3,16 +3,20 @@ import { RootState } from '../store';
 import { OrderType, ErrorMessageType } from '../../types';
 
 interface OrdersState {
+  completing: string;
   error: ErrorMessageType;
   items: OrderType[];
   loading: boolean;
+  refreshing: boolean;
   total: number;
 }
 
 const initialState: OrdersState = {
+  completing: '',
   error: { type: '', text: '' },
   items: [],
   loading: true,
+  refreshing: false,
   total: 0,
 };
 
@@ -26,6 +30,23 @@ const ordersSlice = createSlice({
     addItems(state, action: PayloadAction<OrderType[]>) {
       state.items = [...state.items, ...action.payload];
     },
+    updateItem(state, action: PayloadAction<OrderType>) {
+      if (
+        state.items.find((item: OrderType) => item._id === action.payload._id)
+      ) {
+        state.items = [
+          ...state.items.map((item: OrderType) => {
+            if (item._id === action.payload._id) {
+              return action.payload;
+            } else {
+              return item;
+            }
+          }),
+        ];
+      } else {
+        state.items = [...state.items, action.payload];
+      }
+    },
     setTotal(state, action: PayloadAction<number>) {
       state.total = action.payload;
     },
@@ -37,6 +58,12 @@ const ordersSlice = createSlice({
     },
     clearError(state) {
       state.error = { type: '', text: '' };
+    },
+    setRefreshing(state, action: PayloadAction<boolean>) {
+      state.refreshing = action.payload;
+    },
+    setCompleting(state, action: PayloadAction<string>) {
+      state.completing = action.payload;
     },
   },
 });

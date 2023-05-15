@@ -5,43 +5,41 @@ import React, {
   useEffect,
   useState,
 } from 'react';
-import { OrderType, ChainType } from '../types';
+import { OrderType, ErrorMessageType } from '../types';
 import {
   useAppDispatch,
   useAppSelector,
   ordersStoreActions,
   selectUserStore,
+  selectWalletsStore,
+  selectAbiStore,
+  selectChainsStore,
 } from '../store';
 import {
-  getErrorMessage,
+  getMetaMaskErrorMessage,
   getOfferFromChain,
   switchMetamaskNetwork,
 } from '../utils';
 import { useUserProvider } from './UserProvider';
 import {
   completeSellerOrderRequest,
+  getOrderRequest,
   getSellerOrdersRequest,
   getWalletBalanceRequest,
-  updateWalletRequest,
+  refreshSellerOrdersRequest,
 } from '../services';
 
 // Context props
 type ContextProps = {
-  handleOrderCompleteAction: (
-    order: OrderType,
-    accessToken: string,
-    userWalletAddress: string,
-    userChainId: string,
-    liquidityWalletAbi: any,
-    orders: OrderType[],
-    chains: ChainType[]
-  ) => Promise<boolean>;
+  handleOrderCompleteAction: (order: OrderType) => void;
   handleFetchMoreOrdersAction: () => void;
+  handleOrdersRefreshAction: () => void;
 };
 
 export const OrdersContext = createContext<ContextProps>({
-  handleOrderCompleteAction: async () => false,
+  handleOrderCompleteAction: () => {},
   handleFetchMoreOrdersAction: () => {},
+  handleOrdersRefreshAction: () => {},
 });
 
 type OrdersProviderProps = {
@@ -50,10 +48,13 @@ type OrdersProviderProps = {
 
 export const OrdersProvider = ({ children }: OrdersProviderProps) => {
   const dispatch = useAppDispatch();
-  const { accessToken } = useAppSelector(selectUserStore);
+  const { accessToken, chainId: userChainId } = useAppSelector(selectUserStore);
   const { getSigner, getEthers } = useUserProvider();
   const limit = 5;
   const [offset, setOffset] = useState(limit);
+  const { items: wallets } = useAppSelector(selectWalletsStore);
+  const { liquidityWalletAbi } = useAppSelector(selectAbiStore);
+  const { items: chains } = useAppSelector(selectChainsStore);
 
   const fetchOrders = useCallback(
     async (accessToken: string) => {
@@ -66,239 +67,167 @@ export const OrdersProvider = ({ children }: OrdersProviderProps) => {
     [dispatch]
   );
 
+  const fetchOrder = useCallback(
+    async (_id: string) => {
+      const res = await getOrderRequest(accessToken, _id);
+      if (res) {
+        dispatch(ordersStoreActions.updateItem(res));
+      }
+    },
+    [accessToken, dispatch]
+  );
+
   const handleFetchMoreOrdersAction = useCallback(async () => {
     const res = await getSellerOrdersRequest(accessToken, limit, offset);
     setOffset(offset + limit);
     dispatch(ordersStoreActions.addItems(res?.items || []));
   }, [dispatch, offset, accessToken]);
 
-  const validateOrderCompleteAction = (order: OrderType): boolean => {
-    if (!order.offer) {
-      dispatch(
-        ordersStoreActions.setError({
-          type: order.orderId || '',
-          text: 'Associated offer not found',
-        })
-      );
-      return false;
+  const handleOrdersRefreshAction = useCallback(async () => {
+    dispatch(ordersStoreActions.setRefreshing(true));
+    const refreshedOrders = await refreshSellerOrdersRequest(accessToken).catch(
+      (error: any) => {
+        dispatch(ordersStoreActions.setRefreshing(false));
+      }
+    );
+    if (refreshedOrders) {
+      for (const order of refreshedOrders) {
+        dispatch(ordersStoreActions.updateItem(order));
+      }
     }
+    dispatch(ordersStoreActions.setRefreshing(false));
+  }, [accessToken, dispatch]);
+
+  const validateOrderCompleteAction = (
+    order: OrderType
+  ): ErrorMessageType | true => {
     if (!order.offer) {
-      return false;
+      return {
+        type: order.orderId || '',
+        text: 'Associated offer not found',
+      };
     }
     if (!order.offerId) {
-      dispatch(
-        ordersStoreActions.setError({
-          type: order.orderId || '',
-          text: 'Order has no associated offer id',
-        })
-      );
-      return false;
+      return {
+        type: order.orderId || '',
+        text: 'Order has no associated offer id',
+      };
     }
-
     return true;
   };
 
-  const handleOrderCompleteAction = async (
-    order: OrderType,
-    accessToken: string,
-    userWalletAddress: string,
-    userChainId: string,
-    liquidityWalletAbi: any,
-    orders: OrderType[],
-    chains: ChainType[]
-  ): Promise<boolean> => {
-    dispatch(ordersStoreActions.clearError());
+  const handleOrderCompleteAction = useCallback(
+    async (order: OrderType) => {
+      dispatch(ordersStoreActions.clearError());
 
-    if (!validateOrderCompleteAction(order)) {
-      return false;
-    }
+      const validation = validateOrderCompleteAction(order);
 
-    if (!userWalletAddress) {
-      dispatch(
-        ordersStoreActions.setError({
-          type: order.orderId || '',
-          text: 'Liquidity wallet not found',
-        })
-      );
-      return false;
-    }
+      if (typeof validation !== 'boolean') {
+        dispatch(ordersStoreActions.setError(validation));
+        return false;
+      }
 
-    const offerChainId = order.offer?.chainId || '';
-    const offerTokenSymbol = order.offer?.token || '';
-    if (!order.offer) {
-      dispatch(
-        ordersStoreActions.setError({
-          type: order.orderId,
-          text: 'Associated offer not found',
-        })
-      );
-      return false;
-    }
-    const offerFromChain = getOfferFromChain(order.offer, chains);
-    if (!offerFromChain) {
-      dispatch(
-        ordersStoreActions.setError({
-          type: order.orderId,
-          text: 'Offer chain not found',
-        })
-      );
-      return false;
-    }
-    const switchNetwork = await switchMetamaskNetwork(
-      userChainId,
-      offerFromChain
-    );
-    if (!switchNetwork) {
-      dispatch(
-        ordersStoreActions.setError({
-          type: order.orderId,
-          text: 'Network switching failed. Please, switch network in your MetaMask and try again.',
-        })
-      );
-      return false;
-    }
+      try {
+        dispatch(ordersStoreActions.setCompleting(order.orderId));
 
-    let balance = await getWalletBalanceRequest(
-      accessToken,
-      offerChainId,
-      '0x0',
-      userWalletAddress
-    );
+        const userWalletAddress =
+          wallets.find((w) => w.chainId === order.offer?.chainId || '')
+            ?.walletAddress || '';
 
-    if (parseFloat(balance) < parseFloat(order.amountTokenOffer)) {
-      console.error(
-        "handleOrderCompleteClick error: You don't have enough BNB. Fund your liquidity wallet."
-      );
-      dispatch(
-        ordersStoreActions.setError({
-          type: order.orderId,
-          text: "You don't have enough BNB. Fund your liquidity wallet.",
-        })
-      );
-      return false;
-    }
+        if (!userWalletAddress) {
+          throw new Error('Liquidity wallet not found');
+        }
 
-    // get signer
-    const signer = getSigner();
-    const ethers = getEthers();
+        const offerChainId = order.offer?.chainId || '';
+        if (!order.offer) {
+          throw new Error('Associated offer not found');
+        }
+        const offerFromChain = getOfferFromChain(order.offer, chains);
+        if (!offerFromChain) {
+          throw new Error('Offer chain not found');
+        }
+        const switchNetwork = await switchMetamaskNetwork(
+          userChainId,
+          offerFromChain
+        );
+        if (!switchNetwork) {
+          throw new Error(
+            'Network switching failed. Please, switch network in your MetaMask and try again.'
+          );
+        }
 
-    // set wallet contract
-    const _walletContract = new ethers.Contract(
-      userWalletAddress,
-      liquidityWalletAbi,
-      signer
-    );
+        let balance = await getWalletBalanceRequest(
+          accessToken,
+          offerChainId,
+          '0x0',
+          userWalletAddress
+        );
 
-    // connect signer
-    const walletContract = _walletContract.connect(signer);
+        if (parseFloat(balance) < parseFloat(order.amountTokenOffer)) {
+          console.error(
+            "handleOrderCompleteClick error: You don't have enough BNB. Fund your liquidity wallet."
+          );
+          throw new Error(
+            "You don't have enough BNB. Fund your liquidity wallet."
+          );
+        }
 
-    // pay order transaction
-    const tx = await walletContract
-      .payOfferWithNativeTokens(
-        order.offerId,
-        order.destAddr,
-        ethers.utils.parseEther(parseFloat(order.amountTokenOffer).toFixed(6))
-      )
-      .catch((error: any) => {
-        console.error('payOfferWithNativeTokens error', error);
+        // get signer
+        const signer = getSigner();
+        const ethers = getEthers();
+
+        // set wallet contract
+        const _walletContract = new ethers.Contract(
+          userWalletAddress,
+          liquidityWalletAbi,
+          signer
+        );
+
+        // connect signer
+        const walletContract = _walletContract.connect(signer);
+
+        // pay order transaction
+        const tx = await walletContract.payOfferWithNativeTokens(
+          order.offerId,
+          order.destAddr,
+          ethers.utils.parseEther(parseFloat(order.amountTokenOffer).toFixed(6))
+        );
+
+        const completed = await completeSellerOrderRequest(
+          accessToken,
+          order.orderId,
+          tx.hash || ''
+        );
+
+        if (!completed) {
+          throw new Error("Server error: order wasn't marked as complete");
+        }
+        await fetchOrder(order._id);
+      } catch (error: any) {
         dispatch(
           ordersStoreActions.setError({
             type: order.orderId || '',
-            text: getErrorMessage(error) || 'Transaction error',
+            text: getMetaMaskErrorMessage(
+              error,
+              "Server error: order wasn't marked as complete"
+            ),
           })
         );
-        return false;
-      });
-
-    // stop execution if order payment failed
-    if (!tx) {
-      dispatch(
-        ordersStoreActions.setError({
-          type: order.orderId || '',
-          text: 'Transaction error',
-        })
-      );
-      return false;
-    }
-
-    // wait for payment transaction
-    try {
-      await tx.wait();
-    } catch (error: any) {
-      console.error('tx.wait error', error);
-      dispatch(
-        ordersStoreActions.setError({
-          type: order.orderId || '',
-          text: getErrorMessage(error) || 'Transaction error',
-        })
-      );
-      return false;
-    }
-
-    // get liquidity wallet balance
-    balance = await getWalletBalanceRequest(
+      }
+      dispatch(ordersStoreActions.setCompleting(''));
+    },
+    [
       accessToken,
-      offerChainId,
-      '0x0',
-      userWalletAddress
-    );
-
-    // update wallet balance
-    const isUpdated = await updateWalletRequest(accessToken, {
-      walletAddress: userWalletAddress,
-      chainId: offerChainId,
-      tokenId: offerTokenSymbol,
-      amount: balance.toString(),
-    });
-
-    if (!isUpdated) {
-      console.error(
-        "handleOrderCompleteClick error: wallet balance wasn't updated"
-      );
-      dispatch(
-        ordersStoreActions.setError({
-          type: order.orderId || '',
-          text: "Server error: wallet balance wasn't updated",
-        })
-      );
-      return false;
-    }
-
-    // set order as completed
-    const completed = await completeSellerOrderRequest(
-      accessToken,
-      order.orderId,
-      tx.hash || ''
-    );
-
-    if (!completed) {
-      console.error(
-        "handleOrderCompleteClick error: order wasn't marked as completed"
-      );
-      dispatch(
-        ordersStoreActions.setError({
-          type: order.orderId || '',
-          text: "Server error: order wasn't marked as complete",
-        })
-      );
-      return false;
-    }
-    dispatch(
-      ordersStoreActions.setItems([
-        ...orders.map((o: OrderType) => {
-          if (o.orderId === order.orderId) {
-            return {
-              ...o,
-              isComplete: true,
-            };
-          } else {
-            return o;
-          }
-        }),
-      ])
-    );
-    return true;
-  };
+      wallets,
+      userChainId,
+      liquidityWalletAbi,
+      chains,
+      dispatch,
+      fetchOrder,
+      getSigner,
+      getEthers,
+    ]
+  );
 
   useEffect(() => {
     if (accessToken) {
@@ -311,6 +240,7 @@ export const OrdersProvider = ({ children }: OrdersProviderProps) => {
       value={{
         handleOrderCompleteAction,
         handleFetchMoreOrdersAction,
+        handleOrdersRefreshAction,
       }}
     >
       {children}

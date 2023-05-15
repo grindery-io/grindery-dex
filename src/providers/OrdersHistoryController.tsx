@@ -11,7 +11,7 @@ import {
   ordersHistoryStoreActions,
   selectUserStore,
 } from '../store';
-import { getBuyerOrdersRequest, refreshOrdersRequest } from '../services';
+import { getBuyerOrdersRequest, refreshBuyerOrdersRequest } from '../services';
 
 // Context props
 type ContextProps = {
@@ -55,7 +55,7 @@ export const OrdersHistoryController = ({
 
   const handleOrdersRefreshAction = useCallback(async () => {
     dispatch(ordersHistoryStoreActions.setRefreshing(true));
-    const refreshedOrders = await refreshOrdersRequest(accessToken).catch(
+    const refreshedOrders = await refreshBuyerOrdersRequest(accessToken).catch(
       (error: any) => {
         dispatch(ordersHistoryStoreActions.setRefreshing(false));
       }
