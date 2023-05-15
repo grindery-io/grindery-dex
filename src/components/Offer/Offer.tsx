@@ -130,7 +130,7 @@ const Offer = (props: Props) => {
   return (
     <Card
       className="OfferPublic"
-      id={`offer-${offer.offerId}`}
+      id={`offer-${offer._id}`}
       data-provider={offer.provider}
       flex={1}
       sx={{
@@ -167,7 +167,11 @@ const Offer = (props: Props) => {
             },
           }}
         >
-          <Chip size="small" label={getOfferStatus(offer)} />
+          <Chip
+            className="OfferPublic__status"
+            size="small"
+            label={getOfferStatus(offer)}
+          />
           {isInAdvancedMode && (
             <>
               <Tooltip title="Execution time">

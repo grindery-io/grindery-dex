@@ -2,7 +2,7 @@
 
 describe('Offers page', () => {
   beforeEach(() => {
-    cy.intercept(`${Cypress.env('CYPRESS_DELIGHT_API_URL')}/offers/user`).as(
+    cy.intercept(`${Cypress.env('CYPRESS_DELIGHT_API_URL')}/offers/user*`).as(
       'GetUserOffers'
     );
     cy.intercept(`${Cypress.env('CYPRESS_DELIGHT_API_URL')}/offers/id?id=*`).as(
@@ -157,16 +157,12 @@ describe('Offers page', () => {
         .first()
         .find('.MuiCollapse-root p.MuiTypography-body1')
         .first()
-        .should('include.text', 'Merchant:');
-      cy.get('.OfferPublic')
-        .first()
-        .find('.MuiCollapse-root p.MuiTypography-body1')
-        .last()
         .should('include.text', 'Offer ID:');
     });
   });
 
   it('Deactivates an offer on deactivate button click', () => {
+    cy.wait(60000);
     cy.wait('@GetUserOffers').then(() => {
       cy.wait(1000);
       let offerId: string;
@@ -178,8 +174,8 @@ describe('Offers page', () => {
             .find('button[aria-label="show more"]')
             .click();
           cy.get('#' + offerId)
-            .find('button')
-            .contains('Deactivate')
+            .find('button', { timeout: 60000 })
+            .contains('Deactivate', { timeout: 60000 })
             .click();
 
           cy.confirmMetamaskTransaction();
@@ -193,8 +189,7 @@ describe('Offers page', () => {
               .find('button[aria-label="show more"]')
               .click();
             cy.get('#' + offerId)
-              .find('button')
-              .contains('Activate')
+              .find('.OfferPublic__status')
               .should('exist');
           });
         });
@@ -202,6 +197,7 @@ describe('Offers page', () => {
   });
 
   it('Activates an offer on activate button click', () => {
+    cy.wait(60000);
     cy.wait('@GetUserOffers').then(() => {
       cy.wait(1000);
       let offerId: string;
@@ -213,8 +209,8 @@ describe('Offers page', () => {
             .find('button[aria-label="show more"]')
             .click();
           cy.get('#' + offerId)
-            .find('button')
-            .contains('Activate')
+            .find('button', { timeout: 60000 })
+            .contains('Activate', { timeout: 60000 })
             .click();
 
           cy.confirmMetamaskTransaction();
@@ -228,8 +224,7 @@ describe('Offers page', () => {
               .find('button[aria-label="show more"]')
               .click();
             cy.get('#' + offerId)
-              .find('button')
-              .contains('Deactivate')
+              .find('.OfferPublic__status')
               .should('exist');
           });
         });

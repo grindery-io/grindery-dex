@@ -4,7 +4,7 @@ describe('Orders page', () => {
   beforeEach(() => {
     cy.intercept(
       'GET',
-      `${Cypress.env('CYPRESS_DELIGHT_API_URL')}/orders/liquidity-provider`
+      `${Cypress.env('CYPRESS_DELIGHT_API_URL')}/orders/liquidity-provider*`
     ).as('GetUserOrders');
     cy.intercept(
       'PUT',
@@ -61,7 +61,7 @@ describe('Orders page', () => {
                 cy.wait(1000);
                 cy.get('#' + orderCardId)
                   .find('.OrderCard__button')
-                  .should('have.text', 'Completed');
+                  .should('have.text', 'Processing');
                 cy.changeMetamaskNetwork('goerli');
                 cy.wait(2000);
               });

@@ -2,7 +2,7 @@
 
 describe('Complete testing', () => {
   beforeEach(() => {
-    cy.intercept(`${Cypress.env('CYPRESS_DELIGHT_API_URL')}/offers/user`).as(
+    cy.intercept(`${Cypress.env('CYPRESS_DELIGHT_API_URL')}/offers/user*`).as(
       'GetUserOffers'
     );
     cy.intercept(

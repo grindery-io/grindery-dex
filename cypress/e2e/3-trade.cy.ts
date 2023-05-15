@@ -8,9 +8,10 @@ describe('Trade page', () => {
       )}/view-blockchains/balance-token?chainId=*&address=*&tokenAddress=*`
     ).as('GetFromTokenBalance');
 
-    cy.intercept('POST', `${Cypress.env('CYPRESS_DELIGHT_API_URL')}/orders`).as(
-      'PlaceOrder'
-    );
+    cy.intercept(
+      'POST',
+      `${Cypress.env('CYPRESS_DELIGHT_API_URL')}/orders*`
+    ).as('PlaceOrder');
 
     cy.visit('http://localhost:3000/buy/trade');
     cy.get('#connect-button').click();
@@ -44,19 +45,20 @@ describe('Trade page', () => {
 
   it('Shows offers if form is submitted', () => {
     cy.wait(['@GetFromTokenBalance']);
-    cy.get('button').contains('max').click();
+    cy.get('input[name="amount"]').type('0.001');
     cy.get('button').contains('Search offers').click();
     cy.get('.TradePage__box').should('have.css', 'opacity', '1');
-    cy.get('.OfferPublic').first().should('exist');
+    cy.get('.TradeOffer').first().should('exist');
   });
 
   it('Places an order', () => {
+    cy.wait(60000);
     cy.wait(['@GetFromTokenBalance']);
     cy.get('input[name="amount"]').type('0.001');
     cy.get('button').contains('Search offers').click();
     cy.get('.TradePage__box').should('have.css', 'opacity', '1');
     cy.get(
-      '.OfferPublic[data-provider="0x8730762Cad4a27816A467fAc54e3dd1E2e9617A1"]'
+      '.TradeOffer[data-provider="0x8730762Cad4a27816A467fAc54e3dd1E2e9617A1"]'
     )
       .first()
       .click();
