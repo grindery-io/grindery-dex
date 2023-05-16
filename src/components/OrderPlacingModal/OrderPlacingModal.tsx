@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Box } from '@mui/system';
 import {
   Button,
@@ -7,7 +7,6 @@ import {
   DialogTitle,
   Typography,
 } from '@mui/material';
-import Countdown from 'react-countdown';
 import {
   AlertBox,
   Loading,
@@ -28,6 +27,7 @@ import {
   getOfferProviderLink,
   getOrderBuyerLink,
 } from '../../utils';
+import moment from 'moment';
 
 type Props = {
   open: boolean;
@@ -60,8 +60,6 @@ const OrderPlacingModal = (props: Props) => {
     ? getOrderBuyerLink(createdOrder, chains)
     : undefined;
 
-  const [now, setNow] = useState(Date.now());
-
   const renderAddress = (value: string, link: string) => {
     return (
       <TransactionID
@@ -86,89 +84,6 @@ const OrderPlacingModal = (props: Props) => {
       />
     );
   };
-
-  const countdownRenderer = ({
-    days,
-    hours,
-    minutes,
-    seconds,
-    completed,
-  }: {
-    days: any;
-    hours: any;
-    minutes: any;
-    seconds: any;
-    completed: any;
-  }) => {
-    if (!createdOrder) {
-      return null;
-    }
-    if (completed) {
-      // Render a completed state
-      return (
-        <>
-          <Typography gutterBottom variant="body2">
-            You should have received a transfer of {createdOrder.offer?.amount}{' '}
-            {createdOrder.offer?.token} on{' '}
-            {getChainById(createdOrder.offer?.chainId || '', chains)?.label ||
-              ''}{' '}
-            from{' '}
-            {renderAddress(
-              createdOrder.offer?.provider || '',
-              providerLink || ''
-            )}{' '}
-            in your wallet{' '}
-            {renderAddress(createdOrder.destAddr || '', destAddrLink || '')}.
-            Check your wallet.
-          </Typography>
-          <Typography variant="body2">
-            If you have not received anything within the next 5 minutes, please{' '}
-            <a
-              style={{ color: '#3f49e1' }}
-              href="https://discord.gg/PCMTWg3KzE"
-              target="_blank"
-              rel="noreferrer"
-            >
-              visit our Discord
-            </a>
-            .
-          </Typography>
-        </>
-      );
-    } else {
-      // Render a countdown
-      return (
-        <>
-          <Typography variant="body2">
-            You should receive {createdOrder.offer?.amount}{' '}
-            {createdOrder.offer?.token} on{' '}
-            {getChainById(createdOrder.offer?.chainId || '', chains)?.label ||
-              ''}{' '}
-            from{' '}
-            {renderAddress(
-              createdOrder.offer?.provider || '',
-              providerLink || ''
-            )}{' '}
-            in your wallet{' '}
-            {renderAddress(createdOrder.destAddr || '', destAddrLink || '')}{' '}
-            within {days > 0 ? `${days} day${days !== 1 ? 's' : ''} ` : ''}{' '}
-            {hours > 0 ? `${hours} hour${hours !== 1 ? 's' : ''} ` : ''}
-            {minutes > 0
-              ? `${minutes} minute${minutes !== 1 ? 's' : ''} and`
-              : ''}{' '}
-            {seconds} second{seconds !== 1 ? 's' : ''}.
-          </Typography>
-        </>
-      );
-    }
-  };
-
-  useEffect(() => {
-    if (orderStatus === OrderPlacingStatusType.COMPLETED) {
-      const nowDate = Date.now();
-      setNow(nowDate);
-    }
-  }, [orderStatus]);
 
   return (
     <Dialog
@@ -248,15 +163,30 @@ const OrderPlacingModal = (props: Props) => {
                   <Typography variant="h6" gutterBottom>
                     What's next?
                   </Typography>
-                  <Countdown
-                    date={
-                      now +
-                      (createdOrder.offer?.estimatedTime
-                        ? parseInt(createdOrder.offer.estimatedTime) * 1000
-                        : 0)
-                    }
-                    renderer={countdownRenderer}
-                  />
+                  <Typography variant="body2">
+                    Once your transaction will be confirmed, you should receive{' '}
+                    {createdOrder.offer?.amount} {createdOrder.offer?.token} on{' '}
+                    {getChainById(createdOrder.offer?.chainId || '', chains)
+                      ?.label || ''}{' '}
+                    from{' '}
+                    {renderAddress(
+                      createdOrder.offer?.provider || '',
+                      providerLink || ''
+                    )}{' '}
+                    in your wallet{' '}
+                    {renderAddress(
+                      createdOrder.destAddr || '',
+                      destAddrLink || ''
+                    )}{' '}
+                    within{' '}
+                    {moment
+                      .duration(
+                        parseFloat(createdOrder.offer?.estimatedTime || '0') *
+                          1000
+                      )
+                      .humanize()}
+                    .
+                  </Typography>
                   <EmailNotificationForm onSubmit={onEmailSubmit} />
                 </Box>
               </>

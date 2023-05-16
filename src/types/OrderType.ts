@@ -7,7 +7,7 @@ export type OrderType = {
   chainIdTokenDeposit: string;
   amountTokenOffer: string;
   orderId: string;
-  date?: string;
+  date: string;
   destAddr?: string;
   isComplete?: boolean;
   offerId?: string;
@@ -22,4 +22,5 @@ export enum OrderStatusType {
   SUCCESS = 'success',
   FAILURE = 'failure',
   COMPLETION = 'completion',
+  COMPLETE = 'complete',
 }

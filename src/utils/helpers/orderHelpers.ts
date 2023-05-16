@@ -68,6 +68,8 @@ export const getOrderStatus = (order: OrderType): string => {
       return 'Processing';
     case OrderStatusType.FAILURE:
       return 'Failed';
+    case OrderStatusType.COMPLETE:
+      return 'Completed';
   }
 };
 
