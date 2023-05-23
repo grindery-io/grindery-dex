@@ -50,7 +50,7 @@ const OfferCardAction = (props: OfferCardProps) => {
           onAcceptOfferClick(offer);
         }}
       >
-        {loading ? 'Waiting transaction' : 'Buy now'}
+        {loading ? 'Waiting transaction' : 'Place order'}
       </LoadingButton>
     </Box>
   );

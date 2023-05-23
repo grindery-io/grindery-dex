@@ -24,18 +24,18 @@ export const FAUCET_MENU = [
     label: 'Goerli ETH Tokens',
     external: true,
   },
-  // {
-  //   path: 'https://testnet.bnbchain.org/faucet-smart',
-  //   fullPath: 'https://testnet.bnbchain.org/faucet-smart',
-  //   label: 'Binance BNB Tokens',
-  //   external: true,
-  // },
-  // {
-  //   path: 'https://cronos.org/faucet',
-  //   fullPath: 'https://cronos.org/faucet',
-  //   label: 'Cronos CRO Tokens',
-  //   external: true,
-  // },
+  {
+    path: 'https://testnet.bnbchain.org/faucet-smart',
+    fullPath: 'https://testnet.bnbchain.org/faucet-smart',
+    label: 'Binance BNB Tokens',
+    external: true,
+  },
+  {
+    path: 'https://faucet.fantom.network/',
+    fullPath: 'https://faucet.fantom.network/',
+    label: 'Fantom FTM Tokens',
+    external: true,
+  },
 ];
 
 type Props = {};

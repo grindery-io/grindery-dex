@@ -29,6 +29,7 @@ import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import { getChainById } from '../../utils';
 import { WalletIcon } from '../../icons';
 import { enqueueSnackbar } from 'notistack';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 type Props = {};
 
@@ -81,6 +82,7 @@ const MainNavigationUserMenu = (props: Props) => {
             id={accessToken ? 'user-menu-button' : 'connect-button'}
             aria-expanded={open ? 'true' : undefined}
             onClick={handleClickListItemButton}
+            //onMouseOver={handleClickListItemButton}
             component="button"
             sx={{
               borderRadius: '34px',
@@ -89,7 +91,7 @@ const MainNavigationUserMenu = (props: Props) => {
               paddingLeft: '16px',
               paddingRight: '16px',
               transition: 'border-color 0.2s ease-in-out',
-              border: `1px solid ${open ? '#0b0d17' : '#dcdcdc'}`,
+              //border: `1px solid ${open ? '#0b0d17' : '#dcdcdc'}`,
               '&:hover': {
                 background: 'transparent',
                 borderColor: '#0b0d17 !important',
@@ -195,6 +197,9 @@ const MainNavigationUserMenu = (props: Props) => {
                 </Stack>
               }
             />
+            <ListItemIcon sx={{ minWidth: 'initial', marginLeft: '4px' }}>
+              <ExpandMoreIcon />
+            </ListItemIcon>
           </ListItemButton>
         </ListItem>
       </List>

@@ -318,7 +318,16 @@ const TradeOffer = (props: Props) => {
                 </Box>
               }
               subheader={
-                <span style={{ whiteSpace: 'pre-wrap' }}>
+                <span
+                  style={{
+                    whiteSpace: 'pre-wrap',
+                    display: '-webkit-box',
+                    WebkitLineClamp: '2',
+                    WebkitBoxOrient: 'vertical',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                  }}
+                >
                   {fromAmount && payToken && payChain ? (
                     `${payToken.symbol} on ${payChain.label}`
                   ) : (
@@ -404,7 +413,16 @@ const TradeOffer = (props: Props) => {
             </Box>
           }
           subheader={
-            <span style={{ whiteSpace: 'pre-wrap' }}>
+            <span
+              style={{
+                whiteSpace: 'pre-wrap',
+                display: '-webkit-box',
+                WebkitLineClamp: '2',
+                WebkitBoxOrient: 'vertical',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+              }}
+            >
               {amount && token && chain ? (
                 `${token.symbol} on ${chain.label}`
               ) : (

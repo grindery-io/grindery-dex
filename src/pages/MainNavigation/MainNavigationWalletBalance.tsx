@@ -38,7 +38,7 @@ const MainNavigationWalletBalance = (props: Props) => {
       sx={{
         '& .MuiChip-root': {
           background: 'transparent',
-          border: '1px solid #E3E3E8',
+          //border: '1px solid #E3E3E8',
           borderRadius: '48px',
           padding: '11px 16px',
           height: 'auto',

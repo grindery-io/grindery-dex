@@ -48,7 +48,7 @@ const NotificationsPopup = (props: Props) => {
           padding: '0px',
         }}
       >
-        Get Alerts from Mercari!
+        Critical transaction alerts!
       </Typography>
       <Typography
         sx={{
@@ -61,8 +61,8 @@ const NotificationsPopup = (props: Props) => {
           maxWidth: '400px',
         }}
       >
-        Mercari can send you alerts when your orders has been created or
-        completed.
+        Receive notification when transactions have completed. (Highly
+        recommended)
       </Typography>
       <Stack
         direction="row"
