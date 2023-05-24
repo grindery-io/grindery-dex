@@ -164,7 +164,8 @@ const OrderPlacingModal = (props: Props) => {
                     What's next?
                   </Typography>
                   <Typography variant="body2">
-                    Once your transaction will be confirmed, you should receive{' '}
+                    The blockchain is processing your transaction now. Once the
+                    transaction has been confirmed, you should receive{' '}
                     {createdOrder.offer?.amount} {createdOrder.offer?.token} on{' '}
                     {getChainById(createdOrder.offer?.chainId || '', chains)
                       ?.label || ''}{' '}

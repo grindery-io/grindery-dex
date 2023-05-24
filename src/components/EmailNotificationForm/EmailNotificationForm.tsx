@@ -20,7 +20,7 @@ const EmailNotificationForm = (props: Props) => {
   return !userEmailSubmitted ? (
     <Box>
       <TextInput
-        label="Notify me on completion"
+        label="Notify when my order was completed"
         value={userEmail}
         onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
           setUserEmail(event.target.value);
