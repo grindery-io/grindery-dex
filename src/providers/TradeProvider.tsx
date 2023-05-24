@@ -10,12 +10,12 @@ import {
   useAppSelector,
   TradeFilterFieldName,
   Tradefilter,
-  ordersStoreActions,
   selectAbiStore,
   selectChainsStore,
   selectTradeStore,
   tradeStoreActions,
   selectUserStore,
+  ordersHistoryStoreActions,
 } from '../store';
 import {
   getChainById,
@@ -110,7 +110,7 @@ export const TradeProvider = ({ children }: TradeProviderProps) => {
         order = await getOrderRequest(accessToken, id);
       } catch (error) {}
       if (order) {
-        dispatch(ordersStoreActions.setItems([order]));
+        dispatch(ordersHistoryStoreActions.setItems([order]));
       }
     },
     [accessToken, dispatch]

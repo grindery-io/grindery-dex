@@ -9,11 +9,11 @@ import { ROUTES } from '../../config';
 import {
   useAppSelector,
   useAppDispatch,
-  selectOrdersStore,
   selectChainsStore,
   selectTradeStore,
   tradeStoreActions,
   selectUserStore,
+  selectOrdersHistoryStore,
 } from '../../store';
 import Page404 from '../Page404/Page404';
 import { OrderType } from '../../types';
@@ -38,7 +38,7 @@ const TradePage = (props: Props) => {
       ROUTES.BUY.TRADE.SELECT_TO.FULL_PATH,
     ].includes(location.pathname) && isOffersVisible;
   const { items: chains } = useAppSelector(selectChainsStore);
-  const { items: orders } = useAppSelector(selectOrdersStore);
+  const { items: orders } = useAppSelector(selectOrdersHistoryStore);
   const createdOrder =
     (orderTransactionId &&
       orders.find((order: OrderType) => order.hash === orderTransactionId)) ||

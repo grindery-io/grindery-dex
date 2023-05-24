@@ -12,11 +12,11 @@ import { OfferType, OrderType, TokenType } from '../../types';
 import {
   useAppSelector,
   useAppDispatch,
-  selectOrdersStore,
   selectShopStore,
   shopStoreActions,
   selectChainsStore,
   selectUserStore,
+  selectOrdersHistoryStore,
 } from '../../store';
 import { getChainById } from '../../utils';
 import { useShopProvider, useUserProvider } from '../../providers';
@@ -49,7 +49,7 @@ const ShopPageRoot = (props: Props) => {
   );
   const { handleAcceptOfferAction } = useShopProvider();
   const [showWalletModal, setShowWalletModal] = useState(false);
-  const { items: orders } = useAppSelector(selectOrdersStore);
+  const { items: orders } = useAppSelector(selectOrdersHistoryStore);
   const createdOrder =
     (orderTransactionId &&
       orders.find((order: OrderType) => order.hash === orderTransactionId)) ||

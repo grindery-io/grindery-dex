@@ -9,10 +9,10 @@ import {
   useAppDispatch,
   useAppSelector,
   shopStoreActions,
-  ordersStoreActions,
   selectAbiStore,
   selectChainsStore,
   selectUserStore,
+  ordersHistoryStoreActions,
 } from '../store';
 import { useUserProvider } from './UserProvider';
 import { getAllOffers, addOrderRequest, getOrderRequest } from '../services';
@@ -81,7 +81,7 @@ export const ShopProvider = ({ children }: ShopProviderProps) => {
         order = await getOrderRequest(accessToken, id);
       } catch (error) {}
       if (order) {
-        dispatch(ordersStoreActions.setItems([order]));
+        dispatch(ordersHistoryStoreActions.setItems([order]));
       }
     },
     [accessToken, dispatch]
