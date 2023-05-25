@@ -1,6 +1,6 @@
 import React from 'react';
 import { Route, Routes } from 'react-router-dom';
-import { FaucetMenu, Loading, PageCard } from '../../components';
+import { Loading, PageCard } from '../../components';
 import { ROUTES } from '../../config';
 import FaucetPageRoot from './FaucetPageRoot';
 import FaucetPageSelectChain from './FaucetPageSelectChain';
@@ -26,7 +26,7 @@ function FaucetPage() {
 
   return (
     <FaucetProvider>
-      <FaucetMenu />
+      {/*<FaucetMenu />*/}
       <PageCard>
         <Routes>
           <Route
