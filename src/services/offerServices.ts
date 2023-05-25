@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { DELIGHT_API_URL } from '../config';
 import { OfferType } from '../types';
+import { Shopfilter } from '../store';
 
 export const getOffer = (
   accessToken: string,
@@ -99,15 +100,32 @@ export const getUserOffers = (
 
 export const getAllOffers = (
   limit?: number,
-  offset?: number
+  offset?: number,
+  filter?: Shopfilter
 ): Promise<{ items: OfferType[]; total: number }> => {
   return new Promise((resolve, reject) => {
     try {
       axios
         .get(
           `${DELIGHT_API_URL}/offers?${
-            typeof limit !== 'undefined' ? 'limit=' + limit + '&' : ''
-          }${typeof offset !== 'undefined' ? 'offset=' + offset : ''}`
+            typeof limit !== 'undefined' ? 'limit=' + limit : ''
+          }${typeof offset !== 'undefined' ? '&offset=' + offset : ''}${
+            typeof filter !== 'undefined' && filter.token
+              ? '&token=' + filter.token
+              : ''
+          }${
+            typeof filter !== 'undefined' && filter.exchangeToken
+              ? '&exchangeToken=' + filter.exchangeToken
+              : ''
+          }${
+            typeof filter !== 'undefined' && filter.exchangeChainId
+              ? '&exchangeChainId=' + filter.exchangeChainId
+              : ''
+          }${
+            typeof filter !== 'undefined' && filter.chainId
+              ? '&chainId=' + filter.chainId
+              : ''
+          }`
         )
         .then((res) => {
           resolve({

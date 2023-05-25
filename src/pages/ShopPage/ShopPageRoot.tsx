@@ -7,6 +7,7 @@ import {
   OrderPlacingModal,
   ConnectWalletModal,
   OfferCardSkeleton,
+  ShopFilters,
 } from '../../components';
 import { OfferType, OrderType, TokenType } from '../../types';
 import {
@@ -18,7 +19,7 @@ import {
   selectUserStore,
   selectOrdersHistoryStore,
 } from '../../store';
-import { getChainById } from '../../utils';
+import { getChainById, getTokensOptionsList } from '../../utils';
 import { useShopProvider, useUserProvider } from '../../providers';
 
 type Props = {};
@@ -41,6 +42,7 @@ const ShopPageRoot = (props: Props) => {
     orderTransactionId,
     orderStatus,
     total,
+    filter,
   } = useAppSelector(selectShopStore);
   const { items: chains } = useAppSelector(selectChainsStore);
   const fromChain = getChainById('5', chains);
@@ -57,6 +59,7 @@ const ShopPageRoot = (props: Props) => {
   const { handleEmailSubmitAction, handleFetchMoreOffersAction } =
     useShopProvider();
   const hasMore = offers.length < total;
+  const filterOptions = getTokensOptionsList(chains);
 
   const onEmailSubmit = useCallback(
     async (email: string): Promise<boolean> => {
@@ -110,6 +113,13 @@ const ShopPageRoot = (props: Props) => {
         flex="1"
         className="ShopPageRoot__box"
       >
+        <ShopFilters
+          filter={filter}
+          filterOptions={filterOptions}
+          onChange={(newFilter) => {
+            dispatch(shopStoreActions.setFilter(newFilter));
+          }}
+        />
         {!loading && offers.length < 1 && (
           <Typography textAlign="center">No offers found</Typography>
         )}

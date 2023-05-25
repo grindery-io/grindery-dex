@@ -116,7 +116,7 @@ const MainNavigation = (props: Props) => {
       </Container>
       <Box
         sx={{
-          height: advancedMode && advancedModeAlert ? '123px' : '75px',
+          height: advancedMode && advancedModeAlert ? '78px' : '24px',
         }}
       />
     </>

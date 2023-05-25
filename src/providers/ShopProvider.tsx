@@ -13,6 +13,8 @@ import {
   selectChainsStore,
   selectUserStore,
   ordersHistoryStoreActions,
+  selectShopStore,
+  Shopfilter,
 } from '../store';
 import { useUserProvider } from './UserProvider';
 import { getAllOffers, addOrderRequest, getOrderRequest } from '../services';
@@ -58,15 +60,20 @@ export const ShopProvider = ({ children }: ShopProviderProps) => {
     address: userAddress,
   } = useAppSelector(selectUserStore);
   const { poolAbi, tokenAbi } = useAppSelector(selectAbiStore);
+  const { filter } = useAppSelector(selectShopStore);
 
-  const fetchOffers = useCallback(async () => {
-    dispatch(shopStoreActions.setLoading(true));
-    const res = await getAllOffers(limit);
+  const fetchOffers = useCallback(
+    async (filter: Shopfilter) => {
+      dispatch(shopStoreActions.setLoading(true));
+      const res = await getAllOffers(limit, 0, filter);
 
-    dispatch(shopStoreActions.setOffers(res?.items || []));
-    dispatch(shopStoreActions.setOffersTotal(res?.total || 0));
-    dispatch(shopStoreActions.setLoading(false));
-  }, [dispatch]);
+      dispatch(shopStoreActions.setOffers(res?.items || []));
+      dispatch(shopStoreActions.setOffersTotal(res?.total || 0));
+      setOffset(limit);
+      dispatch(shopStoreActions.setLoading(false));
+    },
+    [dispatch]
+  );
 
   const handleFetchMoreOffersAction = useCallback(async () => {
     const res = await getAllOffers(limit, offset);
@@ -351,8 +358,8 @@ export const ShopProvider = ({ children }: ShopProviderProps) => {
   );
 
   useEffect(() => {
-    fetchOffers();
-  }, [fetchOffers]);
+    fetchOffers(filter);
+  }, [fetchOffers, filter]);
 
   return (
     <ShopContext.Provider

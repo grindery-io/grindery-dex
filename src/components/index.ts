@@ -15,6 +15,7 @@ export { default as ConnectWalletModal } from './ConnectWalletModal/ConnectWalle
 export { default as Drawer } from './Drawer/Drawer';
 export { default as EmailNotificationForm } from './EmailNotificationForm/EmailNotificationForm';
 export { default as FaucetMenu } from './FaucetMenu/FaucetMenu';
+export { default as FilterDropdown } from './FilterDropdown/FilterDropdown';
 export { default as LiquidityWallet } from './LiquidityWallet/LiquidityWallet';
 export { default as LiquidityWalletToken } from './LiquidityWalletToken/LiquidityWalletToken';
 export { default as ListSubheader } from './ListSubheader/ListSubheader';
@@ -41,6 +42,7 @@ export { default as SelectChainAndTokenButton } from './SelectChainAndTokenButto
 export { default as SelectChainButton } from './SelectChainButton/SelectChainButton';
 export { default as SelectTokenButton } from './SelectTokenButton/SelectTokenButton';
 export { default as SellMenu } from './SellMenu/SellMenu';
+export { default as ShopFilters } from './ShopFilters/ShopFilters';
 export { default as Stake } from './Stake/Stake';
 export { default as TextArea } from './TextArea/TextArea';
 export { default as TextInput } from './TextInput/TextInput';

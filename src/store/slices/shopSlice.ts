@@ -6,7 +6,11 @@ import {
   OrderPlacingStatusType,
 } from '../../types';
 
-export type ShopFilterFieldName = 'toChainId' | 'toTokenId';
+export type ShopFilterFieldName =
+  | 'chainId'
+  | 'token'
+  | 'exchangeChainId'
+  | 'exchangeToken';
 
 export type Shopfilter = {
   [key in ShopFilterFieldName]: string;
@@ -27,8 +31,10 @@ interface ShopState {
 const initialState: ShopState = {
   error: { type: '', text: '' },
   filter: {
-    toChainId: '97',
-    toTokenId: '1839',
+    chainId: '',
+    token: '',
+    exchangeChainId: '',
+    exchangeToken: '',
   },
   loading: true,
   modal: false,
@@ -75,8 +81,10 @@ const shopSlice = createSlice({
     },
     clearFilter(state) {
       state.filter = {
-        toChainId: '',
-        toTokenId: '',
+        chainId: '',
+        token: '',
+        exchangeChainId: '',
+        exchangeToken: '',
       };
     },
     setModal(state, action: PayloadAction<boolean>) {

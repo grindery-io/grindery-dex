@@ -23,3 +23,22 @@ export const filterBuyerChains = (chains: ChainType[]): ChainType[] => {
       chain.chainId === '4002'
   );
 };
+
+export const getTokensOptionsList = (
+  chains: ChainType[]
+): { value: string; label: string; chainId?: string; tokenId?: string }[] => {
+  let options = [];
+  for (var i = 0; i < chains.length; i++) {
+    if (chains[i].tokens) {
+      for (var t = 0; t < (chains[i].tokens || []).length; t++) {
+        options.push({
+          value: `${chains[i]?.tokens?.[t]?.symbol}:${chains[i].chainId}`,
+          label: `${chains[i]?.tokens?.[t]?.symbol} on ${chains[i].label}`,
+          chainId: chains[i].chainId,
+          tokenId: chains[i]?.tokens?.[t]?.symbol,
+        });
+      }
+    }
+  }
+  return options;
+};
