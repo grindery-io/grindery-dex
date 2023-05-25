@@ -14,8 +14,6 @@ import {
   Typography,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import Icon from '@mdi/react';
-import { mdiWaterPump } from '@mdi/js';
 import SellOutlinedIcon from '@mui/icons-material/SellOutlined';
 import { useUserProvider } from '../../providers';
 import {
@@ -243,7 +241,7 @@ const MainNavigationUserMenu = (props: Props) => {
             </Typography>
           </MenuItem>
         )}
-        <MenuItem
+        {/*<MenuItem
           onClick={() => {
             handleClose();
             navigate(ROUTES.FAUCET.FULL_PATH);
@@ -258,7 +256,7 @@ const MainNavigationUserMenu = (props: Props) => {
           <Typography component="span" variant="body2">
             Faucet
           </Typography>
-        </MenuItem>
+        </MenuItem>*/}
         {isAdmin && (
           <MenuItem
             onClick={() => {

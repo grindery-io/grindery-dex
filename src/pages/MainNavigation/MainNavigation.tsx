@@ -21,6 +21,8 @@ import { NavTabsItemType } from '../../types';
 import MainNavigationWalletBalance from './MainNavigationWalletBalance';
 import MainNavigationAdvancedModeAlert from './MainNavigationAdvancedModeAlert';
 //import MainNavigationSwitchChainButtonV2 from './MainNavigationSwitchChainButtonV2';
+import Icon from '@mdi/react';
+import { mdiWaterPump } from '@mdi/js';
 
 export const TABS_NAV: NavTabsItemType[] = [
   {
@@ -33,6 +35,17 @@ export const TABS_NAV: NavTabsItemType[] = [
     path: ROUTES.BUY.TRADE.FULL_PATH,
     label: 'Trade',
     icon: <CurrencyExchangeIcon />,
+    iconPosition: 'start',
+  },
+  {
+    path: ROUTES.FAUCET.FULL_PATH,
+    label: 'Faucet',
+    icon: (
+      <Icon
+        path={mdiWaterPump}
+        style={{ width: '20px', height: '20px', color: '#000' }}
+      />
+    ),
     iconPosition: 'start',
   },
 ];
@@ -116,7 +129,7 @@ const MainNavigation = (props: Props) => {
       </Container>
       <Box
         sx={{
-          height: advancedMode && advancedModeAlert ? '78px' : '24px',
+          height: advancedMode && advancedModeAlert ? '123px' : '75px',
         }}
       />
     </>

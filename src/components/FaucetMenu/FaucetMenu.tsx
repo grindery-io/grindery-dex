@@ -10,8 +10,9 @@ import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import DrawerDesktop from '../Drawer/DrawerDesktop';
+import { FAUCET_MENU } from '../../config';
 
-export const FAUCET_MENU = [
+/*export const FAUCET_MENU = [
   // {
   //   path: '/',
   //   fullPath: '/faucet',
@@ -36,7 +37,7 @@ export const FAUCET_MENU = [
     label: 'Fantom FTM Tokens',
     external: true,
   },
-];
+];*/
 
 type Props = {};
 

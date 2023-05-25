@@ -24,7 +24,7 @@ const ShopFilters = (props: Props) => {
       justifyContent="center"
       direction="row"
       gap="0px"
-      sx={{ width: '100%', maxWidth: '1053px', margin: '0 auto 24px' }}
+      sx={{ width: '100%', maxWidth: '1053px', margin: '-40px auto 24px' }}
     >
       <FilterDropdown
         label="Pay with"

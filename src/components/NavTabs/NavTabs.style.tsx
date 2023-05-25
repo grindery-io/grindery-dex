@@ -47,7 +47,7 @@ export const StyledTab = styled((props: TabProps) => <Tab {...props} />)(
     minHeight: 'initial',
     marginTop: '4px',
     marginBottom: '5px',
-    padding: '10px 42px',
+    padding: '10px 24px',
     fontWeight: '500',
     '&.Mui-selected': {
       color: '#000',

@@ -10,6 +10,10 @@ export const DRAWER_NAVIGATION: SidebarNavigationItemType[] = [
     path: ROUTES.SELL.FULL_PATH,
     label: 'Sell',
   },
+  {
+    path: ROUTES.FAUCET.FULL_PATH,
+    label: 'Faucet',
+  },
 ];
 
 export const BUY_NAVIGATION: SidebarNavigationItemType[] = [
