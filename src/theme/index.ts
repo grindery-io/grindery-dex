@@ -11,12 +11,18 @@ export const theme = createTheme({
     },
   },
   typography: {
+    h1: {
+      fontWeight: '700',
+      fontSize: '32px',
+      lineHeight: '120%',
+      fontStyle: 'normal',
+    },
     h2: {
-      fontSize: 20,
-      color: '#0B0D17',
+      fontSize: '24px',
+      color: '#363636',
       fontStyle: 'normal',
       fontWeight: '700',
-      lineHeight: '110%',
+      lineHeight: '120%',
     },
     h3: {
       fontSize: 30,

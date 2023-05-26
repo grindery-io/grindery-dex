@@ -341,7 +341,6 @@ export const ShopProvider = ({ children }: ShopProviderProps) => {
         );
         dispatch(shopStoreActions.setOrderStatus(OrderPlacingStatusType.ERROR));
       }
-      dispatch(shopStoreActions.setOfferId(''));
     },
     [
       accessToken,

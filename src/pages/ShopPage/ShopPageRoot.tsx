@@ -4,10 +4,10 @@ import { Box } from '@mui/system';
 import { Stack, Typography } from '@mui/material';
 import {
   OfferCard,
-  OrderPlacingModal,
   ConnectWalletModal,
   OfferCardSkeleton,
   ShopFilters,
+  OrderPlacingModalV2,
 } from '../../components';
 import { OfferType, OrderType, TokenType } from '../../types';
 import {
@@ -60,6 +60,7 @@ const ShopPageRoot = (props: Props) => {
     useShopProvider();
   const hasMore = offers.length < total;
   const filterOptions = getTokensOptionsList(chains);
+  const acceptingOffer = offers.find((offer) => offer.offerId === offerId);
 
   const onEmailSubmit = useCallback(
     async (email: string): Promise<boolean> => {
@@ -95,7 +96,7 @@ const ShopPageRoot = (props: Props) => {
           }}
         />
       )}
-      <OrderPlacingModal
+      <OrderPlacingModalV2
         open={showModal}
         chains={chains}
         orderStatus={orderStatus}
@@ -103,6 +104,7 @@ const ShopPageRoot = (props: Props) => {
         errorMessage={errorMessage}
         onEmailSubmit={onEmailSubmit}
         onClose={onModalClose}
+        offer={acceptingOffer}
       />
       <Box
         sx={{
