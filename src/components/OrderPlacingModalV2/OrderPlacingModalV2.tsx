@@ -322,7 +322,14 @@ const OrderPlacingModalV2 = (props: Props) => {
             sx={{ flex: 1 }}
           >
             <Box>
-              <Box sx={{ maxWidth: '425px' }}>
+              <Box
+                sx={{
+                  maxWidth: '425px',
+                  '& .MuiIconButton-root svg': {
+                    color: '#F57F21',
+                  },
+                }}
+              >
                 <Typography
                   variant="h1"
                   sx={{ margin: '0 0 16px', padding: 0 }}
@@ -333,15 +340,55 @@ const OrderPlacingModalV2 = (props: Props) => {
                 (createdOrder.status === OrderStatusType.SUCCESS ||
                   createdOrder.status === OrderStatusType.COMPLETION ||
                   createdOrder.status === OrderStatusType.COMPLETE) ? (
-                  <Countdown
-                    date={
-                      now +
-                      (createdOrder.offer?.estimatedTime
-                        ? parseInt(createdOrder.offer.estimatedTime) * 1000
-                        : 0)
-                    }
-                    renderer={countdownRenderer}
-                  />
+                  <>
+                    {createdOrder.status === OrderStatusType.COMPLETE ? (
+                      <>
+                        <Typography gutterBottom variant="body2">
+                          You should have received a transfer of{' '}
+                          {createdOrder.offer?.amount}{' '}
+                          {createdOrder.offer?.token} on{' '}
+                          {getChainById(
+                            createdOrder.offer?.chainId || '',
+                            chains
+                          )?.label || ''}{' '}
+                          from{' '}
+                          {renderAddress(
+                            createdOrder.offer?.provider || '',
+                            providerLink || ''
+                          )}{' '}
+                          in your wallet{' '}
+                          {renderAddress(
+                            createdOrder.destAddr || '',
+                            destAddrLink || ''
+                          )}
+                          . Check your wallet.
+                        </Typography>
+                        <Typography variant="body2">
+                          If you have not received anything within the next 5
+                          minutes, please{' '}
+                          <a
+                            style={{ color: '#F57F21' }}
+                            href="https://discord.gg/PCMTWg3KzE"
+                            target="_blank"
+                            rel="noreferrer"
+                          >
+                            visit our Discord
+                          </a>
+                          .
+                        </Typography>
+                      </>
+                    ) : (
+                      <Countdown
+                        date={
+                          now +
+                          (createdOrder.offer?.estimatedTime
+                            ? parseInt(createdOrder.offer.estimatedTime) * 1000
+                            : 0)
+                        }
+                        renderer={countdownRenderer}
+                      />
+                    )}
+                  </>
                 ) : (
                   <>
                     {!createdOrder ? (
@@ -368,6 +415,9 @@ const OrderPlacingModalV2 = (props: Props) => {
                       gap: '2px',
                       marginBottom: '12px',
                       marginTop: '16px',
+                      '& .MuiIconButton-root svg': {
+                        color: '#F57F21',
+                      },
                     }}
                     labelStyle={{
                       color: '#0B0D17',
@@ -686,6 +736,9 @@ const OrderPlacingModalV2 = (props: Props) => {
                           fontSize: '14px',
                           lineHeight: '125%',
                           color: 'inherit',
+                        },
+                        '& .MuiIconButton-root svg': {
+                          color: '#F57F21',
                         },
                       }}
                     >
