@@ -49,14 +49,13 @@ export const SessionExpiredPopup = (props: Props) => {
           paddingBottom: '20px',
         }}
       >
-        Your auth session has expired
+        Your session expired
       </DialogTitle>
       <DialogContent>
         <Box sx={{ textAlign: 'center', marginBottom: '20px' }}>
           <HistoryToggleOffIcon sx={{ fontSize: '40px' }} />
         </Box>
         <Typography textAlign="center">
-          Please,{' '}
           <button
             style={{
               fontSize: 'inherit',
@@ -74,9 +73,9 @@ export const SessionExpiredPopup = (props: Props) => {
               window.location.reload();
             }}
           >
-            reload the page
+            Reload the page
           </button>{' '}
-          and connect your wallet again.
+          and reconnect your wallet if needed.
         </Typography>
       </DialogContent>
     </Dialog>

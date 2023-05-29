@@ -45,7 +45,7 @@ const TradePageSelectChainAndToken = (props: Props) => {
   return (
     <PageCard>
       <PageCardHeader
-        title="Select chain and token"
+        title="Receive"
         titleSize={18}
         titleAlign="center"
         startAdornment={

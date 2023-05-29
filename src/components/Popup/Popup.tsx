@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import {
-  Alert,
   Box,
   Dialog,
   DialogContent,
@@ -63,12 +62,12 @@ const Popup = (props: Props) => {
           paddingBottom: '20px',
         }}
       >
-        Quickly get a bunch of BNB for BSC-testnet using Goerli-Eth!
+        Quickly get any testnet token!
       </DialogTitle>
       <DialogContent>
         <Box
           sx={{
-            margin: '0 auto',
+            margin: '0 auto 24px',
             width: '100%',
             maxWidth: '600px',
             borderRadius: '20px',
@@ -81,33 +80,6 @@ const Popup = (props: Props) => {
             backgroundRepeat: 'no-repeat',
           }}
         />
-
-        <Box sx={{ textAlign: 'center', margin: '24px 0' }}>
-          <Alert
-            severity="warning"
-            sx={{
-              background: '#FFF1D6 !important',
-              borderRadius: '5px !important',
-              padding: '8px !important',
-              width: 'auto !important',
-              display: 'inline-flex',
-              alignItems: 'center',
-              '& .MuiAlert-icon': {
-                padding: 0,
-                marginRight: '10px',
-              },
-              '& .MuiAlert-message': {
-                padding: 0,
-                height: 'auto',
-                lineHeight: 1.5,
-                fontSize: '16px',
-                color: '#0B0D17',
-              },
-            }}
-          >
-            To trade purchase with exactly 0.01 g-eth.
-          </Alert>
-        </Box>
 
         <Typography textAlign="center">
           Something not working? Want to see live transactions?{' '}

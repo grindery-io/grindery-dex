@@ -189,7 +189,7 @@ const OrderPlacingModalV2 = (props: Props) => {
           <Typography variant="body2">
             If you have not received anything within the next 5 minutes, please{' '}
             <a
-              style={{ color: '#3f49e1' }}
+              style={{ color: '#F57F21' }}
               href="https://discord.gg/PCMTWg3KzE"
               target="_blank"
               rel="noreferrer"
