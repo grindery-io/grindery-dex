@@ -462,9 +462,16 @@ const OrderPlacingModalV2 = (props: Props) => {
                 alignItems="stretch"
                 justifyContent="space-between"
               >
-                <CardTitle sx={{ flex: 1 }}>You pay</CardTitle>
+                <CardTitle sx={{ flex: 1 }}>
+                  {!createdOrder ? 'You will pay' : 'You paid'}
+                </CardTitle>
 
-                <CardTitle sx={{ flex: 1 }}>You receive</CardTitle>
+                <CardTitle sx={{ flex: 1 }}>
+                  {!createdOrder ||
+                  createdOrder.status !== OrderStatusType.COMPLETE
+                    ? 'You will receive'
+                    : 'You received'}
+                </CardTitle>
               </Stack>
 
               <Box display={'flex'} flexDirection={'row'}></Box>
