@@ -49,9 +49,11 @@ type Props = {
   createdOrder?: OrderType;
   chains: ChainType[];
   errorMessage: ErrorMessageType;
-  onEmailSubmit: (email: string) => Promise<boolean>;
+  onEmailSubmit?: (email: string) => Promise<boolean>;
   onClose: () => void;
   offer?: OfferType;
+  userAmount?: string;
+  offerAmount?: string;
 };
 
 const OrderPlacingModalV2 = (props: Props) => {
@@ -64,6 +66,8 @@ const OrderPlacingModalV2 = (props: Props) => {
     onEmailSubmit,
     onClose,
     offer: selectedoffer,
+    userAmount,
+    offerAmount: customOfferAmount,
   } = props;
   const showModal = open;
 
@@ -102,8 +106,16 @@ const OrderPlacingModalV2 = (props: Props) => {
     offer?.chainId || '',
     chains
   );
-  const amount = offer ? getOfferAmount(offer) : '0';
-  const offerAmount = offer ? getOfferExchangeAmount(offer) : '0';
+  const amount = !userAmount
+    ? offer
+      ? getOfferAmount(offer)
+      : '0'
+    : userAmount;
+  const offerAmount = !customOfferAmount
+    ? offer
+      ? getOfferExchangeAmount(offer)
+      : '0'
+    : customOfferAmount;
 
   const steps = offer ? getOrderSteps(offer, chains, createdOrder) : [];
 
@@ -115,8 +127,6 @@ const OrderPlacingModalV2 = (props: Props) => {
           ? step.status === createdOrder?.status
           : step.status === orderStatus)
     ) || 0;
-
-  console.log('createdOrder?.status', createdOrder?.status);
 
   const title = steps[activeStep]?.title || '';
   const text = steps[activeStep]?.content || '';
@@ -437,9 +447,11 @@ const OrderPlacingModalV2 = (props: Props) => {
                   />
                 )}
               </Box>
-              <Box sx={{ marginTop: '24px', maxWidth: '332px' }}>
-                <EmailNotificationForm onSubmit={onEmailSubmit} />
-              </Box>
+              {onEmailSubmit && (
+                <Box sx={{ marginTop: '24px', maxWidth: '332px' }}>
+                  <EmailNotificationForm onSubmit={onEmailSubmit} />
+                </Box>
+              )}
             </Box>
             <Box>
               <Stack
@@ -515,12 +527,12 @@ const OrderPlacingModalV2 = (props: Props) => {
                       }}
                       mb={'3px'}
                     >
-                      {!amount ? <Skeleton /> : <>{amount}</>}
+                      {!offerAmount ? <Skeleton /> : <>{offerAmount}</>}
                     </Box>
                   }
                   subheader={
                     <span style={{ whiteSpace: 'pre-wrap' }}>
-                      {amount && exchangeToken && exchangeChain ? (
+                      {offerAmount && exchangeToken && exchangeChain ? (
                         `${exchangeToken.symbol} on ${exchangeChain.label}`
                       ) : (
                         <Skeleton />
@@ -588,12 +600,12 @@ const OrderPlacingModalV2 = (props: Props) => {
                         }}
                         mb={'3px'}
                       >
-                        {!offerAmount ? <Skeleton /> : <>{offerAmount}</>}
+                        {!amount ? <Skeleton /> : <>{amount}</>}
                       </Box>
                     }
                     subheader={
                       <span style={{ whiteSpace: 'pre-wrap' }}>
-                        {offerAmount && offerToken && offerChain ? (
+                        {amount && offerToken && offerChain ? (
                           `${offerToken.symbol} on ${offerChain.label}`
                         ) : (
                           <Skeleton />
@@ -725,8 +737,26 @@ const OrderPlacingModalV2 = (props: Props) => {
                           color: index === activeStep ? '#F57F21' : 'inherit',
                         }}
                       >
-                        {step.title}
+                        {index < activeStep
+                          ? step.completed?.title || step.title
+                          : step.title}
                       </span>
+                      {step.subtitle ||
+                        (index < activeStep && step.completed?.subtitle && (
+                          <span
+                            style={{
+                              fontWeight: '400',
+                              color: '#979797',
+                              fontSize: '12px',
+                            }}
+                          >
+                            {' '}
+                            •{' '}
+                            {index < activeStep
+                              ? step.completed?.subtitle || step.subtitle
+                              : step.subtitle}
+                          </span>
+                        ))}
                     </StepLabel>
                     <StepContent
                       sx={{

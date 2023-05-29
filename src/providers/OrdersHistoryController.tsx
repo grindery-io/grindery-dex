@@ -33,7 +33,7 @@ export const OrdersHistoryController = ({
 }: OrdersHistoryControllerProps) => {
   const dispatch = useAppDispatch();
   const { accessToken } = useAppSelector(selectUserStore);
-  const limit = 5;
+  const limit = 10;
   const [offset, setOffset] = useState(limit);
 
   const fetchOrders = useCallback(

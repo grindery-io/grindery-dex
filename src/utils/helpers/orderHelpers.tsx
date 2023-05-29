@@ -12,6 +12,7 @@ import { getChainById } from './chainHelpers';
 import { getTokenBySymbol } from './tokenHelpers';
 import { getOfferProviderLink } from './offerHelpers';
 import { TransactionID } from '../../components';
+import moment from 'moment';
 
 export const getOrderIdFromReceipt = (receipt: any): string => {
   return receipt?.logs?.[0]?.topics?.[2] || '';
@@ -46,6 +47,27 @@ export const getOrderFromToken = (
       (t: TokenType) =>
         t.address === order.addressTokenDeposit ||
         (t.address && order.addressTokenDeposit.includes(t.address))
+    ) || null
+  );
+};
+
+export const getOrderToChain = (
+  order: OrderType,
+  chains: ChainType[]
+): ChainType | null => {
+  return (
+    chains.find((c: ChainType) => c.chainId === order.offer?.chainId || '') ||
+    null
+  );
+};
+
+export const getOrderToToken = (
+  order: OrderType,
+  chains: ChainType[]
+): TokenType | null => {
+  return (
+    getOrderToChain(order, chains)?.tokens?.find(
+      (t: TokenType) => t.symbol === order.offer?.token || ''
     ) || null
   );
 };
@@ -203,7 +225,7 @@ export const getOrderSteps = (
     ),
     completed: {
       title: '',
-      subtitle: '',
+      subtitle: order ? moment(order.date).format('MM/DD/YYYY HH:mm:ss') : '',
       content: <Typography>Order was stored on chain</Typography>,
     },
     status: OrderStatusType.PENDING,

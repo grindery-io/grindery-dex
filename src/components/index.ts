@@ -30,6 +30,7 @@ export { default as OfferCard } from './OfferCard/OfferCard';
 export { default as OfferCardSkeleton } from './OfferCardSkeleton/OfferCardSkeleton';
 export { default as OrderCard } from './OrderCard/OrderCard';
 export { default as OrderHistoryCard } from './OrderHistoryCard/OrderHistoryCard';
+export { default as OrderHistoryRow } from './OrderHistoryRow/OrderHistoryRow';
 export { default as OrderPlacingModal } from './OrderPlacingModal/OrderPlacingModal';
 export { default as OrderPlacingModalV2 } from './OrderPlacingModalV2/OrderPlacingModalV2';
 export { default as OrderSkeleton } from './OrderCard/OrderSkeleton';
