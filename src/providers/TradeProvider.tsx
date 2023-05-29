@@ -522,8 +522,6 @@ export const TradeProvider = ({ children }: TradeProviderProps) => {
           tradeStoreActions.setOrderStatus(OrderPlacingStatusType.ERROR)
         );
       }
-
-      dispatch(tradeStoreActions.setOfferId(''));
     },
     [
       accessToken,

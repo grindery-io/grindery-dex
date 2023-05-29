@@ -17,8 +17,9 @@ import {
 } from '../../store';
 import Page404 from '../Page404/Page404';
 import { OrderType } from '../../types';
-import { OrderPlacingModal } from '../../components';
+import { OrderPlacingModalV2 } from '../../components';
 import TradePageSelectFromChainAndToken from './TradePageSelectFromChainAndToken';
+import { getOfferById } from '../../utils';
 
 type Props = {};
 
@@ -31,7 +32,11 @@ const TradePage = (props: Props) => {
     orderStatus,
     orderTransactionId,
     error: errorMessage,
+    offerId,
+    offers,
+    filter,
   } = useAppSelector(selectTradeStore);
+  const { amount } = filter;
   const showRightColumn =
     [
       ROUTES.BUY.TRADE.ROOT.FULL_PATH,
@@ -45,6 +50,7 @@ const TradePage = (props: Props) => {
     undefined;
   const { address: userWalletAddress } = useAppSelector(selectUserStore);
   const { handleEmailSubmitAction } = useTradeProvider();
+  const acceptingOffer = getOfferById(offerId, offers);
 
   const onEmailSubmit = useCallback(
     async (email: string): Promise<boolean> => {
@@ -69,7 +75,7 @@ const TradePage = (props: Props) => {
 
   return (
     <TradeProvider>
-      <OrderPlacingModal
+      <OrderPlacingModalV2
         open={showModal}
         chains={chains}
         orderStatus={orderStatus}
@@ -77,7 +83,18 @@ const TradePage = (props: Props) => {
         errorMessage={errorMessage}
         onEmailSubmit={onEmailSubmit}
         onClose={onModalClose}
+        offer={acceptingOffer}
+        userAmount={amount}
       />
+      {/*<OrderPlacingModal
+        open={showModal}
+        chains={chains}
+        orderStatus={orderStatus}
+        createdOrder={createdOrder}
+        errorMessage={errorMessage}
+        onEmailSubmit={onEmailSubmit}
+        onClose={onModalClose}
+  />*/}
       <Box
         display="flex"
         flexDirection="row"

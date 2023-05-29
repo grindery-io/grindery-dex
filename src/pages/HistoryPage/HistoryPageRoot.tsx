@@ -150,6 +150,9 @@ const HistoryPageRoot = (props: Props) => {
         onClose={() => {
           setSelectedOrder(false);
         }}
+        userAmount={
+          selectedOrder ? selectedOrder.amountTokenDeposit : undefined
+        }
       />
     </>
   ) : (

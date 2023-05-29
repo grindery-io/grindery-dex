@@ -33,6 +33,7 @@ import {
   getChainById,
   getOfferAmount,
   getOfferExchangeAmount,
+  getOfferExchangeRate,
   getOfferProviderLink,
   getOrderBuyerLink,
   getOrderLink,
@@ -51,9 +52,8 @@ type Props = {
   errorMessage: ErrorMessageType;
   onEmailSubmit?: (email: string) => Promise<boolean>;
   onClose: () => void;
-  offer?: OfferType;
+  offer?: OfferType | null;
   userAmount?: string;
-  offerAmount?: string;
 };
 
 const OrderPlacingModalV2 = (props: Props) => {
@@ -67,7 +67,6 @@ const OrderPlacingModalV2 = (props: Props) => {
     onClose,
     offer: selectedoffer,
     userAmount,
-    offerAmount: customOfferAmount,
   } = props;
   const showModal = open;
 
@@ -108,14 +107,18 @@ const OrderPlacingModalV2 = (props: Props) => {
   );
   const amount = !userAmount
     ? offer
-      ? getOfferAmount(offer)
-      : '0'
-    : userAmount;
-  const offerAmount = !customOfferAmount
-    ? offer
       ? getOfferExchangeAmount(offer)
       : '0'
-    : customOfferAmount;
+    : userAmount;
+  const offerAmount = !userAmount
+    ? offer
+      ? getOfferAmount(offer)
+      : '0'
+    : offer
+    ? (
+        parseFloat(userAmount) / parseFloat(getOfferExchangeRate(offer))
+      ).toString()
+    : '0';
 
   const steps = offer ? getOrderSteps(offer, chains, createdOrder) : [];
 
@@ -527,12 +530,12 @@ const OrderPlacingModalV2 = (props: Props) => {
                       }}
                       mb={'3px'}
                     >
-                      {!offerAmount ? <Skeleton /> : <>{offerAmount}</>}
+                      {!amount ? <Skeleton /> : <>{amount}</>}
                     </Box>
                   }
                   subheader={
                     <span style={{ whiteSpace: 'pre-wrap' }}>
-                      {offerAmount && exchangeToken && exchangeChain ? (
+                      {amount && exchangeToken && exchangeChain ? (
                         `${exchangeToken.symbol} on ${exchangeChain.label}`
                       ) : (
                         <Skeleton />
@@ -600,12 +603,12 @@ const OrderPlacingModalV2 = (props: Props) => {
                         }}
                         mb={'3px'}
                       >
-                        {!amount ? <Skeleton /> : <>{amount}</>}
+                        {!offerAmount ? <Skeleton /> : <>{offerAmount}</>}
                       </Box>
                     }
                     subheader={
                       <span style={{ whiteSpace: 'pre-wrap' }}>
-                        {amount && offerToken && offerChain ? (
+                        {offerAmount && offerToken && offerChain ? (
                           `${offerToken.symbol} on ${offerChain.label}`
                         ) : (
                           <Skeleton />
