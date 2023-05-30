@@ -3,12 +3,10 @@ import {
   Box,
   Dialog,
   DialogContent,
-  DialogTitle,
   IconButton,
   Typography,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import HistoryToggleOffIcon from '@mui/icons-material/HistoryToggleOff';
 
 type Props = {};
 
