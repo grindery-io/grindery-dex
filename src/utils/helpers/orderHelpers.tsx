@@ -133,7 +133,7 @@ export const getOrderSteps = (
   status: string;
   completed?: { title: string };
 }[] => {
-  const offerChain = getChainById(offer.exchangeChainId, chains);
+  const offerChain = getChainById(offer.chainId, chains);
   const steps = [];
 
   steps.push({
@@ -194,7 +194,9 @@ export const getOrderSteps = (
   steps.push({
     title: 'Order complete',
     completed: {
-      title: `You will receive your tokens on ${offerChain?.label || ''}`,
+      title: `You should have received your tokens on ${
+        offerChain?.label || ''
+      }`,
     },
     status: OrderStatusType.COMPLETE,
   });
@@ -215,6 +217,9 @@ export const getOrderHistory = (
 }[] => {
   const steps = [];
   const orderChain = order ? getOrderFromChain(order, chains) : null;
+  const offerChain = order
+    ? getChainById(order.offer?.chainId || '', chains)
+    : null;
 
   steps.push({
     title: 'Confirm transaction in MetaMask',
@@ -308,7 +313,7 @@ export const getOrderHistory = (
               padding: '0 1px',
             }}
           />
-          ) sent you tokens on {orderChain?.label || ''}
+          ) sent you tokens on {offerChain?.label || ''}
         </Typography>
       ),
     },
@@ -316,6 +321,11 @@ export const getOrderHistory = (
   });
 
   const userAddress = order?.destAddr || '';
+  const userLink = getAddressLink(
+    userAddress,
+    order?.offer?.chainId || '',
+    chains
+  );
 
   steps.push({
     title: 'Order complete',
@@ -339,11 +349,12 @@ export const getOrderHistory = (
               buttonStyle={{
                 padding: '0 1px',
               }}
+              link={userLink}
             />
             )
           </>
         ) : null}{' '}
-        on {orderChain?.label || ''}
+        on {offerChain?.label || ''}
       </Typography>
     ),
     completed: {
