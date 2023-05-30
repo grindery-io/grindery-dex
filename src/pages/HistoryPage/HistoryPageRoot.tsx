@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import {
@@ -17,7 +17,7 @@ import {
   selectOrdersHistoryStore,
   selectUserStore,
 } from '../../store';
-import { useOrdersHistoryController } from '../../providers';
+import { useOrdersHistoryController, useShopProvider } from '../../providers';
 import Page404 from '../Page404/Page404';
 import {
   Box,
@@ -40,12 +40,32 @@ const HistoryPageRoot = (props: Props) => {
     total,
     refreshing,
   } = useAppSelector(selectOrdersHistoryStore);
-  const { id: user, accessToken } = useAppSelector(selectUserStore);
+  const {
+    id: user,
+    accessToken,
+    address: userWalletAddress,
+  } = useAppSelector(selectUserStore);
   const { items: chains } = useAppSelector(selectChainsStore);
   const { handleFetchMoreOrdersAction, handleOrdersRefreshAction } =
     useOrdersHistoryController();
   const hasMore = orders.length < total;
   const [selectedOrder, setSelectedOrder] = useState<false | OrderType>(false);
+  const { handleEmailSubmitAction } = useShopProvider();
+
+  const onEmailSubmit = useCallback(
+    async (email: string): Promise<boolean> => {
+      if (!selectedOrder) {
+        return false;
+      }
+      const res = await handleEmailSubmitAction(
+        email,
+        selectedOrder.orderId,
+        userWalletAddress
+      );
+      return res;
+    },
+    [handleEmailSubmitAction, selectedOrder, userWalletAddress]
+  );
 
   return accessToken ? (
     <>
@@ -153,6 +173,7 @@ const HistoryPageRoot = (props: Props) => {
         userAmount={
           selectedOrder ? selectedOrder.amountTokenDeposit : undefined
         }
+        onEmailSubmit={onEmailSubmit}
       />
     </>
   ) : (

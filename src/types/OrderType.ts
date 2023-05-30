@@ -15,6 +15,7 @@ export type OrderType = {
   hash?: string;
   offer?: OfferType;
   status: OrderStatusType;
+  completionHash?: string;
 };
 
 export enum OrderStatusType {
