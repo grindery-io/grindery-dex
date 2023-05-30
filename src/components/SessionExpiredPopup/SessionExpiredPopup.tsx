@@ -41,20 +41,30 @@ export const SessionExpiredPopup = (props: Props) => {
           <CloseIcon sx={{ fontSize: 36 }} />
         </IconButton>
       </Box>
-      <DialogTitle
-        sx={{
-          textAlign: 'center',
-          fontSize: '24px',
-          fontWeight: '700',
-          paddingBottom: '20px',
-        }}
-      >
-        Your session expired
-      </DialogTitle>
       <DialogContent>
-        <Box sx={{ textAlign: 'center', marginBottom: '20px' }}>
-          <HistoryToggleOffIcon sx={{ fontSize: '40px' }} />
+        <Box sx={{ textAlign: 'center', marginBottom: '24px' }}>
+          <img
+            src="/images/session-expired.svg"
+            alt=""
+            style={{
+              display: 'block',
+              width: '88px',
+              height: '88px',
+              margin: '0 auto',
+            }}
+          />
         </Box>
+        <Typography
+          sx={{
+            textAlign: 'center',
+            fontSize: '24px',
+            fontWeight: '700',
+            paddingBottom: '24px',
+            margin: 0,
+          }}
+        >
+          Your session expired
+        </Typography>
         <Typography textAlign="center">
           <button
             style={{

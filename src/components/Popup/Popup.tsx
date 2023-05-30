@@ -72,8 +72,7 @@ const Popup = (props: Props) => {
             maxWidth: '600px',
             borderRadius: '20px',
             boxSizing: 'border-box',
-            backgroundImage:
-              'url(https://www.grindery.io/hubfs/mercari-assets/promo-optimized.png)',
+            backgroundImage: 'url(/images/mercari-faucet.png)',
             paddingBottom: '47.33%',
             backgroundPosition: 'center center',
             backgroundSize: 'cover',
