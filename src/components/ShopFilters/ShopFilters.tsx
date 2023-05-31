@@ -41,7 +41,9 @@ const ShopFilters = (props: Props) => {
             exchangeChainId: valueArr[1] || '',
           });
         }}
-        options={filterOptions}
+        options={filterOptions.filter(
+          (option) => option.chainId && option.chainId !== '97'
+        )}
         defaultOption={{
           label: 'any token',
           value: '',

@@ -16,6 +16,15 @@ export const getNotificationObject = (
             variant: 'success',
           },
         };
+      case 'creation':
+        return {
+          text: `${capitalizeFirstLetter(event.params.type)} ${formatAddress(
+            event.params.id
+          )} ${event.params.type === 'offer' ? 'created' : 'placed'}!`,
+          props: {
+            variant: 'success',
+          },
+        };
       case 'complete':
         return {
           text: `${capitalizeFirstLetter(event.params.type)} ${formatAddress(

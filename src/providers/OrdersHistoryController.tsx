@@ -12,16 +12,23 @@ import {
   selectUserStore,
 } from '../store';
 import { getBuyerOrdersRequest, refreshBuyerOrdersRequest } from '../services';
+import { addGsheetRowRequest } from '../services/gsheetServices';
 
 // Context props
 type ContextProps = {
   handleFetchMoreOrdersAction: () => void;
   handleOrdersRefreshAction: () => void;
+  handleEmailSubmitAction: (
+    email: string,
+    orderId: string,
+    walletAddress: string
+  ) => Promise<boolean>;
 };
 
 export const OrdersHistoryContext = createContext<ContextProps>({
   handleFetchMoreOrdersAction: () => {},
   handleOrdersRefreshAction: () => {},
+  handleEmailSubmitAction: async () => false,
 });
 
 type OrdersHistoryControllerProps = {
@@ -68,6 +75,28 @@ export const OrdersHistoryController = ({
     dispatch(ordersHistoryStoreActions.setRefreshing(false));
   }, [accessToken, dispatch]);
 
+  const handleEmailSubmitAction = useCallback(
+    async (
+      email: string,
+      orderId: string,
+      walletAddress: string
+    ): Promise<boolean> => {
+      let res;
+      try {
+        res = await addGsheetRowRequest(accessToken, {
+          email,
+          walletAddress,
+          orderId,
+        });
+      } catch (error: any) {
+        console.error('handleEmailSubmitAction error:', error);
+        return false;
+      }
+      return res;
+    },
+    [accessToken]
+  );
+
   useEffect(() => {
     if (accessToken) {
       fetchOrders(accessToken);
@@ -79,6 +108,7 @@ export const OrdersHistoryController = ({
       value={{
         handleFetchMoreOrdersAction,
         handleOrdersRefreshAction,
+        handleEmailSubmitAction,
       }}
     >
       {children}

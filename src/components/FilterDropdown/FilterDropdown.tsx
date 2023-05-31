@@ -110,6 +110,7 @@ const FilterDropdown = (props: Props) => {
 
         {options.map((option) => (
           <MenuItem
+            key={option.value}
             onClick={() => {
               onChange(option.value);
               handleClose();

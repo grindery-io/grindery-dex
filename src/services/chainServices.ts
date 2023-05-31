@@ -14,8 +14,9 @@ export const getChainsWithTokens = (): Promise<ChainType[]> => {
               .get(`${DELIGHT_API_URL}/tokens/active`)
               .then((res2) => {
                 // remove data formatting and enriching away from services
-                const chainsWithTokens = (res?.data || []).map(
-                  (chain: any) => ({
+                const chainsWithTokens = (res?.data || [])
+                  .filter((chain: any) => chain.isActive)
+                  .map((chain: any) => ({
                     ...chain,
                     value: chain.caipId,
                     nativeToken: chain.nativeTokenSymbol || '',
@@ -24,8 +25,7 @@ export const getChainsWithTokens = (): Promise<ChainType[]> => {
                         (token: any) => token.chainId === chain.chainId
                       )
                     ),
-                  })
-                );
+                  }));
                 resolve(chainsWithTokens);
               })
               .catch((err) => {

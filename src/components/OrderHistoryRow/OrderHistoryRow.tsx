@@ -48,6 +48,8 @@ const OrderHistoryRow = (props: Props) => {
   } =
     order.status === OrderStatusType.COMPLETE
       ? { label: 'Completed', color: 'success' }
+      : order.status === OrderStatusType.COMPLETION_FAILURE
+      ? { label: 'Failed', color: 'error' }
       : { label: 'In process', color: 'default' };
 
   const renderTokenCell = (

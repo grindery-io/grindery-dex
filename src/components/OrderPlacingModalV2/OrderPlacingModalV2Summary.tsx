@@ -266,7 +266,7 @@ const OrderPlacingModalV2Summary = (props: OrderPlacingModalV2Props) => {
           <Table>
             <TableBody>
               {orderSummaryRows.map((row) => (
-                <TableRow>
+                <TableRow key={row.label}>
                   <TableCell>{row.label}</TableCell>
                   <TableCell>{row.chain}</TableCell>
                   <TableCell>

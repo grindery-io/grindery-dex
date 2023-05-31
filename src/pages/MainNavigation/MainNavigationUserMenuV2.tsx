@@ -272,305 +272,305 @@ const MainNavigationUserMenuV2 = (props: Props) => {
         }}
       >
         {mode === MODES.DEFAULT && (
-          <>
-            <ListItem disablePadding disabled sx={{ opacity: '1 !important' }}>
-              <ListItemIcon
-                sx={{
-                  minWidth: 'auto',
-                  padding: '0px',
-                  marginRight: '8px',
-                  '& img': {
-                    width: '48px !important',
-                    height: '48px !important',
-                    maxWidth: '48px !important',
-                    display: 'block',
-                  },
-                }}
-              >
-                <img src={ICONS.METAMASK} alt="" />
-              </ListItemIcon>
+          <ListItem disablePadding disabled sx={{ opacity: '1 !important' }}>
+            <ListItemIcon
+              sx={{
+                minWidth: 'auto',
+                padding: '0px',
+                marginRight: '8px',
+                '& img': {
+                  width: '48px !important',
+                  height: '48px !important',
+                  maxWidth: '48px !important',
+                  display: 'block',
+                },
+              }}
+            >
+              <img src={ICONS.METAMASK} alt="" />
+            </ListItemIcon>
 
-              <ListItemText
-                secondaryTypographyProps={{
-                  component: 'div',
-                }}
-                sx={{
-                  margin: 0,
-                }}
-                primary={
-                  <Typography
-                    variant="body2"
-                    sx={{
-                      fontSize: '16px',
-                      lineHeight: '19px',
-                      color: '#0B0D17',
-                      fontWeight: '700',
-                    }}
-                  >
-                    MetaMask
-                  </Typography>
-                }
-                secondary={
-                  <Stack sx={{ marginTop: '4px' }} direction="row">
-                    <Typography
-                      variant="body2"
-                      component="span"
-                      sx={{
-                        fontSize: '14px',
-                        color: '#979797',
-                        fontWeight: '400',
-                        lineHeight: '125%',
-                      }}
-                    >
-                      {address.substring(0, 6) +
-                        '...' +
-                        address.substring(address.length - 4)}
-                    </Typography>
-                    <Tooltip title="Copy wallet address">
-                      <IconButton
-                        onClick={() => {
-                          navigator.clipboard.writeText(address);
-                          enqueueSnackbar(`Wallet address copied!`, {
-                            variant: 'success',
-                          });
-                        }}
-                        sx={{ marginLeft: '4px', padding: '1px !important' }}
-                      >
-                        <ContentCopyIcon sx={{ fontSize: '14px' }} />
-                      </IconButton>
-                    </Tooltip>
-                  </Stack>
-                }
-              />
-              {userChain && (
-                <ListItemIcon
+            <ListItemText
+              secondaryTypographyProps={{
+                component: 'div',
+              }}
+              sx={{
+                margin: 0,
+              }}
+              primary={
+                <Typography
+                  variant="body2"
                   sx={{
-                    minWidth: 'initial',
-                    marginLeft: '20px',
-                    marginBottom: 'auto',
+                    fontSize: '16px',
+                    lineHeight: '19px',
+                    color: '#0B0D17',
+                    fontWeight: '700',
                   }}
                 >
-                  <Stack
-                    direction="row"
-                    alignItems="center"
-                    justifyContent="center"
+                  MetaMask
+                </Typography>
+              }
+              secondary={
+                <Stack sx={{ marginTop: '4px' }} direction="row">
+                  <Typography
+                    variant="body2"
+                    component="span"
                     sx={{
-                      background: '#FFFFFF',
-                      border: '1px solid #D4D7DD',
-                      borderRadius: '4px',
-                      padding: '4px 8px',
+                      fontSize: '14px',
+                      color: '#979797',
+                      fontWeight: '400',
+                      lineHeight: '125%',
                     }}
                   >
-                    <Avatar
-                      src={userChain?.icon}
-                      sx={{
-                        width: '12px',
-                        height: '12px',
-                        marginRight: '4px',
-                        '& img': {
-                          width: '100% !important',
-                          height: '100% !important',
-                        },
+                    {address.substring(0, 6) +
+                      '...' +
+                      address.substring(address.length - 4)}
+                  </Typography>
+                  <Tooltip title="Copy wallet address">
+                    <IconButton
+                      onClick={() => {
+                        navigator.clipboard.writeText(address);
+                        enqueueSnackbar(`Wallet address copied!`, {
+                          variant: 'success',
+                        });
                       }}
-                    />
-                    <Typography
-                      sx={{
-                        fontWeight: '400',
-                        fontSize: '12px',
-                        lineHeight: '120%',
-                        padding: 0,
-                        margin: 0,
-                      }}
+                      sx={{ marginLeft: '4px', padding: '1px !important' }}
                     >
-                      {userChain.label}
-                    </Typography>
-                  </Stack>
-                </ListItemIcon>
-              )}
-            </ListItem>
-            <Box
-              sx={{ margin: '16px 0', height: '1px', background: '#E3E3E8' }}
+                      <ContentCopyIcon sx={{ fontSize: '14px' }} />
+                    </IconButton>
+                  </Tooltip>
+                </Stack>
+              }
             />
-            <MenuItem
-              onClick={() => {
-                setMode(MODES.CHAINS);
-              }}
-            >
-              <ListItemIcon>
-                <LoopIcon
-                  sx={{ width: '20px', height: '20px', color: '#000' }}
-                />
-              </ListItemIcon>
-              <Typography component="span" variant="body2">
-                Change network
-              </Typography>
-            </MenuItem>
-            {advancedMode && (
-              <MenuItem
-                onClick={() => {
-                  handleClose();
-                  navigate(ROUTES.HISTORY.ROOT.FULL_PATH);
-                }}
-              >
-                <ListItemIcon>
-                  <ReceiptLongIcon
-                    sx={{ width: '20px', height: '20px', color: '#000' }}
-                  />
-                </ListItemIcon>
-                <Typography component="span" variant="body2">
-                  Orders history
-                </Typography>
-              </MenuItem>
-            )}
-
-            {isAdmin && (
-              <MenuItem
-                onClick={() => {
-                  handleClose();
-                  navigate(ROUTES.SELL.FULL_PATH);
-                }}
-              >
-                <ListItemIcon>
-                  <SellOutlinedIcon
-                    sx={{ width: '20px', height: '20px', color: '#000' }}
-                  />
-                </ListItemIcon>
-                <Typography component="span" variant="body2">
-                  Sell
-                </Typography>
-              </MenuItem>
-            )}
-            <MenuItem disableRipple>
-              <ListItemIcon>
-                <SettingsOutlinedIcon sx={{ color: '#000' }} />
-              </ListItemIcon>
-              <Stack
-                direction="row"
-                flexWrap="nowrap"
-                alignItems="center"
-                justifyContent="space-between"
-                gap="8px"
-                sx={{ flex: 1 }}
-              >
-                <Typography component="span" variant="body2">
-                  Advanced mode
-                </Typography>
-                <Switch
-                  checked={advancedMode}
-                  onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                    handleAdvancedModeToggleAction(
-                      userId,
-                      event.target.checked
-                    );
-                  }}
-                  color="success"
-                  sx={{
-                    marginRight: '-12px',
-                    marginTop: '-12px',
-                    marginBottom: '-12px',
-                    '& .MuiSwitch-switchBase': {
-                      '&:hover': {
-                        background: 'transparent !important',
-                      },
-                    },
-                  }}
-                />
-              </Stack>
-            </MenuItem>
-            <Button
-              onClick={() => {
-                handleClose();
-                disconnectUser();
-              }}
-              id="disconnect-button"
-              startIcon={<img src={ICONS.DISCONNECT} alt="" />}
-              sx={{
-                width: '100%',
-                background: '#F1F2F4',
-                borderRadius: '5px',
-                color: '#0B0C0E',
-                fontSize: '16px',
-                fontWeight: '700',
-                lineHeight: '1.5',
-                padding: '12px 24px',
-                margin: '16px 0 0',
-                '&:hover': {
-                  background: '#F1F2F4 !important',
-                  color: '#0B0C0E !important',
-                },
-                '& .MuiButton-startIcon img': {
-                  padding: 0,
-                  border: 'none',
-                  background: 'none',
-                },
-              }}
-            >
-              Disconnect
-            </Button>
-          </>
-        )}
-        {mode === MODES.CHAINS && (
-          <>
-            <Button
-              onClick={() => {
-                setMode(MODES.DEFAULT);
-              }}
-              sx={{
-                background: '#FFFFFF',
-                border: '1px solid #B9BDC6',
-                borderRadius: '5px',
-                fontWeight: '700',
-                fontSize: '12px',
-                lineHeight: '160%',
-                padding: '8px 24px',
-                color: '#0B0D17',
-                width: '100%',
-                margin: '0 0 6px',
-                '&:hover': {
-                  background: '#FFFFFF !important',
-                  color: '#0B0D17 !important',
-                },
-              }}
-              startIcon={<ArrowBackIcon sx={{ fontSize: '16px !important' }} />}
-            >
-              Back to wallet
-            </Button>
-            {chainsList.map((chain: ChainType) => (
-              <MenuItem
-                key={chain.chainId}
-                onClick={(event) => {
-                  if (chain.chainId !== userChainId) {
-                    handleNetworkClick(event, chain, userChainId);
-                  } else {
-                    handleClose();
-                  }
-                }}
-                id={`chain-${chain.chainId}`}
+            {userChain && (
+              <ListItemIcon
                 sx={{
-                  padding: '8px 16px !important',
-                  borderRadius: '34px !important',
-                  '&:hover': {
-                    background: '#F1F2F4 !important',
+                  minWidth: 'initial',
+                  marginLeft: '20px',
+                  marginBottom: 'auto',
+                }}
+              >
+                <Stack
+                  direction="row"
+                  alignItems="center"
+                  justifyContent="center"
+                  sx={{
+                    background: '#FFFFFF',
+                    border: '1px solid #D4D7DD',
+                    borderRadius: '4px',
+                    padding: '4px 8px',
+                  }}
+                >
+                  <Avatar
+                    src={userChain?.icon}
+                    sx={{
+                      width: '12px',
+                      height: '12px',
+                      marginRight: '4px',
+                      '& img': {
+                        width: '100% !important',
+                        height: '100% !important',
+                      },
+                    }}
+                  />
+                  <Typography
+                    sx={{
+                      fontWeight: '400',
+                      fontSize: '12px',
+                      lineHeight: '120%',
+                      padding: 0,
+                      margin: 0,
+                    }}
+                  >
+                    {userChain.label}
+                  </Typography>
+                </Stack>
+              </ListItemIcon>
+            )}
+          </ListItem>
+        )}
+        {mode === MODES.DEFAULT && (
+          <Box
+            sx={{ margin: '16px 0', height: '1px', background: '#E3E3E8' }}
+          />
+        )}
+        {mode === MODES.DEFAULT && (
+          <MenuItem
+            onClick={() => {
+              setMode(MODES.CHAINS);
+            }}
+          >
+            <ListItemIcon>
+              <LoopIcon sx={{ width: '20px', height: '20px', color: '#000' }} />
+            </ListItemIcon>
+            <Typography component="span" variant="body2">
+              Change network
+            </Typography>
+          </MenuItem>
+        )}
+
+        {advancedMode && mode === MODES.DEFAULT && (
+          <MenuItem
+            onClick={() => {
+              handleClose();
+              navigate(ROUTES.HISTORY.ROOT.FULL_PATH);
+            }}
+          >
+            <ListItemIcon>
+              <ReceiptLongIcon
+                sx={{ width: '20px', height: '20px', color: '#000' }}
+              />
+            </ListItemIcon>
+            <Typography component="span" variant="body2">
+              Orders history
+            </Typography>
+          </MenuItem>
+        )}
+
+        {isAdmin && mode === MODES.DEFAULT && (
+          <MenuItem
+            onClick={() => {
+              handleClose();
+              navigate(ROUTES.SELL.FULL_PATH);
+            }}
+          >
+            <ListItemIcon>
+              <SellOutlinedIcon
+                sx={{ width: '20px', height: '20px', color: '#000' }}
+              />
+            </ListItemIcon>
+            <Typography component="span" variant="body2">
+              Sell
+            </Typography>
+          </MenuItem>
+        )}
+        {mode === MODES.DEFAULT && (
+          <MenuItem disableRipple>
+            <ListItemIcon>
+              <SettingsOutlinedIcon sx={{ color: '#000' }} />
+            </ListItemIcon>
+            <Stack
+              direction="row"
+              flexWrap="nowrap"
+              alignItems="center"
+              justifyContent="space-between"
+              gap="8px"
+              sx={{ flex: 1 }}
+            >
+              <Typography component="span" variant="body2">
+                Advanced mode
+              </Typography>
+              <Switch
+                checked={advancedMode}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                  handleAdvancedModeToggleAction(userId, event.target.checked);
+                }}
+                color="success"
+                sx={{
+                  marginRight: '-12px',
+                  marginTop: '-12px',
+                  marginBottom: '-12px',
+                  '& .MuiSwitch-switchBase': {
+                    '&:hover': {
+                      background: 'transparent !important',
+                    },
                   },
                 }}
-              >
-                <ListItemIcon>
-                  <img src={chain.icon} alt="" />
-                </ListItemIcon>
-                <Typography component="span" variant="body2">
-                  {chain.label}
-                </Typography>
-                {chain.chainId === userChainId && (
-                  <ListItemIcon
-                    sx={{ marginLeft: 'auto', marginRight: '-8px' }}
-                  >
-                    <CheckIcon sx={{ marginLeft: '8px', fontSize: '20px' }} />
-                  </ListItemIcon>
-                )}
-              </MenuItem>
-            ))}
-          </>
+              />
+            </Stack>
+          </MenuItem>
         )}
+        {mode === MODES.DEFAULT && (
+          <Button
+            onClick={() => {
+              handleClose();
+              disconnectUser();
+            }}
+            id="disconnect-button"
+            startIcon={<img src={ICONS.DISCONNECT} alt="" />}
+            sx={{
+              width: '100%',
+              background: '#F1F2F4',
+              borderRadius: '5px',
+              color: '#0B0C0E',
+              fontSize: '16px',
+              fontWeight: '700',
+              lineHeight: '1.5',
+              padding: '12px 24px',
+              margin: '16px 0 0',
+              '&:hover': {
+                background: '#F1F2F4 !important',
+                color: '#0B0C0E !important',
+              },
+              '& .MuiButton-startIcon img': {
+                padding: 0,
+                border: 'none',
+                background: 'none',
+              },
+            }}
+          >
+            Disconnect
+          </Button>
+        )}
+
+        {mode === MODES.CHAINS && (
+          <Button
+            onClick={() => {
+              setMode(MODES.DEFAULT);
+            }}
+            sx={{
+              background: '#FFFFFF',
+              border: '1px solid #B9BDC6',
+              borderRadius: '5px',
+              fontWeight: '700',
+              fontSize: '12px',
+              lineHeight: '160%',
+              padding: '8px 24px',
+              color: '#0B0D17',
+              width: '100%',
+              margin: '0 0 6px',
+              '&:hover': {
+                background: '#FFFFFF !important',
+                color: '#0B0D17 !important',
+              },
+            }}
+            startIcon={<ArrowBackIcon sx={{ fontSize: '16px !important' }} />}
+          >
+            Back to wallet
+          </Button>
+        )}
+        {mode === MODES.CHAINS &&
+          chainsList.map((chain: ChainType) => (
+            <MenuItem
+              key={chain.chainId}
+              onClick={(event) => {
+                if (chain.chainId !== userChainId) {
+                  handleNetworkClick(event, chain, userChainId);
+                } else {
+                  handleClose();
+                }
+              }}
+              id={`chain-${chain.chainId}`}
+              sx={{
+                padding: '8px 16px !important',
+                borderRadius: '34px !important',
+                '&:hover': {
+                  background: '#F1F2F4 !important',
+                },
+              }}
+            >
+              <ListItemIcon>
+                <img src={chain.icon} alt="" />
+              </ListItemIcon>
+              <Typography component="span" variant="body2">
+                {chain.label}
+              </Typography>
+              {chain.chainId === userChainId && (
+                <ListItemIcon sx={{ marginLeft: 'auto', marginRight: '-8px' }}>
+                  <CheckIcon sx={{ marginLeft: '8px', fontSize: '20px' }} />
+                </ListItemIcon>
+              )}
+            </MenuItem>
+          ))}
       </Menu>
     </Box>
   );

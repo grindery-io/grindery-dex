@@ -105,6 +105,8 @@ export const getOrderStatus = (order: OrderType): string => {
       return 'Failed';
     case OrderStatusType.COMPLETE:
       return 'Completed';
+    case OrderStatusType.COMPLETION_FAILURE:
+      return 'Failed';
   }
 };
 

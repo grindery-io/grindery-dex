@@ -257,7 +257,7 @@ export const ShopProvider = ({ children }: ShopProviderProps) => {
 
         if (exchangeToken?.address !== '0x0') {
           const gasEstimate =
-            await poolContract.estimateGas.depositTestTokenAndAcceptOffer(
+            await poolContract.estimateGas.depositMRITokenAndAcceptOffer(
               exchangeToken?.address,
               ethers.utils.parseEther(amountToPay),
               offer.offerId,
@@ -265,7 +265,7 @@ export const ShopProvider = ({ children }: ShopProviderProps) => {
               ethers.utils.parseEther(offerAmount)
             );
 
-          tx = await poolContract.depositTestTokenAndAcceptOffer(
+          tx = await poolContract.depositMRITokenAndAcceptOffer(
             exchangeToken?.address,
             ethers.utils.parseEther(amountToPay),
             offer.offerId,
@@ -277,7 +277,7 @@ export const ShopProvider = ({ children }: ShopProviderProps) => {
           );
         } else {
           const gasEstimate =
-            await poolContract.estimateGas.depositETHAndAcceptOffer(
+            await poolContract.estimateGas.depositNativeAndAcceptOffer(
               offer.offerId,
               userAddress,
               ethers.utils.parseEther(
@@ -290,7 +290,7 @@ export const ShopProvider = ({ children }: ShopProviderProps) => {
               }
             );
 
-          tx = await poolContract.depositETHAndAcceptOffer(
+          tx = await poolContract.depositNativeAndAcceptOffer(
             offer.offerId,
             userAddress,
             ethers.utils.parseEther(

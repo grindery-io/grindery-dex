@@ -6,6 +6,7 @@ import {
   ErrorMessageType,
   OfferType,
   OrderPlacingStatusType,
+  OrderStatusType,
   OrderType,
 } from '../../types';
 import { selectUserStore, useAppSelector } from '../../store';
@@ -28,7 +29,7 @@ export type OrderPlacingModalV2Props = {
 };
 
 const OrderPlacingModalV2 = (props: OrderPlacingModalV2Props) => {
-  const { open, errorMessage, onClose } = props;
+  const { open, errorMessage, onClose, createdOrder } = props;
   const showModal = open;
 
   const { advancedMode, advancedModeAlert } = useAppSelector(selectUserStore);

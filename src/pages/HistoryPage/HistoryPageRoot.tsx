@@ -17,7 +17,7 @@ import {
   selectOrdersHistoryStore,
   selectUserStore,
 } from '../../store';
-import { useOrdersHistoryController, useShopProvider } from '../../providers';
+import { useOrdersHistoryController } from '../../providers';
 import Page404 from '../Page404/Page404';
 import {
   Box,
@@ -46,11 +46,13 @@ const HistoryPageRoot = (props: Props) => {
     address: userWalletAddress,
   } = useAppSelector(selectUserStore);
   const { items: chains } = useAppSelector(selectChainsStore);
-  const { handleFetchMoreOrdersAction, handleOrdersRefreshAction } =
-    useOrdersHistoryController();
+  const {
+    handleFetchMoreOrdersAction,
+    handleOrdersRefreshAction,
+    handleEmailSubmitAction,
+  } = useOrdersHistoryController();
   const hasMore = orders.length < total;
   const [selectedOrder, setSelectedOrder] = useState<false | OrderType>(false);
-  const { handleEmailSubmitAction } = useShopProvider();
 
   const onEmailSubmit = useCallback(
     async (email: string): Promise<boolean> => {
@@ -111,53 +113,61 @@ const HistoryPageRoot = (props: Props) => {
               <Loading />
             </Box>
           ) : (
-            <Box
-              sx={{
-                width: '100%',
-                overflow: 'hidden',
-                '& .infinite-scroll-component': {
-                  overflow: 'initial !important',
-                },
-              }}
-            >
-              <TableContainer sx={{ maxHeight: 410 }} id="history-orders-list">
-                <InfiniteScroll
-                  dataLength={orders.length}
-                  next={handleFetchMoreOrdersAction}
-                  hasMore={hasMore}
-                  loader={<Loading />}
-                  scrollableTarget="history-orders-list"
+            <>
+              {orders.length > 0 && (
+                <Box
+                  sx={{
+                    width: '100%',
+                    overflow: 'hidden',
+                    '& .infinite-scroll-component': {
+                      overflow: 'initial !important',
+                    },
+                  }}
                 >
-                  <Table
-                    sx={{ minWidth: 650 }}
-                    aria-label="orders history"
-                    stickyHeader
+                  <TableContainer
+                    sx={{ maxHeight: 410 }}
+                    id="history-orders-list"
                   >
-                    <TableHead>
-                      <TableRow>
-                        <TableCell size="small">ID</TableCell>
-                        <TableCell size="small">Order Date</TableCell>
-                        <TableCell size="small">Pay</TableCell>
-                        <TableCell size="small">Receive</TableCell>
-                        <TableCell size="small">Status</TableCell>
-                      </TableRow>
-                    </TableHead>
-                    <TableBody>
-                      {orders.map((order: OrderType) => (
-                        <OrderHistoryRow
-                          key={order._id}
-                          chains={chains}
-                          order={order}
-                          onClick={() => {
-                            setSelectedOrder(order);
-                          }}
-                        />
-                      ))}
-                    </TableBody>
-                  </Table>
-                </InfiniteScroll>
-              </TableContainer>
-            </Box>
+                    <InfiniteScroll
+                      dataLength={orders.length}
+                      next={handleFetchMoreOrdersAction}
+                      hasMore={hasMore}
+                      loader={<Loading />}
+                      scrollableTarget="history-orders-list"
+                    >
+                      <Table
+                        sx={{ minWidth: 650 }}
+                        aria-label="orders history"
+                        stickyHeader
+                      >
+                        <TableHead>
+                          <TableRow>
+                            <TableCell size="small">ID</TableCell>
+                            <TableCell size="small">Order Date</TableCell>
+                            <TableCell size="small">Pay</TableCell>
+                            <TableCell size="small">Receive</TableCell>
+                            <TableCell size="small">Status</TableCell>
+                          </TableRow>
+                        </TableHead>
+                        <TableBody>
+                          {orders.map((order: OrderType) => (
+                            <OrderHistoryRow
+                              key={order._id}
+                              chains={chains}
+                              order={order}
+                              onClick={() => {
+                                setSelectedOrder(order);
+                              }}
+                            />
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </InfiniteScroll>
+                  </TableContainer>
+                  <Box sx={{ height: '16px' }} />
+                </Box>
+              )}
+            </>
           )}
         </PageCardBody>
       </PageCard>

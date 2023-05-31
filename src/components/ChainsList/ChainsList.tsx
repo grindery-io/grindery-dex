@@ -46,7 +46,11 @@ const ChainsList = (props: Props) => {
                 <Avatar
                   src={blockchain.icon}
                   alt={blockchain.label}
-                  sx={{ width: 40, height: 40 }}
+                  sx={{
+                    width: 40,
+                    height: 40,
+                    borderRadius: 0,
+                  }}
                 >
                   {blockchain.label}
                 </Avatar>

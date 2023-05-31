@@ -104,24 +104,58 @@ const OrderPlacingModalV2Title = (props: OrderPlacingModalV2Props) => {
 
   return (
     <Box>
-      <Typography variant="h1" sx={{ margin: '0', padding: 0 }}>
-        {offer && activeAction === actions.length - 2 ? (
-          <Countdown
-            date={
-              now +
-              (offer?.estimatedTime ? parseInt(offer.estimatedTime) * 1000 : 0)
-            }
-            renderer={countdownRenderer}
-          />
-        ) : (
-          title
-        )}
-      </Typography>
+      {createdOrder &&
+      createdOrder.status === OrderStatusType.COMPLETION_FAILURE ? (
+        <>
+          <Typography variant="h1" sx={{ margin: '0', padding: 0 }}>
+            Order failed
+          </Typography>
+          <Typography
+            variant="body2"
+            component="span"
+            sx={{
+              display: 'inline-block',
+              lineHeight: '1.5',
+              marginTop: '8px',
+            }}
+          >
+            Please{' '}
+            <a
+              style={{ color: '#F57F21', whiteSpace: 'nowrap' }}
+              href="https://discord.gg/PCMTWg3KzE"
+              target="_blank"
+              rel="noreferrer"
+            >
+              visit our Discord
+            </a>
+            .
+          </Typography>
+        </>
+      ) : (
+        <>
+          <Typography variant="h1" sx={{ margin: '0', padding: 0 }}>
+            {offer && activeAction === actions.length - 2 ? (
+              <Countdown
+                date={
+                  now +
+                  (offer?.estimatedTime
+                    ? parseInt(offer.estimatedTime) * 1000
+                    : 0)
+                }
+                renderer={countdownRenderer}
+              />
+            ) : (
+              title
+            )}
+          </Typography>
 
-      {(!createdOrder || createdOrder.status !== OrderStatusType.COMPLETE) && (
-        <Box sx={{ maxWidth: '332px', marginTop: '16px' }}>
-          <EmailNotificationForm onSubmit={onEmailSubmit} />
-        </Box>
+          {(!createdOrder ||
+            createdOrder.status !== OrderStatusType.COMPLETE) && (
+            <Box sx={{ maxWidth: '332px', marginTop: '16px' }}>
+              <EmailNotificationForm onSubmit={onEmailSubmit} />
+            </Box>
+          )}
+        </>
       )}
     </Box>
   );

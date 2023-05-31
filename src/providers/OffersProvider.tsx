@@ -320,7 +320,7 @@ export const OffersProvider = ({ children }: OffersProviderProps) => {
 
         await poolContract.getOfferer(offerId);
 
-        const tx = await poolContract.setIsActive(offerId, isActive, {
+        const tx = await poolContract.setIsActiveOffer(offerId, isActive, {
           gasLimit: 1000000,
         });
 

@@ -17,10 +17,7 @@ export const sortChains = (chains: ChainType[]) => {
 
 export const filterBuyerChains = (chains: ChainType[]): ChainType[] => {
   return chains.filter(
-    (chain) =>
-      chain.chainId === '5' ||
-      chain.chainId === '97' ||
-      chain.chainId === '4002'
+    (chain) => chain.chainId === '80001' || chain.chainId === '4002'
   );
 };
 

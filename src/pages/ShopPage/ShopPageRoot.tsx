@@ -45,7 +45,7 @@ const ShopPageRoot = (props: Props) => {
     filter,
   } = useAppSelector(selectShopStore);
   const { items: chains } = useAppSelector(selectChainsStore);
-  const fromChain = getChainById('5', chains);
+  const fromChain = getChainById('4002', chains);
   const fromToken = fromChain?.tokens?.find(
     (token: TokenType) => token.symbol === fromChain?.nativeToken
   );
@@ -125,7 +125,7 @@ const ShopPageRoot = (props: Props) => {
         {!loading && offers.length < 1 && (
           <Typography textAlign="center">No offers found</Typography>
         )}
-        {loading || !fromChain || !fromToken ? (
+        {loading ? (
           <Stack
             flexWrap="wrap"
             alignItems="stretch"
@@ -143,65 +143,69 @@ const ShopPageRoot = (props: Props) => {
             ))}
           </Stack>
         ) : (
-          <InfiniteScroll
-            dataLength={offers.length}
-            next={handleFetchMoreOffersAction}
-            hasMore={hasMore}
-            loader={
-              <Stack
-                flexWrap="wrap"
-                alignItems="stretch"
-                direction="row"
-                gap="24px"
-                sx={{
-                  width: '100%',
-                  maxWidth: '1053px',
-                  margin: '24px auto 0',
-                  justifyContent: { xs: 'center', lg: 'flex-start' },
-                }}
+          <>
+            {offers.length > 0 && fromChain && fromToken && (
+              <InfiniteScroll
+                dataLength={offers.length}
+                next={handleFetchMoreOffersAction}
+                hasMore={hasMore}
+                loader={
+                  <Stack
+                    flexWrap="wrap"
+                    alignItems="stretch"
+                    direction="row"
+                    gap="24px"
+                    sx={{
+                      width: '100%',
+                      maxWidth: '1053px',
+                      margin: '24px auto 0',
+                      justifyContent: { xs: 'center', lg: 'flex-start' },
+                    }}
+                  >
+                    {[0, 1, 2].map((i: number) => (
+                      <OfferCardSkeleton key={i} />
+                    ))}
+                  </Stack>
+                }
+                style={{ paddingBottom: '30px' }}
               >
-                {[0, 1, 2].map((i: number) => (
-                  <OfferCardSkeleton key={i} />
-                ))}
-              </Stack>
-            }
-            style={{ paddingBottom: '30px' }}
-          >
-            <Stack
-              flexWrap="wrap"
-              alignItems="stretch"
-              direction="row"
-              gap="24px"
-              sx={{
-                width: '100%',
-                maxWidth: '1053px',
-                margin: '0 auto',
-                justifyContent: { xs: 'center', lg: 'flex-start' },
-              }}
-            >
-              {offers.map((offer: OfferType) => (
-                <OfferCard
-                  id={offer.offerId || offer._id}
-                  key={offer._id}
-                  offer={offer}
-                  tokenPrice={tokenPrice}
-                  fromChain={fromChain}
-                  fromToken={fromToken}
-                  chains={chains}
-                  accepting={offerId}
-                  advancedMode={advancedMode}
-                  onAcceptOfferClick={(offer: OfferType) => {
-                    if (!accessToken) {
-                      setShowWalletModal(true);
-                    } else {
-                      handleAcceptOfferAction(offer);
-                    }
+                <Stack
+                  flexWrap="wrap"
+                  alignItems="stretch"
+                  direction="row"
+                  gap="24px"
+                  sx={{
+                    width: '100%',
+                    maxWidth: '1053px',
+                    margin: '0 auto',
+                    justifyContent: { xs: 'center', lg: 'flex-start' },
                   }}
-                  getTokenPrice={getTokenPriceBySymbol}
-                />
-              ))}
-            </Stack>
-          </InfiniteScroll>
+                >
+                  {offers.map((offer: OfferType) => (
+                    <OfferCard
+                      id={offer.offerId || offer._id}
+                      key={offer._id}
+                      offer={offer}
+                      tokenPrice={tokenPrice}
+                      fromChain={fromChain}
+                      fromToken={fromToken}
+                      chains={chains}
+                      accepting={offerId}
+                      advancedMode={advancedMode}
+                      onAcceptOfferClick={(offer: OfferType) => {
+                        if (!accessToken) {
+                          setShowWalletModal(true);
+                        } else {
+                          handleAcceptOfferAction(offer);
+                        }
+                      }}
+                      getTokenPrice={getTokenPriceBySymbol}
+                    />
+                  ))}
+                </Stack>
+              </InfiniteScroll>
+            )}
+          </>
         )}
       </Box>
     </>

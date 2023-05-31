@@ -24,4 +24,5 @@ export enum OrderStatusType {
   FAILURE = 'failure',
   COMPLETION = 'completion',
   COMPLETE = 'complete',
+  COMPLETION_FAILURE = 'completionFailure',
 }

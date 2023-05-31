@@ -187,8 +187,9 @@ export const OrdersProvider = ({ children }: OrdersProviderProps) => {
         const walletContract = _walletContract.connect(signer);
 
         // pay order transaction
-        const tx = await walletContract.payOfferWithNativeTokens(
+        const tx = await walletContract.payTradeWithNativeTokens(
           order.offerId,
+          order.orderId,
           order.destAddr,
           ethers.utils.parseEther(parseFloat(order.amountTokenOffer).toFixed(6))
         );

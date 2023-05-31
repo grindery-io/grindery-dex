@@ -440,7 +440,7 @@ export const TradeProvider = ({ children }: TradeProviderProps) => {
         let tx;
         if (exchangeToken?.address !== '0x0') {
           const gasEstimate =
-            await poolContract.estimateGas.depositTestTokenAndAcceptOffer(
+            await poolContract.estimateGas.depositMRITokenAndAcceptOffer(
               exchangeToken?.address,
               ethers.utils.parseEther(amountToPay),
               offer.offerId,
@@ -448,7 +448,7 @@ export const TradeProvider = ({ children }: TradeProviderProps) => {
               ethers.utils.parseEther(offerAmount)
             );
 
-          tx = await poolContract.depositTestTokenAndAcceptOffer(
+          tx = await poolContract.depositMRITokenAndAcceptOffer(
             exchangeToken?.address,
             ethers.utils.parseEther(amountToPay),
             offer.offerId,
@@ -460,7 +460,7 @@ export const TradeProvider = ({ children }: TradeProviderProps) => {
           );
         } else {
           const gasEstimate =
-            await poolContract.estimateGas.depositETHAndAcceptOffer(
+            await poolContract.estimateGas.depositNativeAndAcceptOffer(
               offer.offerId,
               userAddress,
               ethers.utils.parseEther(offerAmount),
@@ -469,7 +469,7 @@ export const TradeProvider = ({ children }: TradeProviderProps) => {
               }
             );
 
-          tx = await poolContract.depositETHAndAcceptOffer(
+          tx = await poolContract.depositNativeAndAcceptOffer(
             offer.offerId,
             userAddress,
             ethers.utils.parseEther(offerAmount),

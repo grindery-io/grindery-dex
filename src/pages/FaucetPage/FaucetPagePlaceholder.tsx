@@ -19,27 +19,6 @@ function FaucetPagePlaceholder() {
             Visit{' '}
             <a
               style={{ color: '#3f49e1' }}
-              href="https://goerlifaucet.com/"
-              target="_blank"
-              rel="noreferrer"
-              id="faucet-link"
-            >
-              <strong>goerlifaucet.com</strong>
-              <OpenInNewIcon
-                sx={{
-                  display: 'inline-block',
-                  marginBottom: '-4px',
-                  fontSize: '16px',
-                }}
-              />
-            </a>
-            <br />
-            to get some Goerli ETH tokens.
-          </Typography>
-          <Typography className="Faucet_text" sx={{ marginBottom: '20px' }}>
-            Visit{' '}
-            <a
-              style={{ color: '#3f49e1' }}
               href="https://testnet.bnbchain.org/faucet-smart"
               target="_blank"
               rel="noreferrer"
@@ -56,6 +35,27 @@ function FaucetPagePlaceholder() {
             </a>
             <br />
             to get some BSC testnet BNB tokens.
+          </Typography>
+          <Typography className="Faucet_text" sx={{ marginBottom: '20px' }}>
+            Visit{' '}
+            <a
+              style={{ color: '#3f49e1' }}
+              href="https://mumbaifaucet.com/"
+              target="_blank"
+              rel="noreferrer"
+              id="faucet-link"
+            >
+              <strong>mumbaifaucet.com</strong>
+              <OpenInNewIcon
+                sx={{
+                  display: 'inline-block',
+                  marginBottom: '-4px',
+                  fontSize: '16px',
+                }}
+              />
+            </a>
+            <br />
+            to get some Mumbai testnet MATIC tokens.
           </Typography>
           <Typography className="Faucet_text">
             Visit{' '}
