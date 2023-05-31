@@ -14,15 +14,13 @@ import {
 } from './MainNavigation.style';
 import { Logo, NavTabs } from '../../components';
 import MainNavigationDrawer from './MainNavigationDrawer';
-import MainNavigationUserMenu from './MainNavigationUserMenu';
 import { useAppSelector, selectUserStore } from '../../store';
 import { ROUTES } from '../../config';
 import { NavTabsItemType } from '../../types';
-import MainNavigationWalletBalance from './MainNavigationWalletBalance';
 import MainNavigationAdvancedModeAlert from './MainNavigationAdvancedModeAlert';
-//import MainNavigationSwitchChainButtonV2 from './MainNavigationSwitchChainButtonV2';
 import Icon from '@mdi/react';
 import { mdiWaterPump } from '@mdi/js';
+import MainNavigationUserMenuV2 from './MainNavigationUserMenuV2';
 
 export const TABS_NAV: NavTabsItemType[] = [
   {
@@ -114,10 +112,7 @@ const MainNavigation = (props: Props) => {
             }}
           >
             {/*<MainNavigationSwitchChainButtonV2 />*/}
-            <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
-              <MainNavigationWalletBalance />
-            </Box>
-            <MainNavigationUserMenu />
+            <MainNavigationUserMenuV2 />
           </Stack>
         </Wrapper>
         <MainNavigationDrawer

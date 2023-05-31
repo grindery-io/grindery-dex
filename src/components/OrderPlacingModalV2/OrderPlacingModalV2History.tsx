@@ -7,12 +7,6 @@ import {
   Stepper,
   Typography,
 } from '@mui/material';
-import {
-  ChainType,
-  OfferType,
-  OrderPlacingStatusType,
-  OrderType,
-} from '../../types';
 import { getOrderHistory } from '../../utils';
 import { OrderPlacingModalV2Props } from './OrderPlacingModalV2';
 

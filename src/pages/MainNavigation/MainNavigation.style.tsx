@@ -17,8 +17,8 @@ export const Wrapper = styled('div')({
   flexDirection: 'row',
   flexWrap: 'nowrap',
   gap: '10px',
-  backdropFilter: 'blur(12px)',
-  background: 'rgba(255, 255, 255, 0.84)',
+
+  background: '#ffffff',
   width: '100%',
   boxSizing: 'border-box',
 });

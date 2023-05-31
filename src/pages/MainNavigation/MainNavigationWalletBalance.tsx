@@ -1,19 +1,16 @@
 import React from 'react';
-import { Avatar, Box, Chip, Skeleton, Typography } from '@mui/material';
+import { Avatar, Box, Chip, Skeleton } from '@mui/material';
 import {
   selectChainsStore,
   selectUserStore,
   useAppSelector,
 } from '../../store';
 import { getChainById, getTokenBySymbol } from '../../utils';
-import { useNavigate } from 'react-router-dom';
-import { ROUTES } from '../../config';
 import { AvatarDefault } from '../../components';
 
 type Props = {};
 
 const MainNavigationWalletBalance = (props: Props) => {
-  let navigate = useNavigate();
   const {
     accessToken,
     chainId: userChainId,
@@ -28,19 +25,14 @@ const MainNavigationWalletBalance = (props: Props) => {
     chains
   );
 
-  const handleGetClick = () => {
-    navigate(ROUTES.FAUCET.FULL_PATH);
-  };
-
   return accessToken && nativeToken ? (
     <Box
       className="MainNavigationWalletBalance"
       sx={{
+        borderRight: '1px solid #E3E3E8',
         '& .MuiChip-root': {
           background: 'transparent',
-          //border: '1px solid #E3E3E8',
-          borderRadius: '48px',
-          padding: '11px 16px',
+          padding: '7px 16px 7px 0',
           height: 'auto',
           transition: 'border-color 0.2s ease-in-out',
           '&:hover': {
@@ -50,79 +42,41 @@ const MainNavigationWalletBalance = (props: Props) => {
             borderColor: '#0b0d17 !important',
           },
           '& .MuiChip-label': {
-            fontSize: '16px',
-            lineHeight: 1.5,
+            fontSize: '14px',
+            lineHeight: 1,
+            color: '#0B0D17',
             padding: 0,
           },
           '& .MuiChip-avatar': {
-            margin: '0 6px 0 0',
+            margin: '0 8px 0 0',
             width: '16px',
             height: '16px',
+            '& img': {
+              width: '100%',
+              height: '100%',
+            },
           },
         },
       }}
     >
       {walletBalanceLoading ? (
         <Skeleton
-          width="100px"
+          width="60px"
           variant="rounded"
-          height="48px"
-          sx={{ borderRadius: '48px' }}
+          height="16px"
+          sx={{ borderRadius: '6px', margin: '7px 16px 7px 0' }}
         />
       ) : (
-        <>
-          {parseFloat(walletBalance) > 0 ? (
-            <Chip
-              avatar={
-                nativeToken.icon ? (
-                  <Avatar src={nativeToken.icon} alt={nativeToken.symbol} />
-                ) : (
-                  <AvatarDefault sx={{ width: '16px', height: '16px' }} />
-                )
-              }
-              label={parseFloat(
-                parseFloat(walletBalance).toFixed(6)
-              ).toString()}
-            />
-          ) : (
-            <Chip
-              avatar={
-                nativeToken.icon ? (
-                  <Avatar src={nativeToken.icon} alt={nativeToken.symbol} />
-                ) : (
-                  <AvatarDefault sx={{ width: '16px', height: '16px' }} />
-                )
-              }
-              label={
-                <Typography
-                  component="span"
-                  sx={{
-                    fontSize: 'inherit',
-                    lineHeight: 'inherit',
-                    color: 'inherit',
-                    fontWeight: '700',
-                  }}
-                >
-                  0.0000
-                  {
-                    <>
-                      {userChain?.isTestnet ? (
-                        <>
-                          {' '}
-                          /{' '}
-                          <span style={{ color: '#EA5230' }}>
-                            Get {nativeToken.symbol}
-                          </span>
-                        </>
-                      ) : null}
-                    </>
-                  }
-                </Typography>
-              }
-              onClick={userChain?.isTestnet ? handleGetClick : undefined}
-            />
-          )}
-        </>
+        <Chip
+          avatar={
+            nativeToken.icon ? (
+              <Avatar src={nativeToken.icon} alt={nativeToken.symbol} />
+            ) : (
+              <AvatarDefault sx={{ width: '16px', height: '16px' }} />
+            )
+          }
+          label={parseFloat(parseFloat(walletBalance).toFixed(6)).toString()}
+        />
       )}
     </Box>
   ) : null;
