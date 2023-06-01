@@ -57,6 +57,7 @@ const TransactionID = (props: Props) => {
           padding: 0,
           ...(labelStyle || {}),
         }}
+        component={containerComponent || 'p'}
       >
         {label ? `${label}: ` : ''}
         <Typography

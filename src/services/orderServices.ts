@@ -111,7 +111,6 @@ export const getBuyerOrdersRequest = (
           }
         )
         .then((res) => {
-          console.log('getBuyerOrdersRequest > axios res=', res);
           resolve({
             items: res?.data?.orders || [],
             total: res?.data?.totalCount || 0,
