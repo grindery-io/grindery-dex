@@ -1,8 +1,7 @@
 import React, { useCallback, useEffect } from 'react';
 import _ from 'lodash';
 import { useNavigate } from 'react-router-dom';
-import { Button, Stack } from '@mui/material';
-import { Box } from '@mui/system';
+import { Stack } from '@mui/material';
 import {
   SelectChainAndTokenButton,
   AmountInput,
@@ -12,12 +11,11 @@ import {
   PageCardBody,
   PageCardSubmitButton,
 } from '../../components';
-import { ROUTES, GRT_CONTRACT_ADDRESS } from '../../config';
+import { ROUTES } from '../../config';
 import {
   useAppSelector,
   selectChainsStore,
   selectTradeStore,
-  selectUserStore,
 } from '../../store';
 import { useTradeProvider } from '../../providers';
 import { getChainById, getTokenById } from '../../utils';
@@ -31,10 +29,7 @@ const TradePageOffersFilter = (props: Props) => {
     loading,
     filter,
   } = useAppSelector(selectTradeStore);
-  const {
-    chainTokenBalance: userChainTokenBalance,
-    chainTokenBalanceLoading: userChainTokenBalanceLoading,
-  } = useAppSelector(selectUserStore);
+
   const { items: chains } = useAppSelector(selectChainsStore);
   const { toChainId, toTokenId, amount, fromChainId, fromTokenId } = filter;
   const toChain = getChainById(toChainId, chains);
@@ -42,11 +37,8 @@ const TradePageOffersFilter = (props: Props) => {
   const fromChain = getChainById(fromChainId, chains);
   const fromToken = getTokenById(fromTokenId, fromChainId, chains);
 
-  const {
-    handleTradeFilterChange,
-    handleFromAmountMaxClick,
-    handleSearchOffersAction,
-  } = useTradeProvider();
+  const { handleTradeFilterChange, handleSearchOffersAction } =
+    useTradeProvider();
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const debouncedSearch = useCallback(
@@ -127,17 +119,15 @@ const TradePageOffersFilter = (props: Props) => {
                 }`
               : ''
           }
-          endAdornment={
-            GRT_CONTRACT_ADDRESS[fromChain?.value || ''] &&
-            userChainTokenBalance &&
-            !userChainTokenBalanceLoading ? (
+          /*endAdornment={
+            userTokens.length > 0 && balance && balance !== '0' ? (
               <Box>
                 <Button
                   disableElevation
                   size="small"
                   variant="contained"
                   onClick={() => {
-                    handleFromAmountMaxClick(userChainTokenBalance);
+                    handleFromAmountMaxClick(balance);
                   }}
                   sx={{
                     fontSize: '14px',
@@ -159,7 +149,7 @@ const TradePageOffersFilter = (props: Props) => {
                 </Button>
               </Box>
             ) : undefined
-          }
+          }*/
         />
         {errorMessage &&
           errorMessage.type === 'search' &&

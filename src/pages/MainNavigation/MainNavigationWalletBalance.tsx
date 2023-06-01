@@ -14,8 +14,7 @@ const MainNavigationWalletBalance = (props: Props) => {
   const {
     accessToken,
     chainId: userChainId,
-    chainTokenBalance: walletBalance,
-    chainTokenBalanceLoading: walletBalanceLoading,
+    userTokens,
   } = useAppSelector(selectUserStore);
   const { items: chains } = useAppSelector(selectChainsStore);
   const userChain = getChainById(userChainId, chains);
@@ -24,6 +23,10 @@ const MainNavigationWalletBalance = (props: Props) => {
     userChainId,
     chains
   );
+  const balance =
+    userTokens.find(
+      (userToken) => userToken.token.symbol === nativeToken?.symbol
+    )?.balance || '0';
 
   return accessToken && nativeToken ? (
     <Box
@@ -59,7 +62,7 @@ const MainNavigationWalletBalance = (props: Props) => {
         },
       }}
     >
-      {walletBalanceLoading ? (
+      {userTokens.length < 1 ? (
         <Skeleton
           width="60px"
           variant="rounded"
@@ -75,7 +78,7 @@ const MainNavigationWalletBalance = (props: Props) => {
               <AvatarDefault sx={{ width: '16px', height: '16px' }} />
             )
           }
-          label={parseFloat(parseFloat(walletBalance).toFixed(6)).toString()}
+          label={parseFloat(parseFloat(balance).toFixed(6)).toString()}
         />
       )}
     </Box>

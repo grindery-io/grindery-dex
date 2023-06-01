@@ -38,6 +38,7 @@ import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import MainNavigationWalletBalance from './MainNavigationWalletBalance';
 import { ChainType } from '../../types';
 import CheckIcon from '@mui/icons-material/Check';
+import MainNavigationTokenBalances from './MainNavigationTokenBalances';
 
 const MODES = {
   DEFAULT: 0,
@@ -60,6 +61,7 @@ const MainNavigationUserMenuV2 = (props: Props) => {
     address,
     advancedMode,
     chainId: userChainId,
+    userTokens,
   } = useAppSelector(selectUserStore);
   const { items: chains } = useAppSelector(selectChainsStore);
   const userChain = getChainById(userChainId, chains);
@@ -136,7 +138,7 @@ const MainNavigationUserMenuV2 = (props: Props) => {
               sx={{
                 minWidth: 'auto',
                 padding: accessToken ? '0px' : '4px',
-                marginRight: '16px',
+                marginRight: userChain ? '16px' : '0',
                 '& img': {
                   width: '32px',
                   height: '32px',
@@ -148,7 +150,7 @@ const MainNavigationUserMenuV2 = (props: Props) => {
               {accessToken ? (
                 <MainNavigationWalletBalance />
               ) : (
-                <WalletIcon sx={{ color: '#0B0D17' }} />
+                <WalletIcon sx={{ color: '#0B0D17', marginRight: '8px' }} />
               )}
             </ListItemIcon>
 
@@ -341,25 +343,26 @@ const MainNavigationUserMenuV2 = (props: Props) => {
                 </Stack>
               }
             />
-            {userChain && (
-              <ListItemIcon
+
+            <ListItemIcon
+              sx={{
+                minWidth: 'initial',
+                marginLeft: '20px',
+                marginBottom: 'auto',
+              }}
+            >
+              <Stack
+                direction="row"
+                alignItems="center"
+                justifyContent="center"
                 sx={{
-                  minWidth: 'initial',
-                  marginLeft: '20px',
-                  marginBottom: 'auto',
+                  background: '#FFFFFF',
+                  border: '1px solid #D4D7DD',
+                  borderRadius: '4px',
+                  padding: '4px 8px',
                 }}
               >
-                <Stack
-                  direction="row"
-                  alignItems="center"
-                  justifyContent="center"
-                  sx={{
-                    background: '#FFFFFF',
-                    border: '1px solid #D4D7DD',
-                    borderRadius: '4px',
-                    padding: '4px 8px',
-                  }}
-                >
+                {userChain && (
                   <Avatar
                     src={userChain?.icon}
                     sx={{
@@ -372,23 +375,31 @@ const MainNavigationUserMenuV2 = (props: Props) => {
                       },
                     }}
                   />
-                  <Typography
-                    sx={{
-                      fontWeight: '400',
-                      fontSize: '12px',
-                      lineHeight: '120%',
-                      padding: 0,
-                      margin: 0,
-                    }}
-                  >
-                    {userChain.label}
-                  </Typography>
-                </Stack>
-              </ListItemIcon>
-            )}
+                )}
+                <Typography
+                  sx={{
+                    fontWeight: '400',
+                    fontSize: '12px',
+                    lineHeight: '120%',
+                    padding: 0,
+                    margin: 0,
+                  }}
+                >
+                  {userChain?.label || 'Unknown network'}
+                </Typography>
+              </Stack>
+            </ListItemIcon>
           </ListItem>
         )}
         {mode === MODES.DEFAULT && (
+          <Box
+            sx={{ margin: '16px 0', height: '1px', background: '#E3E3E8' }}
+          />
+        )}
+        {mode === MODES.DEFAULT && userChain && userTokens.length > 0 && (
+          <MainNavigationTokenBalances />
+        )}
+        {mode === MODES.DEFAULT && userChain && userTokens.length > 0 && (
           <Box
             sx={{ margin: '16px 0', height: '1px', background: '#E3E3E8' }}
           />
@@ -495,7 +506,7 @@ const MainNavigationUserMenuV2 = (props: Props) => {
               fontSize: '16px',
               fontWeight: '700',
               lineHeight: '1.5',
-              padding: '12px 24px',
+              padding: '12px 24px !important',
               margin: '16px 0 0',
               '&:hover': {
                 background: '#F1F2F4 !important',

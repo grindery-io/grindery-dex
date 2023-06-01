@@ -57,7 +57,11 @@ const TradePageOffersList = (props: Props) => {
             <NotFound
               text={
                 <>
-                  No offers found. Try 0.01 Goerli ETH. For support{' '}
+                  No offers found.
+                  <br />
+                  Try another amount, chain or token.
+                  <br />
+                  For support{' '}
                   <a
                     style={{ color: '#3f49e1' }}
                     href="https://discord.gg/PCMTWg3KzE"

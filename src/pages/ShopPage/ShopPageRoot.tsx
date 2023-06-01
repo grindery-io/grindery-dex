@@ -31,7 +31,6 @@ const ShopPageRoot = (props: Props) => {
     accessToken,
     address: userWalletAddress,
     advancedMode,
-    chainTokenPrice: tokenPrice,
   } = useAppSelector(selectUserStore);
   const {
     offers,
@@ -186,7 +185,6 @@ const ShopPageRoot = (props: Props) => {
                       id={offer.offerId || offer._id}
                       key={offer._id}
                       offer={offer}
-                      tokenPrice={tokenPrice}
                       fromChain={fromChain}
                       fromToken={fromToken}
                       chains={chains}

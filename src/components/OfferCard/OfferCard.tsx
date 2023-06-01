@@ -12,7 +12,6 @@ export type OfferCardProps = {
   offer: OfferType;
   fromChain: ChainType;
   fromToken: TokenType;
-  tokenPrice: number | null;
   chains: ChainType[];
   accepting: string;
   advancedMode?: boolean;

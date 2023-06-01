@@ -18,6 +18,7 @@ import {
   isUserAdmin,
 } from '../services';
 import { getChainById } from '../utils';
+import { TokenType } from '../types';
 
 // Context props
 type ContextProps = {
@@ -58,8 +59,7 @@ export const UserProvider = ({ children }: UserProviderProps) => {
     address: userAddress,
   } = useAppSelector(selectUserStore);
   const { items: chains } = useAppSelector(selectChainsStore);
-  const userChainTokenSymbol =
-    getChainById(userChainId, chains)?.nativeToken || '';
+  const userChain = getChainById(userChainId, chains);
 
   const connectUser = () => {
     connect();
@@ -92,37 +92,12 @@ export const UserProvider = ({ children }: UserProviderProps) => {
     [dispatch]
   );
 
-  const fetchChainTokenPrice = useCallback(
-    async (tokenSymbol: string) => {
-      dispatch(userStoreActions.setChainTokenPriceLoading(true));
-      const price = await getTokenPriceById(accessToken, tokenSymbol);
-      dispatch(userStoreActions.setChainTokenPrice(price));
-      dispatch(userStoreActions.setChainTokenPriceLoading(false));
-    },
-    [accessToken, dispatch]
-  );
-
   const getTokenPriceBySymbol = useCallback(
     async (tokenSymbol: string) => {
       const price = await getTokenPriceById(accessToken, tokenSymbol);
       return price;
     },
     [accessToken]
-  );
-
-  const fetchChainTokenBalance = useCallback(
-    async (accessToken: string, address: string) => {
-      dispatch(userStoreActions.setChainTokenBalanceLoading(true));
-      const balance = await getTokenBalanceRequest(
-        accessToken,
-        userChainId,
-        address,
-        '0x0'
-      );
-      dispatch(userStoreActions.setChainTokenBalance(balance || '0'));
-      dispatch(userStoreActions.setChainTokenBalanceLoading(false));
-    },
-    [userChainId, dispatch]
   );
 
   const handleAdvancedModeToggleAction = (userId: string, newMode: boolean) => {
@@ -140,6 +115,35 @@ export const UserProvider = ({ children }: UserProviderProps) => {
       })
     );
   };
+
+  const getUserTokens = useCallback(async () => {
+    dispatch(userStoreActions.setUserTokens([]));
+    if (accessToken && userChain && userChain?.tokens && userAddress) {
+      const promises = userChain?.tokens.map(async (token: TokenType) => {
+        const price = await getTokenPriceById(accessToken, token.symbol).catch(
+          () => {
+            return 0;
+          }
+        );
+        const balance = await getTokenBalanceRequest(
+          accessToken,
+          userChain.chainId,
+          userAddress,
+          token.address || ''
+        ).catch(() => {
+          return '0';
+        });
+        return { token, price, balance };
+      });
+
+      const results = await Promise.all(promises);
+      dispatch(userStoreActions.setUserTokens(results));
+    }
+  }, [accessToken, userAddress, userChain, dispatch]);
+
+  useEffect(() => {
+    getUserTokens();
+  }, [getUserTokens]);
 
   useEffect(() => {
     dispatch(userStoreActions.setId(user || ''));
@@ -166,25 +170,6 @@ export const UserProvider = ({ children }: UserProviderProps) => {
       checkUserIsAdmin(accessToken);
     }
   }, [accessToken, checkUserIsAdmin]);
-
-  useEffect(() => {
-    if (userChainId && accessToken && userAddress && userChainTokenSymbol) {
-      fetchChainTokenBalance(accessToken, userAddress);
-      fetchChainTokenPrice(userChainTokenSymbol);
-    } else {
-      dispatch(userStoreActions.setChainTokenBalance('0'));
-      dispatch(userStoreActions.setChainTokenPrice(null));
-      dispatch(userStoreActions.setChainTokenPriceLoading(false));
-    }
-  }, [
-    userChainId,
-    accessToken,
-    userAddress,
-    userChainTokenSymbol,
-    fetchChainTokenBalance,
-    fetchChainTokenPrice,
-    dispatch,
-  ]);
 
   useEffect(() => {
     const savedAdvancedMode = localStorage.getItem(`${user}_advancedMode`);

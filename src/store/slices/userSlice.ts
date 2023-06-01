@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../store';
+import { UserTokenType } from '../../types';
 
 interface UserState {
   accessToken: string;
@@ -8,15 +9,12 @@ interface UserState {
   advancedModeAlert: boolean;
   chain: string;
   chainId: string;
-  chainTokenBalance: string;
-  chainTokenBalanceLoading: boolean;
-  chainTokenPrice: number | null;
-  chainTokenPriceLoading: boolean;
   id: string;
   isAdmin: boolean;
   isAdminLoading: boolean;
   popupClosed: boolean;
   sessionExpired: boolean;
+  userTokens: UserTokenType[];
 }
 
 const initialState: UserState = {
@@ -26,15 +24,12 @@ const initialState: UserState = {
   advancedModeAlert: true,
   chain: '',
   chainId: '',
-  chainTokenBalance: '',
-  chainTokenBalanceLoading: true,
-  chainTokenPrice: null,
-  chainTokenPriceLoading: true,
   id: '',
   isAdmin: false,
   isAdminLoading: true,
   popupClosed: false,
   sessionExpired: false,
+  userTokens: [],
 };
 
 const userSlice = createSlice({
@@ -60,18 +55,6 @@ const userSlice = createSlice({
     setIsAdminLoading(state, action: PayloadAction<boolean>) {
       state.isAdminLoading = action.payload;
     },
-    setChainTokenPrice(state, action: PayloadAction<number | null>) {
-      state.chainTokenPrice = action.payload;
-    },
-    setChainTokenPriceLoading(state, action: PayloadAction<boolean>) {
-      state.chainTokenPriceLoading = action.payload;
-    },
-    setChainTokenBalance(state, action: PayloadAction<string>) {
-      state.chainTokenBalance = action.payload;
-    },
-    setChainTokenBalanceLoading(state, action: PayloadAction<boolean>) {
-      state.chainTokenBalanceLoading = action.payload;
-    },
     setAdvancedMode(state, action: PayloadAction<boolean>) {
       state.advancedMode = action.payload;
     },
@@ -83,6 +66,9 @@ const userSlice = createSlice({
     },
     setSessionExpired(state, action: PayloadAction<boolean>) {
       state.sessionExpired = action.payload;
+    },
+    setUserTokens(state, action: PayloadAction<UserTokenType[]>) {
+      state.userTokens = action.payload;
     },
   },
 });

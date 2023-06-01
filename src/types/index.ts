@@ -11,3 +11,4 @@ export * from './WalletTokenType';
 export * from './OrderPlacingStatusType';
 export * from './JSONRPCRequestType';
 export * from './NotificationType';
+export * from './UserTokenType';
