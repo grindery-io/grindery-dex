@@ -73,6 +73,9 @@ const HistoryPageRoot = (props: Props) => {
     <>
       <PageCard containerStyle={{ maxWidth: '1024px' }}>
         <PageCardHeader
+          sx={{
+            padding: '40px 40px 10px !important',
+          }}
           title="Orders history"
           endAdornment={
             user && orders.length > 0 ? (
@@ -106,7 +109,9 @@ const HistoryPageRoot = (props: Props) => {
             ) : null
           }
         />
-        <PageCardBody>
+        <PageCardBody
+          sx={{ paddingTop: '90px', paddingLeft: '40px', paddingRight: '40px' }}
+        >
           {!loading && orders.length < 1 && <NotFound text="No orders found" />}
           {loading ? (
             <Box sx={{ paddingBottom: '24px' }}>
@@ -141,12 +146,24 @@ const HistoryPageRoot = (props: Props) => {
                         stickyHeader
                       >
                         <TableHead>
-                          <TableRow>
+                          <TableRow
+                            sx={{
+                              '& th': {
+                                color: '#808898',
+                                fontWeight: '700',
+                              },
+                            }}
+                          >
                             <TableCell size="small">ID</TableCell>
                             <TableCell size="small">Order Date</TableCell>
                             <TableCell size="small">Pay</TableCell>
                             <TableCell size="small">Receive</TableCell>
-                            <TableCell size="small">Status</TableCell>
+                            <TableCell
+                              sx={{ textAlign: 'right', paddingRight: '20px' }}
+                              size="small"
+                            >
+                              Status
+                            </TableCell>
                           </TableRow>
                         </TableHead>
                         <TableBody>

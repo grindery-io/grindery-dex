@@ -1,5 +1,5 @@
 import React, { ReactNode } from 'react';
-import { Typography } from '@mui/material';
+import { SxProps, Typography } from '@mui/material';
 import { PageCardHeaderAppBar } from './PageCardHeaderAppBar';
 
 type Props = {
@@ -8,15 +8,17 @@ type Props = {
   titleSize?: number;
   startAdornment?: ReactNode;
   endAdornment?: ReactNode;
+  sx?: SxProps | React.CSSProperties;
 };
 
 const PageCardHeader = (props: Props) => {
-  const { title, endAdornment, startAdornment, titleAlign, titleSize } = props;
+  const { title, endAdornment, startAdornment, titleAlign, titleSize, sx } =
+    props;
   return (
     <>
       <PageCardHeaderAppBar
         elevation={0}
-        style={{
+        sx={{
           paddingLeft: '24px',
           paddingRight: '24px',
           paddingBottom: '10px',
@@ -29,6 +31,7 @@ const PageCardHeader = (props: Props) => {
           borderTopRightRadius: '12px',
           borderTopLeftRadius: '12px',
           overflow: 'hidden',
+          ...(sx || {}),
         }}
       >
         {startAdornment || null}

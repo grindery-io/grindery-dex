@@ -1,12 +1,5 @@
 import React from 'react';
-import {
-  Avatar,
-  Badge,
-  Chip,
-  Skeleton,
-  TableCell,
-  TableRow,
-} from '@mui/material';
+import { Avatar, Badge, Skeleton, TableCell, TableRow } from '@mui/material';
 import { Box } from '@mui/system';
 import moment from 'moment';
 import TransactionID from '../TransactionID/TransactionID';
@@ -20,6 +13,7 @@ import {
 } from '../../utils';
 import { ChainTokenBox } from '../ChainTokenBox/ChainTokenBox';
 import { AvatarDefault } from '../Avatar/AvatarDefault';
+import { OrderHistoryRowChip } from './OrderHistoryRowChip';
 
 type Props = {
   order: OrderType;
@@ -50,7 +44,7 @@ const OrderHistoryRow = (props: Props) => {
       ? { label: 'Completed', color: 'success' }
       : order.status === OrderStatusType.COMPLETION_FAILURE
       ? { label: 'Failed', color: 'error' }
-      : { label: 'In process', color: 'default' };
+      : { label: 'In process', color: 'warning' };
 
   const renderTokenCell = (
     chain: ChainType,
@@ -136,25 +130,38 @@ const OrderHistoryRow = (props: Props) => {
       sx={{
         '&:last-child td, &:last-child th': { border: 0 },
         cursor: onClick ? 'pointer' : 'default',
+        '& td': {
+          padding: '14px 16px',
+        },
       }}
       onClick={onClick}
       hover={!!onClick}
     >
-      <TableCell component="th" scope="row">
-        <TransactionID
-          value={order.hash || ''}
-          link={explorerLink}
-          startLength={6}
-          endLength={4}
-        />
-      </TableCell>
-      <TableCell sx={{ whiteSpace: 'nowrap' }}>
-        {order.date && (
-          <>
-            <div>{moment(order.date).format('MM/DD/YYYY')}</div>
-            <div>{moment(order.date).format('HH:mm:ss')}</div>
-          </>
+      <TableCell
+        component="th"
+        scope="row"
+        sx={{
+          '& svg': {
+            color: '#F57F21',
+          },
+        }}
+      >
+        {order.orderId ? (
+          <TransactionID
+            value={order.orderId || ''}
+            link={explorerLink}
+            startLength={6}
+            endLength={4}
+            valueStyle={{
+              color: '#0B0D17',
+            }}
+          />
+        ) : (
+          'Pending...'
         )}
+      </TableCell>
+      <TableCell sx={{ whiteSpace: 'nowrap', color: '#0B0D17' }}>
+        {order.date && <>{moment(order.date).format('MM/DD/YYYY, HH:mm')}</>}
       </TableCell>
       <TableCell>
         {fromChain &&
@@ -168,8 +175,12 @@ const OrderHistoryRow = (props: Props) => {
           order.amountTokenOffer &&
           renderTokenCell(toChain, toToken, order.amountTokenOffer)}
       </TableCell>
-      <TableCell>
-        <Chip label={status.label} color={status.color} size="small" />
+      <TableCell sx={{ textAlign: 'right' }}>
+        <OrderHistoryRowChip
+          label={status.label}
+          color={status.color}
+          size="small"
+        />
       </TableCell>
     </TableRow>
   );
