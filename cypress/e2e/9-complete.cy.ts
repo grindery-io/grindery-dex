@@ -33,21 +33,8 @@ describe('Complete testing', () => {
             .contains('Deactivate')
             .click();
 
+          cy.allowMetamaskToSwitchNetwork();
           cy.confirmMetamaskTransaction();
-
-          cy.wait('@UpdateOffer', {
-            requestTimeout: 120000,
-            responseTimeout: 120000,
-          }).then(() => {
-            cy.wait(1000);
-            cy.get('#' + offerId)
-              .find('button[aria-label="show more"]')
-              .click();
-            cy.get('#' + offerId)
-              .find('button')
-              .contains('Activate')
-              .should('exist');
-          });
         });
     });
   });

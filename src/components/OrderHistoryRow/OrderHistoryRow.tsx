@@ -126,6 +126,7 @@ const OrderHistoryRow = (props: Props) => {
 
   return (
     <TableRow
+      className="OrderHistoryRow"
       key={order._id}
       sx={{
         '&:last-child td, &:last-child th': { border: 0 },

@@ -25,11 +25,11 @@ describe('Orders page', () => {
   it('Shows orders list', () => {
     cy.wait('@GetUserOrders').then(() => {
       cy.wait(1000);
-      cy.get('.orders-list').should('exist');
+      cy.get('#orders-list').should('exist');
 
-      cy.get('.orders-list').then((ordersList) => {
+      cy.get('#orders-list').then((ordersList) => {
         if (ordersList.find('.OrderCard').length) {
-          cy.get('.orders-list .OrderCard').first().should('exist');
+          cy.get('#orders-list .OrderCard').first().should('exist');
         } else {
           cy.get('#not-found-message').should('have.text', 'No orders found');
         }
@@ -40,7 +40,7 @@ describe('Orders page', () => {
   it('Pays an order and updates order status', () => {
     cy.wait('@GetUserOrders').then(() => {
       cy.wait(1000);
-      cy.get('.orders-list').then((ordersList) => {
+      cy.get('#orders-list').then((ordersList) => {
         if (ordersList.find('.OrderCard-incomplete').length) {
           let orderCardId: string;
           cy.get('.OrderCard-incomplete')
@@ -67,7 +67,7 @@ describe('Orders page', () => {
               });
             });
         } else {
-          cy.get('.orders-list .OrderCard-incomplete').should('exist');
+          cy.get('#orders-list .OrderCard-incomplete').should('exist');
         }
       });
     });

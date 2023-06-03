@@ -9,6 +9,6 @@ describe('Orders history page', () => {
   });
 
   it('Shows orders list', () => {
-    cy.get('.OrderCard').should('exist');
+    cy.get('.OrderHistoryRow').should('exist');
   });
 });

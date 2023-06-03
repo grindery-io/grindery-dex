@@ -20,7 +20,7 @@ describe('Shop page', () => {
 
   it('Buys a shop offer', () => {
     cy.get(
-      '.OfferCard[data-provider="0x8730762Cad4a27816A467fAc54e3dd1E2e9617A1"]'
+      '.OfferCard[data-provider="0xc8F2da4F38804224fF56E2c28604327Ffbeb2e69"]'
     )
       .first()
       .get('.OfferCardAction button')
@@ -33,8 +33,6 @@ describe('Shop page', () => {
     cy.wait('@PlaceOrder', {
       requestTimeout: 120000,
       responseTimeout: 120000,
-    }).then(() => {
-      cy.contains('button', 'Close').click();
     });
   });
 });

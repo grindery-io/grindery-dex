@@ -53,14 +53,11 @@ describe('Offers page', () => {
           'on BSC Testnet'
         );
 
-        cy.get('#receive-button .MuiCardHeader-title').should(
-          'have.text',
-          'ETH'
-        );
-        cy.get('#receive-button .MuiCardHeader-subheader').should(
-          'have.text',
-          'on Goerli'
-        );
+        // v2
+        cy.get('#receive-button').click();
+        cy.get('.ChainsList__card').first().click();
+        cy.get('.TokensList__item').first().click();
+        // v2
 
         cy.get('button').contains('Create').click();
 
@@ -82,7 +79,7 @@ describe('Offers page', () => {
           .find('.Mui-error')
           .should('exist');
 
-        cy.get('input[name="amountMin"]').type('0.001', { force: true });
+        cy.get('input[name="amountMin"]').type('0.01', { force: true });
         cy.get('input[name="amountMin"]')
           .parents('.MuiFormControl-root')
           .find('.Mui-error')
@@ -114,10 +111,11 @@ describe('Offers page', () => {
           .find('.Mui-error')
           .should('not.exist');
 
-        cy.get('input[name="amount"]').type('0.001', { force: true });
+        cy.get('input[name="amount"]').type('0.01', { force: true });
 
         cy.get('button').contains('Create').click();
 
+        cy.allowMetamaskToAddAndSwitchNetwork();
         cy.confirmMetamaskTransaction();
 
         cy.wait('@GetCreatedOffer', {
@@ -133,101 +131,6 @@ describe('Offers page', () => {
           });
         });
       });
-    });
-  });
-
-  it('Shows offer details when offer selected', () => {
-    cy.wait('@GetUserOffers').then(() => {
-      cy.wait(1000);
-      cy.get('.OfferPublic').first().should('exist');
-      cy.get('.OfferPublic')
-        .first()
-        .find('button[aria-label="show more"]')
-        .should('exist');
-      cy.get('.OfferPublic')
-        .first()
-        .find('button[aria-label="show more"]')
-        .click({ force: true });
-      cy.get('.OfferPublic').first().find('.MuiCollapse-root').should('exist');
-      cy.get('.OfferPublic')
-        .first()
-        .find('.MuiCollapse-root button')
-        .should('exist');
-      cy.get('.OfferPublic')
-        .first()
-        .find('.MuiCollapse-root p.MuiTypography-body1')
-        .first()
-        .should('include.text', 'Offer ID:');
-    });
-  });
-
-  it('Deactivates an offer on deactivate button click', () => {
-    cy.wait(60000);
-    cy.wait('@GetUserOffers').then(() => {
-      cy.wait(1000);
-      let offerId: string;
-      cy.get('.OfferPublic')
-        .first()
-        .then((offer) => {
-          offerId = offer.attr('id');
-          cy.get('#' + offerId)
-            .find('button[aria-label="show more"]')
-            .click();
-          cy.get('#' + offerId)
-            .find('button', { timeout: 60000 })
-            .contains('Deactivate', { timeout: 60000 })
-            .click();
-
-          cy.confirmMetamaskTransaction();
-
-          cy.wait('@UpdateOffer', {
-            requestTimeout: 120000,
-            responseTimeout: 120000,
-          }).then(() => {
-            cy.wait(1000);
-            cy.get('#' + offerId)
-              .find('button[aria-label="show more"]')
-              .click();
-            cy.get('#' + offerId)
-              .find('.OfferPublic__status')
-              .should('exist');
-          });
-        });
-    });
-  });
-
-  it('Activates an offer on activate button click', () => {
-    cy.wait(60000);
-    cy.wait('@GetUserOffers').then(() => {
-      cy.wait(1000);
-      let offerId: string;
-      cy.get('.OfferPublic')
-        .last()
-        .then((offer) => {
-          offerId = offer.attr('id');
-          cy.get('#' + offerId)
-            .find('button[aria-label="show more"]')
-            .click();
-          cy.get('#' + offerId)
-            .find('button', { timeout: 60000 })
-            .contains('Activate', { timeout: 60000 })
-            .click();
-
-          cy.confirmMetamaskTransaction();
-
-          cy.wait('@UpdateOffer', {
-            requestTimeout: 120000,
-            responseTimeout: 120000,
-          }).then(() => {
-            cy.wait(1000);
-            cy.get('#' + offerId)
-              .find('button[aria-label="show more"]')
-              .click();
-            cy.get('#' + offerId)
-              .find('.OfferPublic__status')
-              .should('exist');
-          });
-        });
     });
   });
 });

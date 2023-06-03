@@ -23,7 +23,7 @@ describe('Trade page', () => {
     cy.get('#receive-button').click();
     cy.get('.PageCardHeader__typography')
       .first()
-      .should('have.text', 'Select chain and token');
+      .should('have.text', 'Receive');
     cy.get('.ChainsList__card').should('have.length', 1);
     cy.get('.ChainsList__card').click();
     cy.get('.TokensList__item').should('have.length', 1);
@@ -44,31 +44,41 @@ describe('Trade page', () => {
   });
 
   it('Shows offers if form is submitted', () => {
-    cy.wait(['@GetFromTokenBalance']);
-    cy.get('input[name="amount"]').type('0.001');
+    cy.get('#pay-button').click();
+    cy.get('.ChainsList__card').first().click();
+    cy.get('.TokensList__item').first().click();
+
+    cy.get('#receive-button').click();
+    cy.get('.ChainsList__card').first().click();
+    cy.get('.TokensList__item').first().click();
+
+    cy.get('input[name="amount"]').type('0.01');
     cy.get('button').contains('Search offers').click();
     cy.get('.TradePage__box').should('have.css', 'opacity', '1');
     cy.get('.TradeOffer').first().should('exist');
   });
 
   it('Places an order', () => {
-    cy.wait(60000);
-    cy.wait(['@GetFromTokenBalance']);
-    cy.get('input[name="amount"]').type('0.001');
+    cy.get('input[name="amount"]').type('0.01');
     cy.get('button').contains('Search offers').click();
     cy.get('.TradePage__box').should('have.css', 'opacity', '1');
     cy.get(
-      '.TradeOffer[data-provider="0x8730762Cad4a27816A467fAc54e3dd1E2e9617A1"]'
+      '.TradeOffer[data-provider="0xc8F2da4F38804224fF56E2c28604327Ffbeb2e69"]'
     )
       .first()
+      .click();
+    cy.get(
+      '.TradeOffer[data-provider="0xc8F2da4F38804224fF56E2c28604327Ffbeb2e69"]'
+    )
+      .first()
+      .find('button')
+      .contains('Place order')
       .click();
     cy.wait(2000);
     cy.confirmMetamaskTransaction();
     cy.wait('@PlaceOrder', {
       requestTimeout: 120000,
       responseTimeout: 120000,
-    }).then(() => {
-      cy.contains('button', 'Close').click();
     });
   });
 });
