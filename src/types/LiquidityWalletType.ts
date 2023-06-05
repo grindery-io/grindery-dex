@@ -6,4 +6,6 @@ export type LiquidityWalletType = {
   updated?: boolean;
   new?: boolean;
   name?: string;
+  trades?: string;
+  reputation?: string;
 };

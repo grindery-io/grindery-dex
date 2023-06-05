@@ -7,6 +7,7 @@ import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import { getOfferProviderLink } from '../../utils';
 import { OfferCardProps } from './OfferCard';
 import moment from 'moment';
+import StarBorderIcon from '@mui/icons-material/StarBorder';
 
 const OfferCardHeader = (props: OfferCardProps) => {
   const { offer, chains, advancedMode } = props;
@@ -63,7 +64,7 @@ const OfferCardHeader = (props: OfferCardProps) => {
       >
         {isInAdvancedMode && (
           <Box>
-            <Tooltip title="Trades: 134">
+            <Tooltip title={`Trades: ${offer.liquidityWallet?.trades || '0'}`}>
               <Stack
                 direction="row"
                 alignItems="center"
@@ -79,12 +80,12 @@ const OfferCardHeader = (props: OfferCardProps) => {
                 <Typography
                   sx={{
                     fontWeight: '400',
-                    fontSize: '12px',
-                    lineHeight: '12px',
+                    fontSize: '14px',
+                    lineHeight: '14px',
                     color: '#E3E3E8',
                   }}
                 >
-                  134
+                  {offer.liquidityWallet?.trades || '0'}
                 </Typography>
               </Stack>
             </Tooltip>
@@ -92,16 +93,18 @@ const OfferCardHeader = (props: OfferCardProps) => {
         )}
         {isInAdvancedMode && (
           <Box>
-            <Tooltip title="Disputes: 2">
+            <Tooltip
+              title={`Reputation: ${offer.liquidityWallet?.reputation || '0'}`}
+            >
               <Stack
                 direction="row"
                 alignItems="center"
                 justifyContent="flex-start"
                 gap="4px"
               >
-                <GavelIcon
+                <StarBorderIcon
                   sx={{
-                    fontSize: '14px',
+                    fontSize: '16px',
                     color: '#808898',
                   }}
                 />
@@ -113,7 +116,7 @@ const OfferCardHeader = (props: OfferCardProps) => {
                     color: '#E3E3E8',
                   }}
                 >
-                  2
+                  {offer.liquidityWallet?.reputation || '0'}
                 </Typography>
               </Stack>
             </Tooltip>
