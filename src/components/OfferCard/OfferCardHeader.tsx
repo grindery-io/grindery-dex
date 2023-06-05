@@ -1,7 +1,6 @@
 import React from 'react';
 import { Box, Skeleton, Stack, Tooltip, Typography } from '@mui/material';
 import TransactionID from '../TransactionID/TransactionID';
-import GavelIcon from '@mui/icons-material/Gavel';
 import CurrencyExchangeIcon from '@mui/icons-material/CurrencyExchange';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import { getOfferProviderLink } from '../../utils';
