@@ -236,18 +236,24 @@ export const AutomationsProvider = ({ children }: AutomationsProviderProps) => {
     // connect signer
     const walletContract = _walletContract.connect(signer);
 
+    const gasEstimate = await walletContract.estimateGas.setBot(input.bot);
+
     // set wallet bot
-    const tx = await walletContract.setBot(input.bot).catch((error: any) => {
-      dispatch(
-        automationsStoreActions.setError({
-          type: 'setBot',
-          text: getErrorMessage(error, 'Transaction error'),
-        })
-      );
-      console.error('setBot error', error);
-      dispatch(automationsStoreActions.setLoading(false));
-      return;
-    });
+    const tx = await walletContract
+      .setBot(input.bot, {
+        gasLimit: gasEstimate,
+      })
+      .catch((error: any) => {
+        dispatch(
+          automationsStoreActions.setError({
+            type: 'setBot',
+            text: getErrorMessage(error, 'Transaction error'),
+          })
+        );
+        console.error('setBot error', error);
+        dispatch(automationsStoreActions.setLoading(false));
+        return;
+      });
 
     if (!tx) {
       dispatch(automationsStoreActions.setLoading(false));
