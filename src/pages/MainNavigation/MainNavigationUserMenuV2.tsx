@@ -419,7 +419,7 @@ const MainNavigationUserMenuV2 = (props: Props) => {
           </MenuItem>
         )}
 
-        {advancedMode && mode === MODES.DEFAULT && (
+        {mode === MODES.DEFAULT && (
           <MenuItem
             onClick={() => {
               handleClose();

@@ -458,7 +458,7 @@ const Offer = (props: Props) => {
                 )}
 
                 <TransactionID
-                  value={offer.hash || ''}
+                  value={offer.offerId || offer.hash || ''}
                   label="Offer ID"
                   link={explorerLink}
                 />
