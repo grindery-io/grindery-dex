@@ -1,36 +1,21 @@
 import React from 'react';
 import { Box } from '@mui/system';
-import {
-  Avatar,
-  Badge,
-  Skeleton,
-  Stack,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableRow,
-  Typography,
-} from '@mui/material';
-import { TransactionID, CardTitle, ChainTokenBox, AvatarDefault } from '..';
+import { Avatar, Badge, Skeleton, Stack, Typography } from '@mui/material';
+import { CardTitle, ChainTokenBox, AvatarDefault } from '..';
 import { OrderStatusType } from '../../types';
 import {
   getChainById,
   getOfferAmount,
   getOfferExchangeAmount,
   getOfferExchangeRate,
-  getOrderSummaryRows,
   getTokenBySymbol,
 } from '../../utils';
-import { selectUserStore, useAppSelector } from '../../store';
 import { OrderPlacingModalV2Props } from './OrderPlacingModalV2';
 
 const OrderPlacingModalV2Summary = (props: OrderPlacingModalV2Props) => {
   const { createdOrder, chains, offer: selectedoffer, userAmount } = props;
 
   const offer = createdOrder?.offer || selectedoffer;
-
-  const { address } = useAppSelector(selectUserStore);
 
   const exchangeChain = getChainById(offer?.exchangeChainId || '', chains);
   const exchangeToken = getTokenBySymbol(
@@ -58,13 +43,6 @@ const OrderPlacingModalV2Summary = (props: OrderPlacingModalV2Props) => {
         parseFloat(userAmount) / parseFloat(getOfferExchangeRate(offer))
       ).toString()
     : '0';
-
-  const orderSummaryRows = getOrderSummaryRows(
-    chains,
-    offer,
-    createdOrder,
-    address
-  );
 
   return (
     <>
@@ -240,58 +218,6 @@ const OrderPlacingModalV2Summary = (props: OrderPlacingModalV2Props) => {
             />
           )}
         </Stack>
-      </Box>
-      <Box>
-        <TableContainer
-          sx={{
-            '& table': {
-              width: '100%',
-              borderCollapse: 'collapse',
-              border: '1px solid #979797',
-              '& td': {
-                border: '1px solid #979797',
-                padding: '8px',
-                textAlign: 'left',
-                color: '#000000',
-                fontWeight: '400',
-                fontSize: '14px',
-                lineHeight: '125%',
-                '& svg': {
-                  color: '#F57F21',
-                },
-              },
-            },
-          }}
-        >
-          <Table>
-            <TableBody>
-              {orderSummaryRows.map((row) => (
-                <TableRow key={row.label}>
-                  <TableCell>{row.label}</TableCell>
-                  <TableCell>{row.chain}</TableCell>
-                  <TableCell>
-                    {row.address ? (
-                      <TransactionID
-                        startLength={6}
-                        endLength={4}
-                        value={row.address}
-                        link={row.addressLink || undefined}
-                        valueStyle={{
-                          color: '#000000',
-                          fontWeight: '400',
-                          fontSize: '14px',
-                          lineHeight: '125%',
-                        }}
-                      />
-                    ) : (
-                      'pending...'
-                    )}
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
       </Box>
     </>
   );
