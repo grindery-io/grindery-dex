@@ -20,7 +20,7 @@ const OfferCardFooter = (props: OfferCardProps) => {
           iconStyle={{
             color: '#9DA2AE',
           }}
-          value={offer.hash}
+          value={offer.offerId || offer.hash || ''}
           link={explorerLink}
         />
       ) : (

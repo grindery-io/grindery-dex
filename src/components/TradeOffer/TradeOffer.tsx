@@ -555,7 +555,7 @@ const TradeOffer = (props: Props) => {
               </Stack>
             )}
             <TransactionID
-              value={offer.hash || ''}
+              value={offer.offerId || offer.hash || ''}
               label="Offer ID"
               link={explorerLink}
               valueStyle={{ color: '#000' }}
