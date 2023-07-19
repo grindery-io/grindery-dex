@@ -34,7 +34,7 @@ const OrderPlacingModalV2History = (props: OrderPlacingModalV2Props) => {
         padding: '40px',
       }}
     >
-      <Typography variant="h2" sx={{ margin: '0 0 24px', padding: 0 }}>
+      <Typography variant="h2" sx={{ margin: '0 0 40px', padding: 0 }}>
         Order History
       </Typography>
       <Stepper
