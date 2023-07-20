@@ -5,11 +5,7 @@ import {
   selectUserStore,
   useAppSelector,
 } from '../../store';
-import {
-  filterBuyerChains,
-  getChainById,
-  switchMetamaskNetwork,
-} from '../../utils';
+import { getChainById, switchMetamaskNetwork } from '../../utils';
 import { ChainType } from '../../types';
 import { RefreshIcon } from '../../icons';
 import { Menu } from '../../components';
@@ -23,7 +19,7 @@ const MainNavigationSwitchChainButtonV2 = (props: Props) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const selectedChain = getChainById(userChainId, chains);
-  const chainsList = filterBuyerChains(chains);
+  const chainsList = chains;
 
   const handleButtonClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);

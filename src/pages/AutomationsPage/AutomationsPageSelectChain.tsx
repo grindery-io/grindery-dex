@@ -22,7 +22,7 @@ const AutomationsPageSelectChain = (props: Props) => {
 
   const { input } = useAppSelector(selectAutomationsStore);
   const { chainId } = input;
-  const filteredChains = chains.filter((c: ChainType) => c.chainId === '97');
+
   let navigate = useNavigate();
   return (
     <>
@@ -46,7 +46,7 @@ const AutomationsPageSelectChain = (props: Props) => {
       <PageCardBody>
         <ChainsList
           chain={chainId}
-          chains={filteredChains}
+          chains={chains}
           onClick={(chain: ChainType) => {
             handleAutomationsInputChange('chainId', chain.chainId);
             navigate(ROUTES.SELL.AUTOMATIONS.ROOT.FULL_PATH);

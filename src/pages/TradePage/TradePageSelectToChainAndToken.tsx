@@ -28,9 +28,6 @@ const TradePageSelectChainAndToken = (props: Props) => {
   let navigate = useNavigate();
   const { items: chains, loading: chainsIsLoading } =
     useAppSelector(selectChainsStore);
-  const filteredChains = chains.filter(
-    (c: ChainType) => c.value === 'eip155:97'
-  );
   const { filter } = useAppSelector(selectTradeStore);
   const { toChainId } = filter;
   const toChain = getChainById(toChainId, chains);
@@ -64,7 +61,7 @@ const TradePageSelectChainAndToken = (props: Props) => {
       <PageCardBody>
         <ChainsList
           chain={toChain?.value || ''}
-          chains={filteredChains}
+          chains={chains}
           onClick={(chain: ChainType) => {
             handleTradeFilterChange('toChainId', chain.chainId);
             handleTradeFilterChange('toTokenId', '');

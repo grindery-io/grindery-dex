@@ -18,7 +18,7 @@ import {
   selectChainsStore,
   selectTradeStore,
 } from '../../store';
-import { filterBuyerChains, getChainById, getTokensByChain } from '../../utils';
+import { getChainById, getTokensByChain } from '../../utils';
 import { useTradeProvider } from '../../providers';
 import { ROUTES } from '../../config';
 
@@ -30,7 +30,7 @@ const TradePageSelectFromChainAndToken = (props: Props) => {
     useAppSelector(selectChainsStore);
   const { filter } = useAppSelector(selectTradeStore);
   const { fromChainId } = filter;
-  const filteredChains = filterBuyerChains(chains);
+
   const fromChain = getChainById(fromChainId, chains);
   const chainTokens = getTokensByChain(fromChain);
   const { handleTradeFilterChange } = useTradeProvider();
@@ -62,7 +62,7 @@ const TradePageSelectFromChainAndToken = (props: Props) => {
       <PageCardBody>
         <ChainsList
           chain={fromChain?.value || ''}
-          chains={filteredChains}
+          chains={chains}
           onClick={(chain: ChainType) => {
             handleTradeFilterChange('fromChainId', chain.chainId);
             handleTradeFilterChange('fromTokenId', '');
