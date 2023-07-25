@@ -21,9 +21,21 @@ export const filterBuyerChains = (chains: ChainType[]): ChainType[] => {
   );
 };
 
+export const filterChainsByPoolContract = (
+  chains: ChainType[]
+): ChainType[] => {
+  return chains.filter((chain) => chain.usefulAddresses?.grtPoolAddress);
+};
+
 export const getTokensOptionsList = (
   chains: ChainType[]
-): { value: string; label: string; chainId?: string; tokenId?: string }[] => {
+): {
+  value: string;
+  label: string;
+  chainId?: string;
+  tokenId?: string;
+  hasPoolContract?: boolean;
+}[] => {
   let options = [];
   for (var i = 0; i < chains.length; i++) {
     if (chains[i].tokens) {
@@ -33,6 +45,7 @@ export const getTokensOptionsList = (
           label: `${chains[i]?.tokens?.[t]?.symbol} on ${chains[i].label}`,
           chainId: chains[i].chainId,
           tokenId: chains[i]?.tokens?.[t]?.symbol,
+          hasPoolContract: Boolean(chains[i].usefulAddresses?.grtPoolAddress),
         });
       }
     }

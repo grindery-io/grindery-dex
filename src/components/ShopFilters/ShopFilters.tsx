@@ -11,6 +11,7 @@ type Props = {
     label: string;
     chainId?: string;
     tokenId?: string;
+    hasPoolContract?: boolean;
   }[];
 };
 
@@ -41,9 +42,7 @@ const ShopFilters = (props: Props) => {
             exchangeChainId: valueArr[1] || '',
           });
         }}
-        options={filterOptions.filter(
-          (option) => option.chainId && option.chainId !== '97'
-        )}
+        options={filterOptions.filter((option) => option.hasPoolContract)}
         defaultOption={{
           label: 'any token',
           value: '',
@@ -60,9 +59,7 @@ const ShopFilters = (props: Props) => {
             chainId: valueArr[1] || '',
           });
         }}
-        options={filterOptions.filter(
-          (option) => option.chainId && option.chainId === '97'
-        )}
+        options={filterOptions}
         defaultOption={{
           label: 'any token',
           value: '',

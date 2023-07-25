@@ -18,7 +18,11 @@ import {
   selectChainsStore,
   selectTradeStore,
 } from '../../store';
-import { getChainById, getTokensByChain } from '../../utils';
+import {
+  filterChainsByPoolContract,
+  getChainById,
+  getTokensByChain,
+} from '../../utils';
 import { useTradeProvider } from '../../providers';
 import { ROUTES } from '../../config';
 
@@ -62,7 +66,7 @@ const TradePageSelectFromChainAndToken = (props: Props) => {
       <PageCardBody>
         <ChainsList
           chain={fromChain?.value || ''}
-          chains={chains}
+          chains={filterChainsByPoolContract(chains)}
           onClick={(chain: ChainType) => {
             handleTradeFilterChange('fromChainId', chain.chainId);
             handleTradeFilterChange('fromTokenId', '');

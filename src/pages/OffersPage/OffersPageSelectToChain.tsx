@@ -18,7 +18,11 @@ import {
   selectOffersStore,
 } from '../../store';
 import { useOffersProvider } from '../../providers';
-import { getChainById, getTokensByChain } from '../../utils';
+import {
+  filterChainsByPoolContract,
+  getChainById,
+  getTokensByChain,
+} from '../../utils';
 import { ROUTES } from '../../config';
 
 function OffersPageSelectToChain() {
@@ -59,7 +63,7 @@ function OffersPageSelectToChain() {
       <PageCardBody>
         <ChainsList
           chain={toChainId}
-          chains={chains}
+          chains={filterChainsByPoolContract(chains)}
           onClick={(blockchain: ChainType) => {
             handleOfferCreateInputChange('toChainId', blockchain.chainId);
             handleOfferCreateInputChange('toTokenId', '');
