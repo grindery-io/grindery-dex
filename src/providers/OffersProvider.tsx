@@ -355,7 +355,7 @@ export const OffersProvider = ({ children }: OffersProviderProps) => {
     }
   }, [accessToken, fetchOffers]);
 
-  useEffect(() => {
+  /*useEffect(() => {
     if (!input.fromChainId) {
       handleOfferCreateInputChange('fromChainId', '97');
     }
@@ -368,7 +368,7 @@ export const OffersProvider = ({ children }: OffersProviderProps) => {
     if (!input.toTokenId) {
       handleOfferCreateInputChange('toTokenId', '1027');
     }
-  }, [input, handleOfferCreateInputChange]);
+  }, [input, handleOfferCreateInputChange]);*/
 
   useEffect(() => {
     if (error && error.text) {
