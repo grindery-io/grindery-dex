@@ -549,7 +549,7 @@ export const TradeProvider = ({ children }: TradeProviderProps) => {
       if (userChainId) {
         const userChain = getChainById(userChainId, chains);
 
-        if (userChain) {
+        if (userChain && userChain.usefulAddresses?.grtPoolAddress) {
           dispatch(
             tradeStoreActions.setFilterValue({
               name: 'fromChainId',
